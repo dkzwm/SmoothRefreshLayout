@@ -20,13 +20,14 @@ public class DefaultIndicator implements IIndicator {
     private int mFooterHeight = -1;
     private int mPressedPos = 0;
     private int mOffsetToKeepHeaderWhileLoading = -1;
+    private int mOffsetToKeepFooterWhileLoading = -1;
     private int mRefreshCompleteY = 0;
 
     private float mOffsetY;
-    private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_OF_EXTRA_VIEW_HEIGHT_TO_REFRESH;
-    private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_OF_EXTRA_VIEW_HEIGHT_TO_REFRESH;
-    private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_EXTRA_VIEW_HEIGHT;
-    private float mCanMoveTheMaxRatioOfFooterHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_EXTRA_VIEW_HEIGHT;
+    private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH;
+    private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH;
+    private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT;
+    private float mCanMoveTheMaxRatioOfFooterHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT;
     private float mResistanceHeader = DEFAULT_RESISTANCE;
     private float mResistanceFooter = DEFAULT_RESISTANCE;
     private boolean mTouched = false;
@@ -77,16 +78,9 @@ public class DefaultIndicator implements IIndicator {
         return mCurrentPos >= mRefreshCompleteY;
     }
 
-    @Override
-    public void processOnMove(float currentX, float currentY, float offsetX, float offsetY) {
-        if (mStatus == MOVING_CONTENT || mStatus == MOVING_HEADER)
-            mOffsetY = offsetY / mResistanceHeader;
-        else
-            mOffsetY = offsetY / mResistanceFooter;
-    }
 
     @Override
-    public void setRatioOfExtraViewHeightToRefresh(float ratio) {
+    public void setRatioOfRefreshViewHeightToRefresh(float ratio) {
         mRatioOfHeaderHeightToRefresh = ratio;
         mRatioOfFooterHeightToLoadMore = ratio;
         mOffsetToRefresh = (int) (mHeaderHeight * ratio);
@@ -144,9 +138,8 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public final void onFingerMove(float x, float y) {
-        float offsetX = x - mLastMovePoint[0];
         float offsetY = (y - mLastMovePoint[1]);
-        processOnMove(x, y, offsetX, offsetY);
+        processOnMove(offsetY);
         mLastMovePoint[0] = x;
         mLastMovePoint[1] = y;
     }
@@ -263,22 +256,26 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public boolean isOverOffsetToFixedExtraViewWhileLoading() {
+    public boolean isOverOffsetToKeepRefreshViewWhileLoading() {
         return mStatus != IIndicator.MOVING_CONTENT && mCurrentPos >
-                getOffsetToKeepExtraViewWhileLoading();
+                getOffsetToKeepRefreshViewWhileLoading();
     }
 
-    @Override
     public void setOffsetToKeepHeaderWhileLoading(int offset) {
         mOffsetToKeepHeaderWhileLoading = offset;
     }
 
     @Override
-    public int getOffsetToKeepExtraViewWhileLoading() {
+    public void setOffsetToKeepFooterWhileLoading(int offset) {
+        mOffsetToKeepFooterWhileLoading = offset;
+    }
+
+    @Override
+    public int getOffsetToKeepRefreshViewWhileLoading() {
         if (mStatus == MOVING_HEADER) {
             return mOffsetToKeepHeaderWhileLoading >= 0 ? mOffsetToKeepHeaderWhileLoading : mHeaderHeight;
         } else if (mStatus == MOVING_FOOTER) {
-            return mOffsetToKeepHeaderWhileLoading >= 0 ? mOffsetToKeepHeaderWhileLoading : mFooterHeight;
+            return mOffsetToKeepFooterWhileLoading >= 0 ? mOffsetToKeepFooterWhileLoading : mFooterHeight;
         }
         return -1;
     }
@@ -289,18 +286,29 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getLastPercentOfHeader() {
+    public float getLastPercentOfRefresh() {
         return mHeaderHeight == 0 ? 0 : mLastPos * 1f / mHeaderHeight;
     }
 
     @Override
-    public float getCurrentPercentOfHeader() {
+    public float getCurrentPercentOfRefresh() {
         return mHeaderHeight == 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
     }
 
     @Override
     public boolean willOverTop(int to) {
         return to < DEFAULT_START_POS;
+    }
+
+    @Override
+    public void setCanMoveTheMaxRatioOfRefreshHeight(float ratio) {
+        setCanMoveTheMaxRatioOfHeaderHeight(ratio);
+        setCanMoveTheMaxRatioOfFooterHeight(ratio);
+    }
+
+    @Override
+    public float getCanMoveTheMaxRatioOfHeaderHeight() {
+        return mCanMoveTheMaxRatioOfHeaderHeight;
     }
 
     @Override
@@ -313,9 +321,8 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setCanMoveTheMaxRatioOfExtraHeight(float ratio) {
-        setCanMoveTheMaxRatioOfHeaderHeight(ratio);
-        setCanMoveTheMaxRatioOfFooterHeight(ratio);
+    public float getCanMoveTheMaxRatioOfFooterHeight() {
+        return mCanMoveTheMaxRatioOfFooterHeight;
     }
 
     @Override
@@ -325,16 +332,6 @@ public class DefaultIndicator implements IIndicator {
             throw new SRUIRuntimeException("If MaxRatioOfFooterWhenFingerMoves less than " +
                     "RatioOfFooterHeightToLoadMore, load more will be never trigger!");
         mCanMoveTheMaxRatioOfFooterHeight = ratio;
-    }
-
-    @Override
-    public float getCanMoveTheMaxRatioOfHeaderHeight() {
-        return mCanMoveTheMaxRatioOfHeaderHeight;
-    }
-
-    @Override
-    public float getCanMoveTheMaxRatioOfFooterHeight() {
-        return mCanMoveTheMaxRatioOfFooterHeight;
     }
 
     @Override
@@ -360,8 +357,8 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public boolean isJustReachedToKeepHeaderWhileLoading() {
-        return mStatus != IIndicator.MOVING_CONTENT && mCurrentPos >= getOffsetToKeepExtraViewWhileLoading();
+    public boolean isJustReachedToKeepRefreshWhileLoading() {
+        return mStatus != IIndicator.MOVING_CONTENT && mCurrentPos >= getOffsetToKeepRefreshViewWhileLoading();
     }
 
     private void updateHeight() {
@@ -369,5 +366,11 @@ public class DefaultIndicator implements IIndicator {
         mOffsetToLoadMore = (int) (mRatioOfHeaderHeightToRefresh * mFooterHeight);
     }
 
+    private void processOnMove(float offsetY) {
+        if (mStatus == MOVING_CONTENT || mStatus == MOVING_HEADER)
+            mOffsetY = offsetY / mResistanceHeader;
+        else
+            mOffsetY = offsetY / mResistanceFooter;
+    }
 
 }

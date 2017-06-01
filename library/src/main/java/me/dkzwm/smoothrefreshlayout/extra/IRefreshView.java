@@ -11,11 +11,11 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
  *
  * @author dkzwm
  */
-public interface IExtraView {
+public interface IRefreshView {
     int TYPE_HEADER = 0;
     int TYPE_FOOTER = 1;
 
-    @ExtraViewType
+    @RefreshViewType
     int getType();
 
     @NonNull

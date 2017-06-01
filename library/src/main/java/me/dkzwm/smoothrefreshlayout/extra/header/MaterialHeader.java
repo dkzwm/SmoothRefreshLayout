@@ -8,15 +8,17 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.drawable.MaterialProgressDrawable;
-import me.dkzwm.smoothrefreshlayout.extra.IExtraView;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 
-public class MaterialHeader extends View implements IExtraView {
+/**
+ * @author dkzwm
+ */
+public class MaterialHeader extends View implements IRefreshView {
     private MaterialProgressDrawable mDrawable;
     private float mScale = 1f;
     private ValueAnimator mAnimator;
@@ -100,19 +102,16 @@ public class MaterialHeader extends View implements IExtraView {
 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-        Log.d(getClass().getSimpleName(), "--------onFingerUp-------");
     }
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        Log.d(getClass().getSimpleName(), "--------onReset-------");
         mDrawable.stop();
         mScale = 1;
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
-        Log.d(getClass().getSimpleName(), "--------onRefreshPrepare-------");
         if (mAnimator.isRunning())
             mAnimator.cancel();
     }
@@ -120,14 +119,12 @@ public class MaterialHeader extends View implements IExtraView {
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
-        Log.d(getClass().getSimpleName(), "--------onRefreshBegin-------");
         mDrawable.setAlpha(255);
         mDrawable.start();
     }
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout layout) {
-        Log.d(getClass().getSimpleName(), "--------onRefreshComplete-------");
         long duration = layout.getDurationToCloseHeader();
         if (duration > 100)
             duration -= 100;
@@ -137,8 +134,7 @@ public class MaterialHeader extends View implements IExtraView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        Log.d(getClass().getSimpleName(), "--------onRefreshPositionChanged-------");
-        float percent = Math.min(1f, indicator.getCurrentPercentOfHeader());
+        float percent = Math.min(1f, indicator.getCurrentPercentOfRefresh());
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mDrawable.setAlpha((int) (255 * percent));
             mDrawable.showArrow(true);

@@ -11,7 +11,6 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @author dkzwm
  */
-
 public class SRLog {
     public static final int LEVEL_VERBOSE = 0;
     public static final int LEVEL_DEBUG = 1;

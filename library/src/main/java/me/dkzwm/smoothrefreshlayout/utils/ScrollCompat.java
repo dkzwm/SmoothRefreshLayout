@@ -11,7 +11,6 @@ import android.widget.ScrollView;
  *
  * @author dkzwm
  */
-
 public class ScrollCompat {
     public static boolean canChildScrollDown(View view) {
         if (android.os.Build.VERSION.SDK_INT < 14) {

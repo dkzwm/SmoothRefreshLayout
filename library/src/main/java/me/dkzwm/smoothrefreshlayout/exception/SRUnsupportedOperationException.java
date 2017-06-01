@@ -5,7 +5,6 @@ package me.dkzwm.smoothrefreshlayout.exception;
  *
  * @author dkzwm
  */
-
 public class SRUnsupportedOperationException extends RuntimeException {
     public SRUnsupportedOperationException(String message) {
         super(message);

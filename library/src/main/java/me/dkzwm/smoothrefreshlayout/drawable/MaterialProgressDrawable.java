@@ -45,7 +45,9 @@ import java.util.ArrayList;
 
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 
-
+/**
+ * a copy of the Android Open Source Project
+ */
 public class MaterialProgressDrawable extends Drawable implements Animatable {
 
     // Maps to ProgressBar.Large style
@@ -141,7 +143,6 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
         updateSizes(DEFAULT);
         setupAnimators();
     }
-
 
 
     private void setSizeParameters(double progressCircleWidth, double progressCircleHeight,

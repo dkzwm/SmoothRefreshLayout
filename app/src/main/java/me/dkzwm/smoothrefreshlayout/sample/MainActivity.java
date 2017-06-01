@@ -15,12 +15,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
+        //设置模式
+        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
+        //开启越界回弹效果
         mRefreshLayout.setEnableOverScroll(true);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
+        //开启黏贴固定被刷新视图
         mRefreshLayout.setEnablePinContentView(true);
-        mRefreshLayout.setEnableKeepExtraView(true);
+        //刷新时保持刷新视图停在其视图高度等待刷新完成
+        mRefreshLayout.setEnableKeepRefreshView(true);
         //设置刷新时黏贴属性
-        mRefreshLayout.setEnablePinExtraViewWhileLoading(true);
+        mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
+        //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        //自动刷新
         mRefreshLayout.autoRefresh();
     }
 

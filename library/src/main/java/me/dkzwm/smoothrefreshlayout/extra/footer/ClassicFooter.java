@@ -14,10 +14,13 @@ import android.widget.TextView;
 import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.ClassicConfig;
-import me.dkzwm.smoothrefreshlayout.extra.IExtraView;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 
-public class ClassicFooter extends FrameLayout implements IExtraView {
+/**
+ * @author dkzwm
+ */
+public class ClassicFooter extends FrameLayout implements IRefreshView {
     protected RotateAnimation mFlipAnimation;
     protected RotateAnimation mReverseFlipAnimation;
     protected TextView mTitleTextView;

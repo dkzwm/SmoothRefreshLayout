@@ -6,11 +6,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Created by dkzwm1 on 2017/5/23.
+ * Created by dkzwm on 2017/5/23.
+ *
+ * @author dkzwm
  */
-
-
-@IntDef({IExtraView.TYPE_HEADER, IExtraView.TYPE_FOOTER})
+@IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
 @Retention(RetentionPolicy.SOURCE)
-public @interface ExtraViewType {
+@interface RefreshViewType {
 }

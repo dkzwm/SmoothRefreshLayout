@@ -7,6 +7,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
+        android:overScrollMode="never"
         android:layout_height="match_parent">
 
         <LinearLayout
@@ -62,6 +63,7 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/with_viewPager"/>
+
             <Button
                 android:id="@+id/button_main_with_recyclerView_in_coordinatorLayout"
                 style="@style/MainButtonStyle"
@@ -76,14 +78,38 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/test_nested"/>
-
             <Button
-                android:id="@+id/button_main_test_fixed_extra_view"
+                android:id="@+id/button_main_test_pull_to_refresh"
                 style="@style/MainButtonStyle"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
-                android:text="@string/refreshing_fixed_extra_view"/>
+                android:text="@string/pull_to_refresh"/>
 
+            <Button
+                android:id="@+id/button_main_test_release_to_refresh"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/release_to_refresh"/>
+            <Button
+                android:id="@+id/button_main_test_enable_next_pull_to_refresh_at_once"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/enable_next_pull_to_refresh_at_once"/>
+            <Button
+                android:id="@+id/button_main_test_keep_refresh_view"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/refreshing_keep_refresh_view"/>
+
+            <Button
+                android:id="@+id/button_main_test_keep_refresh_view_and_pinned_refresh_view_while_loading"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/refreshing_keep_refresh_view_and_pinned_refresh_view_while_loading"/>
         </LinearLayout>
     </ScrollView>
 

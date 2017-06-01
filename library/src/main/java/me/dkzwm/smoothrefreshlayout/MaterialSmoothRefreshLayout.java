@@ -8,6 +8,9 @@ import me.dkzwm.smoothrefreshlayout.extra.footer.MaterialFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 
+/**
+ * @author dkzwm
+ */
 public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
     private MaterialHeader mMaterialHeader;
     private MaterialFooter mMaterialFooter;

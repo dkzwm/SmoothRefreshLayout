@@ -9,12 +9,15 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.extra.IExtraView;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 import me.dkzwm.smoothrefreshlayout.view.ProgressWheel;
 
-public class MaterialFooter extends FrameLayout implements IExtraView {
+/**
+ * @author dkzwm
+ */
+public class MaterialFooter extends FrameLayout implements IRefreshView {
     private ProgressWheel mProgress;
 
     public MaterialFooter(Context context) {
@@ -81,7 +84,7 @@ public class MaterialFooter extends FrameLayout implements IExtraView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        float percent = Math.min(1f, indicator.getCurrentPercentOfHeader());
+        float percent = Math.min(1f, indicator.getCurrentPercentOfRefresh());
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             if (mProgress.isSpinning()) {
                 mProgress.stopSpinning();

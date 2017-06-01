@@ -7,7 +7,10 @@
     <string name="with_gridView">包含GridView</string>
     <string name="with_webView">包含WebView</string>
     <string name="with_viewPager">包含ViewPager</string>
-    <string name="refreshing_fixed_extra_view">刷新时保持头部</string>
+    <string name="refreshing_keep_refresh_view">刷新时保持头部停留在头部高度同时支持手指移动</string>
     <string name="in_coordinatorLayout_with_recyclerView">在CoordinatorLayout内部包含RecyclerView</string>
     <string name="test_nested">测试嵌套滑动</string>
+    <string name="pull_to_refresh">下拉刷新</string>
+    <string name="release_to_refresh">释放刷新</string>
+    <string name="enable_next_pull_to_refresh_at_once">刷新完成立即可以刷新</string>
 </resources>

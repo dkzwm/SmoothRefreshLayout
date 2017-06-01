@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 
 /**
  * Created by dkzwm on 2017/5/25.
- * smooth scroll to load more
+ * Smooth scroll to load more
  *
  * @author dkzwm
  */

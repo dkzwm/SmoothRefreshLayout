@@ -12,8 +12,8 @@ import java.lang.annotation.RetentionPolicy;
  * @author dkzwm
  */
 public interface IIndicator {
-    float DEFAULT_RATIO_OF_EXTRA_VIEW_HEIGHT_TO_REFRESH = 1.1f;
-    float DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_EXTRA_VIEW_HEIGHT = 0f;
+    float DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH = 1.1f;
+    float DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT = 0f;
     float DEFAULT_RESISTANCE = 1.65f;
     int DEFAULT_START_POS = 0;
     int MOVING_CONTENT = 0;
@@ -46,9 +46,7 @@ public interface IIndicator {
 
     boolean crossCompletePos();
 
-    void processOnMove(float currentX, float currentY, float offsetX, float offsetY);
-
-    void setRatioOfExtraViewHeightToRefresh(float ratio);
+    void setRatioOfRefreshViewHeightToRefresh(float ratio);
 
     float getRatioOfHeaderHeightToRefresh();
 
@@ -104,11 +102,13 @@ public interface IIndicator {
 
     boolean hasJustReachedFooterHeightFromBottomToTop();
 
-    boolean isOverOffsetToFixedExtraViewWhileLoading();
+    boolean isOverOffsetToKeepRefreshViewWhileLoading();
 
-    int getOffsetToKeepExtraViewWhileLoading();
+    int getOffsetToKeepRefreshViewWhileLoading();
 
     void setOffsetToKeepHeaderWhileLoading(int offset);
+
+    void setOffsetToKeepFooterWhileLoading(int offset);
 
     boolean isAlreadyHere(int to);
 
@@ -116,7 +116,7 @@ public interface IIndicator {
 
     void setCanMoveTheMaxRatioOfHeaderHeight(float ratio);
 
-    void setCanMoveTheMaxRatioOfExtraHeight(float ratio);
+    void setCanMoveTheMaxRatioOfRefreshHeight(float ratio);
 
     void setCanMoveTheMaxRatioOfFooterHeight(float ratio);
 
@@ -134,11 +134,11 @@ public interface IIndicator {
     @NonNull
     float[] getLastMovePoint();
 
-    boolean isJustReachedToKeepHeaderWhileLoading();
+    boolean isJustReachedToKeepRefreshWhileLoading();
 
-    float getLastPercentOfHeader();
+    float getLastPercentOfRefresh();
 
-    float getCurrentPercentOfHeader();
+    float getCurrentPercentOfRefresh();
 
     @IntDef({MOVING_CONTENT, MOVING_FOOTER, MOVING_HEADER})
     @Retention(RetentionPolicy.SOURCE)

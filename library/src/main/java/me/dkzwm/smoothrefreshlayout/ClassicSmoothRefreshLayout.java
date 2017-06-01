@@ -6,6 +6,9 @@ import android.util.AttributeSet;
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
 
+/**
+ * @author dkzwm
+ */
 public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
     private ClassicHeader mClassicHeader;
     private ClassicFooter mClassicFooter;
