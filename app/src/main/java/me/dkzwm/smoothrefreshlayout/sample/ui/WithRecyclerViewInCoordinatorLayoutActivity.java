@@ -78,7 +78,7 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 3000);
+                }, 2000);
             }
 
             @Override

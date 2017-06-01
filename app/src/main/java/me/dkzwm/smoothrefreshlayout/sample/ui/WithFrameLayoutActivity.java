@@ -49,7 +49,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                         mRefreshLayout.refreshComplete();
                         mTextView.setText("刷新次数：" + mCount);
                     }
-                }, 3000);
+                }, 2000);
             }
 
             @Override

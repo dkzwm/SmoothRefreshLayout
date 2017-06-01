@@ -66,7 +66,7 @@ public class WithGridViewActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 3000);
+                }, 2000);
             }
 
             @Override

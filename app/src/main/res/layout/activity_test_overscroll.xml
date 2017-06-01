@@ -10,14 +10,19 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:overScrollMode="never"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/test_text"
-            android:textColor="#666666"
-            android:textSize="17sp"/>
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="800dp"
+                android:background="@android:color/darker_gray"/>
+
+        </LinearLayout>
     </ScrollView>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
