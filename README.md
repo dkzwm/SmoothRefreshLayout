@@ -1,11 +1,11 @@
 # SmoothRefreshLayout
 ## English | [中文](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README_CN.md)
-<p>
-A highly efficient refresh library for Android.In theory,Can support all Views.     
-It's easy to use and more powerful than SwipeRefreshLayout.     
+
+A highly efficient refresh library for Android.In theory,Can support all Views.It's easy to use and more powerful than SwipeRefreshLayout.    
 Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
 Thank him for providing such a great open source library ！
-<p/>
+
+
 
 ## Features
  1.Support 5 modes: refresh,loadMore,overScroll,both(refresh & loadMore),none;    

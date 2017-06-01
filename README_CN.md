@@ -1,10 +1,8 @@
 # SmoothRefreshLayout
 ## [English](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README.md) | 中文
-<p>
 一个高效的Android刷新库，理论上支持所有的视图，比官方的SwipeRefreshLayout更强大且使用方便.    
-本开源库的部分代码来自 [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
+本开源库的部分代码来自[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
 非常感谢他提供的这么棒的开源项目！    
-<p/>
 
 ## 特性
  1.支持5种模式: refresh(刷新),loadMore(加载更多),overScroll(越界回弹),both(刷新和加载更多),none;    
