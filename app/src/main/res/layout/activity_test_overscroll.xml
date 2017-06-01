@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_with_webView_activity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:sr_mode="over_scroll">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:overScrollMode="never"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/test_text"
+            android:textColor="#666666"
+            android:textSize="17sp"/>
+    </ScrollView>
+</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

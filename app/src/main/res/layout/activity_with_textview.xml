@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_with_textView_activity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/textView_with_textView_activity_desc"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E8E8E8"
+        android:gravity="center"
+        android:text="Test TextView"
+        android:textColor="#333333"
+        android:textSize="42sp"/>
+
+
+</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

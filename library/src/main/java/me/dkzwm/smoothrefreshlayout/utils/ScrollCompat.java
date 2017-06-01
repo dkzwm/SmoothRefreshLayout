@@ -13,41 +13,25 @@ import android.widget.ScrollView;
  */
 public class ScrollCompat {
     public static boolean canChildScrollDown(View view) {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (view instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) view;
-                return absListView.getChildCount() == 0
-                        || (absListView.getChildCount() > 0 && (absListView
-                        .getLastVisiblePosition() < absListView.getChildCount() - 1)
-                        || absListView.getChildAt(absListView.getChildCount() - 1)
-                        .getBottom() > absListView.getPaddingBottom());
-            } else if (view instanceof ScrollView) {
-                final ScrollView scrollView = (ScrollView) view;
-                return scrollView.getChildCount() == 0
-                        || (scrollView.getChildCount() != 0
-                        && scrollView.getScrollY() < scrollView.getChildAt(0)
-                        .getHeight() - scrollView.getHeight());
-            } else if (view instanceof RecyclerView) {
-                final RecyclerView recyclerView = (RecyclerView) view;
-                return recyclerView.getChildCount() == 0;
-            }
-            return false;
-        } else {
-            if (view instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) view;
-                return absListView.getChildCount() <= 0 || ViewCompat
-                        .canScrollVertically(absListView, 1);
-            } else if (view instanceof ScrollView) {
-                final ScrollView scrollView = (ScrollView) view;
-                return scrollView.getChildCount() == 0 || ViewCompat
-                        .canScrollVertically(view, 1);
-            } else if (view instanceof RecyclerView) {
-                final RecyclerView recyclerView = (RecyclerView) view;
-                return recyclerView.getChildCount() == 0 || ViewCompat
-                        .canScrollVertically(view, 1);
-            }
-            return ViewCompat.canScrollVertically(view, 1);
+        if (view instanceof AbsListView) {
+            final AbsListView absListView = (AbsListView) view;
+            return absListView.getChildCount() == 0
+                    || (absListView.getChildCount() > 0 && (absListView.getLastVisiblePosition()
+                    < absListView.getChildCount() - 1)
+                    || absListView.getChildAt(absListView.getChildCount() - 1)
+                    .getBottom() > absListView.getBottom());
+        } else if (view instanceof ScrollView) {
+            final ScrollView scrollView = (ScrollView) view;
+            return scrollView.getChildCount() == 0
+                    || (scrollView.getChildCount() != 0
+                    && scrollView.getScrollY() < scrollView.getChildAt(0)
+                    .getHeight() - scrollView.getHeight());
+        } else if (view instanceof RecyclerView) {
+            final RecyclerView recyclerView = (RecyclerView) view;
+            return recyclerView.getChildCount() == 0
+                    || ViewCompat.canScrollVertically(view, 1);
         }
+        return ViewCompat.canScrollVertically(view, 1);
     }
 
 

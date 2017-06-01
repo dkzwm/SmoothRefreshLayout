@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_with_listView_activity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/listView_with_listView_activity"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

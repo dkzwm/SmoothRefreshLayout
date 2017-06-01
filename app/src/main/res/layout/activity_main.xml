@@ -70,7 +70,12 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/in_coordinatorLayout_with_recyclerView"/>
-
+            <Button
+                android:id="@+id/button_main_test_over_scroll"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/over_scroll"/>
 
             <Button
                 android:id="@+id/button_main_test_nested"

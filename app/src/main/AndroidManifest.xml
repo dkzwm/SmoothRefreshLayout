@@ -2,6 +2,9 @@
 <manifest package="me.dkzwm.smoothrefreshlayout.sample"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,13 +12,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".ui.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.WithFrameLayoutActivity"/>
+        <activity android:name=".ui.WithTextViewActivity"/>
+        <activity android:name=".ui.WithWebViewActivity"/>
+        <activity android:name=".ui.WithListViewActivity"/>
+        <activity android:name=".ui.WithGridViewActivity"/>
+        <activity android:name=".ui.WithRecyclerViewActivity"/>
+        <activity android:name=".ui.WithRecyclerViewInCoordinatorLayoutActivity" android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".ui.TestOverScrollActivity"/>
     </application>
 
 </manifest>

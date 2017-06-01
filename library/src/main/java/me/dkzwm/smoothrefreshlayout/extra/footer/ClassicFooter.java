@@ -48,7 +48,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mRotateView = header.findViewById(R.id.view_footer_rotate);
         mTitleTextView = (TextView) header.findViewById(R.id.textView_footer_title);
         mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_footer_last_update);
-        mProgressBar = header.findViewById(R.id.progressBar_header);
+        mProgressBar = header.findViewById(R.id.progressBar_footer);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         resetView();
     }

@@ -201,6 +201,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             @Mode
             int mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, MODE_NONE);
             mMode = mode;
+            if (mMode == MODE_OVER_SCROLL) {
+                setEnableOverScroll(true);
+            }
             arr.recycle();
         } else {
             setEnablePullToRefresh(true);
@@ -1087,7 +1090,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         return isEnabled() && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0
-                && (isEnableOverScroll() && !mOverScrollChecker.isScrolling());
+                || (isEnableOverScroll() && !mOverScrollChecker.isScrolling());
     }
 
     @Override
@@ -1483,7 +1486,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void onFingerUp(boolean stayForLoading) {
         notifyFingerUp();
-        if (hasBeenKeepRefreshView() && needCheckPos()) {
+        if (hasBeenKeepRefreshView() && needCheckPos() && mStatus != SR_STATUS_COMPLETE) {
             if (mIndicator.isOverOffsetToKeepRefreshViewWhileLoading() && !stayForLoading) {
                 if (isMovingHeader()) {
                     mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepRefreshViewWhileLoading(),
@@ -1540,9 +1543,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     private void notifyUIRefreshComplete() {
-        if (isMovingHeader()) {
+        if (isMovingHeader() && mHeaderView != null) {
             mHeaderView.onRefreshComplete(this);
-        } else if (isMovingFooter()) {
+        } else if (isMovingFooter() && mFooterView != null) {
             mFooterView.onRefreshComplete(this);
         }
         mIndicator.onRefreshComplete();
