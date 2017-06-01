@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sr_pull_up">上拉</string>
+    <string name="sr_pull_up_to_load">上拉加载</string>
+    <string name="sr_release_to_load">释放加载</string>
+    <string name="sr_pull_down">下拉</string>
+    <string name="sr_pull_down_to_refresh">下拉刷新</string>
+    <string name="sr_release_to_refresh">释放刷新</string>
+    <string name="sr_refreshing">正在更新中…</string>
+    <string name="sr_refresh_complete">更新完成</string>
+    <string name="sr_loading">正在加载中…</string>
+    <string name="sr_load_complete">加载完成</string>
+
+    <string name="sr_last_update">上次更新:&#160;</string>
+    <string name="sr_seconds_ago">&#160;秒之前</string>
+    <string name="sr_minutes_ago">&#160;分钟之前</string>
+    <string name="sr_hours_ago">&#160;小时之前</string>
+
+</resources>

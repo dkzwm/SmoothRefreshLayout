@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_main"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/button_main_with_frameLayout"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_frameLayout"/>
+
+            <Button
+                android:id="@+id/button_main_with_textView"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_textView"/>
+
+            <Button
+                android:id="@+id/button_main_with_listView"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_listView"/>
+
+            <Button
+                android:id="@+id/button_main_with_recyclerView"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_recyclerView"/>
+
+            <Button
+                android:id="@+id/button_main_with_gridView"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_gridView"/>
+
+            <Button
+                android:id="@+id/button_main_with_webView"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_webView"/>
+
+            <Button
+                android:id="@+id/button_main_with_viewPager"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/with_viewPager"/>
+            <Button
+                android:id="@+id/button_main_with_recyclerView_in_coordinatorLayout"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/in_coordinatorLayout_with_recyclerView"/>
+
+
+            <Button
+                android:id="@+id/button_main_test_nested"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/test_nested"/>
+
+            <Button
+                android:id="@+id/button_main_test_fixed_extra_view"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/refreshing_fixed_extra_view"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+</me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SmoothRefreshLayout-master</string>
+    <string name="with_frameLayout">With FrameLayout</string>
+    <string name="with_textView">With TextView</string>
+    <string name="with_listView">With ListView</string>
+    <string name="with_recyclerView">With RecyclerView</string>
+    <string name="with_gridView">With GridView</string>
+    <string name="with_webView">With WebView</string>
+    <string name="with_viewPager">With ViewPager</string>
+    <string name="refreshing_fixed_extra_view">Refreshing fixed extra view</string>
+    <string name="in_coordinatorLayout_with_recyclerView">In CoordinatorLayout With
+        RecyclerView</string>
+    <string name="test_nested">Test Nested</string>
+</resources>

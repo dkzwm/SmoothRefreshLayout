@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="SmoothRefreshLayout">
+        <attr name="sr_content" format="reference"/>
+        <attr name="sr_resistance" format="float"/>
+        <attr name="sr_resistance_of_pull" format="float"/>
+        <attr name="sr_resistance_of_pull_down" format="float"/>
+        <attr name="sr_ratio_of_extra_height_to_refresh" format="float"/>
+        <attr name="sr_ratio_of_header_height_to_refresh" format="float"/>
+        <attr name="sr_ratio_of_footer_height_to_refresh" format="float"/>
+        <attr name="sr_can_move_the_max_ratio_of_extra_height" format="float"/>
+        <attr name="sr_can_move_the_max_ratio_of_header_height" format="float"/>
+        <attr name="sr_can_move_the_max_ratio_of_footer_height" format="float"/>
+        <attr name="sr_duration_to_close_of_extra" format="integer"/>
+        <attr name="sr_duration_to_close_of_header" format="integer"/>
+        <attr name="sr_duration_to_close_of_footer" format="integer"/>
+        <attr name="sr_duration_of_back_to_extra_height" format="integer"/>
+        <attr name="sr_duration_of_back_to_header_height" format="integer"/>
+        <attr name="sr_duration_of_back_to_footer_height" format="integer"/>
+        <attr name="sr_enable_pull_to_refresh" format="boolean"/>
+        <attr name="sr_enable_keep_extra_view" format="boolean"/>
+
+        <attr name="sr_layout_gravity" format="enum">
+            <enum name="top" value="0"/>
+            <enum name="bottom" value="1"/>
+            <enum name="left" value="2"/>
+            <enum name="right" value="3"/>
+            <enum name="center_horizontal" value="4"/>
+            <enum name="center_vertical" value="5"/>
+            <enum name="center" value="6"/>
+            <enum name="start" value="7"/>
+            <enum name="end" value="8"/>
+        </attr>
+        <attr name="sr_mode" format="enum">
+            <enum name="none" value="0"/>
+            <enum name="refresh" value="1"/>
+            <enum name="load_more" value="2"/>
+            <enum name="over_scroll" value="3"/>
+            <enum name="both" value="4"/>
+        </attr>
+    </declare-styleable>
+
+</resources>
