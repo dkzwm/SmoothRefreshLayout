@@ -1,44 +1,50 @@
 # SmoothRefreshLayout
 ## English | [中文](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README_CN.md)
 <p>
-A highly efficient refresh library for Android.In theory,Can support all Views.    
-It's easy to use and more powerful than SwipeRefreshLayout.    
-Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).
+A highly efficient refresh library for Android.In theory,Can support all Views.     
+It's easy to use and more powerful than SwipeRefreshLayout.     
+Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
 Thank him for providing such a great open source library ！
 <p/>
 
 ## Features
  1.Support 5 modes: refresh,loadMore,overScroll,both(refresh & loadMore),none;    
- 2.Support nestedScroll    
- 3.Support all views    
+ 2.Support nestedScroll;    
+ 3.Support all views;    
  
 ## Snapshot
-
 * With frameLayout    
    <div class='row'>
-       <img src='with_frameLayout.png' width="300px"/>
+       <img src='snapshot/with_frameLayout.png' width="300px"/>
    </div>
-
-* With textView    
-    <img src='with_textView.png' width="300px"/>
-
+* With textView     
+	<div class='row'>
+    	<img src='snapshot/with_textView.png' width="300px"/>
+	</div>
 * With listView    
-    <img src='with_listView.png' width="300px"/>
-	
+	<div class='row'>
+    	<img src='snapshot/with_listView.png' width="300px"/>
+	</div>
 * With gridView    
-	<img src='with_gridView.png' width="300px"/>
-	
+	<div class='row'>
+		<img src='snapshot/with_gridView.png' width="300px"/>
+	</div>
 * With recyclerView    
-    <img src='with_recyclerView.png' width="300px"/>
-	
+	<div class='row'> 
+   		<img src='snapshot/with_recyclerView.png' width="300px"/>
+	</div>
 * With webView    
-    <img src='with_webView.png' width="300px"/>
-	
-* With recyclerView in coordinatorLayout    
-    <img src='with_recyclerView_in_coordinatorLayout.png' width="300px"/>
-	
-* Test overScroll    
-    <img src='test_overScroll.png' width="300px"/>
+	<div class='row'> 
+    	<img src='snapshot/with_webView.png' width="300px"/>
+	</div>
+* With recyclerView in coordinatorLayout
+	<div class='row'> 
+    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.png' width="300px"/>
+	</div>
+* OverScroll  
+	<div class='row'> 
+    	<img src='snapshot/test_overScroll.png' width="300px"/>
+	</div>
 
 ## How to use    
 In edit
