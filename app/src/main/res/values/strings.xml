@@ -11,8 +11,7 @@
     <string name="in_coordinatorLayout_with_recyclerView">In CoordinatorLayout With
         RecyclerView</string>
     <string name="test_nested">Test Nested</string>
-    <string name="refreshing_keep_refresh_view_and_pinned_refresh_view_while_loading">When
-        refreshing triggered,keep refresh view and pinned it while loading</string>
+    <string name="test_material_style">Material Style</string>
     <string name="pull_to_refresh">Pull to refresh</string>
     <string name="release_to_refresh">Release to refresh</string>
     <string name="enable_next_pull_to_refresh_at_once">Refresh at once after completion of

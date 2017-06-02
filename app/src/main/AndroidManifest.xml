@@ -2,8 +2,8 @@
 <manifest package="me.dkzwm.smoothrefreshlayout.sample"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -14,21 +14,54 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.WithFrameLayoutActivity"/>
-        <activity android:name=".ui.WithTextViewActivity"/>
-        <activity android:name=".ui.WithWebViewActivity"/>
-        <activity android:name=".ui.WithListViewActivity"/>
-        <activity android:name=".ui.WithGridViewActivity"/>
-        <activity android:name=".ui.WithRecyclerViewActivity"/>
-        <activity android:name=".ui.WithRecyclerViewInCoordinatorLayoutActivity" android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".ui.TestOverScrollActivity"/>
+        <activity
+            android:name=".ui.WithFrameLayoutActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithTextViewActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithWebViewActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithListViewActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithGridViewActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithRecyclerViewActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithRecyclerViewInCoordinatorLayoutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.TestOverScrollActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.WithViewPagerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TestPullToRefreshActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TestReleaseToRefreshActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TestNextRefreshAtOnceActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TestMaterialStyleActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

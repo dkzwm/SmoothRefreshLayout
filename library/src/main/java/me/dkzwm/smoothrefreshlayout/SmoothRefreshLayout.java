@@ -1,5 +1,6 @@
 package me.dkzwm.smoothrefreshlayout;
 
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -116,6 +117,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private float mTotalRefreshingUnconsumed;
     private boolean mNestedScrollInProgress;
     private boolean mNeedReLayout = false;
+    private boolean mNeedNotifyRefreshComplete = true;
     private int mTotalRefreshingConsumed = 0;
     private int mTotalLoadMoreUnconsumed = 0;
     private int mTotalLoadMoreConsumed = 0;
@@ -493,10 +495,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         mGestureDetector.onTouchEvent(ev);
         if ((isEnableOverScroll() && mOverScrollChecker.isScrolling())
-                || (mPinRefreshViewWhileLoading && (isRefreshing() || isLoadingMore()))) {
+                || (mPinRefreshViewWhileLoading && (isRefreshing() || isLoadingMore()))
+                || mNestedScrollInProgress) {
             return super.dispatchTouchEvent(ev);
         }
-        return processDispatch(ev);
+        return processDispatchTouchEvent(ev);
     }
 
     @Override
@@ -1299,9 +1302,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    private boolean processDispatch(MotionEvent ev) {
-        if (mNestedScrollInProgress)
-            return super.dispatchTouchEvent(ev);
+    private boolean processDispatchTouchEvent(MotionEvent ev) {
         int action = ev.getAction();
         switch (action) {
             case MotionEvent.ACTION_UP:
@@ -1336,7 +1337,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mPreventForHorizontal = false;
                 mDealHorizontalMove = false;
                 super.dispatchTouchEvent(ev);
-                mIndicator.setMovingStatus(IIndicator.MOVING_CONTENT);
                 return true;
             case MotionEvent.ACTION_MOVE:
                 mLastMoveEvent = ev;
@@ -1486,7 +1486,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void onFingerUp(boolean stayForLoading) {
         notifyFingerUp();
-        if (hasBeenKeepRefreshView() && needCheckPos() && mStatus != SR_STATUS_COMPLETE) {
+        if (hasBeenKeepRefreshView() && needCheckPos() && mStatus != SR_STATUS_COMPLETE
+                && !isRefreshing() && !isLoadingMore()) {
             if (mIndicator.isOverOffsetToKeepRefreshViewWhileLoading() && !stayForLoading) {
                 if (isMovingHeader()) {
                     mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepRefreshViewWhileLoading(),
@@ -1511,10 +1512,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mStatus == SR_STATUS_REFRESHING || mStatus == SR_STATUS_LOADING_MORE) {
             if (hasBeenKeepRefreshView()) {
                 if (mIndicator.isOverOffsetToKeepRefreshViewWhileLoading()) {
-                    if (isMovingHeader()) {
+                    if (isRefreshing()) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepRefreshViewWhileLoading(),
                                 mDurationOfBackToHeaderHeight);
-                    } else if (isMovingFooter()) {
+                    } else if (isLoadingMore()) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepRefreshViewWhileLoading(),
                                 mDurationOfBackToFooterHeight);
                     }
@@ -1531,7 +1532,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     private void tryScrollBackToTop(int duration) {
-        if (!mIndicator.hasTouched() && mIndicator.hasLeftStartPosition()) {
+        if ( !mIndicator.hasTouched()&&mIndicator.hasLeftStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, duration);
             return;
         }
@@ -1543,14 +1544,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     private void notifyUIRefreshComplete() {
-        if (isMovingHeader() && mHeaderView != null) {
-            mHeaderView.onRefreshComplete(this);
-        } else if (isMovingFooter() && mFooterView != null) {
-            mFooterView.onRefreshComplete(this);
-        }
         mIndicator.onRefreshComplete();
-        if (mRefreshListener != null)
-            mRefreshListener.onRefreshComplete();
+        if (mNeedNotifyRefreshComplete) {
+            if (isMovingHeader() && mHeaderView != null) {
+                mHeaderView.onRefreshComplete(this);
+            } else if (isMovingFooter() && mFooterView != null) {
+                mFooterView.onRefreshComplete(this);
+            }
+            if (mRefreshListener != null) {
+                mRefreshListener.onRefreshComplete();
+            }
+            mNeedNotifyRefreshComplete = false;
+        }
         if (isMovingHeader()) {
             tryScrollBackToTop(mDurationToCloseHeader);
         } else if (isMovingFooter()) {
@@ -1666,7 +1671,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 break;
             case MODE_REFRESH:
-                if (isMovingHeader()) {
+                if (isMovingHeader() || isRefreshing()) {
                     if (mHeaderView != null) {
                         mHeaderView.getView().offsetTopAndBottom(change);
                         mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -1678,7 +1683,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 break;
             case MODE_LOAD_MORE:
-                if (isMovingFooter()) {
+                if (isMovingFooter() || isLoadingMore()) {
                     if (mFooterView != null) {
                         mFooterView.getView().offsetTopAndBottom(change);
                         mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -1694,12 +1699,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 break;
             case MODE_BOTH:
             case MODE_OVER_SCROLL:
-                if (mMode == MODE_BOTH && isMovingHeader()) {
+                if (mMode == MODE_BOTH && (isMovingHeader() || isRefreshing())) {
                     if (mHeaderView != null) {
                         mHeaderView.getView().offsetTopAndBottom(change);
                         mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                     }
-                } else if (mMode == MODE_BOTH && isMovingFooter()) {
+                } else if (mMode == MODE_BOTH && (isMovingFooter() || isLoadingMore())) {
                     if (mFooterView != null) {
                         mFooterView.getView().offsetTopAndBottom(change);
                         mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -1758,7 +1763,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mHeaderView.onReset(this);
             if (mFooterView != null)
                 mFooterView.onReset(this);
+            mIndicator.setMovingStatus(IIndicator.MOVING_CONTENT);
             mStatus = SR_STATUS_INIT;
+            mNeedNotifyRefreshComplete = true;
             clearAutoRefreshFlag();
             return true;
         }
@@ -1767,10 +1774,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void performRefreshComplete() {
         mStatus = SR_STATUS_COMPLETE;
-        // if is auto refresh do nothing, wait scroller stop
-        if (mScrollChecker.mIsRunning && isAutoRefresh()) {
-            return;
-        }
         notifyUIRefreshComplete();
     }
 
@@ -1829,16 +1832,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void performRefresh() {
         //loading start milliseconds since boot
         mLoadingStartTime = SystemClock.uptimeMillis();
+        mNeedNotifyRefreshComplete = true;
         onRefresh();
-        if (isMovingHeader()) {
+        if (isRefreshing()) {
             if (mHeaderView != null)
                 mHeaderView.onRefreshBegin(this, mIndicator);
-        } else if (isMovingFooter()) {
+        } else if (isLoadingMore()) {
             if (mFooterView != null)
                 mFooterView.onRefreshBegin(this, mIndicator);
         }
         if (mRefreshListener != null)
-            mRefreshListener.onRefreshBegin(isMovingHeader());
+            mRefreshListener.onRefreshBegin(isRefreshing());
     }
 
     protected void onRefresh() {

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
         //设置模式
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
+        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         //开启越界回弹效果
         mRefreshLayout.setEnableOverScroll(true);
         //开启黏贴固定被刷新视图
@@ -28,8 +29,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRefreshLayout.setEnableKeepRefreshView(true);
         //设置刷新时黏贴属性
         mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
+        //设置刷新完成后可立即开始下次刷新
+        mRefreshLayout.setEnabledNextPtrAtOnce(true);
         //设置刷新回调
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
                 mHandler.postDelayed(new Runnable() {
@@ -38,11 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mRefreshLayout.refreshComplete();
                     }
                 }, 4000);
-            }
-
-            @Override
-            public void onRefreshComplete() {
-
             }
         });
         //自动刷新
@@ -56,8 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 (this);
         findViewById(R.id.button_main_test_enable_next_pull_to_refresh_at_once)
                 .setOnClickListener(this);
-        findViewById(R.id.button_main_test_keep_refresh_view).setOnClickListener(this);
-        findViewById(R.id.button_main_test_keep_refresh_view_and_pinned_refresh_view_while_loading)
+        findViewById(R.id.button_main_test_material_style)
                 .setOnClickListener(this);
         findViewById(R.id.button_main_test_nested).setOnClickListener(this);
         findViewById(R.id.button_main_test_pull_to_refresh).setOnClickListener(this);
@@ -100,6 +97,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_over_scroll:
                 startActivity(new Intent(MainActivity.this, TestOverScrollActivity.class));
+                break;
+            case R.id.button_main_with_viewPager:
+                startActivity(new Intent(MainActivity.this, WithViewPagerActivity.class));
+                break;
+            case R.id.button_main_test_pull_to_refresh:
+                startActivity(new Intent(MainActivity.this, TestPullToRefreshActivity.class));
+                break;
+            case R.id.button_main_test_release_to_refresh:
+                startActivity(new Intent(MainActivity.this, TestReleaseToRefreshActivity.class));
+                break;
+            case R.id.button_main_test_enable_next_pull_to_refresh_at_once:
+                startActivity(new Intent(MainActivity.this, TestNextRefreshAtOnceActivity.class));
+                break;
+            case R.id.button_main_test_material_style:
+                startActivity(new Intent(MainActivity.this, TestMaterialStyleActivity.class));
                 break;
         }
 

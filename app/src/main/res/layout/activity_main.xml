@@ -102,19 +102,13 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/enable_next_pull_to_refresh_at_once"/>
-            <Button
-                android:id="@+id/button_main_test_keep_refresh_view"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:text="@string/refreshing_keep_refresh_view"/>
 
             <Button
-                android:id="@+id/button_main_test_keep_refresh_view_and_pinned_refresh_view_while_loading"
+                android:id="@+id/button_main_test_material_style"
                 style="@style/MainButtonStyle"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
-                android:text="@string/refreshing_keep_refresh_view_and_pinned_refresh_view_while_loading"/>
+                android:text="@string/test_material_style"/>
         </LinearLayout>
     </ScrollView>
 

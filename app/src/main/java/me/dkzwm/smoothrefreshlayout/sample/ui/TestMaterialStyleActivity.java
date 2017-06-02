@@ -19,7 +19,7 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  *
  * @author dkzwm
  */
-public class TestKeepHeaderWhileLoadingActivity extends AppCompatActivity {
+public class TestMaterialStyleActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private TextView mTextView;
     private Handler mHandler = new Handler();
@@ -72,7 +72,7 @@ public class TestKeepHeaderWhileLoadingActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(TestKeepHeaderWhileLoadingActivity.this, MainActivity.class));
+        startActivity(new Intent(TestMaterialStyleActivity.this, MainActivity.class));
         finish();
     }
 

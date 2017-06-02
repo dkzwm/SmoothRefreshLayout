@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import java.util.List;
 
+import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
@@ -48,7 +49,7 @@ public class WithListViewActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setFooterView(footer);
         mRefreshLayout.setEnableKeepRefreshView(true);
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
                 mHandler.postDelayed(new Runnable() {
@@ -67,11 +68,6 @@ public class WithListViewActivity extends AppCompatActivity {
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
-            }
-
-            @Override
-            public void onRefreshComplete() {
-
             }
         });
         mRefreshLayout.autoRefresh(false);

@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
@@ -39,7 +40,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
                 mCount++;
@@ -50,11 +51,6 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                         mTextView.setText("刷新次数：" + mCount);
                     }
                 }, 2000);
-            }
-
-            @Override
-            public void onRefreshComplete() {
-
             }
         });
     }

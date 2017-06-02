@@ -19,7 +19,7 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  *
  * @author dkzwm
  */
-public class TestPullToRefreshActivity extends AppCompatActivity {
+public class TestReleaseToRefreshActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private TextView mTextView;
     private Handler mHandler = new Handler();
@@ -28,16 +28,16 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_pull_to_refresh);
+        setContentView(R.layout.activity_test_refresh);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.over_scroll);
-        mTextView = (TextView) findViewById(R.id.textView_test_pull_to_refresh_activity_desc);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_pull_to_refresh_activity);
+        mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
+        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
+        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
-        mRefreshLayout.setEnablePullToRefresh(true);
+        mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
@@ -68,7 +68,7 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(TestPullToRefreshActivity.this, MainActivity.class));
+        startActivity(new Intent(TestReleaseToRefreshActivity.this, MainActivity.class));
         finish();
     }
 

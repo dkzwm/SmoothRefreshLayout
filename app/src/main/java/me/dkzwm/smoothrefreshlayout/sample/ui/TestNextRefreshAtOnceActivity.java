@@ -19,7 +19,7 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  *
  * @author dkzwm
  */
-public class TestPullToRefreshActivity extends AppCompatActivity {
+public class TestNextRefreshAtOnceActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private TextView mTextView;
     private Handler mHandler = new Handler();
@@ -38,7 +38,7 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
-        mRefreshLayout.setEnablePullToRefresh(true);
+        mRefreshLayout.setEnabledNextPtrAtOnce(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
@@ -69,7 +69,7 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(TestPullToRefreshActivity.this, MainActivity.class));
+        startActivity(new Intent(TestNextRefreshAtOnceActivity.this, MainActivity.class));
         finish();
     }
 
