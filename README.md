@@ -33,6 +33,10 @@ Thank him for providing such a great open source library ！
 	<div class='row'> 
    		<img src='snapshot/with_recyclerView.png' width="300px"/>
 	</div>
+* With viewPager    
+	<div class='row'> 
+	   	<img src='snapshot/with_viewPager.png' width="300px"/>
+	</div>
 * With webView    
 	<div class='row'> 
     	<img src='snapshot/with_webView.png' width="300px"/>

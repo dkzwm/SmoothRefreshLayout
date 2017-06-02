@@ -30,6 +30,10 @@
 	<div class='row'> 
    		<img src='snapshot/with_recyclerView.png' width="300px"/>
 	</div>
+* 包含ViewPager    
+	<div class='row'> 
+	   	<img src='snapshot/with_viewPager.png' width="300px"/>
+	</div>
 * 包含WebView    
 	<div class='row'> 
     	<img src='snapshot/with_webView.png' width="300px"/>
