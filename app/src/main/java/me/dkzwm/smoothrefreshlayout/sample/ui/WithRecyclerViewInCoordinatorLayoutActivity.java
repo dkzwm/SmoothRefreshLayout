@@ -44,6 +44,7 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
                 onBackPressed();
             }
         });
+        setSupportActionBar(toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id
                 .recyclerView_with_recyclerView_in_coordinatorLayout_activity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -53,7 +53,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setResistanceOfPull(float resistance) {
+    public void setResistanceOfPullUp(float resistance) {
         mResistanceFooter = resistance;
     }
 

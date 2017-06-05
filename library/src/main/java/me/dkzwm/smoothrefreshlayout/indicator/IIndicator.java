@@ -35,8 +35,7 @@ public interface IIndicator {
 
     float getResistanceOfPull();
 
-    void setResistanceOfPull(float resistance);
-
+    void setResistanceOfPullUp(float resistance);
 
     void setResistance(float resistance);
 
@@ -114,15 +113,15 @@ public interface IIndicator {
 
     boolean willOverTop(int to);
 
-    void setCanMoveTheMaxRatioOfHeaderHeight(float ratio);
-
     void setCanMoveTheMaxRatioOfRefreshHeight(float ratio);
-
-    void setCanMoveTheMaxRatioOfFooterHeight(float ratio);
 
     float getCanMoveTheMaxRatioOfHeaderHeight();
 
+    void setCanMoveTheMaxRatioOfHeaderHeight(float ratio);
+
     float getCanMoveTheMaxRatioOfFooterHeight();
+
+    void setCanMoveTheMaxRatioOfFooterHeight(float ratio);
 
     float getCanMoveTheMaxDistanceOfHeader();
 

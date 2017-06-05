@@ -140,8 +140,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mIndicator.setResistance(resistance);
             mIndicator.setResistanceOfPullDown(arr.getFloat(R.styleable
                     .SmoothRefreshLayout_sr_resistance_of_pull_down, mIndicator.getResistanceOfPullDown()));
-            mIndicator.setResistanceOfPull(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistance_of_pull, mIndicator.getResistanceOfPull()));
+            mIndicator.setResistanceOfPullUp(arr.getFloat(R.styleable
+                    .SmoothRefreshLayout_sr_resistance_of_pull_up, mIndicator.getResistanceOfPull()));
 
             mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
                             .SmoothRefreshLayout_sr_duration_of_back_to_refresh_height,
@@ -515,7 +515,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * You can call this method,set the listView as load more scroll target view.<br/>
      * Load more compat will try to make it smooth scrolling
      *
-     * @param view target view
+     * @param view Target view
      */
     @SuppressWarnings({"unused"})
     public void setLoadMoreScrollTargetView(View view) {
@@ -525,30 +525,64 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mLoadMoreScrollTargetView = view;
     }
 
+    /**
+     * Set the listener to be notified when a refresh is triggered.
+     * @param listener Listener
+     */
     public void setOnRefreshListener(OnRefreshListener listener) {
         mRefreshListener = listener;
     }
 
+    /**
+     * Set a scrolling callback when loading more.
+     *
+     * @param callback Callback that should be called when scrolling on loading more.
+     */
     public void setOnLoadMoreScrollCallback(OnLoadMoreScrollCallback callback) {
         mLoadMoreScrollCallback = callback;
     }
 
+    /**
+     * Set a callback to override {@link SmoothRefreshLayout#canChildScrollUp()} method. Non-null
+     * callback will return the value provided by the callback and ignore all internal logic.
+     *
+     * @param callback Callback that should be called when canChildScrollUp() is called.
+     */
     public void setOnChildScrollUpCallback(OnChildScrollUpCallback callback) {
         mScrollUpCallback = callback;
     }
 
+    /**
+     * Set a callback to override {@link SmoothRefreshLayout#canChildScrollDown()} method. Non-null
+     * callback will return the value provided by the callback and ignore all internal logic.
+     *
+     * @param callback Callback that should be called when canChildScrollDown() is called.
+     */
     public void setOnChildScrollDownCallback(OnChildScrollDownCallback callback) {
         mScrollDownCallback = callback;
     }
 
+    /**
+     * Whether it is being refreshed
+     *
+     * @return Refreshing
+     */
     public boolean isRefreshing() {
         return mStatus == SR_STATUS_REFRESHING;
     }
 
+    /**
+     * Whether it is being refreshed
+     *
+     * @return Loading
+     */
     public boolean isLoadingMore() {
         return mStatus == SR_STATUS_LOADING_MORE;
     }
 
+    /**
+     * Perform refresh complete ,to reset
+     */
     final public void refreshComplete() {
         long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
         if (delay <= 0) {
@@ -563,7 +597,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Set the loading min time
      *
-     * @param time millis
+     * @param time Millis
      */
     public void setLoadingMinTime(long time) {
         mLoadingMinTime = time;
@@ -573,7 +607,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * Get the header height,
      * After the measurement is completed, the height will have value
      *
-     * @return height default is -1
+     * @return Height default is -1
      */
     public int getHeaderHeight() {
         return mIndicator.getHeaderHeight();
@@ -583,7 +617,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * Get the footer height,
      * After the measurement is completed, the height will have value
      *
-     * @return height default is -1
+     * @return Height default is -1
      */
     public int getFooterHeight() {
         return mIndicator.getFooterHeight();
@@ -592,7 +626,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If enable has been set to true. The user can perform next PTR at once.
      *
-     * @return isEnable
+     * @return Is enable
      */
     public boolean isEnabledNextPtrAtOnce() {
         return (mFlag & FLAG_ENABLE_NEXT_AT_ONCE) > 0;
@@ -601,7 +635,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param enable has been set to true. The user can perform next PTR at once.
      *
-     * @param enable enable
+     * @param enable Enable
      */
     public void setEnabledNextPtrAtOnce(boolean enable) {
         if (enable) {
@@ -621,7 +655,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param atOnce has been set to true. Auto perform refresh at once.
      *
-     * @param atOnce auto refresh at once
+     * @param atOnce Auto refresh at once
      */
     public void autoRefresh(boolean atOnce) {
         if (mMode == MODE_NONE || mMode == MODE_LOAD_MORE)
@@ -651,9 +685,39 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * The resistance while you are moving
+     *
+     * @param resistance Height ratio
+     */
+    @SuppressWarnings({"unused"})
+    public void setResistance(float resistance) {
+        mIndicator.setResistance(resistance);
+    }
+
+    /**
+     * The resistance while you are pulling up
+     *
+     * @param resistance Height ratio
+     */
+    @SuppressWarnings({"unused"})
+    public void setResistanceOfPullUp(float resistance) {
+        mIndicator.setResistanceOfPullUp(resistance);
+    }
+
+    /**
+     * The resistance while you are pulling down
+     *
+     * @param resistance Height ratio
+     */
+    @SuppressWarnings({"unused"})
+    public void setResistanceOfPullDown(float resistance) {
+        mIndicator.setResistanceOfPullDown(resistance);
+    }
+
+    /**
      * the height ratio of the trigger refresh
      *
-     * @param ratio height ratio
+     * @param ratio Height ratio
      */
     @SuppressWarnings({"unused"})
     public void setRatioOfExtraViewHeightToRefresh(float ratio) {
@@ -663,7 +727,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * the height ratio of the trigger refresh
      *
-     * @param ratio height ratio
+     * @param ratio Height ratio
      */
     @SuppressWarnings({"unused"})
     public void setRatioOfHeaderHeightToRefresh(float ratio) {
@@ -681,9 +745,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * the height ratio of the trigger refresh
+     * The height ratio of the trigger refresh
      *
-     * @param ratio height ratio
+     * @param ratio Height ratio
      */
     @SuppressWarnings({"unused"})
     public void setRatioOfFooterHeightToRefresh(float ratio) {
@@ -693,7 +757,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The duration of return back to the start position
      *
-     * @param duration millis
+     * @param duration Millis
      */
     @SuppressWarnings({"unused"})
     public void setDurationToClose(int duration) {
@@ -704,7 +768,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Get the  duration of header return back to the start position
      *
-     * @return duration
+     * @return Duration
      */
     @SuppressWarnings({"unused"})
     public long getDurationToCloseHeader() {
@@ -714,7 +778,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The duration of header return back to the start position
      *
-     * @param duration millis
+     * @param duration Millis
      */
     @SuppressWarnings({"unused"})
     public void setDurationToCloseHeader(int duration) {
@@ -724,7 +788,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Get the  duration of footer return back to the start position
      *
-     * @return duration
+     * @return Duration
      */
     @SuppressWarnings({"unused"})
     public long getDurationToCloseFooter() {
@@ -734,7 +798,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The duration of footer return back to the start position
      *
-     * @param duration millis
+     * @param duration Millis
      */
     @SuppressWarnings({"unused"})
     public void setDurationToCloseFooter(int duration) {
@@ -745,7 +809,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The duration of return back to the refresh or loading position
      *
-     * @param duration millis
+     * @param duration Millis
      */
     @SuppressWarnings({"unused"})
     public void setDurationToBack(int duration) {
@@ -756,7 +820,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Get the duration of header return back to the refresh position
      *
-     * @return duration
+     * @return Duration
      */
     @SuppressWarnings({"unused"})
     public int getDurationToBackHeader() {
@@ -766,7 +830,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The duration of header return back to the refresh position
      *
-     * @param duration millis
+     * @param duration Millis
      */
     @SuppressWarnings({"unused"})
     public void setDurationToBackHeader(int duration) {
@@ -776,7 +840,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Get the duration of footer return back to the loading position
      *
-     * @return duration
+     * @return Duration
      */
     @SuppressWarnings({"unused"})
     public int getDurationToBackFooter() {
@@ -786,7 +850,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The duration of footer return back to the loading position
      *
-     * @param duration millis
+     * @param duration Millis
      */
     @SuppressWarnings({"unused"})
     public void setDurationToBackFooter(int duration) {
@@ -796,7 +860,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The max ratio of height for the refresh view when the finger moves
      *
-     * @param ratio the max ratio of refresh view
+     * @param ratio The max ratio of refresh view
      */
     @SuppressWarnings({"unused"})
     public void setCanMoveTheMaxRatioOfRefreshHeight(float ratio) {
@@ -811,7 +875,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The max ratio of height for the header view when the finger moves
      *
-     * @param ratio the max ratio of header view
+     * @param ratio The max ratio of header view
      */
     @SuppressWarnings({"unused"})
     public void setCanMoveTheMaxRatioOfHeaderHeight(float ratio) {
@@ -826,7 +890,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The max ratio of height for the footer view when the finger moves
      *
-     * @param ratio the max ratio of footer view
+     * @param ratio The max ratio of footer view
      */
     @SuppressWarnings({"unused"})
     public void setCanMoveTheMaxRatioOfFooterHeight(float ratio) {
@@ -836,7 +900,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has auto refresh
      *
-     * @return has
+     * @return Has
      */
     public boolean isAutoRefresh() {
         return (mFlag & MASK_AUTO_REFRESH) > 0;
@@ -846,7 +910,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has over scroll
      *
-     * @return has
+     * @return Has
      */
     public boolean isEnableOverScroll() {
         return (mFlag & FLAG_ENABLE_OVER_SCROLL) > 0;
@@ -855,7 +919,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param enable has been set to true. Will supports over scroll.
      *
-     * @param enable enable
+     * @param enable Enable
      */
     public void setEnableOverScroll(boolean enable) {
         if (enable) {
@@ -868,7 +932,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has pull to refresh
      *
-     * @return has
+     * @return Has
      */
     public boolean isPullToRefresh() {
         return (mFlag & FLAG_ENABLE_PULL_TO_REFRESH) > 0;
@@ -878,7 +942,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param enable has been set to true. When the current pos >= refresh offsets, perform refresh
      *
-     * @param enable pull to refresh
+     * @param enable Pull to refresh
      */
     public void setEnablePullToRefresh(boolean enable) {
         if (enable) {
@@ -891,7 +955,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has been keep refresh view when refreshing
      *
-     * @return has
+     * @return Has
      */
     public boolean hasBeenKeepRefreshView() {
         return (mFlag & FLAG_ENABLE_KEEP_REFRESH_VIEW) > 0;
@@ -902,7 +966,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * it rolls back to the refresh view height to perform refresh and remains until the refresh
      * completed
      *
-     * @param enable pin refresh view
+     * @param enable Pin refresh view
      */
     public void setEnableKeepRefreshView(boolean enable) {
         if (enable) {
@@ -932,7 +996,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has been pinned content view when refreshing
      *
-     * @return has
+     * @return Has
      */
     public boolean hasBeenPinnedContentView() {
         return (mFlag & FLAG_ENABLE_PIN_CONTENT_VIEW) > 0;
@@ -942,7 +1006,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * If @param enable has been set to true.The content view will fixed in the start pos unless
      * overScroll flag has been set and in overScrolling
      *
-     * @param enable pin content view
+     * @param enable Pin content view
      */
     public void setEnablePinContentView(boolean enable) {
         if (enable) {
@@ -955,7 +1019,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Set the load more view
      *
-     * @param footer footer view
+     * @param footer Footer view
      */
     public void setFooterView(@NonNull IRefreshView footer) {
         if (mFooterView != null && mFooterView != footer) {
@@ -980,7 +1044,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Set the refresh view
      *
-     * @param header header view
+     * @param header Header view
      */
     public void setHeaderView(@NonNull IRefreshView header) {
         if (mHeaderView != null && mHeaderView != header) {
@@ -1005,7 +1069,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Set the content view
      *
-     * @param content content view
+     * @param content Content view
      */
     public void setContentView(@NonNull View content) {
         if (mContentView != null && mContentView != content) {
@@ -1043,7 +1107,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Get SR mode
      *
-     * @return mode SR mode
+     * @return Mode SR mode
      */
     @SmoothRefreshLayout.Mode
     @SuppressWarnings({"unused"})
@@ -1088,6 +1152,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mOverScrollChecker.updateVelocityY(vy, dy);
     }
 
+    // NestedScrollingParent
 
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
@@ -1208,7 +1273,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mNestedScrollingChildHelper.isNestedScrollingEnabled();
     }
 
-    // NestedScrollingParent
+    // NestedScrollingChild
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {
         mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
@@ -1254,7 +1319,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
-    // NestedScrollingChild
     @Override
     public boolean dispatchNestedFling(float velocityX, float velocityY, boolean consumed) {
         return mNestedScrollingChildHelper.dispatchNestedFling(velocityX, velocityY, consumed);
@@ -1729,7 +1793,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * when moving, only the specified mode needs to check the position
      *
-     * @return need check position
+     * @return Need check position
      */
     private boolean needCheckPos() {
         return mMode == MODE_REFRESH || mMode == MODE_LOAD_MORE || mMode == MODE_BOTH;
@@ -1782,7 +1846,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * try to perform refresh or loading , if performed return true
      *
-     * @return performed
+     * @return Performed
      */
     private boolean tryToPerformRefresh() {
         if (mStatus != SR_STATUS_PREPARE) {
@@ -1825,7 +1889,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * try check auto refresh later flag
      *
-     * @return performed
+     * @return Performed
      */
     private boolean performAutoRefreshButLater() {
         return (mFlag & MASK_AUTO_REFRESH) == FLAG_AUTO_REFRESH_BUT_LATER;
@@ -1882,7 +1946,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     public interface OnRefreshListener {
         /**
-         * @param isRefresh refresh is true , load more is false
+         * @param isRefresh Refresh is true , load more is false
          */
         void onRefreshBegin(boolean isRefresh);
 
