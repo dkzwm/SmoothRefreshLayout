@@ -31,7 +31,7 @@ public class TestMaterialStyleActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_refresh);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.over_scroll);
+        getSupportActionBar().setTitle(R.string.test_material_style);
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
