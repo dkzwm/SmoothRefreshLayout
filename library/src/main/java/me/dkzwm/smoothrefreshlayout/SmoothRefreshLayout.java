@@ -1108,6 +1108,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (dy > 0 && mTotalRefreshingUnconsumed >= 0
+                && !mScrollChecker.mIsRunning
                 && (mMode == MODE_BOTH || mMode == MODE_REFRESH)
                 && (isMovingHeader() || isMovingContent() && mTotalRefreshingUnconsumed == 0)) {
             if (mTotalRefreshingUnconsumed == 0 && mStatus == SR_STATUS_REFRESHING
@@ -1129,6 +1130,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         if (dy < 0 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
+                && !mScrollChecker.mIsRunning
                 && mTotalLoadMoreUnconsumed >= 0) {
             if (mStatus == SR_STATUS_LOADING_MORE && mTotalLoadMoreUnconsumed == 0
                     && mTotalLoadMoreConsumed / mIndicator.getResistanceOfPullDown()
@@ -1185,7 +1187,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow);
-
+        if (mScrollChecker.mIsRunning)
+            return;
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         if (dy < 0 && !canChildScrollUp() && (isMovingHeader()
                 || mTotalRefreshingUnconsumed == 0 && isMovingContent())) {
