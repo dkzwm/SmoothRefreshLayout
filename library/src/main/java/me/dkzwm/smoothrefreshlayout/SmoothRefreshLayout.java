@@ -1,6 +1,5 @@
 package me.dkzwm.smoothrefreshlayout;
 
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -1532,7 +1531,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     private void tryScrollBackToTop(int duration) {
-        if ( !mIndicator.hasTouched()&&mIndicator.hasLeftStartPosition()) {
+        if (!mIndicator.hasTouched() && mIndicator.hasLeftStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, duration);
             return;
         }
@@ -1601,9 +1600,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         } else {
             mNeedReLayout = true;
         }
-        if (isMovingHeader())
+        if (isRefreshing() || isMovingHeader())
             updatePos(change);
-        else if (isMovingFooter())
+        else if (isLoadingMore() || isMovingFooter())
             updatePos(-change);
     }
 
@@ -1671,7 +1670,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 break;
             case MODE_REFRESH:
-                if (isMovingHeader() || isRefreshing()) {
+                if (isRefreshing() || isMovingHeader()) {
                     if (mHeaderView != null) {
                         mHeaderView.getView().offsetTopAndBottom(change);
                         mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -1683,7 +1682,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 break;
             case MODE_LOAD_MORE:
-                if (isMovingFooter() || isLoadingMore()) {
+                if (isLoadingMore() || isMovingFooter()) {
                     if (mFooterView != null) {
                         mFooterView.getView().offsetTopAndBottom(change);
                         mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -1699,12 +1698,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 break;
             case MODE_BOTH:
             case MODE_OVER_SCROLL:
-                if (mMode == MODE_BOTH && (isMovingHeader() || isRefreshing())) {
+                if (mMode == MODE_BOTH && (isRefreshing() || isMovingHeader())) {
                     if (mHeaderView != null) {
                         mHeaderView.getView().offsetTopAndBottom(change);
                         mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                     }
-                } else if (mMode == MODE_BOTH && (isMovingFooter() || isLoadingMore())) {
+                } else if (mMode == MODE_BOTH && (isLoadingMore() || isMovingFooter())) {
                     if (mFooterView != null) {
                         mFooterView.getView().offsetTopAndBottom(change);
                         mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -1978,9 +1977,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             int deltaY = curY - mLastFlingY;
             if (!finish) {
                 mLastFlingY = curY;
-                if (layout.isMovingHeader()) {
+                if (layout.isRefreshing() || layout.isMovingHeader()) {
                     layout.moveHeaderPos(deltaY);
-                } else if (layout.isMovingFooter()) {
+                } else if (layout.isLoadingMore() || layout.isMovingFooter()) {
                     layout.moveFooterPos(-deltaY);
                 }
                 layout.post(this);
@@ -2121,7 +2120,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
         @Override
         public void run() {
-            if (mLayoutWeakRf.get() == null || isScrolling())
+            if (mLayoutWeakRf.get() == null || mScrolling)
                 return;
             SmoothRefreshLayout layout = mLayoutWeakRf.get();
             layout.removeCallbacks(this);

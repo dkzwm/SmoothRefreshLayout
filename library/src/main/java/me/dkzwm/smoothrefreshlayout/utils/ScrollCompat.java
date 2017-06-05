@@ -19,7 +19,7 @@ public class ScrollCompat {
                     || (absListView.getChildCount() > 0 && (absListView.getLastVisiblePosition()
                     < absListView.getChildCount() - 1)
                     || absListView.getChildAt(absListView.getChildCount() - 1)
-                    .getBottom() > absListView.getBottom());
+                    .getBottom() > absListView.getHeight()-absListView.getPaddingBottom());
         } else if (view instanceof ScrollView) {
             final ScrollView scrollView = (ScrollView) view;
             return scrollView.getChildCount() == 0
