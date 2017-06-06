@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.sample.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -10,7 +11,7 @@ import android.widget.TextView;
 
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
+import me.dkzwm.smoothrefreshlayout.extra.header.StoreHouseHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 
@@ -35,7 +36,9 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
-        MaterialHeader header = new MaterialHeader(this);
+        StoreHouseHeader header = new StoreHouseHeader(this);
+        header.initPathWithString("RELEASE TO REFRESH");
+        header.setTextColor(Color.BLACK);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {

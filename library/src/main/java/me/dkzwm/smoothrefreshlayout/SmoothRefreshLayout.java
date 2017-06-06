@@ -527,6 +527,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set the listener to be notified when a refresh is triggered.
+     *
      * @param listener Listener
      */
     public void setOnRefreshListener(OnRefreshListener listener) {
@@ -1394,9 +1395,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 boolean hasLeftStartPosition = mIndicator.hasLeftStartPosition();
                 if ((!movingFooter && hasLeftStartPosition) || mStatus != SR_STATUS_COMPLETE) {
                     mScrollChecker.abortIfWorking();
-                    if (!hasLeftStartPosition && mContentView.getTop() != 0) {
-                        mContentView.offsetTopAndBottom(0);
-                    }
                 } else {
                     mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, 0);
                 }
