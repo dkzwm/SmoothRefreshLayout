@@ -1408,6 +1408,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 super.dispatchTouchEvent(ev);
                 return true;
             case MotionEvent.ACTION_MOVE:
+                if (!mIndicator.hasTouched()){
+                    return super.dispatchTouchEvent(ev);
+                }
                 mLastMoveEvent = ev;
                 mIndicator.onFingerMove(ev.getX(), ev.getY());
                 float offsetX, offsetY;
