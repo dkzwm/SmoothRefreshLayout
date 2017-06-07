@@ -57,9 +57,9 @@ Use `app:sr_content` to specifies the resource ID of the content view.
 
 Use `app:sr_resistance` to set the resistence while you are moving(pull up or pull down),default is `1.65f`.   
  
-Use `app:sr_resistance_of_pull_up` to set the resistence while you are moving header,default is `1.65f`.    
+Use `app:sr_resistance_of_pull_up` to set the resistence while you are moving footer,default is `1.65f`.    
 
-Use `app:sr_resistance_of_pull_down` to set the resistence while you are moving footer,default is `1.65f`.    
+Use `app:sr_resistance_of_pull_down` to set the resistence while you are moving header,default is `1.65f`.    
 
 Use `app:sr_ratio_of_refresh_height_to_refresh` to set the ratio of the height to trigger refresh, default is: `1.1f`.   
  
