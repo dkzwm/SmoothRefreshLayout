@@ -197,6 +197,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
             setEnableKeepRefreshView(arr.getBoolean(R.styleable
                     .SmoothRefreshLayout_sr_enable_keep_refresh_view, true));
+            setEnablePinContentView(arr.getBoolean(R.styleable
+                    .SmoothRefreshLayout_sr_enable_pin_content, false));
+            setEnableOverScroll(arr.getBoolean(R.styleable
+                    .SmoothRefreshLayout_sr_enable_over_scroll, true));
             setEnablePullToRefresh(arr.getBoolean(R.styleable
                     .SmoothRefreshLayout_sr_enable_pull_to_refresh, false));
             @Mode
@@ -721,7 +725,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param ratio Height ratio
      */
     @SuppressWarnings({"unused"})
-    public void setRatioOfExtraViewHeightToRefresh(float ratio) {
+    public void setRatioOfRefreshViewHeightToRefresh(float ratio) {
         mIndicator.setRatioOfRefreshViewHeightToRefresh(ratio);
     }
 
@@ -808,7 +812,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
 
     /**
-     * The duration of return back to the refresh or loading position
+     * The duration of refresh view to return back to the refresh or loading position
      *
      * @param duration Millis
      */
@@ -1075,6 +1079,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setContentView(@NonNull View content) {
         if (mContentView != null && mContentView != content) {
             removeView(content);
+            mContentResId=0;
             mContentView = null;
         }
         ViewGroup.LayoutParams lp = content.getLayoutParams();
@@ -1591,7 +1596,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             notifyUIRefreshComplete();
         } else {
             tryScrollBackToTop(duration > 0 ? duration : isMovingHeader() ?
-                    mDurationToCloseHeader : mDurationToCloseFooter);
+                    Math.round(mDurationToCloseHeader * mIndicator.getCurrentPercentOfRefresh())
+                    : Math.round(mDurationToCloseFooter * mIndicator.getCurrentPercentOfRefresh()));
         }
     }
 
@@ -1604,7 +1610,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && mIndicator.hasJustBackToStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, duration);
         }
-
     }
 
     private void notifyUIRefreshComplete() {
@@ -1621,9 +1626,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mNeedNotifyRefreshComplete = false;
         }
         if (isMovingHeader()) {
-            tryScrollBackToTop(mDurationToCloseHeader);
+            tryScrollBackToTop(Math.round(mDurationToCloseHeader * mIndicator.getCurrentPercentOfRefresh()));
         } else if (isMovingFooter()) {
-            tryScrollBackToTop(mDurationToCloseFooter);
+            tryScrollBackToTop(Math.round(mDurationToCloseFooter * mIndicator.getCurrentPercentOfRefresh()));
         } else {
             tryScrollBackToTop(0);
         }
@@ -2114,6 +2119,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    /**
+     * Delayed completion of loading
+     */
     private static class DelayToRefreshComplete implements Runnable {
         private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
 
@@ -2129,6 +2137,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    /**
+     * Support over Scroll feature
+     * The Over Scroll checker
+     */
     private static class OverScrollChecker implements Runnable {
         private float mVelocityY;
         private int mDirection = 0;

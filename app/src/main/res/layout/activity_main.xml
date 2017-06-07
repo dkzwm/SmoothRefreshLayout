@@ -2,13 +2,16 @@
 <me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    app:sr_content="@+id/scrollView_main_container">
 
     <ScrollView
+        android:id="@+id/scrollView_main_container"
         android:layout_width="match_parent"
-        android:overScrollMode="never"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,6 +73,7 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/in_coordinatorLayout_with_recyclerView"/>
+
             <Button
                 android:id="@+id/button_main_test_over_scroll"
                 style="@style/MainButtonStyle"
@@ -83,6 +87,7 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/test_nested"/>
+
             <Button
                 android:id="@+id/button_main_test_pull_to_refresh"
                 style="@style/MainButtonStyle"
@@ -96,6 +101,7 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/release_to_refresh"/>
+
             <Button
                 android:id="@+id/button_main_test_enable_next_pull_to_refresh_at_once"
                 style="@style/MainButtonStyle"
@@ -111,5 +117,12 @@
                 android:text="@string/test_material_style"/>
         </LinearLayout>
     </ScrollView>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:src="@mipmap/ic_launcher_round"
+        app:sr_layout_gravity="end"/>
 
 </me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout>

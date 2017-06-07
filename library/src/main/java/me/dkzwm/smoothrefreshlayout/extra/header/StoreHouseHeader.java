@@ -204,13 +204,10 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         float progress = mProgress;
         int c1 = canvas.save();
         int len = mAnimations.size();
-
         for (int i = 0; i < len; i++) {
-
             canvas.save();
             StoreHouseBarItemAnimation storeHouseBarItem = mAnimations.get(i);
             float offsetX = mOffsetX + storeHouseBarItem.getMiddlePoint()[0];

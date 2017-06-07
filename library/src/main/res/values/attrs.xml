@@ -20,7 +20,8 @@
         <attr name="sr_duration_of_back_to_footer_height" format="integer"/>
         <attr name="sr_enable_pull_to_refresh" format="boolean"/>
         <attr name="sr_enable_keep_refresh_view" format="boolean"/>
-
+        <attr name="sr_enable_over_scroll" format="boolean"/>
+        <attr name="sr_enable_pin_content" format="boolean"/>
         <attr name="sr_layout_gravity" format="enum">
             <enum name="top" value="0"/>
             <enum name="bottom" value="1"/>
