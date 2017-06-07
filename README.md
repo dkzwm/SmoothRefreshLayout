@@ -178,9 +178,7 @@ mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             //to do something.
        }
 });
-````
-	Or
-````
+Or
 mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefreshBegin(final boolean isRefresh) {
