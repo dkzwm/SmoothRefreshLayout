@@ -45,12 +45,6 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-        ClassicHeader header = new ClassicHeader(this);
-        header.setLastUpdateTimeKey("header_last_update_time");
-        ClassicFooter footer = new ClassicFooter(this);
-        footer.setLastUpdateTimeKey("footer_last_update_time");
-        mRefreshLayout.setHeaderView(header);
-        mRefreshLayout.setFooterView(footer);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override

@@ -46,7 +46,18 @@
 	<div class='row'> 
     	<img src='snapshot/test_overScroll.png' width="300px"/>
 	</div>
-## 使用    
+## 使用   
+#### Gradle
+````
+repositories {  
+    ...
+    maven { url 'https://jitpack.io' }  
+}
+
+dependencies {  
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.0.0'
+}
+```` 
 #### 配置
 Xml 属性:    
 `app:sr_content` 指定Content的资源ID。    

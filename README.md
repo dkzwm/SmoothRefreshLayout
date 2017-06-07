@@ -51,6 +51,17 @@ Thank him for providing such a great open source library ！
 	</div>
 
 ## How to use    
+#### Gradle
+````
+repositories {  
+    ...
+    maven { url 'https://jitpack.io' }  
+}
+
+dependencies {  
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.0.0'
+}
+````
 #### Config
 The attr:    
 Use `app:sr_content` to specifies the resource ID of the content view.    
