@@ -52,34 +52,50 @@ Thank him for providing such a great open source library ！
 
 ## How to use    
 #### Config
-The attr: 
+The attr:    
 Use `app:sr_content` to specifies the resource ID of the content view.    
-Use `app:sr_resistance` to set the resistence while you are moving(pull up or pull down),default is 1.65f.    
-Use `app:sr_resistance_of_pull_up` to set the resistence while you are moving header,default is 1.65f.    
-Use `app:sr_resistance_of_pull_down` to set the resistence while you are moving footer,default is 1.65f.    
-Use `app:sr_ratio_of_refresh_height_to_refresh` to set the ratio of the height to trigger refresh, default is: `1.1f`.    
+
+Use `app:sr_resistance` to set the resistence while you are moving(pull up or pull down),default is `1.65f`.   
+ 
+Use `app:sr_resistance_of_pull_up` to set the resistence while you are moving header,default is `1.65f`.    
+
+Use `app:sr_resistance_of_pull_down` to set the resistence while you are moving footer,default is `1.65f`.    
+
+Use `app:sr_ratio_of_refresh_height_to_refresh` to set the ratio of the height to trigger refresh, default is: `1.1f`.   
+ 
 Use `app:sr_ratio_of_header_height_to_refresh` to set the ratio of the height of the header to trigger refresh, default is: `1.1f`.    
+
 Use `app:sr_ratio_of_footer_height_to_refresh` to set the ratio of the height of the footer to trigger refresh, default is: `1.1f`.    
-Use `app:sr_can_move_the_max_ratio_of_refresh_height` to set the max ratio of height of the refresh view when the finger moves, 
-default is: `0f`,indicates that the condition will never be triggered.    
-Use `app:sr_can_move_the_max_ratio_of_header_height` to set the max ratio of height of the header when the finger moves, 
-default is: `0f`,indicates that the condition will never be triggered.    
-Use `app:sr_can_move_the_max_ratio_of_footer_height` to set the max ratio of height of the footer when the finger moves, 
-default is: `0f`,indicates that the condition will never be triggered.    
+
+Use `app:sr_can_move_the_max_ratio_of_refresh_height` to set the max ratio of height of the refresh view when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
+
+Use `app:sr_can_move_the_max_ratio_of_header_height` to set the max ratio of height of the header when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
+
+Use `app:sr_can_move_the_max_ratio_of_footer_height` to set the max ratio of height of the footer when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
+
 Use `app:sr_duration_to_close_of_refresh` to set the duration of refresh view to return back to the start position, default is `500`.    
+
 Use `app:sr_duration_to_close_of_header` to set the duration of header to return back to the start position, default is `500`.    
+
 Use `app:sr_duration_to_close_of_footer` to set the duration of footer to return back to the start position, default is `500`.    
-Use `app:sr_duration_of_back_to_refresh_height` to set the duration of the refresh view to return back to the trigger the refresh 
-position, default is `200`.    
-Use `app:sr_duration_of_back_to_header_height` to set the duration of the header to return back to the trigger the refresh position,
- default is `200`.    
+
+Use `app:sr_duration_of_back_to_refresh_height` to set the duration of the refresh view to return back to the trigger the refresh position, default is `200`.    
+
+Use `app:sr_duration_of_back_to_header_height` to set the duration of the header to return back to the trigger the refresh position, default is `200`.    
+ 
 Use `app:sr_duration_of_back_to_footer_height` to set the duration of the footer to return back to the trigger the refresh position,
  default is `200`.    
+ 
 Use `app:sr_enable_pin_content` to set enable pinned the content, default is `false`.    
+
 Use `app:sr_enable_pull_to_refresh` to set enable pull to refresh, default is `false`.    
+
 Use `app:sr_enable_keep_refresh_view` to set enable keep the refresh view, default is `true`.   
-Use `app:sr_enable_over_scroll to set enable over scroll feature, default is `true`.   
+
+Use `app:sr_enable_over_scroll` to set enable over scroll feature, default is `true`.   
+
 Use `app:sr_layout_gravity` to set the gravity of the other views in the viewgroup.    
+
 Use `app:sr_mode` to set the mode, default is `none`.   
 
 * Config in xml
@@ -146,9 +162,8 @@ mRefreshLayout.setResistance(1.7f);
 mRefreshLayout.setResistanceOfPullUp(1.7f);
 mRefreshLayout.setResistanceOfPullDown(1.7f);
 ````
-* Other config:
-`setEnablePinRefreshViewWhileLoading(boolean enable)` this method can only be enabled if setEnablePinContentView and 
-setEnableKeepRefreshView are set be true, material style need set this.    
+* Other config:    
+`setEnablePinRefreshViewWhileLoading(boolean enable)` this method can only be enabled if setEnablePinContentView and setEnableKeepRefreshView are set be true, material style need set this.    
 `setFooterView(IRefreshView footer)` set the footer.    
 `setHeaderView(IRefreshView header)` set the header.   
 `setContentView(View content)` set the content.
@@ -164,7 +179,7 @@ mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
        }
 });
 ````
-Or
+	Or
 ````
 mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
         @Override
