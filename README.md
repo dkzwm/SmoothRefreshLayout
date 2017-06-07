@@ -101,9 +101,9 @@ Use `app:sr_mode` to set the mode, default is `none`.
 * Config in xml
 ````
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_with_textView_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/smoothRefreshLayout_with_textView_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:sr_can_move_the_max_ratio_of_footer_height="2"
@@ -117,8 +117,8 @@ Use `app:sr_mode` to set the mode, default is `none`.
     app:sr_duration_to_close_of_header="1000"
     app:sr_duration_to_close_of_refresh="1000"
     app:sr_enable_keep_refresh_view="true"
-	app:sr_enable_over_scroll="true"
-	app:sr_enable_pin_content="false"
+    app:sr_enable_over_scroll="true"
+    app:sr_enable_pin_content="false"
     app:sr_enable_pull_to_refresh="false"
     app:sr_mode="both"
     app:sr_ratio_of_footer_height_to_refresh="1.5"
