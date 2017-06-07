@@ -138,7 +138,7 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        float percent = Math.min(1f, indicator.getCurrentPercentOfRefresh());
+        float percent = Math.min(1f, indicator.getCurrentPercentOfHeader());
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mDrawable.setAlpha((int) (255 * percent));
             mDrawable.showArrow(true);

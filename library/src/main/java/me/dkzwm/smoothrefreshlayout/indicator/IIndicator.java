@@ -135,9 +135,13 @@ public interface IIndicator {
 
     boolean isJustReachedToKeepRefreshWhileLoading();
 
-    float getLastPercentOfRefresh();
+    float getLastPercentOfHeader();
 
-    float getCurrentPercentOfRefresh();
+    float getCurrentPercentOfHeader();
+
+    float getLastPercentOfFooter();
+
+    float getCurrentPercentOfFooter();
 
     @IntDef({MOVING_CONTENT, MOVING_FOOTER, MOVING_HEADER})
     @Retention(RetentionPolicy.SOURCE)

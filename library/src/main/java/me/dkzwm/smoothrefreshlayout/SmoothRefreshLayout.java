@@ -1079,7 +1079,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setContentView(@NonNull View content) {
         if (mContentView != null && mContentView != content) {
             removeView(content);
-            mContentResId=0;
+            mContentResId = 0;
             mContentView = null;
         }
         ViewGroup.LayoutParams lp = content.getLayoutParams();
@@ -1595,9 +1595,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         } else if (mStatus == SR_STATUS_COMPLETE) {
             notifyUIRefreshComplete();
         } else {
-            tryScrollBackToTop(duration > 0 ? duration : isMovingHeader() ?
-                    Math.round(mDurationToCloseHeader * mIndicator.getCurrentPercentOfRefresh())
-                    : Math.round(mDurationToCloseFooter * mIndicator.getCurrentPercentOfRefresh()));
+            float percent;
+            if (isMovingHeader()) {
+                percent = mIndicator.getCurrentPercentOfHeader();
+                percent = percent > 1 ? 1 : percent;
+                tryScrollBackToTop(duration > 0 ? duration : Math.round(mDurationToCloseHeader * percent));
+            } else if (isMovingFooter()) {
+                percent = mIndicator.getCurrentPercentOfFooter();
+                percent = percent > 1 ? 1 : percent;
+                tryScrollBackToTop(duration > 0 ? duration : Math.round(mDurationToCloseFooter * percent));
+            } else {
+                tryScrollBackToTop(duration);
+            }
+
         }
     }
 
@@ -1625,10 +1635,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             mNeedNotifyRefreshComplete = false;
         }
+        float percent;
         if (isMovingHeader()) {
-            tryScrollBackToTop(Math.round(mDurationToCloseHeader * mIndicator.getCurrentPercentOfRefresh()));
+            percent = mIndicator.getCurrentPercentOfHeader();
+            percent = percent > 1 ? 1 : percent;
+            tryScrollBackToTop(Math.round(mDurationToCloseHeader * percent));
         } else if (isMovingFooter()) {
-            tryScrollBackToTop(Math.round(mDurationToCloseFooter * mIndicator.getCurrentPercentOfRefresh()));
+            percent = mIndicator.getCurrentPercentOfFooter();
+            percent = percent > 1 ? 1 : percent;
+            tryScrollBackToTop(Math.round(mDurationToCloseFooter * percent));
         } else {
             tryScrollBackToTop(0);
         }

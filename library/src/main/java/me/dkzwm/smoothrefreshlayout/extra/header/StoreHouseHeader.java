@@ -295,7 +295,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
-            float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefresh());
+            float currentPercent = Math.min(1f, indicator.getCurrentPercentOfHeader());
             setProgress(currentPercent);
             invalidate();
         }

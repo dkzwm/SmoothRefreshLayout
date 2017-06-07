@@ -286,13 +286,23 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getLastPercentOfRefresh() {
+    public float getLastPercentOfHeader() {
         return mHeaderHeight == 0 ? 0 : mLastPos * 1f / mHeaderHeight;
     }
 
     @Override
-    public float getCurrentPercentOfRefresh() {
+    public float getCurrentPercentOfHeader() {
         return mHeaderHeight == 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
+    }
+
+    @Override
+    public float getLastPercentOfFooter() {
+        return mFooterHeight == 0 ? 0 : mLastPos * 1f / mFooterHeight;
+    }
+
+    @Override
+    public float getCurrentPercentOfFooter() {
+        return mFooterHeight == 0 ? 0 : mCurrentPos * 1f / mFooterHeight;
     }
 
     @Override
