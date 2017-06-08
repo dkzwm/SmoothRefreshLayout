@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">SmoothRefreshLayout</string>
     <string name="with_frameLayout">包含FrameLayout</string>
     <string name="with_textView">包含TextView</string>
     <string name="with_listView">包含ListView</string>
@@ -15,5 +16,5 @@
     <string name="release_to_refresh">释放刷新</string>
     <string name="enable_next_pull_to_refresh_at_once">刷新完成立即可以刷新</string>
     <string name="over_scroll">越界回弹</string>
-
+    <string name="refreshing_keep_refresh_view">刷新时保持刷新视图</string>
 </resources>

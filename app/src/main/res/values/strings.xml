@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmoothRefreshLayout-master</string>
+    <string name="app_name">SmoothRefreshLayout</string>
     <string name="with_frameLayout">With FrameLayout</string>
     <string name="with_textView">With TextView</string>
     <string name="with_listView">With ListView</string>
