@@ -4,6 +4,9 @@
 本开源库的部分代码来自[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
 非常感谢他提供的这么棒的开源项目！    
 
+## 演示程序
+下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
+ 
 ## 特性
  1.支持5种模式: refresh(刷新),loadMore(加载更多),overScroll(越界回弹),both(刷新和加载更多),none;    
  2.支持嵌套滑动;    

@@ -5,7 +5,8 @@ A highly efficient refresh library for Android.In theory,Can support all Views.I
 Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
 Thank him for providing such a great open source library ！
 
-
+## Demo
+Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
 ## Features
  1.Support 5 modes: refresh,loadMore,overScroll,both(refresh & loadMore),none;    
