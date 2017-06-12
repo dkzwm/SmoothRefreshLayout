@@ -39,7 +39,6 @@ public interface IIndicator {
 
     void setResistance(float resistance);
 
-    void onFingerUp();
 
     void onRefreshComplete();
 
@@ -61,9 +60,13 @@ public interface IIndicator {
 
     int getOffsetToLoadMore();
 
+    void onFingerDown();
+
     void onFingerDown(float x, float y);
 
     void onFingerMove(float x, float y);
+
+    void onFingerUp();
 
     float getOffsetY();
 
@@ -88,6 +91,7 @@ public interface IIndicator {
     boolean hasJustBackToStartPosition();
 
     boolean isOverOffsetToRefresh();
+    boolean isOverOffsetToLoadMore();
 
     boolean hasMovedAfterPressedDown();
 
@@ -101,13 +105,17 @@ public interface IIndicator {
 
     boolean hasJustReachedFooterHeightFromBottomToTop();
 
-    boolean isOverOffsetToKeepRefreshViewWhileLoading();
+    boolean isOverOffsetToKeepHeaderWhileLoading();
 
-    int getOffsetToKeepRefreshViewWhileLoading();
+    boolean isOverOffsetToKeepFooterWhileLoading();
 
-    void setOffsetToKeepHeaderWhileLoading(int offset);
+    int getOffsetToKeepHeaderWhileLoading();
 
-    void setOffsetToKeepFooterWhileLoading(int offset);
+    int getOffsetToKeepFooterWhileLoading();
+
+    void setOffsetRatioToKeepHeaderWhileLoading(float ratio);
+
+    void setOffsetRatioToKeepFooterWhileLoading(float ratio);
 
     boolean isAlreadyHere(int to);
 
@@ -133,7 +141,9 @@ public interface IIndicator {
     @NonNull
     float[] getLastMovePoint();
 
-    boolean isJustReachedToKeepRefreshWhileLoading();
+    boolean isJustReachedToKeepHeaderWhileLoading();
+
+    boolean isJustReachedToKeepFooterWhileLoading();
 
     float getLastPercentOfHeader();
 

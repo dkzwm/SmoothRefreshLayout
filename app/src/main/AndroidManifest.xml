@@ -47,6 +47,10 @@
         <activity
             android:name=".ui.TestOverScrollActivity"
             android:screenOrientation="portrait"/>
+
+        <activity
+            android:name=".ui.TestTwoLevelRefreshActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.WithViewPagerActivity"
             android:screenOrientation="portrait"/>

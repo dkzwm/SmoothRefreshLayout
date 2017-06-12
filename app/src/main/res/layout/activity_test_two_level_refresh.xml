@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_two_level_refresh_activity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:sr_mode="over_scroll">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#E8E8E8">
+
+        <TextView
+            android:id="@+id/textView_test_two_level_refresh_activity_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Test Pull To Refresh"
+            android:textColor="#333333"
+            android:textSize="25sp"/>
+    </FrameLayout>
+
+</me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout>

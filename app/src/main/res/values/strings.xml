@@ -17,5 +17,9 @@
     <string name="enable_next_pull_to_refresh_at_once">Refresh at once after completion of
         refresh</string>
     <string name="over_scroll">Test OverScroll</string>
+    <string name="continue_pull_down_to_have_a_surprise">Continue pull down to have a
+        surprise</string>
+    <string name="release_your_finger_to_get_surprise">Release your finger to get surprise</string>
+    <string name="test_two_level_refresh">Test Two Level Refresh</string>
 
 </resources>

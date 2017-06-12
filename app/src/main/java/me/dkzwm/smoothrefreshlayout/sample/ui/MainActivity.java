@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_with_webView).setOnClickListener(this);
         findViewById(R.id.button_main_with_textView).setOnClickListener(this);
         findViewById(R.id.button_main_test_over_scroll).setOnClickListener(this);
+        findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
     }
 
     @Override
@@ -112,6 +113,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_material_style:
                 startActivity(new Intent(MainActivity.this, TestMaterialStyleActivity.class));
+                break;
+            case R.id.button_main_test_two_level_refresh:
+                startActivity(new Intent(MainActivity.this, TestTwoLevelRefreshActivity.class));
                 break;
         }
 

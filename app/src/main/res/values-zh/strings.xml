@@ -17,4 +17,7 @@
     <string name="enable_next_pull_to_refresh_at_once">刷新完成立即可以刷新</string>
     <string name="over_scroll">越界回弹</string>
     <string name="refreshing_keep_refresh_view">刷新时保持刷新视图</string>
+    <string name="continue_pull_down_to_have_a_surprise">继续下拉有惊喜</string>
+    <string name="release_your_finger_to_get_surprise">松手得惊喜</string>
+    <string name="test_two_level_refresh">测试二级刷新</string>
 </resources>
