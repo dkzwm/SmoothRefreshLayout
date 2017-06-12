@@ -12,6 +12,7 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
  1.Support 5 modes: refresh,loadMore,overScroll,both(refresh & loadMore),none;    
  2.Support nestedScroll;    
  3.Support all views;    
+ 4.Support Two-Level refresh;    
  
 ## Snapshot
 * With frameLayout    
