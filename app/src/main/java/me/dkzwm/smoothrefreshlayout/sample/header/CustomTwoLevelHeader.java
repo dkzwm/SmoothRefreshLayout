@@ -62,7 +62,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onReset(SmoothRefreshLayout frame) {
-        if (frame.isPullToRefresh()) {
+        if (frame.isEnablePullToRefresh()) {
             mTitleTextView.setText(getResources().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh));
         } else {
             mTitleTextView.setText(getResources().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down));
@@ -71,7 +71,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
-        if (frame.isPullToRefresh()) {
+        if (frame.isEnablePullToRefresh()) {
             mTitleTextView.setText(getResources().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh));
         } else {
             mTitleTextView.setText(getResources().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down));
@@ -118,7 +118,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
                             && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                         if (mStaus != STATUS_TWO_LEVEL_RELEASE_TO_REFRESH) {
                             mStaus = STATUS_TWO_LEVEL_RELEASE_TO_REFRESH;
-                            if (!frame.isPullToRefresh()) {
+                            if (!frame.isEnablePullToRefresh()) {
                                 mTitleTextView.setText(R.string.release_your_finger_to_get_surprise);
                             }
                         }
@@ -131,7 +131,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
         if (currentPos < mOffsetToRefresh && mStaus != STATUS_PULL_DOWN
                 && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mStaus = STATUS_PULL_DOWN;
-            if (frame.isPullToRefresh()) {
+            if (frame.isEnablePullToRefresh()) {
                 mTitleTextView.setText(getResources().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh));
             } else {
                 mTitleTextView.setText(getResources().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down));
@@ -139,7 +139,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
         } else if (currentPos > mOffsetToRefresh && mStaus != STATUS_RELEASE_TO_REFRESH
                 && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mStaus = STATUS_RELEASE_TO_REFRESH;
-            if (!frame.isPullToRefresh()) {
+            if (!frame.isEnablePullToRefresh()) {
                 mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_release_to_refresh);
             }
         }

@@ -37,6 +37,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(new CustomTwoLevelHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnableTwoLevelPullToRefresh(true);
+        mRefreshLayout.setEnableBackToStartPosAtOnce(true);
         mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(.4f);
         mRefreshLayout.setRatioOfHeaderHeightToRefresh(.4f);
         mRefreshLayout.setRatioOfHeaderHeightToHintTwoLevelRefresh(.5f);

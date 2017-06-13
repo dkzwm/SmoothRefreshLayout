@@ -16,7 +16,9 @@ import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
  * @author dkzwm
  */
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
-    private boolean mEnableTwoLevelPullToRefresh = false;
+    private static final byte FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH = 0x01;
+    private static final byte FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE = 0x01 << 1;
+    private int mTwoLevelFlag = 0x00;
     private TwoLevelRefreshView mTwoLevelRefreshView;
     private ITwoLevelIndicator mTwoLevelIndicator;
     private boolean mOnTwoLevelRefreshing = false;
@@ -37,8 +39,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mTwoLevelIndicator = indicator;
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout, 0, 0);
         if (arr != null) {
-            mEnableTwoLevelPullToRefresh = arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enable_two_level_pull_to_refresh, false);
+            setEnableTwoLevelPullToRefresh(arr.getBoolean(R.styleable
+                    .SmoothRefreshLayout_sr_enable_two_level_pull_to_refresh, false));
             arr.recycle();
         }
     }
@@ -59,12 +61,28 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mTwoLevelIndicator.setRatioOfHeaderHeightToTwoLevelRefresh(ratio);
     }
 
+    public boolean isEnableBackToStartPosAtOnce() {
+        return (mTwoLevelFlag & FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE) > 0;
+    }
+
+    public void setEnableBackToStartPosAtOnce(boolean enable) {
+        if (enable) {
+            mTwoLevelFlag = mTwoLevelFlag | FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE;
+        } else {
+            mTwoLevelFlag = mTwoLevelFlag & ~FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE;
+        }
+    }
+
     public boolean isEnableTwoLevelPullToRefresh() {
-        return mEnableTwoLevelPullToRefresh;
+        return (mTwoLevelFlag & FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH) > 0;
     }
 
     public void setEnableTwoLevelPullToRefresh(boolean enable) {
-        mEnableTwoLevelPullToRefresh = enable;
+        if (enable) {
+            mTwoLevelFlag = mTwoLevelFlag | FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH;
+        } else {
+            mTwoLevelFlag = mTwoLevelFlag & ~FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH;
+        }
     }
 
     public boolean isTwoLevelRefreshing() {
@@ -79,7 +97,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 && isEnabledNextPtrAtOnce()))) {
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
-            if (mIndicator.hasTouched() && !isAutoRefresh() && isPullToRefresh()) {
+            if (mIndicator.hasTouched() && !isAutoRefresh() && isEnablePullToRefresh()) {
                 if (isMovingHeader() && mTwoLevelIndicator.crossTwoLevelRefreshLine())
                     tryToPerformRefresh();
             }
@@ -103,9 +121,15 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (canPerformTwoLevelPullToRefresh()) {
             tryToPerformRefresh();
         }
-        if (mEnableTwoLevelPullToRefresh && mStatus == SR_STATUS_REFRESHING
+        if (isEnableTwoLevelPullToRefresh() && mStatus == SR_STATUS_REFRESHING
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
-            tryScrollBackToHeaderHeight();
+            final boolean atOnce = isEnableBackToStartPosAtOnce();
+            if (isEnableKeepRefreshView() && !atOnce)
+                tryScrollBackToHeaderHeight();
+            else if (!atOnce)
+                tryScrollBackToTop(mDurationToCloseHeader);
+            else
+                tryScrollBackToTop(0);
             return;
         }
         super.onRelease(duration);
@@ -137,10 +161,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         super.performRefresh();
     }
 
-    private boolean canPerformTwoLevelPullToRefresh() {
-        return (mMode == MODE_REFRESH || mMode == MODE_BOTH)
-                && mEnableTwoLevelPullToRefresh && canPerformRefresh() && isMovingHeader();
-    }
 
     @Override
     protected void notifyUIRefreshComplete() {
@@ -150,6 +170,12 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mOnTwoLevelRefreshing = false;
         super.notifyUIRefreshComplete();
     }
+
+    private boolean canPerformTwoLevelPullToRefresh() {
+        return (mMode == MODE_REFRESH || mMode == MODE_BOTH) && mTwoLevelRefreshView != null
+                && isEnableTwoLevelPullToRefresh() && canPerformRefresh() && isMovingHeader();
+    }
+
 
     public interface OnRefreshListener extends SmoothRefreshLayout.OnRefreshListener {
         void onTwoLevelRefreshBegin();

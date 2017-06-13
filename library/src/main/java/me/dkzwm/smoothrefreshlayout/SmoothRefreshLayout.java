@@ -422,7 +422,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             offsetFooterY = mIndicator.getCurrentPosY();
         }
         int contentBottom = 0;
-        boolean pin = hasBeenPinnedContentView() && !(isEnableOverScroll() && mOverScrollChecker.isScrolling());
+        boolean pin = isEnablePinContentView() && !(isEnableOverScroll() && mOverScrollChecker.isScrolling());
         if (mLoadMoreScrollTargetView != null && !isMovingHeader())
             pin = true;
         for (int i = 0; i < count; i++) {
@@ -980,7 +980,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @return Has
      */
-    public boolean isPullToRefresh() {
+    public boolean isEnablePullToRefresh() {
         return (mFlag & FLAG_ENABLE_PULL_TO_REFRESH) > 0;
     }
 
@@ -1003,7 +1003,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @return Has
      */
-    public boolean hasBeenKeepRefreshView() {
+    public boolean isEnableKeepRefreshView() {
         return (mFlag & FLAG_ENABLE_KEEP_REFRESH_VIEW) > 0;
     }
 
@@ -1022,13 +1022,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    public boolean hasBeenPinnedRefreshViewWhileLoading() {
+    public boolean isEnablePinRefreshViewWhileLoading() {
         return mPinRefreshViewWhileLoading;
     }
 
     public void setEnablePinRefreshViewWhileLoading(boolean enable) {
         if (enable) {
-            if (hasBeenPinnedContentView() && hasBeenKeepRefreshView()) {
+            if (isEnablePinContentView() && isEnableKeepRefreshView()) {
                 mPinRefreshViewWhileLoading = true;
             } else {
                 throw new SRUnsupportedOperationException("This method can only be enabled if setEnablePinContentView" +
@@ -1044,7 +1044,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @return Has
      */
-    public boolean hasBeenPinnedContentView() {
+    public boolean isEnablePinContentView() {
         return (mFlag & FLAG_ENABLE_PIN_CONTENT_VIEW) > 0;
     }
 
@@ -1175,7 +1175,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onDown(MotionEvent ev) {
-        if (!isEnableOverScroll() || (hasBeenPinnedContentView() && !isEnableOverScroll())
+        if (!isEnableOverScroll() || (isEnablePinContentView() && !isEnableOverScroll())
                 || mOverScrollChecker.isScrolling() || isRefreshing() || isLoadingMore())
             return;
         mOverScrollChecker.abortIfWorking();
@@ -1185,7 +1185,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onFling(MotionEvent pressed, MotionEvent current, float vx, float vy) {
-        if (!isEnableOverScroll() || (hasBeenPinnedContentView() && !isEnableOverScroll())
+        if (!isEnableOverScroll() || (isEnablePinContentView() && !isEnableOverScroll())
                 || isRefreshing() || isLoadingMore())
             return;
         final int dy = (int) (current.getY() - pressed.getY());
@@ -1604,7 +1604,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected void onFingerUp(boolean stayForLoading) {
         notifyFingerUp();
-        if (!stayForLoading && hasBeenKeepRefreshView()
+        if (!stayForLoading && isEnableKeepRefreshView()
                 && needCheckPos() && mStatus != SR_STATUS_COMPLETE
                 && !isRefreshing() && !isLoadingMore()) {
             if (isMovingHeader() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
@@ -1626,7 +1626,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             tryToPerformRefresh();
         }
         if (mStatus == SR_STATUS_REFRESHING || mStatus == SR_STATUS_LOADING_MORE) {
-            if (hasBeenKeepRefreshView()) {
+            if (isEnableKeepRefreshView()) {
                 if (isRefreshing() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
                     mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
                             mDurationOfBackToHeaderHeight);
@@ -1698,7 +1698,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void moveFooterPos(float deltaY) {
         mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
         // to keep the consistence with refresh, need to converse the deltaY
-        if (!hasBeenPinnedContentView() && mStatus == SR_STATUS_COMPLETE) {
+        if (!isEnablePinContentView() && mStatus == SR_STATUS_COMPLETE) {
             if (mLoadMoreScrollCallback == null)
                 LoadMoreScrollCompat.scrollCompact(mContentView, deltaY);
             else {
@@ -1780,7 +1780,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (needCheckPos() && !mOverScrollChecker.isScrolling() && mStatus == SR_STATUS_PREPARE) {
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
-            if (mIndicator.hasTouched() && !isAutoRefresh() && isPullToRefresh()) {
+            if (mIndicator.hasTouched() && !isAutoRefresh() && isEnablePullToRefresh()) {
                 if ((isMovingHeader() && mIndicator.crossRefreshLineFromTopToBottom())
                         || (isMovingFooter() && mIndicator.crossRefreshLineFromBottomToTop()))
                     tryToPerformRefresh();
@@ -1805,7 +1805,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                     }
                 }
-                if (!hasBeenPinnedContentView() || (isEnableOverScroll() && mOverScrollChecker.isScrolling())) {
+                if (!isEnablePinContentView() || (isEnableOverScroll() && mOverScrollChecker.isScrolling())) {
                     mContentView.offsetTopAndBottom(change);
                 }
                 invalidate();
@@ -1817,7 +1817,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                     }
                 }
-                if (!hasBeenPinnedContentView() || (isEnableOverScroll() && mOverScrollChecker.isScrolling())) {
+                if (!isEnablePinContentView() || (isEnableOverScroll() && mOverScrollChecker.isScrolling())) {
                     if (mLoadMoreScrollTargetView != null && isMovingFooter())
                         mLoadMoreScrollTargetView.offsetTopAndBottom(change);
                     else
@@ -1838,7 +1838,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                     }
                 }
-                if (!hasBeenPinnedContentView() || (isEnableOverScroll() && mOverScrollChecker.isScrolling())) {
+                if (!isEnablePinContentView() || (isEnableOverScroll() && mOverScrollChecker.isScrolling())) {
                     if (mLoadMoreScrollTargetView != null && isMovingFooter() && mMode == MODE_BOTH) {
                         mLoadMoreScrollTargetView.offsetTopAndBottom(change);
                     } else {
@@ -1943,7 +1943,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         if (isMovingHeader()
                 && ((mIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh())
-                || (hasBeenKeepRefreshView() && mIndicator.isJustReachedToKeepHeaderWhileLoading())
+                || (isEnableKeepRefreshView() && mIndicator.isJustReachedToKeepHeaderWhileLoading())
                 || mIndicator.isOverOffsetToRefresh())) {
             mStatus = SR_STATUS_REFRESHING;
             performRefresh();
@@ -1951,7 +1951,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (isMovingFooter()
                 && ((mIndicator.isOverOffsetToKeepFooterWhileLoading() && isAutoRefresh())
-                || (hasBeenKeepRefreshView() && mIndicator.isJustReachedToKeepFooterWhileLoading())
+                || (isEnableKeepRefreshView() && mIndicator.isJustReachedToKeepFooterWhileLoading())
                 || mIndicator.isOverOffsetToLoadMore())) {
             mStatus = SR_STATUS_LOADING_MORE;
             performRefresh();
