@@ -1720,19 +1720,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPosY();
-        if (change == 0) {
-            if (mNeedReLayout) {
-                mNeedReLayout = false;
-                requestLayout();
-            }
-            return;
-        } else {
-            mNeedReLayout = true;
-        }
         if (isRefreshing() || isMovingHeader())
             updatePos(change);
         else if (isLoadingMore() || isMovingFooter())
             updatePos(-change);
+        if (mIndicator.isInStartPosition() && mNeedReLayout) {
+            mNeedReLayout = false;
+            requestLayout();
+        } else {
+            mNeedReLayout = true;
+        }
     }
 
     protected void tryToSendCancelEventToChild() {
@@ -2110,9 +2107,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private static class ScrollChecker implements Runnable {
         private int mLastFlingY;
+        private int mLastTo;
         private Scroller mScroller;
         private boolean mIsRunning = false;
-        private int mStart;
         private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
 
         private ScrollChecker(SmoothRefreshLayout layout) {
@@ -2137,12 +2134,28 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 layout.post(this);
             } else {
                 if (!layout.needScrollBackToTop()) {
+                    checkInStartPosition();
                     reset();
                     layout.onRelease(0);
                 }
             }
         }
 
+        private void checkInStartPosition() {
+            if (mLayoutWeakRf.get() == null)
+                return;
+            SmoothRefreshLayout layout = mLayoutWeakRf.get();
+            if (mLastTo == IIndicator.DEFAULT_START_POS
+                    && !layout.mIndicator.isInStartPosition()) {
+                int currentPos = layout.mIndicator.getCurrentPosY();
+                int deltaY = IIndicator.DEFAULT_START_POS - currentPos;
+                if (layout.isRefreshing() || layout.isMovingHeader()) {
+                    layout.moveHeaderPos(deltaY);
+                } else if (layout.isLoadingMore() || layout.isMovingFooter()) {
+                    layout.moveFooterPos(-deltaY);
+                }
+            }
+        }
 
         private void reset() {
             mIsRunning = false;
@@ -2179,8 +2192,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (layout.mIndicator.isAlreadyHere(to)) {
                 return;
             }
-            mStart = layout.mIndicator.getCurrentPosY();
-            int distance = to - mStart;
+            mLastTo = to;
+            int distance = to - layout.mIndicator.getCurrentPosY();
             layout.removeCallbacks(this);
             mLastFlingY = 0;
             if (!mScroller.isFinished()) {
