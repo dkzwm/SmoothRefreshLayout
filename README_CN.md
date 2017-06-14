@@ -14,6 +14,10 @@
  4.支持2级刷新(暂时只支持头部视图的二级刷新);    
  
 ## 快照
+* 测试2级沙墟,新添加的效果!     
+   <div class='row'>
+       <img src='snapshot/test_two_level_refresh.png' width="300px"/>
+   </div>
 * 包含FrameLayout    
    <div class='row'>
        <img src='snapshot/with_frameLayout.png' width="300px"/>

@@ -15,6 +15,10 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
  4.Support Two-Level refresh;    
  
 ## Snapshot
+* Test two-level refresh , newly added !     
+   <div class='row'>
+       <img src='snapshot/test_two_level_refresh.png' width="300px"/>
+   </div>
 * With frameLayout    
    <div class='row'>
        <img src='snapshot/with_frameLayout.png' width="300px"/>

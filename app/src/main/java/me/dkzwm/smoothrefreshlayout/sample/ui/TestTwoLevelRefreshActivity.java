@@ -30,18 +30,24 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_two_level_refresh);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.with_textView);
+        getSupportActionBar().setTitle(R.string.test_two_level_refresh);
         mRefreshLayout = (TwoLevelSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_two_level_refresh_activity);
         mTextView = (TextView) findViewById(R.id.textView_test_two_level_refresh_activity_desc);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mRefreshLayout.setHeaderView(new CustomTwoLevelHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
+        //设置启用触发二级刷新
         mRefreshLayout.setEnableTwoLevelPullToRefresh(true);
+        //设置触发二级刷新后立即回到起始位置
         mRefreshLayout.setEnableBackToStartPosAtOnce(true);
-        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(.4f);
-        mRefreshLayout.setRatioOfHeaderHeightToRefresh(.4f);
-        mRefreshLayout.setRatioOfHeaderHeightToHintTwoLevelRefresh(.5f);
-        mRefreshLayout.setRatioOfHeaderHeightToTwoLevelRefresh(.85f);
+        //设置保持头部的Offset（占头部的高度比例）
+        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(.35f);
+        //设置触发刷新的头部高度比
+        mRefreshLayout.setRatioOfHeaderHeightToRefresh(.35f);
+        //设置触发提示二级刷新的头部高度比
+        mRefreshLayout.setRatioOfHeaderHeightToHintTwoLevelRefresh(.45f);
+        //设置触发二级刷新的头部高度比
+        mRefreshLayout.setRatioOfHeaderHeightToTwoLevelRefresh(.65f);
         mRefreshLayout.setOnRefreshListener(new TwoLevelSmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onTwoLevelRefreshBegin() {
