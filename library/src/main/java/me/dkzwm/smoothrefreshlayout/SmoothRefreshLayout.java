@@ -110,6 +110,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
     private boolean mPinRefreshViewWhileLoading = false;
+    private boolean mHasLastRefreshSuccessful = true;
     private int mTwoTimesTouchSlop;
     private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
@@ -618,10 +619,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mStatus == SR_STATUS_LOADING_MORE;
     }
 
+
+    public boolean isRefreshSuccessful() {
+        return mHasLastRefreshSuccessful;
+    }
+
     /**
      * Perform refresh complete ,to reset
      */
     final public void refreshComplete() {
+        refreshComplete(true);
+    }
+
+    final public void refreshComplete(boolean isSuccessful) {
+        mHasLastRefreshSuccessful = isSuccessful;
         long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
         if (delay <= 0) {
             performRefreshComplete(true);
@@ -2036,7 +2047,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     public interface OnHookUIRefreshCompleteCallBack {
         @MainThread
-        void onHook();
+        void onHook(RefreshCompleteHook hook);
     }
 
     @SuppressWarnings("unused")
@@ -2214,12 +2225,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    private static class RefreshCompleteHook {
+    public static class RefreshCompleteHook {
         private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
         private OnHookUIRefreshCompleteCallBack mCallBack;
 
         private RefreshCompleteHook(SmoothRefreshLayout layout) {
             mLayoutWeakRf = new WeakReference<>(layout);
+        }
+
+        public void onHookComplete() {
+            if (mLayoutWeakRf.get() != null) {
+                mLayoutWeakRf.get().performRefreshComplete(false);
+            }
         }
 
         private void setHookCallBack(@NonNull OnHookUIRefreshCompleteCallBack callBack) {
@@ -2232,11 +2249,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
 
         private void doHook() {
-            if (mLayoutWeakRf.get() != null) {
-                if (mCallBack != null)
-                    mCallBack.onHook();
-                mLayoutWeakRf.get().performRefreshComplete(false);
-            }
+            if (mCallBack != null)
+                mCallBack.onHook(this);
         }
     }
 

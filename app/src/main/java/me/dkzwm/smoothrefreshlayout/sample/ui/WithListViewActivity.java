@@ -29,6 +29,7 @@ public class WithListViewActivity extends AppCompatActivity {
     private ListViewAdapter mAdapter;
     private Handler mHandler = new Handler();
     private int mCount = 0;
+    private int mFailedCount = 0;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,9 +43,9 @@ public class WithListViewActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-        ClassicHeader header = new ClassicHeader(this);
+        final ClassicHeader header = new ClassicHeader(this);
         header.setLastUpdateTimeKey("header_last_update_time");
-        ClassicFooter footer = new ClassicFooter(this);
+        final ClassicFooter footer = new ClassicFooter(this);
         footer.setLastUpdateTimeKey("footer_last_update_time");
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setFooterView(footer);
@@ -55,6 +56,11 @@ public class WithListViewActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        mFailedCount++;
+                        if (mFailedCount % 2 == 0) {
+                            mRefreshLayout.refreshComplete(false);
+                            return;
+                        }
                         if (isRefresh) {
                             mCount = 0;
                             List<String> list = DataUtil.createList(mCount, 20);
@@ -68,6 +74,23 @@ public class WithListViewActivity extends AppCompatActivity {
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
+            }
+        });
+        //Hook刷新完成，可以实现延迟完成加载
+        mRefreshLayout.setOnHookUIRefreshCompleteCallback(new SmoothRefreshLayout
+                .OnHookUIRefreshCompleteCallBack() {
+            @Override
+            public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
+                if (mRefreshLayout.isRefreshing())
+                    header.onRefreshComplete(mRefreshLayout);
+                else
+                    footer.onRefreshComplete(mRefreshLayout);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        hook.onHookComplete();
+                    }
+                }, 500);
             }
         });
         mRefreshLayout.autoRefresh(false);

@@ -15,5 +15,7 @@
     <string name="sr_seconds_ago">&#160;秒之前</string>
     <string name="sr_minutes_ago">&#160;分钟之前</string>
     <string name="sr_hours_ago">&#160;小时之前</string>
+    <string name="sr_refresh_failed">更新失败</string>
+    <string name="sr_load_failed">加载失败</string>
 
 </resources>

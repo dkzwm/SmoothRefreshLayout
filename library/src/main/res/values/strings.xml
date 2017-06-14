@@ -9,7 +9,10 @@
     <string name="sr_refreshing">Updating…</string>
     <string name="sr_loading">Loading…</string>
     <string name="sr_refresh_complete">Updated</string>
+    <string name="sr_refresh_failed">Update failed</string>
     <string name="sr_load_complete">Loaded</string>
+    <string name="sr_load_failed">Load failed</string>
+
 
     <string name="sr_last_update">last update:&#160;</string>
     <string name="sr_seconds_ago">&#160;seconds ago</string>

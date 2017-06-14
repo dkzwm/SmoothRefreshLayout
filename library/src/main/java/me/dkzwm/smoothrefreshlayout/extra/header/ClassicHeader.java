@@ -61,6 +61,8 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
             mLastUpdateTimeUpdater.stop();
         }
         removeCallbacks(mLastUpdateTimeUpdater);
+        mFlipAnimation.cancel();
+        mReverseFlipAnimation.cancel();
         if (getHandler() != null)
             getHandler().removeCallbacksAndMessages(null);
     }
@@ -133,9 +135,9 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isEnablePullToRefresh()) {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_down_to_refresh));
+            mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
         } else {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_down));
+            mTitleTextView.setText(R.string.sr_pull_down);
         }
     }
 
@@ -161,9 +163,12 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         hideRotateView();
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        mTitleTextView.setText(getResources().getString(R.string.sr_refresh_complete));
-        mLastUpdateTime = System.currentTimeMillis();
-        ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
+        if (frame.isRefreshSuccessful()) {
+            mTitleTextView.setText(R.string.sr_refresh_complete);
+            mLastUpdateTime = System.currentTimeMillis();
+            ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
+        } else
+            mTitleTextView.setText(R.string.sr_refresh_failed);
     }
 
 
@@ -218,9 +223,9 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
     private void crossRotateLineFromBottomUnderTouch(SmoothRefreshLayout frame) {
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isEnablePullToRefresh()) {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_down_to_refresh));
+            mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
         } else {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_down));
+            mTitleTextView.setText(R.string.sr_pull_down);
         }
     }
 

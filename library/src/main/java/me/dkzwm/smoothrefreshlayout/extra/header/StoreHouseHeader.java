@@ -223,7 +223,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
                 }
                 float startPadding = (1 - mInternalAnimationFactor) * i / len;
                 float endPadding = 1 - mInternalAnimationFactor - startPadding;
-                // done
+                // onHookComplete
                 if (progress == 1 || progress >= 1 - endPadding) {
                     canvas.translate(offsetX, offsetY);
                     storeHouseBarItem.setAlpha(mBarDarkAlpha);

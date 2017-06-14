@@ -60,6 +60,8 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         if (mLastUpdateTimeUpdater != null) {
             mLastUpdateTimeUpdater.stop();
         }
+        mFlipAnimation.cancel();
+        mReverseFlipAnimation.cancel();
         removeCallbacks(mLastUpdateTimeUpdater);
         if (getHandler() != null)
             getHandler().removeCallbacksAndMessages(null);
@@ -129,9 +131,9 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isEnablePullToRefresh()) {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_up_to_load));
+            mTitleTextView.setText(R.string.sr_pull_up_to_load);
         } else {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_up));
+            mTitleTextView.setText(R.string.sr_pull_up);
         }
     }
 
@@ -156,10 +158,13 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         hideRotateView();
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        mTitleTextView.setText(getResources().getString(R.string.sr_load_complete));
-        mLastUpdateTime = System.currentTimeMillis();
-        ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
-
+        if (frame.isRefreshSuccessful()) {
+            mTitleTextView.setText(R.string.sr_load_complete);
+            mLastUpdateTime = System.currentTimeMillis();
+            ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
+        } else {
+            mTitleTextView.setText(R.string.sr_load_failed);
+        }
     }
 
     private void tryUpdateLastUpdateTime() {
@@ -211,9 +216,9 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     private void crossRotateLineFromBottomUnderTouch(SmoothRefreshLayout frame) {
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isEnablePullToRefresh()) {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_up_to_load));
+            mTitleTextView.setText(R.string.sr_pull_up_to_load);
         } else {
-            mTitleTextView.setText(getResources().getString(R.string.sr_pull_up));
+            mTitleTextView.setText(R.string.sr_pull_up);
         }
     }
 
