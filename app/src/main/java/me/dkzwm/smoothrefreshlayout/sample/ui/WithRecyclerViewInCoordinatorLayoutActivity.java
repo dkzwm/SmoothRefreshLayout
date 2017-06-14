@@ -84,7 +84,6 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
 
             @Override
             public void onRefreshComplete() {
-                Toast.makeText(getApplicationContext(), "加载完成", Toast.LENGTH_SHORT).show();
             }
         });
         mRefreshLayout.autoRefresh(false);

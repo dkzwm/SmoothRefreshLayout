@@ -44,7 +44,8 @@ public class WithTextViewActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mRefreshLayout.refreshComplete();
-                        mTextView.setText("刷新次数：" + mCount);
+                        String times=getString(R.string.number_of_refresh) + mCount;
+                        mTextView.setText(times);
                     }
                 }, 2000);
             }

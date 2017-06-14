@@ -9,12 +9,15 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.TwoLevelRefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.header.CustomTwoLevelHeader;
 
 /**
- * Created by dkzwm1 on 2017/6/12.
+ * Created by dkzwm on 2017/6/12.
+ *
+ * @author dkzwm
  */
 
 public class TestTwoLevelRefreshActivity extends AppCompatActivity {
@@ -48,12 +51,13 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setRatioOfHeaderHeightToHintTwoLevelRefresh(.45f);
         //设置触发二级刷新的头部高度比
         mRefreshLayout.setRatioOfHeaderHeightToTwoLevelRefresh(.65f);
-        mRefreshLayout.setOnRefreshListener(new TwoLevelSmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new TwoLevelRefreshingListenerAdapter() {
             @Override
             public void onTwoLevelRefreshBegin() {
                 mTwoLevelCount++;
                 mRefreshLayout.refreshComplete();
-                mTextView.setText("二级刷新次数：" + mTwoLevelCount);
+                String times = getString(R.string.number_of_two_level_refresh) + mTwoLevelCount;
+                mTextView.setText(times);
             }
 
             @Override
@@ -62,15 +66,11 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        String times = getString(R.string.number_of_one_level_refresh) + mCount;
                         mRefreshLayout.refreshComplete();
-                        mTextView.setText("一级刷新次数：" + mCount);
+                        mTextView.setText(times);
                     }
                 }, 2000);
-            }
-
-            @Override
-            public void onRefreshComplete() {
-
             }
         });
     }

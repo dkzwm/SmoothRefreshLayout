@@ -21,5 +21,8 @@
         surprise</string>
     <string name="release_your_finger_to_get_surprise">Release your finger to get surprise</string>
     <string name="test_two_level_refresh">Test Two Level Refresh</string>
+    <string name="number_of_two_level_refresh">Number of Two-Level refresh:</string>
+    <string name="number_of_one_level_refresh">Number of refresh:</string>
+    <string name="number_of_refresh">Number of refresh:</string>
 
 </resources>

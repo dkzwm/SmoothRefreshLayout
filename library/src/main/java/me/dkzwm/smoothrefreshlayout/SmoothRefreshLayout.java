@@ -44,10 +44,10 @@ import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
  * Part of the code comes from @see <a href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">
  * android-Ultra-Pull-To-Refresh</a><br/>
  * 部分代码实现来自 @see <a href="https://github.com/liaohuqiu">LiaoHuQiu</a> 的UltraPullToRefresh项目</p>
- * Supports NestedScroll features;<br/>
- * Supports OverScroll features;<br/>
- * Supports Refresh and LoadMore;<br/>
- * Supports AutoRefresh;<br/>
+ * Support NestedScroll feature;<br/>
+ * Support OverScroll feature;<br/>
+ * Support Refresh and LoadMore feature;<br/>
+ * Support AutoRefresh feature;<br/>
  *
  * @author dkzwm
  */
@@ -85,13 +85,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected IRefreshView mHeaderView;
     protected IRefreshView mFooterView;
     protected IIndicator mIndicator;
+    protected OnRefreshListener mRefreshListener;
     protected byte mStatus = SR_STATUS_INIT;
-    protected ScrollChecker mScrollChecker;
     protected boolean mTriggeredAutoRefresh = false;
+    protected boolean mNeedNotifyRefreshComplete = true;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
-    protected boolean mNeedNotifyRefreshComplete = true;
-    protected OnRefreshListener mRefreshListener;
     protected int mDurationToCloseHeader = 500;
     protected int mDurationToCloseFooter = 500;
     private int mFlag = 0x00;
@@ -100,29 +99,30 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private OnChildScrollDownCallback mScrollDownCallback;
     private OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     private View mContentView;
-    private boolean mHasSendCancelEvent = false;
+    private View mLoadMoreScrollTargetView;
     private MotionEvent mLastMoveEvent;
+    private ScrollChecker mScrollChecker;
     private OverScrollChecker mOverScrollChecker;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mRefreshCompleteHook;
+    private boolean mHasSendCancelEvent = false;
     private boolean mPreventTopOverScroll = false;
     private boolean mPreventBottomOverScroll = false;
     private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
     private boolean mPinRefreshViewWhileLoading = false;
     private boolean mHasLastRefreshSuccessful = true;
+    private boolean mNestedScrollInProgress;
+    private boolean mNeedReLayout = false;
     private int mTwoTimesTouchSlop;
     private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
     private int mDurationOfBackToFooterHeight = 200;
-    private int mContentResId = 0;
-    private View mLoadMoreScrollTargetView;
-    private float mTotalRefreshingUnconsumed;
-    private boolean mNestedScrollInProgress;
-    private boolean mNeedReLayout = false;
-    private int mTotalRefreshingConsumed = 0;
-    private int mTotalLoadMoreUnconsumed = 0;
-    private int mTotalLoadMoreConsumed = 0;
+    private int mContentResId = View.NO_ID;
+    private int mTotalRefreshingUnconsumed;
+    private int mTotalRefreshingConsumed;
+    private int mTotalLoadMoreUnconsumed;
+    private int mTotalLoadMoreConsumed;
 
     public SmoothRefreshLayout(Context context) {
         this(context, null);

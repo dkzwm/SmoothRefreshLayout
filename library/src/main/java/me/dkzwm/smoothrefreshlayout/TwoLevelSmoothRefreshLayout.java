@@ -12,6 +12,8 @@ import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
 
 /**
  * Created by dkzwm on 2017/6/12.
+ * <p>
+ * Support Two-Level refresh feature;<br/>
  *
  * @author dkzwm
  */
