@@ -1131,7 +1131,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setContentView(@NonNull View content) {
         if (mContentView != null && mContentView != content) {
             removeView(content);
-            mContentResId = 0;
+            mContentResId = View.NO_ID;
             mContentView = null;
         }
         ViewGroup.LayoutParams lp = content.getLayoutParams();
@@ -1415,7 +1415,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void ensureContent() {
         if (mContentView == null) {
-            if (mContentResId != 0) {
+            if (mContentResId != View.NO_ID) {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (!(child instanceof IRefreshView) && mContentResId == child.getId())
