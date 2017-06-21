@@ -66,6 +66,9 @@
         <activity
             android:name=".ui.TestMaterialStyleActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TestQQActivityStyleActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

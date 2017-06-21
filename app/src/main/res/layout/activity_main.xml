@@ -122,6 +122,13 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/test_two_level_refresh"/>
+
+            <Button
+                android:id="@+id/button_main_test_QQ_activity_style"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/test_qq_activity_style"/>
         </LinearLayout>
     </ScrollView>
 
@@ -130,6 +137,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="24dp"
         android:src="@mipmap/ic_launcher_round"
-        app:sr_layout_gravity="end"/>
+        app:sr_layout_gravity="bottom|end"/>
 
 </me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout>

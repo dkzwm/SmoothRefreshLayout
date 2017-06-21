@@ -24,5 +24,9 @@
     <string name="number_of_two_level_refresh">Number of Two-Level refresh:</string>
     <string name="number_of_one_level_refresh">Number of refresh:</string>
     <string name="number_of_refresh">Number of refresh:</string>
+    <string name="test_qq_activity_style">Test QQ activity style</string>
+    <string name="brush_a_brush">Brush a brush</string>
+    <string name="normal_style">Normal style</string>
+    <string name="activity_style">Activity style</string>
 
 </resources>

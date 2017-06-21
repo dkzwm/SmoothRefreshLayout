@@ -141,10 +141,6 @@ public interface IIndicator {
     @NonNull
     float[] getLastMovePoint();
 
-    boolean isJustReachedToKeepHeaderWhileLoading();
-
-    boolean isJustReachedToKeepFooterWhileLoading();
-
     float getLastPercentOfHeader();
 
     float getCurrentPercentOfHeader();

@@ -11,9 +11,14 @@
  1.支持5种模式: refresh(刷新),loadMore(加载更多),overScroll(越界回弹),both(刷新和加载更多),none;    
  2.支持嵌套滑动;    
  3.支持所有的视图;   
- 4.支持2级刷新(暂时只支持头部视图的二级刷新);    
+ 4.支持2级刷新(暂时只支持头部视图的二级刷新);   
+ 5.支持抽屉样式; 
  
 ## 快照
+* 测试QQ活动样式,新添加的效果！
+   <div class='row'>
+       <img src='snapshot/test_qq_style.png' width="300px"/>
+   </div>
 * 测试2级刷新,新添加的效果!     
    <div class='row'>
        <img src='snapshot/test_two_level_refresh.png' width="300px"/>

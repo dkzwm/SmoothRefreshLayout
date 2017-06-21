@@ -1,0 +1,99 @@
+package me.dkzwm.smoothrefreshlayout.sample.header;
+
+import android.content.Context;
+import android.support.annotation.AttrRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
+
+import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
+import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
+import me.dkzwm.smoothrefreshlayout.sample.R;
+
+/**
+ * Created by dkzwm on 2017/6/21.
+ *
+ * @author dkzwm
+ */
+public class CustomQQActivityHeader extends FrameLayout implements IRefreshView {
+    private TextView mTextViewTitle;
+    private boolean mStartedCounter;
+    private int mCount = 0;
+
+    public CustomQQActivityHeader(@NonNull Context context) {
+        this(context, null);
+    }
+
+    public CustomQQActivityHeader(@NonNull Context context, @Nullable AttributeSet attrs) {
+        this(context, attrs, 0);
+    }
+
+    public CustomQQActivityHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        View header = LayoutInflater.from(context).inflate(R.layout.layout_custom_qq_activity_header, this);
+        mTextViewTitle = (TextView) header.findViewById(R.id.textView_QQ_activity_header_title);
+    }
+
+
+    @Override
+    public int getType() {
+        return TYPE_HEADER;
+    }
+
+    @NonNull
+    @Override
+    public View getView() {
+        return this;
+    }
+
+    @Override
+    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
+        final int mOffsetToRefresh = indicator.getOffsetToRefresh();
+        final int currentPos = indicator.getCurrentPosY();
+
+        if (currentPos > mOffsetToRefresh) {
+            mCount++;
+            mTextViewTitle.setText("x" + mCount);
+        }
+    }
+
+    @Override
+    public void onReset(SmoothRefreshLayout layout) {
+        mTextViewTitle.setText(R.string.brush_a_brush);
+        mStartedCounter = false;
+        mCount = 0;
+    }
+
+    @Override
+    public void onRefreshPrepare(SmoothRefreshLayout layout) {
+
+    }
+
+    @Override
+    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
+
+    }
+
+    @Override
+    public void onRefreshComplete(SmoothRefreshLayout layout) {
+
+    }
+
+    @Override
+    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        final int mOffsetToRefresh = indicator.getOffsetToRefresh();
+        final int currentPos = indicator.getCurrentPosY();
+
+        if (currentPos > mOffsetToRefresh && !mStartedCounter) {
+            if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
+                mStartedCounter = true;
+                mTextViewTitle.setText("x" + mCount);
+            }
+        }
+    }
+}

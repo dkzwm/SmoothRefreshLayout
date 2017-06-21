@@ -286,7 +286,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public int getOffsetToKeepHeaderWhileLoading() {
-        return Math.round(mOffsetRatioToKeepHeaderWhileLoading * mHeaderHeight);
+        return (int)(mOffsetRatioToKeepHeaderWhileLoading * mHeaderHeight);
     }
 
     @Override
@@ -296,7 +296,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public int getOffsetToKeepFooterWhileLoading() {
-        return Math.round(mOffsetRatioToKeepFooterWhileLoading * mFooterHeight);
+        return (int)(mOffsetRatioToKeepFooterWhileLoading * mFooterHeight);
     }
 
     @Override
@@ -388,16 +388,6 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public float[] getLastMovePoint() {
         return mLastMovePoint;
-    }
-
-    @Override
-    public boolean isJustReachedToKeepHeaderWhileLoading() {
-        return mCurrentPos >= getOffsetToKeepHeaderWhileLoading();
-    }
-
-    @Override
-    public boolean isJustReachedToKeepFooterWhileLoading() {
-        return mCurrentPos >= getOffsetToKeepFooterWhileLoading();
     }
 
 

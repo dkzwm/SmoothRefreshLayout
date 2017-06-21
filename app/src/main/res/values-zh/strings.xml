@@ -23,4 +23,8 @@
     <string name="number_of_two_level_refresh">二级刷新次数:</string>
     <string name="number_of_one_level_refresh">一级刷新次数:</string>
     <string name="number_of_refresh">刷新次数：</string>
+    <string name="test_qq_activity_style">测试QQ下拉抢红包活动</string>
+    <string name="brush_a_brush">刷一刷</string>
+    <string name="normal_style">正常刷新</string>
+    <string name="activity_style">做活动</string>
 </resources>

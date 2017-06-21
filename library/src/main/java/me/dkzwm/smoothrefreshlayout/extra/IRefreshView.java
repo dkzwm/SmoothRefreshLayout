@@ -12,12 +12,22 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
  * @author dkzwm
  */
 public interface IRefreshView {
-    int TYPE_HEADER = 0;
-    int TYPE_FOOTER = 1;
+    byte TYPE_HEADER = 0;
+    byte TYPE_FOOTER = 1;
 
+    /**
+     * Get the view type
+     *
+     * @return type {@link #TYPE_HEADER}, {@link #TYPE_FOOTER}.
+     */
     @RefreshViewType
     int getType();
 
+    /**
+     * Get the target view
+     *
+     * @return view:The returned view must be the view that will be added to the Layout
+     */
     @NonNull
     View getView();
 

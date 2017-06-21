@@ -13,8 +13,13 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
  2.Support nestedScroll;    
  3.Support all views;    
  4.Support Two-Level refresh;    
+ 5.Support DrawerStyle;    
  
 ## Snapshot
+* Test drawerStyle , newly added!
+   <div class='row'>
+       <img src='snapshot/test_qq_style.png' width="300px"/>
+   </div>
 * Test two-level refresh , newly added !     
    <div class='row'>
        <img src='snapshot/test_two_level_refresh.png' width="300px"/>

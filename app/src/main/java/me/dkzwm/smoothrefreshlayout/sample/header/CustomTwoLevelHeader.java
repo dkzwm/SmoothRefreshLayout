@@ -2,6 +2,7 @@ package me.dkzwm.smoothrefreshlayout.sample.header;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,7 +27,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     private static final byte STATUS_RELEASE_TO_REFRESH = 2;
     private static final byte STATUS_TWO_LEVEL_REFRESH_HINT = 4;
     private static final byte STATUS_TWO_LEVEL_RELEASE_TO_REFRESH = 5;
-    protected TextView mTitleTextView;
+    protected TextView mTextViewTitle;
     private byte mStatus = STATUS_PULL_DOWN;
 
 
@@ -40,8 +41,8 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     public CustomTwoLevelHeader(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        View header = LayoutInflater.from(getContext()).inflate(R.layout.layout_custom_two_level_header, this);
-        mTitleTextView = (TextView) header.findViewById(R.id.textView_two_level_header_title);
+        View header = LayoutInflater.from(context).inflate(R.layout.layout_custom_two_level_header, this);
+        mTextViewTitle = (TextView) header.findViewById(R.id.textView_two_level_header_title);
     }
 
     @Override
@@ -63,18 +64,18 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     @Override
     public void onReset(SmoothRefreshLayout frame) {
         if (frame.isEnablePullToRefresh()) {
-            mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
+            mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
         } else {
-            mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
+            mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
         }
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
         if (frame.isEnablePullToRefresh()) {
-            mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
+            mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
         } else {
-            mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
+            mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
         }
     }
 
@@ -85,15 +86,15 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
-        mTitleTextView.setVisibility(VISIBLE);
-        mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refreshing);
+        mTextViewTitle.setVisibility(VISIBLE);
+        mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refreshing);
     }
 
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout frame) {
-        mTitleTextView.setVisibility(VISIBLE);
-        mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);
+        mTextViewTitle.setVisibility(VISIBLE);
+        mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);
     }
 
 
@@ -110,7 +111,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
                     if (currentPos < offSetToTwoLevelRefresh && currentPos >= offSetToHintTwoLevelRefresh
                             && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                         if (mStatus != STATUS_TWO_LEVEL_REFRESH_HINT) {
-                            mTitleTextView.setText(R.string.continue_pull_down_to_have_a_surprise);
+                            mTextViewTitle.setText(R.string.continue_pull_down_to_have_a_surprise);
                             mStatus = STATUS_TWO_LEVEL_REFRESH_HINT;
                         }
                         return;
@@ -119,7 +120,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
                         if (mStatus != STATUS_TWO_LEVEL_RELEASE_TO_REFRESH) {
                             mStatus = STATUS_TWO_LEVEL_RELEASE_TO_REFRESH;
                             if (!frame.isEnablePullToRefresh()) {
-                                mTitleTextView.setText(R.string.release_your_finger_to_get_surprise);
+                                mTextViewTitle.setText(R.string.release_your_finger_to_get_surprise);
                             }
                         }
                         return;
@@ -132,15 +133,15 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
                 && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mStatus = STATUS_PULL_DOWN;
             if (frame.isEnablePullToRefresh()) {
-                mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
+                mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
             } else {
-                mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
+                mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
             }
         } else if (currentPos > mOffsetToRefresh && mStatus != STATUS_RELEASE_TO_REFRESH
                 && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mStatus = STATUS_RELEASE_TO_REFRESH;
             if (!frame.isEnablePullToRefresh()) {
-                mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_release_to_refresh);
+                mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_release_to_refresh);
             }
         }
     }
@@ -148,7 +149,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     @Override
     public void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, IIndicator indicator,
                                        ITwoLevelIndicator twoLevelIndicator) {
-        mTitleTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refreshing);
+        mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refreshing);
     }
 
 
