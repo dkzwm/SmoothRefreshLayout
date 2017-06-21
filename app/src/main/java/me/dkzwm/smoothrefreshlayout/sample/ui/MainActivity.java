@@ -67,13 +67,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_over_scroll).setOnClickListener(this);
         findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_activity_style).setOnClickListener(this);
-        Log.d(getClass().getSimpleName(),"-----------------top:"+ Gravity.TOP+"  left:"+Gravity.LEFT
-        +"  right:"+Gravity.RIGHT+"  bottom:"+Gravity.BOTTOM+"  center:"+Gravity.CENTER+"  " +
-                "center-v:"+Gravity.CENTER_VERTICAL+"  center-h:"+Gravity.CENTER_HORIZONTAL
-        +"  center-v|left:"+(Gravity.CENTER_VERTICAL|Gravity.LEFT)+" center-h|top:"+(Gravity
-                .CENTER_HORIZONTAL|Gravity.TOP)+" center-v|right:"+(Gravity
-                .CENTER_VERTICAL|Gravity.RIGHT)+" center-h|bottom:"+(Gravity
-                .CENTER_HORIZONTAL|Gravity.BOTTOM)+"  start:"+Gravity.START+"  end:"+Gravity.END);
     }
 
     @Override
