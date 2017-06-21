@@ -18,47 +18,47 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 ## Snapshot
 * Test drawerStyle , newly added!
    <div class='row'>
-       <img src='snapshot/test_qq_style.png' width="300px"/>
+       <img src='snapshot/test_qq_style.gif' width="300px"/>
    </div>
 * Test two-level refresh , newly added !     
    <div class='row'>
-       <img src='snapshot/test_two_level_refresh.png' width="300px"/>
+       <img src='snapshot/test_two_level_refresh.gif' width="300px"/>
    </div>
 * With frameLayout    
    <div class='row'>
-       <img src='snapshot/with_frameLayout.png' width="300px"/>
+       <img src='snapshot/with_frameLayout.gif' width="300px"/>
    </div>
 * With textView     
 	<div class='row'>
-    	<img src='snapshot/with_textView.png' width="300px"/>
+    	<img src='snapshot/with_textView.gif' width="300px"/>
 	</div>
 * With listView    
 	<div class='row'>
-    	<img src='snapshot/with_listView.png' width="300px"/>
+    	<img src='snapshot/with_listView.gif' width="300px"/>
 	</div>
 * With gridView    
 	<div class='row'>
-		<img src='snapshot/with_gridView.png' width="300px"/>
+		<img src='snapshot/with_gridView.gif' width="300px"/>
 	</div>
 * With recyclerView    
 	<div class='row'> 
-   		<img src='snapshot/with_recyclerView.png' width="300px"/>
+   		<img src='snapshot/with_recyclerView.gif' width="300px"/>
 	</div>
 * With viewPager    
 	<div class='row'> 
-	   	<img src='snapshot/with_viewPager.png' width="300px"/>
+	   	<img src='snapshot/with_viewPager.gif' width="300px"/>
 	</div>
 * With webView    
 	<div class='row'> 
-    	<img src='snapshot/with_webView.png' width="300px"/>
+    	<img src='snapshot/with_webView.gif' width="300px"/>
 	</div>
 * With recyclerView in coordinatorLayout
 	<div class='row'> 
-    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.png' width="300px"/>
+    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.gif' width="300px"/>
 	</div>
 * OverScroll  
 	<div class='row'> 
-    	<img src='snapshot/test_overScroll.png' width="300px"/>
+    	<img src='snapshot/test_overScroll.gif' width="300px"/>
 	</div>
 
 ## How to use    

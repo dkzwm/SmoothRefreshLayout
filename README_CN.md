@@ -17,47 +17,47 @@
 ## 快照
 * 测试QQ活动样式,新添加的效果！
    <div class='row'>
-       <img src='snapshot/test_qq_style.png' width="300px"/>
+       <img src='snapshot/test_qq_style.gif' width="300px"/>
    </div>
 * 测试2级刷新,新添加的效果!     
    <div class='row'>
-       <img src='snapshot/test_two_level_refresh.png' width="300px"/>
+       <img src='snapshot/test_two_level_refresh.gif' width="300px"/>
    </div>
 * 包含FrameLayout    
    <div class='row'>
-       <img src='snapshot/with_frameLayout.png' width="300px"/>
+       <img src='snapshot/with_frameLayout.gif' width="300px"/>
    </div>
 * 包含TextView     
 	<div class='row'>
-    	<img src='snapshot/with_textView.png' width="300px"/>
+    	<img src='snapshot/with_textView.gif' width="300px"/>
 	</div>
 * 包含ListView    
 	<div class='row'>
-    	<img src='snapshot/with_listView.png' width="300px"/>
+    	<img src='snapshot/with_listView.gif' width="300px"/>
 	</div>
 * 包含GridView    
 	<div class='row'>
-		<img src='snapshot/with_gridView.png' width="300px"/>
+		<img src='snapshot/with_gridView.gif' width="300px"/>
 	</div>
 * 包含RecyclerView    
 	<div class='row'> 
-   		<img src='snapshot/with_recyclerView.png' width="300px"/>
+   		<img src='snapshot/with_recyclerView.gif' width="300px"/>
 	</div>
 * 包含ViewPager    
 	<div class='row'> 
-	   	<img src='snapshot/with_viewPager.png' width="300px"/>
+	   	<img src='snapshot/with_viewPager.gif' width="300px"/>
 	</div>
 * 包含WebView    
 	<div class='row'> 
-    	<img src='snapshot/with_webView.png' width="300px"/>
+    	<img src='snapshot/with_webView.gif' width="300px"/>
 	</div>
 * CoordinatorLayout里面嵌套RecyclerView
 	<div class='row'> 
-    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.png' width="300px"/>
+    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.gif' width="300px"/>
 	</div>
 * 越界回弹模式    
 	<div class='row'> 
-    	<img src='snapshot/test_overScroll.png' width="300px"/>
+    	<img src='snapshot/test_overScroll.gif' width="300px"/>
 	</div>
 ## 使用   
 #### Gradle
