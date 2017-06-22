@@ -80,6 +80,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_HEADER_DRAWER_STYLE = 0x01 << 7;
     private static final int FLAG_ENABLE_FOOTER_DRAWER_STYLE = 0x01 << 8;
     private static final int FLAG_DISABLE_PERFORM_REFRESH = 0x01 << 9;
+    private static final int FLAG_DISABLE_PERFORM_LOAD_MORE = 0x01 << 10;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private final List<View> mCachedViews = new ArrayList<>(1);
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
@@ -121,7 +122,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mHasLastRefreshSuccessful = true;
     private boolean mNestedScrollInProgress = false;
     private boolean mNeedReLayout = false;
-    private boolean mViewsZTreeNeedReset = false;
+    private boolean mViewsZTreeNeedReset = true;
     private int mTwoTimesTouchSlop;
     private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
@@ -239,51 +240,41 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void addView(View child) {
-        super.addView(child);
-        if (child instanceof IRefreshView) {
-            IRefreshView view = (IRefreshView) child;
-            switch (view.getType()) {
-                case IRefreshView.TYPE_HEADER:
-                    if (mHeaderView != null)
-                        throw new SRUnsupportedOperationException("Unsupported operation , " +
-                                "HeaderView only can be add once !!");
-                    mHeaderView = view;
-                    break;
-                case IRefreshView.TYPE_FOOTER:
-                    if (mFooterView != null)
-                        throw new SRUnsupportedOperationException("Unsupported operation , " +
-                                "FooterView only can be add once !!");
-                    mFooterView = view;
-                    break;
-            }
-        }
-        bringFreshViewToFront();
+        this.addView(child, -1);
     }
 
     @Override
     final public void addView(View child, int index) {
-        super.addView(child, index);
+        if (child == null) {
+            throw new SRUnsupportedOperationException("Cannot add a null child view to a ViewGroup");
+        }
+        ViewGroup.LayoutParams params = child.getLayoutParams();
+        if (params == null) {
+            params = generateDefaultLayoutParams();
+            if (params == null) {
+                throw new SRUnsupportedOperationException("generateDefaultLayoutParams() cannot return null");
+            }
+        }
+        addView(child, index, params);
     }
 
     @Override
     final public void addView(View child, int index, ViewGroup.LayoutParams params) {
         super.addView(child, index, params);
+        ensureFreshView(child);
     }
 
     @Override
     final public void addView(View child, ViewGroup.LayoutParams params) {
-        super.addView(child, params);
+        addView(child, -1, params);
     }
 
     @Override
     final public void addView(View child, int width, int height) {
-        super.addView(child, width, height);
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-        bringFreshViewToFront();
+        final ViewGroup.LayoutParams params = generateDefaultLayoutParams();
+        params.width = width;
+        params.height = height;
+        addView(child, -1, params);
     }
 
     @Override
@@ -456,6 +447,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (isMovingHeader() || isRefreshing()) {
                     top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
                     bottom = top + child.getMeasuredHeight();
+                    child.layout(left, top, right, bottom);
+
                 } else if (isMovingFooter() || isLoadingMore()) {
                     top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
                     bottom = top + child.getMeasuredHeight();
@@ -468,7 +461,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     child.layout(left, top, right, bottom);
                 }
                 contentBottom = bottom;
-                child.layout(left, top, right, bottom);
                 continue;
             }
             if (mFooterView != null && mFooterView == child) {
@@ -1074,6 +1066,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    public boolean isDisablePerformLoadMore() {
+        return (mFlag & FLAG_DISABLE_PERFORM_LOAD_MORE) > 0;
+    }
+
+    public void setDisablePerformLoadMore(boolean disable) {
+        if (disable) {
+            mFlag = mFlag | FLAG_DISABLE_PERFORM_LOAD_MORE;
+        } else {
+            mFlag = mFlag & ~FLAG_DISABLE_PERFORM_LOAD_MORE;
+        }
+    }
+
     /**
      * The flag has been keep refresh view when refreshing
      *
@@ -1144,7 +1148,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param footer Footer view
      */
     public void setFooterView(@NonNull IRefreshView footer) {
-        if (mFooterView != null && mFooterView != footer) {
+        if (mFooterView != null) {
             removeView(mFooterView.getView());
             mFooterView = null;
         }
@@ -1160,6 +1164,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             view.setLayoutParams(lp);
         }
+        mViewsZTreeNeedReset = true;
         addView(view);
     }
 
@@ -1169,7 +1174,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param header Header view
      */
     public void setHeaderView(@NonNull IRefreshView header) {
-        if (mHeaderView != null && mHeaderView != header) {
+        if (mHeaderView != null) {
             removeView(mHeaderView.getView());
             mHeaderView = null;
         }
@@ -1185,6 +1190,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
             view.setLayoutParams(lp);
         }
+        mViewsZTreeNeedReset = true;
         addView(view);
     }
 
@@ -1194,7 +1200,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param content Content view
      */
     public void setContentView(@NonNull View content) {
-        if (mContentView != null && mContentView != content) {
+        if (mContentView != null) {
             removeView(content);
             mContentResId = View.NO_ID;
             mContentView = null;
@@ -1204,6 +1210,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             content.setLayoutParams(lp);
         }
+        mViewsZTreeNeedReset = true;
         addView(content);
     }
 
@@ -1477,43 +1484,42 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void checkViewsZTreeNeedReset() {
         final int count = getChildCount();
-        if (mViewsZTreeNeedReset) {
+        if (mContentView == null)
+            return;
+        mCachedViews.clear();
+        if (mViewsZTreeNeedReset && count > 0) {
             if (isEnableHeaderDrawerStyle() && isEnableFooterDrawerStyle()) {
-                if (getChildAt(count - 1) != mContentView)
-                    mContentView.bringToFront();
+                for (int i = count - 1; i >= 0; i--) {
+                    View view = getChildAt(i);
+                    if (view != mHeaderView && view != mFooterView)
+                        mCachedViews.add(view);
+                }
             } else if (isEnableHeaderDrawerStyle()) {
-                mCachedViews.clear();
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
-                    if (view != mContentView && view != mHeaderView)
+                    if (view != mHeaderView)
                         mCachedViews.add(view);
-                    else if (view != mHeaderView) {
-                        break;
-                    }
                 }
-                mContentView.bringToFront();
-                final int viewCount = mCachedViews.size();
-                for (int i = 0; i < viewCount; i++) {
-                    mCachedViews.get(i).bringToFront();
-                }
-                mCachedViews.clear();
             } else if (isEnableFooterDrawerStyle()) {
-                mCachedViews.clear();
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
-                    if (view != mContentView && view != mFooterView)
+                    if (view != mFooterView)
                         mCachedViews.add(view);
-                    else if (view != mFooterView) {
-                        break;
-                    }
                 }
-                mContentView.bringToFront();
-                final int viewCount = mCachedViews.size();
-                for (int i = 0; i < viewCount; i++) {
+            } else {
+                for (int i = count - 1; i >= 0; i--) {
+                    View view = getChildAt(i);
+                    if (view != mContentView)
+                        mCachedViews.add(view);
+                }
+            }
+            final int viewCount = mCachedViews.size();
+            if (viewCount > 0) {
+                for (int i = viewCount - 1; i >= 0; i--) {
                     mCachedViews.get(i).bringToFront();
                 }
-                mCachedViews.clear();
             }
+            mCachedViews.clear();
         }
         mViewsZTreeNeedReset = false;
     }
@@ -1533,13 +1539,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             getHandler().removeCallbacksAndMessages(null);
     }
 
-    private void bringFreshViewToFront() {
-        if (mHeaderView != null)
-            mHeaderView.getView().bringToFront();
-        if (mFooterView != null)
-            mFooterView.getView().bringToFront();
+    private void ensureFreshView(View child) {
+        if (child instanceof IRefreshView) {
+            IRefreshView view = (IRefreshView) child;
+            switch (view.getType()) {
+                case IRefreshView.TYPE_HEADER:
+                    if (mHeaderView != null)
+                        throw new SRUnsupportedOperationException("Unsupported operation , " +
+                                "HeaderView only can be add once !!");
+                    mHeaderView = view;
+                    break;
+                case IRefreshView.TYPE_FOOTER:
+                    if (mFooterView != null)
+                        throw new SRUnsupportedOperationException("Unsupported operation , " +
+                                "FooterView only can be add once !!");
+                    mFooterView = view;
+                    break;
+            }
+        }
     }
-
 
     private void ensureContent() {
         if (mContentView == null) {
@@ -2094,18 +2112,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (isMovingHeader()
                 && ((mIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh())
-                || (isEnableKeepRefreshView() && !isEnableHeaderDrawerStyle()
+                || (isEnableKeepRefreshView() && !isDisablePerformRefresh()
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())
-                || (mIndicator.isOverOffsetToRefresh() && !isEnableHeaderDrawerStyle()))) {
+                || (mIndicator.isOverOffsetToRefresh() && !isDisablePerformRefresh()))) {
             mStatus = SR_STATUS_REFRESHING;
             performRefresh();
             return;
         }
         if (isMovingFooter()
                 && ((mIndicator.isOverOffsetToKeepFooterWhileLoading() && isAutoRefresh())
-                || (isEnableKeepRefreshView() && !isEnableFooterDrawerStyle()
+                || (isEnableKeepRefreshView() && !isDisablePerformLoadMore()
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())
-                || (mIndicator.isOverOffsetToLoadMore() && !isEnableFooterDrawerStyle()))) {
+                || (mIndicator.isOverOffsetToLoadMore() && !isDisablePerformLoadMore()))) {
             mStatus = SR_STATUS_LOADING_MORE;
             performRefresh();
         }
@@ -2113,7 +2131,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected boolean canPerformRefresh() {
         return !(mOverScrollChecker.needScrollBackToTop() || mOverScrollChecker.isScrolling()
-                || isMovingContent()) && !isDisablePerformRefresh();
+                || isMovingContent());
     }
 
     /**

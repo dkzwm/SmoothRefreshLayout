@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +43,7 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
     private RadioButton mRadioButtonActivity;
     private int mCount = 0;
     private ClassicHeader mClassicHeader;
+    private ClassicFooter mClassicFooter;
     private CustomQQActivityHeader mQQActivityHeader;
 
     @Override
@@ -66,11 +66,11 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
         mClassicHeader = new ClassicHeader(this);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
-        final ClassicFooter footer = new ClassicFooter(this);
-        footer.setLastUpdateTimeKey("footer_last_update_time");
-        footer.setBackgroundColor(Color.WHITE);
+        mClassicFooter = new ClassicFooter(this);
+        mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
+        mClassicFooter.setBackgroundColor(Color.WHITE);
         mRefreshLayout.setHeaderView(mClassicHeader);
-        mRefreshLayout.setFooterView(footer);
+        mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
@@ -157,7 +157,10 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mQQActivityHeader.setLayoutParams(layoutParams);
         mRefreshLayout.setHeaderView(mQQActivityHeader);
+        mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableHeaderDrawerStyle(true);
+        mRefreshLayout.setEnableFooterDrawerStyle(true);
+        mRefreshLayout.setDisablePerformRefresh(true);
         mRefreshLayout.setDurationToCloseHeader(1500);
         mRefreshLayout.setRatioOfHeaderHeightToRefresh(.22f);
         mRefreshLayout.requestLayout();
@@ -166,7 +169,10 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
     private void setNormalStyle() {
         mRefreshLayout.setDurationToCloseHeader(500);
         mRefreshLayout.setHeaderView(mClassicHeader);
+        mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableHeaderDrawerStyle(false);
+        mRefreshLayout.setEnableFooterDrawerStyle(false);
+        mRefreshLayout.setDisablePerformRefresh(false);
         mRefreshLayout.setRatioOfHeaderHeightToRefresh(IIndicator.DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH);
         mRefreshLayout.requestLayout();
     }
