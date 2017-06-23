@@ -2425,6 +2425,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     private static class OverScrollChecker implements Runnable {
         private float mVelocityY;
+        private int mTimes = 0;
         private int mDirection = 0;
         private int mLastScrollDuration = 0;
         private boolean mScrolling = false;
@@ -2446,6 +2447,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
 
         private void reset() {
+            mTimes = 0;
             mDirection = 0;
             mVelocityY = 0;
             if (mLayoutWeakRf.get() == null)
@@ -2483,7 +2485,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 return;
             SmoothRefreshLayout layout = mLayoutWeakRf.get();
             layout.removeCallbacks(this);
-            if (Math.abs(mVelocityY) <= OVER_SCROLL_MIN_VX && mDirection == 0)
+            if (Math.abs(mVelocityY) <= OVER_SCROLL_MIN_VX || mDirection == 0 || mTimes > 200)
                 return;
             mScrolling = false;
             mNeedScrollBackToTop = false;
@@ -2514,6 +2516,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     return;
                 }
             }
+            mTimes++;
             layout.postDelayed(this, 10);
         }
     }
