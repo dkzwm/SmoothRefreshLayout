@@ -123,6 +123,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mNestedScrollInProgress = false;
     private boolean mNeedReLayout = false;
     private boolean mViewsZTreeNeedReset = true;
+    private boolean mNestedFling = false;
     private int mTwoTimesTouchSlop;
     private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
@@ -1369,12 +1370,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mNestedScrollInProgress) {
             mIndicator.onFingerUp();
         }
-        mNestedScrollInProgress = false;
         if (mIndicator.hasLeftStartPosition()) {
             onFingerUp(false);
         } else {
             notifyFingerUp();
         }
+        mNestedScrollInProgress = false;
+        mNestedFling = false;
         mTotalRefreshingUnconsumed = 0;
         mTotalRefreshingConsumed = 0;
         mTotalLoadMoreUnconsumed = 0;
@@ -1448,6 +1450,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onNestedPreFling(View target, float velocityX,
                                     float velocityY) {
+        mNestedFling = Math.abs(velocityY) > 200;
         if (mMode == MODE_OVER_SCROLL || isEnableOverScroll())
             mOverScrollChecker.updateVelocityY(-velocityY / 5, velocityY > 0 ? -1 : 1);
         return dispatchNestedPreFling(velocityX, velocityY);
@@ -1797,7 +1800,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 } else if (isLoadingMore() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                     mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
                             mDurationOfBackToFooterHeight);
-                } else {
+                } else if (mNestedScrollInProgress && mNestedFling) {
                     tryScrollBackToTopByPercentDuration(duration);
                 }
             } else {
@@ -1814,11 +1817,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         float percent;
         if (isMovingHeader()) {
             percent = mIndicator.getCurrentPercentOfHeader();
-            percent = percent > 1 ? 1 : percent;
+            percent = percent > 1 || percent < 0 ? 1 : percent;
             tryScrollBackToTop(duration > 0 ? duration : Math.round(mDurationToCloseHeader * percent));
         } else if (isMovingFooter()) {
             percent = mIndicator.getCurrentPercentOfFooter();
-            percent = percent > 1 ? 1 : percent;
+            percent = percent > 1 || percent < 0 ? 1 : percent;
             tryScrollBackToTop(duration > 0 ? duration : Math.round(mDurationToCloseFooter * percent));
         } else {
             tryScrollBackToTop(duration);
@@ -2497,7 +2500,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             mLastScrollDuration = Math.abs(Math.round(mVelocityY / 15));
             if (mDirection > 0) {
-                if (!layout.canChildScrollUp()) {
+                if (!layout.canChildScrollUp() && !layout.isLoadingMore()) {
                     layout.mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
                     layout.mScrollChecker.tryToScrollTo((int) mVelocityY / 20,
                             mLastScrollDuration);
@@ -2507,7 +2510,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     return;
                 }
             } else {
-                if (!layout.canChildScrollDown()) {
+                if (!layout.canChildScrollDown() && !layout.isRefreshing()) {
                     layout.mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
                     layout.mScrollChecker.tryToScrollTo((int) -(mVelocityY / 20),
                             mLastScrollDuration);
