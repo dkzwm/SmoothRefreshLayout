@@ -1603,6 +1603,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 } else {
                     mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, 0);
                 }
+                mOverScrollChecker.abortIfWorking();
                 mPreventForHorizontal = false;
                 mDealHorizontalMove = false;
                 super.dispatchTouchEvent(ev);
