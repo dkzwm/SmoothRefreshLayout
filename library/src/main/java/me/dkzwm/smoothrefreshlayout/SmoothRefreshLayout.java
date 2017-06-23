@@ -1261,7 +1261,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mPreventTopOverScroll = !canChildScrollUp();
         mPreventBottomOverScroll = !canChildScrollDown();
         if (!isEnableOverScroll() || (isEnablePinContentView() && !isEnableOverScroll())
-                || mOverScrollChecker.isScrolling() || isRefreshing() || isLoadingMore()) {
+                || mOverScrollChecker.isScrolling() || isRefreshing() || isLoadingMore()
+                || mNestedScrollInProgress) {
             return;
         }
         mOverScrollChecker.abortIfWorking();
@@ -1270,14 +1271,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public void onFling(MotionEvent pressed, MotionEvent current, float vx, float vy) {
         if (!isEnableOverScroll() || (isEnablePinContentView() && !isEnableOverScroll())
-                || isRefreshing() || isLoadingMore())
+                || isRefreshing() || isLoadingMore() || mNestedScrollInProgress)
             return;
         final int dy = (int) (current.getY() - pressed.getY());
         if ((dy < -mTwoTimesTouchSlop && mPreventBottomOverScroll)
                 || (dy > mTwoTimesTouchSlop && mPreventTopOverScroll)) {
-            if (!dispatchNestedPreFling(vx, vy)) {
-                dispatchNestedFling(vx, vy, false);
-            }
             return;
         }
         mOverScrollChecker.updateVelocityY(vy, dy);
@@ -1463,6 +1461,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onNestedPreFling(View target, float velocityX,
                                     float velocityY) {
+        if (mMode == MODE_OVER_SCROLL || isEnableOverScroll())
+            mOverScrollChecker.updateVelocityY(-velocityY / 5, velocityY > 0 ? -1 : 1);
         return dispatchNestedPreFling(velocityX, velocityY);
     }
 
