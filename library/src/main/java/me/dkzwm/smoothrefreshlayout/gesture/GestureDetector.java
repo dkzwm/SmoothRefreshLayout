@@ -38,7 +38,7 @@ public class GestureDetector implements IGestureDetector {
             case MotionEvent.ACTION_POINTER_UP:
                 // Check the dot product of current velocities.
                 // If the pointer that left was opposing another velocity vector, clear.
-                mVelocityTracker.computeCurrentVelocity(250, mMaximumFlingVelocity);
+                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                 final int upIndex = ev.getActionIndex();
                 final int id1 = ev.getPointerId(upIndex);
                 final float x1 = mVelocityTracker.getXVelocity(id1);
@@ -67,7 +67,7 @@ public class GestureDetector implements IGestureDetector {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 final int pointerId = ev.getPointerId(0);
-                mVelocityTracker.computeCurrentVelocity(250, mMaximumFlingVelocity);
+                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                 float vy = mVelocityTracker.getYVelocity(pointerId);
                 float vx=mVelocityTracker.getXVelocity(pointerId);
                 if ((Math.abs(vy) > mMinimumFlingVelocity)) {
