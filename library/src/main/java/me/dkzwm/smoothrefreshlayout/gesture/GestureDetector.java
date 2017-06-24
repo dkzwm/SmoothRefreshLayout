@@ -80,6 +80,11 @@ public class GestureDetector implements IGestureDetector {
     }
 
     @Override
+    public int getScaledMinimumFlingVelocity() {
+        return mMinimumFlingVelocity;
+    }
+
+    @Override
     public void onDetached() {
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
