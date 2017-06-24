@@ -69,6 +69,10 @@
         <activity
             android:name=".ui.TestQQActivityStyleActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".ui.TestNestedActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

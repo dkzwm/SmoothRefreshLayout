@@ -69,7 +69,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public static final byte SR_STATUS_COMPLETE = 5;
     //local
     private static final String TAG = "SmoothRefreshLayout";
-    private static final int OVER_SCROLL_MIN_VX = 50;
+    private static final int OVER_SCROLL_MIN_VX = 20;
     private static final byte FLAG_AUTO_REFRESH_AT_ONCE = 0x01;
     private static final byte FLAG_AUTO_REFRESH_BUT_LATER = 0x01 << 1;
     private static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
@@ -1521,6 +1521,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mScrollChecker != null) mScrollChecker.destroy();
             if (mOverScrollChecker != null) mOverScrollChecker.abortIfWorking();
         }
+        mGestureDetector.onDetached();
         removeCallbacks(mScrollChecker);
         removeCallbacks(mOverScrollChecker);
         if (mDelayToRefreshComplete != null)
@@ -1855,9 +1856,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
         // to keep the consistence with refresh, need to converse the deltaY
         if (!isEnablePinContentView() && mStatus == SR_STATUS_COMPLETE) {
-            if (mLoadMoreScrollCallback == null)
-                LoadMoreScrollCompat.scrollCompact(mContentView, deltaY);
-            else {
+            if (mLoadMoreScrollCallback == null) {
+                if (mLoadMoreScrollTargetView != null)
+                    LoadMoreScrollCompat.scrollCompact(mLoadMoreScrollTargetView, deltaY);
+                else
+                    LoadMoreScrollCompat.scrollCompact(mContentView, deltaY);
+            } else {
                 mLoadMoreScrollCallback.onScroll(mContentView, deltaY);
             }
         }
@@ -2032,10 +2036,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected boolean isMovingFooter() {
         return mIndicator.getMovingStatus() == IIndicator.MOVING_FOOTER;
-    }
-
-    protected boolean isOverScrolling() {
-        return mOverScrollChecker.isScrolling();
     }
 
     private boolean needScrollBackToTop() {
@@ -2475,16 +2475,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SmoothRefreshLayout layout = mLayoutWeakRf.get();
             layout.removeCallbacks(this);
             if (Math.abs(mVelocityY) <= OVER_SCROLL_MIN_VX || mScrolling
-                    || mDirection == 0 || mTimes > 200)
+                    || mDirection == 0 || mTimes > 150)
                 return;
             mScrolling = false;
             mNeedScrollBackToTop = false;
             if (mDirection > 0) {
-                mVelocityY -= Math.abs(mVelocityY) * 0.015f;
+                mVelocityY -= Math.abs(mVelocityY) * ViewConfiguration.getScrollFriction();
             } else {
-                mVelocityY += Math.abs(mVelocityY) * 0.015f;
+                mVelocityY += Math.abs(mVelocityY) * ViewConfiguration.getScrollFriction();
             }
-            mLastScrollDuration = Math.abs(Math.round(mVelocityY / 5));
+            mLastScrollDuration = Math.abs(Math.round(mVelocityY * .28f));
             if (mDirection > 0) {
                 if (!layout.canChildScrollUp() && !layout.isLoadingMore()) {
                     layout.mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
@@ -2507,7 +2507,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
             }
             mTimes++;
-            layout.postDelayed(this, 15);
+            layout.postDelayed(this, 10);
         }
     }
 

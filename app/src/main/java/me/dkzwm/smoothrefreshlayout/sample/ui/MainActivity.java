@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_test_QQ_activity_style:
                 startActivity(new Intent(MainActivity.this,TestQQActivityStyleActivity.class));
                 break;
+            case R.id.button_main_test_nested:
+                startActivity(new Intent(MainActivity.this,TestNestedActivity.class));
+                break;
         }
 
     }

@@ -69,9 +69,9 @@ public class GestureDetector implements IGestureDetector {
                 final int pointerId = ev.getPointerId(0);
                 mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                 float vy = mVelocityTracker.getYVelocity(pointerId);
-                float vx=mVelocityTracker.getXVelocity(pointerId);
-                if ((Math.abs(vy) > mMinimumFlingVelocity)) {
-                    mGestureListener.onFling(mDownEvent, ev,vx, vy);
+                float vx = mVelocityTracker.getXVelocity(pointerId);
+                if ((Math.abs(vy) > mMinimumFlingVelocity) && mDownEvent != null) {
+                    mGestureListener.onFling(mDownEvent, ev, vx, vy);
                 }
                 onDetached();
                 break;
