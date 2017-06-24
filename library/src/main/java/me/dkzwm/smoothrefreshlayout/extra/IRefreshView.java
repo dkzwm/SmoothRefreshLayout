@@ -1,7 +1,11 @@
 package me.dkzwm.smoothrefreshlayout.extra;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.view.View;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
@@ -43,4 +47,8 @@ public interface IRefreshView {
 
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
 
+    @IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
+    @Retention(RetentionPolicy.CLASS)
+    @interface RefreshViewType {
+    }
 }
