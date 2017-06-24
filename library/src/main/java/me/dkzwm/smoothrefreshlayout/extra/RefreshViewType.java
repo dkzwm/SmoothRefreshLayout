@@ -11,6 +11,6 @@ import java.lang.annotation.RetentionPolicy;
  * @author dkzwm
  */
 @IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
-@Retention(RetentionPolicy.SOURCE)
+@Retention(RetentionPolicy.CLASS)
 @interface RefreshViewType {
 }

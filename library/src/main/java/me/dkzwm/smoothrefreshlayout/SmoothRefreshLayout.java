@@ -2164,7 +2164,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @IntDef({MODE_NONE, MODE_REFRESH, MODE_LOAD_MORE, MODE_OVER_SCROLL, MODE_BOTH})
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(RetentionPolicy.CLASS)
     @interface Mode {
     }
 
