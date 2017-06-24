@@ -48,7 +48,7 @@ public interface IRefreshView {
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
 
     @IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
-    @Retention(RetentionPolicy.CLASS)
+    @Retention(RetentionPolicy.SOURCE)
     @interface RefreshViewType {
     }
 }
