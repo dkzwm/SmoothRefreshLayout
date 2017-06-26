@@ -4,35 +4,25 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 
+import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Handler mHandler = new Handler();
-    private SmoothRefreshLayout mRefreshLayout;
+    private MaterialSmoothRefreshLayout mRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
+        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
         //设置模式
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
-        //开启越界回弹效果
-        mRefreshLayout.setEnableOverScroll(true);
-        //开启黏贴固定被刷新视图
-        mRefreshLayout.setEnablePinContentView(true);
-        //刷新时保持刷新视图停在其视图高度等待刷新完成
-        mRefreshLayout.setEnableKeepRefreshView(true);
-        //设置刷新时黏贴属性
-        mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
-        //设置刷新完成后可立即开始下次刷新
-        mRefreshLayout.setEnabledNextPtrAtOnce(true);
+        mRefreshLayout.materialStyle();
         //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
@@ -47,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         //自动刷新
         mRefreshLayout.autoRefresh();
-
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);
         findViewById(R.id.button_main_with_gridView).setOnClickListener(this);
@@ -121,10 +110,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, TestTwoLevelRefreshActivity.class));
                 break;
             case R.id.button_main_test_QQ_activity_style:
-                startActivity(new Intent(MainActivity.this,TestQQActivityStyleActivity.class));
+                startActivity(new Intent(MainActivity.this, TestQQActivityStyleActivity.class));
                 break;
             case R.id.button_main_test_nested:
-                startActivity(new Intent(MainActivity.this,TestNestedActivity.class));
+                startActivity(new Intent(MainActivity.this, TestNestedActivity.class));
                 break;
         }
 

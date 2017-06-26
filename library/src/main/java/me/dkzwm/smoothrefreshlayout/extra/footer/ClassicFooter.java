@@ -130,7 +130,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mProgressBar.setVisibility(INVISIBLE);
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnablePullToRefresh()) {
+        if (frame.isEnabledPullToRefresh()) {
             mTitleTextView.setText(R.string.sr_pull_up_to_load);
         } else {
             mTitleTextView.setText(R.string.sr_pull_up);
@@ -207,7 +207,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     }
 
     private void crossRotateLineFromTopUnderTouch(SmoothRefreshLayout frame) {
-        if (!frame.isEnablePullToRefresh()) {
+        if (!frame.isEnabledPullToRefresh()) {
             mTitleTextView.setVisibility(VISIBLE);
             mTitleTextView.setText(R.string.sr_release_to_load);
         }
@@ -215,7 +215,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
 
     private void crossRotateLineFromBottomUnderTouch(SmoothRefreshLayout frame) {
         mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnablePullToRefresh()) {
+        if (frame.isEnabledPullToRefresh()) {
             mTitleTextView.setText(R.string.sr_pull_up_to_load);
         } else {
             mTitleTextView.setText(R.string.sr_pull_up);

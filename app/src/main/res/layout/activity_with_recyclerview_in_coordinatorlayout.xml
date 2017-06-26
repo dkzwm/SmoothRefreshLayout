@@ -48,6 +48,7 @@
         android:id="@+id/smoothRefreshLayout_with_recyclerView_in_coordinatorLayout_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView

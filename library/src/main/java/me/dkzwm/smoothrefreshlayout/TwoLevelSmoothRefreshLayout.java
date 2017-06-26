@@ -99,7 +99,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 && isEnabledNextPtrAtOnce()))) {
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
-            if (mIndicator.hasTouched() && !isAutoRefresh() && isEnablePullToRefresh()) {
+            if (mIndicator.hasTouched() && !isAutoRefresh() && isEnabledPullToRefresh()) {
                 if (isMovingHeader() && mTwoLevelIndicator.crossTwoLevelRefreshLine())
                     tryToPerformRefresh();
             }
@@ -126,7 +126,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (isEnableTwoLevelPullToRefresh() && mStatus == SR_STATUS_REFRESHING
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             final boolean atOnce = isEnableBackToStartPosAtOnce();
-            if (isEnableKeepRefreshView() && !atOnce)
+            if (isEnabledKeepRefreshView() && !atOnce)
                 tryScrollBackToHeaderHeight();
             else if (!atOnce)
                 tryScrollBackToTop(mDurationToCloseHeader);

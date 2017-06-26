@@ -32,14 +32,23 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         mMode = MODE_BOTH;
         mMaterialHeader = new MaterialHeader(getContext());
         mMaterialHeader.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
-                .GREEN,Color.BLACK});
+                .GREEN, Color.BLACK});
         mMaterialHeader.setPadding(0, PixelUtl.dp2px(getContext(), 25), 0,
                 PixelUtl.dp2px(getContext(), 20));
         setHeaderView(mMaterialHeader);
         mMaterialFooter = new MaterialFooter(getContext());
         setFooterView(mMaterialFooter);
+
+    }
+
+    public void materialStyle() {
         setRatioOfFooterHeightToRefresh(.95f);
         setCanMoveTheMaxRatioOfFooterHeight(1f);
+        setEnablePinContentView(true);
+        setEnableKeepRefreshView(true);
+        setEnablePinRefreshViewWhileLoading(true);
+        setEnableNextPtrAtOnce(true);
+        mMaterialHeader.doHookUIRefreshComplete(this);
     }
 
 }

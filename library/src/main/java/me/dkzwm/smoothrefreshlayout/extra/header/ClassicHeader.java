@@ -134,7 +134,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnablePullToRefresh()) {
+        if (frame.isEnabledPullToRefresh()) {
             mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
         } else {
             mTitleTextView.setText(R.string.sr_pull_down);
@@ -214,7 +214,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
 
     private void crossRotateLineFromTopUnderTouch(SmoothRefreshLayout frame) {
-        if (!frame.isEnablePullToRefresh()) {
+        if (!frame.isEnabledPullToRefresh()) {
             mTitleTextView.setVisibility(VISIBLE);
             mTitleTextView.setText(R.string.sr_release_to_refresh);
         }
@@ -222,7 +222,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
     private void crossRotateLineFromBottomUnderTouch(SmoothRefreshLayout frame) {
         mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnablePullToRefresh()) {
+        if (frame.isEnabledPullToRefresh()) {
             mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
         } else {
             mTitleTextView.setText(R.string.sr_pull_down);

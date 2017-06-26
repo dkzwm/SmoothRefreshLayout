@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+<me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_test_refresh_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,4 +22,4 @@
             android:textColor="#333333"
             android:textSize="25sp"/>
     </FrameLayout>
-</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+</me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout>

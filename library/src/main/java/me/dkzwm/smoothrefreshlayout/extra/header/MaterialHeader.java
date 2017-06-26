@@ -1,5 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.extra.header;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -20,8 +22,30 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
  */
 public class MaterialHeader extends View implements IRefreshView {
     private MaterialProgressDrawable mDrawable;
+    private boolean mHooked = false;
     private float mScale = 1f;
+    private int mCachedDuration = -1;
     private ValueAnimator mAnimator;
+    private SmoothRefreshLayout mRefreshLayout;
+    private SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack mHookUIRefreshCompleteCallBack
+            = new SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack() {
+        @Override
+        public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
+            if (mRefreshLayout != null && mRefreshLayout.isRefreshing() && mHooked) {
+                mAnimator.setDuration(320);
+                mAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mAnimator.removeListener(this);
+                        hook.onHookComplete();
+                    }
+                });
+                mAnimator.start();
+            } else {
+                hook.onHookComplete();
+            }
+        }
+    };
 
     public MaterialHeader(Context context) {
         this(context, null);
@@ -54,6 +78,12 @@ public class MaterialHeader extends View implements IRefreshView {
         super.onDetachedFromWindow();
         resetDrawable();
         cancelAnimator();
+    }
+
+    public void release() {
+        if (mHooked)
+            mRefreshLayout.setOnHookUIRefreshCompleteCallback(null);
+        mHooked = false;
     }
 
     @Override
@@ -94,6 +124,11 @@ public class MaterialHeader extends View implements IRefreshView {
         canvas.restoreToCount(saveCount);
     }
 
+    public void doHookUIRefreshComplete(SmoothRefreshLayout layout) {
+        mHooked = true;
+        mRefreshLayout = layout;
+        layout.setOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
+    }
 
     @Override
     public int getType() {
@@ -106,7 +141,6 @@ public class MaterialHeader extends View implements IRefreshView {
         return this;
     }
 
-
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
     }
@@ -114,6 +148,10 @@ public class MaterialHeader extends View implements IRefreshView {
     @Override
     public void onReset(SmoothRefreshLayout layout) {
         resetDrawable();
+        if (mHooked && mCachedDuration != -1) {
+            layout.setDurationToCloseHeader(mCachedDuration);
+        }
+        mCachedDuration = -1;
     }
 
     @Override
@@ -121,7 +159,6 @@ public class MaterialHeader extends View implements IRefreshView {
         resetDrawable();
         cancelAnimator();
     }
-
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
@@ -131,6 +168,11 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout layout) {
+        if (mHooked) {
+            mCachedDuration = layout.getDurationToCloseHeader();
+            layout.setDurationToCloseHeader(0);
+            return;
+        }
         long duration = layout.getDurationToCloseHeader();
         mAnimator.setDuration(duration);
         mAnimator.start();
@@ -138,13 +180,14 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        float percent = Math.min(1f, indicator.getCurrentPercentOfHeader());
+        float percent = Math.min(1, indicator.getCurrentPercentOfHeader());
+        float alphaPercent = Math.min(1, percent * percent * percent);
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
-            mDrawable.setAlpha((int) (255 * percent));
+            mDrawable.setAlpha((int) (255 * alphaPercent));
             mDrawable.showArrow(true);
             float strokeStart = ((percent) * .8f);
             mDrawable.setStartEndTrim(0f, Math.min(0.8f, strokeStart));
-            mDrawable.setArrowScale(Math.min(1f, percent));
+            mDrawable.setArrowScale(percent);
             float rotation = (-0.25f + .4f * percent + percent * 2) * .5f;
             mDrawable.setProgressRotation(rotation);
             invalidate();

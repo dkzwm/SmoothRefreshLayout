@@ -28,6 +28,7 @@ import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
  * @author dkzwm
  */
 public class TestNestedActivity extends AppCompatActivity {
+    int mMinOffset;
     private SmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private AppBarLayout mAppBarLayout;
@@ -40,7 +41,7 @@ public class TestNestedActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_nested);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,30 +89,30 @@ public class TestNestedActivity extends AppCompatActivity {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 mOffset = verticalOffset;
+                mMinOffset = Math.min(mMinOffset, mOffset);
             }
         });
         mRefreshLayout.setOnChildScrollUpCallback(new SmoothRefreshLayout.OnChildScrollUpCallback() {
             @Override
             public boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
-                return mOffset != 0 ||ScrollCompat.canChildScrollUp(mRecyclerView);
+                return parent.isInStartPosition() && (mOffset != 0 || ScrollCompat.canChildScrollUp(mRecyclerView));
             }
         });
         mRefreshLayout.setOnChildScrollDownCallback(new SmoothRefreshLayout.OnChildScrollDownCallback() {
             @Override
             public boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
-                return ScrollCompat.canChildScrollDown(mRecyclerView);
+                return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });
         mRefreshLayout.setLoadMoreScrollTargetView(mRecyclerView);
         mRefreshLayout.setOnLoadMoreScrollCallback(new SmoothRefreshLayout.OnLoadMoreScrollCallback() {
             @Override
             public boolean onScroll(View content, float deltaY) {
-                LoadMoreScrollCompat.scrollCompact(mRecyclerView,deltaY);
+                LoadMoreScrollCompat.scrollCompact(mRecyclerView, deltaY);
                 return true;
             }
         });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
