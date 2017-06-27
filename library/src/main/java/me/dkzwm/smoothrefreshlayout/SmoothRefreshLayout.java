@@ -1391,7 +1391,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
-        boolean isConsumed = false;
         if (dy > 0 && mTotalRefreshingUnconsumed >= 0
                 && !isDisabledRefresh()
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing())
@@ -1406,7 +1405,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mIndicator.getLastMovePoint()[1] - dy);
                 moveHeaderPos(mIndicator.getOffsetY());
                 consumed[1] = dy;
-                isConsumed = true;
             } else if (mTotalRefreshingUnconsumed != 0) {
                 mTotalRefreshingUnconsumed -= dy;
 
@@ -1417,13 +1415,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mIndicator.getLastMovePoint()[1] - dy);
                 moveHeaderPos(mIndicator.getOffsetY());
                 consumed[1] = dy;
-                isConsumed = true;
             } else if (!mIndicator.isInStartPosition()) {
                 mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                         mIndicator.getLastMovePoint()[1] - dy);
                 moveHeaderPos(mIndicator.getOffsetY());
                 consumed[1] = dy;
-                isConsumed = true;
             }
         }
         if (dy < 0 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
@@ -1440,7 +1436,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mIndicator.getLastMovePoint()[1] + Math.abs(dy));
                 moveFooterPos(mIndicator.getOffsetY());
                 consumed[1] = dy;
-                isConsumed = true;
             } else if (mTotalLoadMoreUnconsumed != 0) {
                 mTotalLoadMoreUnconsumed += dy;
                 if (mTotalLoadMoreUnconsumed <= 0) {//over
@@ -1450,25 +1445,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mIndicator.getLastMovePoint()[1] + Math.abs(dy));
                 moveFooterPos(mIndicator.getOffsetY());
                 consumed[1] = dy;
-                isConsumed = true;
             } else if (!mIndicator.isInStartPosition() && isMovingFooter()) {
                 mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                         mIndicator.getLastMovePoint()[1] + Math.abs(dy));
                 moveFooterPos(mIndicator.getOffsetY());
                 consumed[1] = dy;
-                isConsumed = true;
             }
         }
-        //When on loading, the finger is pressed and moved needs to be consumed
-        if (!isConsumed && dy > 0 && isMovingFooter() && mTotalLoadMoreUnconsumed == 0
-                && !mIndicator.isInStartPosition()) {
-            float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-            if (distance <= 0 || mIndicator.getCurrentPosY() < distance) {
-                mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
-                        mIndicator.getLastMovePoint()[1] - dy);
-                moveFooterPos(mIndicator.getOffsetY());
-            }
-            consumed[1] = dy;
+        if (isMovingFooter() && mIndicator.hasLeftStartPosition()
+                && mStatus == SR_STATUS_COMPLETE) {
+            mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, 0);
         }
         // Now let our nested parent consume the leftovers
         final int[] parentConsumed = mParentScrollConsumed;
