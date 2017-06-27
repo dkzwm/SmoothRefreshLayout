@@ -164,28 +164,28 @@ Use `app:sr_mode` to set the mode, default is `none`.
 ````
 * Config in code
 ````
-mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-mRefreshLayout.setEnableOverScroll(true);
-mRefreshLayout.setEnablePinContentView(false);
-mRefreshLayout.setEnablePullToRefresh(false);
-mRefreshLayout.setEnableKeepRefreshView(true);
-mRefreshLayout.setDurationToClose(1000);
-mRefreshLayout.setDurationToBackHeader(300);
-mRefreshLayout.setDurationToBackFooter(300);
-mRefreshLayout.setDurationToCloseHeader(1000);
-mRefreshLayout.setDurationToBackFooter(1000);
-mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(2);
-mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(2);
-mRefreshLayout.setCanMoveTheMaxRatioOfFooterHeight(2);
-mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1.5f);
-mRefreshLayout.setRatioOfHeaderHeightToRefresh(1.5f);
-mRefreshLayout.setRatioOfFooterHeightToRefresh(1.5f);
-mRefreshLayout.setResistance(1.7f);
-mRefreshLayout.setResistanceOfPullUp(1.7f);
-mRefreshLayout.setResistanceOfPullDown(1.7f);
+mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);    
+mRefreshLayout.setEnableOverScroll(true);    
+mRefreshLayout.setEnablePinContentView(false);    
+mRefreshLayout.setEnablePullToRefresh(false);    
+mRefreshLayout.setEnableKeepRefreshView(true);    
+mRefreshLayout.setDurationOfBackToHeaderHeight(300);    
+mRefreshLayout.setDurationOfBackToFooterHeight(300);    
+mRefreshLayout.setDurationToClose(1000);    
+mRefreshLayout.setDurationToCloseHeader(1000);    
+mRefreshLayout.setDurationToCloseFooter(1000);    
+mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(2);    
+mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(2);    
+mRefreshLayout.setCanMoveTheMaxRatioOfFooterHeight(2);    
+mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1.5f);    
+mRefreshLayout.setRatioOfHeaderHeightToRefresh(1.5f);    
+mRefreshLayout.setRatioOfFooterHeightToRefresh(1.5f);    
+mRefreshLayout.setResistance(1.7f);    
+mRefreshLayout.setResistanceOfPullUp(1.7f);    
+mRefreshLayout.setResistanceOfPullDown(1.7f);    
 ````
 * Other config:    
-`setEnablePinRefreshViewWhileLoading(boolean enable)` this method can only be enabled if setEnablePinContentView and setEnableKeepRefreshView are set be true, material style need set this.    
+`setEnablePinRefreshViewWhileLoading(boolean enable)` this method can only be enabled if setEnablePinContentView and setEnableKeepRefreshView are set be true, materialStyle need set this.    
 `setFooterView(IRefreshView footer)` set the footer.    
 `setHeaderView(IRefreshView header)` set the header.   
 `setContentView(View content)` set the content.

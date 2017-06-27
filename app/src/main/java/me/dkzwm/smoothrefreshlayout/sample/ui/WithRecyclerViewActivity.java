@@ -8,13 +8,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.List;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
-import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
@@ -46,6 +43,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(1);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {

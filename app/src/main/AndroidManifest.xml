@@ -47,7 +47,9 @@
         <activity
             android:name=".ui.TestOverScrollActivity"
             android:screenOrientation="portrait"/>
-
+        <activity
+            android:name=".ui.TestQQWebStyleActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.TestTwoLevelRefreshActivity"
             android:screenOrientation="portrait"/>
@@ -71,8 +73,8 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.TestNestedActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

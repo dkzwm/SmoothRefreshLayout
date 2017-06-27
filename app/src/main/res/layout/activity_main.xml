@@ -129,10 +129,18 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/test_qq_activity_style"/>
+
+            <Button
+                android:id="@+id/button_main_test_QQ_web_style"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/test_qq_web_style"/>
         </LinearLayout>
     </ScrollView>
 
     <ImageView
+        android:id="@+id/imageView_main_bottom_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="24dp"

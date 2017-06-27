@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.sample.BuildConfig;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         //自动刷新
         mRefreshLayout.autoRefresh();
+        findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);
         findViewById(R.id.button_main_with_gridView).setOnClickListener(this);
@@ -56,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_over_scroll).setOnClickListener(this);
         findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_activity_style).setOnClickListener(this);
+        findViewById(R.id.button_main_test_QQ_web_style).setOnClickListener(this);
     }
 
     @Override
@@ -114,6 +118,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_nested:
                 startActivity(new Intent(MainActivity.this, TestNestedActivity.class));
+                break;
+            case R.id.button_main_test_QQ_web_style:
+                startActivity(new Intent(MainActivity.this, TestQQWebStyleActivity.class));
+                break;
+            case R.id.imageView_main_bottom_icon:
+                Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,
+                        Toast.LENGTH_SHORT).show();
                 break;
         }
 

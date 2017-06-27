@@ -161,25 +161,25 @@ Xml 属性:
 ````
 * 在代码中配置    
 ````
-mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-mRefreshLayout.setEnableOverScroll(true);
-mRefreshLayout.setEnablePinContentView(false);
-mRefreshLayout.setEnablePullToRefresh(false);
-mRefreshLayout.setEnableKeepRefreshView(true);
-mRefreshLayout.setDurationToClose(1000);
-mRefreshLayout.setDurationToBackHeader(300);
-mRefreshLayout.setDurationToBackFooter(300);
-mRefreshLayout.setDurationToCloseHeader(1000);
-mRefreshLayout.setDurationToBackFooter(1000);
-mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(2);
-mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(2);
-mRefreshLayout.setCanMoveTheMaxRatioOfFooterHeight(2);
-mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1.5f);
-mRefreshLayout.setRatioOfHeaderHeightToRefresh(1.5f);
-mRefreshLayout.setRatioOfFooterHeightToRefresh(1.5f);
-mRefreshLayout.setResistance(1.7f);
-mRefreshLayout.setResistanceOfPullUp(1.7f);
-mRefreshLayout.setResistanceOfPullDown(1.7f);
+mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);    
+mRefreshLayout.setEnableOverScroll(true);    
+mRefreshLayout.setEnablePinContentView(false);    
+mRefreshLayout.setEnablePullToRefresh(false);    
+mRefreshLayout.setEnableKeepRefreshView(true);    
+mRefreshLayout.setDurationOfBackToHeaderHeight(300);    
+mRefreshLayout.setDurationOfBackToFooterHeight(300);    
+mRefreshLayout.setDurationToClose(1000);    
+mRefreshLayout.setDurationToCloseHeader(1000);    
+mRefreshLayout.setDurationToCloseFooter(1000);    
+mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(2);    
+mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(2);    
+mRefreshLayout.setCanMoveTheMaxRatioOfFooterHeight(2);    
+mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1.5f);    
+mRefreshLayout.setRatioOfHeaderHeightToRefresh(1.5f);    
+mRefreshLayout.setRatioOfFooterHeightToRefresh(1.5f);    
+mRefreshLayout.setResistance(1.7f);    
+mRefreshLayout.setResistanceOfPullUp(1.7f);    
+mRefreshLayout.setResistanceOfPullDown(1.7f);    
 ````
 * 其他设置项:        
 `setEnablePinRefreshViewWhileLoading(boolean enable)` 设置刷新时固定住刷新视图不响应滑动，即Material风格。设置前提是开启了固定内容视图和保持刷新视图2个选项，否则运行时会抛出异常。     

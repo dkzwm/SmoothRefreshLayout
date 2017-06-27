@@ -15,14 +15,35 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <View
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="800dp"
-                android:background="@android:color/darker_gray"/>
+                android:layout_height="500dp"
+                android:background="#ff99cc00"
+                android:gravity="center"
+                android:text="Green"
+                android:textColor="@android:color/white"
+                android:textSize="42sp"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:background="#ffff8800"
+                android:gravity="center"
+                android:text="Orange"
+                android:textColor="@android:color/white"
+                android:textSize="42sp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:background="#ffff4444"
+                android:gravity="center"
+                android:text="Red"
+                android:textColor="@android:color/white"
+                android:textSize="42sp"/>
         </LinearLayout>
     </ScrollView>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

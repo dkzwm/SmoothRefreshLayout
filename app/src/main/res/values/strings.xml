@@ -28,5 +28,7 @@
     <string name="brush_a_brush">Brush a brush</string>
     <string name="normal_style">Normal style</string>
     <string name="activity_style">Activity style</string>
+    <string name="current_version">Current version:</string>
+    <string name="test_qq_web_style">Test QQ web style</string>
 
 </resources>

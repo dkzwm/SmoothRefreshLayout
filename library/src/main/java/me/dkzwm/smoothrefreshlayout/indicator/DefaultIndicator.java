@@ -47,7 +47,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getResistanceOfPull() {
+    public float getResistanceOfPullUp() {
         return mResistanceFooter;
     }
 
@@ -216,7 +216,7 @@ public class DefaultIndicator implements IIndicator {
         mOffsetToRefresh = indicator.getOffsetToRefresh();
         mOffsetToLoadMore = indicator.getOffsetToLoadMore();
         mResistanceHeader = indicator.getResistanceOfPullDown();
-        mResistanceFooter = indicator.getResistanceOfPull();
+        mResistanceFooter = indicator.getResistanceOfPullUp();
     }
 
     @Override
@@ -286,7 +286,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public int getOffsetToKeepHeaderWhileLoading() {
-        return (int)(mOffsetRatioToKeepHeaderWhileLoading * mHeaderHeight);
+        return (int) (mOffsetRatioToKeepHeaderWhileLoading * mHeaderHeight);
     }
 
     @Override
@@ -296,7 +296,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public int getOffsetToKeepFooterWhileLoading() {
-        return (int)(mOffsetRatioToKeepFooterWhileLoading * mFooterHeight);
+        return (int) (mOffsetRatioToKeepFooterWhileLoading * mFooterHeight);
     }
 
     @Override
@@ -311,22 +311,22 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public float getLastPercentOfHeader() {
-        return mHeaderHeight == 0 ? 0 : mLastPos * 1f / mHeaderHeight;
+        return mHeaderHeight <= 0 ? 0 : mLastPos * 1f / mHeaderHeight;
     }
 
     @Override
     public float getCurrentPercentOfHeader() {
-        return mHeaderHeight == 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
+        return mHeaderHeight <= 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
     }
 
     @Override
     public float getLastPercentOfFooter() {
-        return mFooterHeight == 0 ? 0 : mLastPos * 1f / mFooterHeight;
+        return mFooterHeight <= 0 ? 0 : mLastPos * 1f / mFooterHeight;
     }
 
     @Override
     public float getCurrentPercentOfFooter() {
-        return mFooterHeight == 0 ? 0 : mCurrentPos * 1f / mFooterHeight;
+        return mFooterHeight <= 0 ? 0 : mCurrentPos * 1f / mFooterHeight;
     }
 
     @Override

@@ -27,4 +27,6 @@
     <string name="brush_a_brush">刷一刷</string>
     <string name="normal_style">正常刷新</string>
     <string name="activity_style">做活动</string>
+    <string name="current_version">当前版本:</string>
+    <string name="test_qq_web_style">测试QQ网页样式</string>
 </resources>

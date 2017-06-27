@@ -157,7 +157,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mIndicator.setResistanceOfPullDown(arr.getFloat(R.styleable
                     .SmoothRefreshLayout_sr_resistance_of_pull_down, mIndicator.getResistanceOfPullDown()));
             mIndicator.setResistanceOfPullUp(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistance_of_pull_up, mIndicator.getResistanceOfPull()));
+                    .SmoothRefreshLayout_sr_resistance_of_pull_up, mIndicator.getResistanceOfPullUp()));
 
             mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
                             .SmoothRefreshLayout_sr_duration_of_back_to_refresh_height,
@@ -1170,6 +1170,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFlag = mFlag | FLAG_ENABLE_KEEP_REFRESH_VIEW;
         } else {
             mFlag = mFlag & ~FLAG_ENABLE_KEEP_REFRESH_VIEW;
+            setEnablePinRefreshViewWhileLoading(false);
         }
     }
 
@@ -1220,6 +1221,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFlag = mFlag | FLAG_ENABLE_PIN_CONTENT_VIEW;
         } else {
             mFlag = mFlag & ~FLAG_ENABLE_PIN_CONTENT_VIEW;
+            setEnablePinRefreshViewWhileLoading(false);
         }
     }
 
@@ -1391,11 +1393,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
         if (dy > 0 && mTotalRefreshingUnconsumed >= 0
                 && !isDisabledRefresh()
+                && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing())
                 && !mScrollChecker.mIsRunning
                 && (mMode == MODE_BOTH || mMode == MODE_REFRESH)
                 && (isMovingHeader() || isMovingContent() && mTotalRefreshingUnconsumed == 0)) {
             if (mTotalRefreshingUnconsumed == 0 && mStatus == SR_STATUS_REFRESHING
-                    && mTotalRefreshingConsumed / mIndicator.getResistanceOfPull()
+                    && mTotalRefreshingConsumed / mIndicator.getResistanceOfPullUp()
                     < mIndicator.getHeaderHeight()) {
                 mTotalRefreshingConsumed += dy;
                 mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
@@ -1421,6 +1424,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (dy < 0 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
                 && !isDisabledLoadMore()
+                && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore())
                 && !mScrollChecker.mIsRunning
                 && mTotalLoadMoreUnconsumed >= 0) {
             if (mStatus == SR_STATUS_LOADING_MORE && mTotalLoadMoreUnconsumed == 0
@@ -1492,13 +1496,21 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         if (dy < 0 && !isDisabledRefresh() && !canChildScrollUp()
-                && (isMovingHeader() || isMovingContent())) {
+                && (isMovingHeader() || isMovingContent())
+                && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing())) {
+            float distance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+            if (distance > 0 && mIndicator.getCurrentPosY() >= distance)
+                return;
             mTotalRefreshingUnconsumed += Math.abs(dy);
             mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                     mIndicator.getLastMovePoint()[1] + Math.abs(dy));
             moveHeaderPos(mIndicator.getOffsetY());
         } else if (dy > 0 && !isDisabledLoadMore() && !canChildScrollDown()
-                && (isMovingFooter() || mTotalLoadMoreUnconsumed == 0 && isMovingContent())) {
+                && (isMovingFooter() || mTotalLoadMoreUnconsumed == 0 && isMovingContent())
+                && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore())) {
+            float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
+            if (distance > 0 && mIndicator.getCurrentPosY() >= distance)
+                return;
             mTotalLoadMoreUnconsumed += dy;
             mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                     mIndicator.getLastMovePoint()[1] - dy);
@@ -1863,14 +1875,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && needCheckPos() && mStatus != SR_STATUS_COMPLETE
                 && !isRefreshing() && !isLoadingMore()) {
             if (isMovingHeader() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
-                if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
+                if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())
+                        || isDisabledPerformRefresh()) {
                     onRelease(0);
                     return;
                 }
                 mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
                         mDurationOfBackToHeaderHeight);
             } else if (isMovingFooter() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
-                if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
+                if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())
+                        || isDisabledPerformLoadMore()) {
                     onRelease(0);
                     return;
                 }
