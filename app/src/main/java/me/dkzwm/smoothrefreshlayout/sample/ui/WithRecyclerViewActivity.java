@@ -11,7 +11,9 @@ import android.view.MenuItem;
 
 import java.util.List;
 
+import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
@@ -22,7 +24,7 @@ import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
  * @author dkzwm
  */
 public class WithRecyclerViewActivity extends AppCompatActivity {
-    private SmoothRefreshLayout mRefreshLayout;
+    private MaterialSmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
     private Handler mHandler = new Handler();
@@ -40,10 +42,8 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-        mRefreshLayout.setEnableKeepRefreshView(true);
-        mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(1);
+        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
+        mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -70,6 +70,17 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
             }
         });
         mRefreshLayout.autoRefresh(false);
+        mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
+            @Override
+            public void onChanged(byte status, IIndicator indicator) {
+                if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
+                    mRefreshLayout.setEnablePinContentView(false);
+                } else {
+                    mRefreshLayout.setEnablePinContentView(true);
+                    mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
+                }
+            }
+        });
     }
 
 

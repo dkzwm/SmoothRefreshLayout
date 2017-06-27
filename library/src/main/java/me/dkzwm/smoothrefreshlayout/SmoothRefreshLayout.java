@@ -15,6 +15,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -122,7 +123,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mPreventBottomOverScroll = false;
     private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
-    private boolean mHasLastRefreshSuccessful = true;
+    private boolean mIsLastRefreshSuccessful = true;
     private boolean mNestedScrollInProgress = false;
     private boolean mNeedReLayout = false;
     private boolean mViewsZTreeNeedReset = true;
@@ -630,7 +631,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     public boolean isRefreshSuccessful() {
-        return mHasLastRefreshSuccessful;
+        return mIsLastRefreshSuccessful;
     }
 
     /**
@@ -641,7 +642,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     final public void refreshComplete(boolean isSuccessful) {
-        mHasLastRefreshSuccessful = isSuccessful;
+        mIsLastRefreshSuccessful = isSuccessful;
         long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
         if (delay <= 0) {
             performRefreshComplete(true);
@@ -1223,6 +1224,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFlag = mFlag & ~FLAG_ENABLE_PIN_CONTENT_VIEW;
             setEnablePinRefreshViewWhileLoading(false);
         }
+        Log.d(getClass().getSimpleName(), "-----------------:" + mFlag);
     }
 
     /**
@@ -1855,10 +1857,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         super.dispatchTouchEvent(e);
     }
 
-    private void moveHeaderPos(float deltaY) {
-        mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
-        movePos(deltaY);
-    }
 
     private void notifyFingerUp() {
         if (isMovingHeader() && mHeaderView != null && needCheckPos()) {
@@ -1971,10 +1969,21 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         tryToNotifyReset();
     }
 
+
+    private void moveHeaderPos(float deltaY) {
+        mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
+        // to keep the consistence with refresh, need to converse the deltaY
+        movePos(deltaY);
+    }
+
     private void moveFooterPos(float deltaY) {
         mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
-        // to keep the consistence with refresh, need to converse the deltaY
-        if (!isEnabledPinContentView() && mStatus == SR_STATUS_COMPLETE) {
+        //check if it is needed to compatible scroll
+        if (!isEnabledPinContentView() && mIsLastRefreshSuccessful
+                && (mStatus == SR_STATUS_COMPLETE
+                || (isEnabledNextPtrAtOnce() && mStatus == SR_STATUS_PREPARE
+                && !mOverScrollChecker.isScrolling()
+                && !mIndicator.hasTouched()))) {
             if (mLoadMoreScrollCallback == null) {
                 if (mLoadMoreScrollTargetView != null)
                     LoadMoreScrollCompat.scrollCompact(mLoadMoreScrollTargetView, deltaY);
@@ -1984,6 +1993,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mLoadMoreScrollCallback.onScroll(mContentView, deltaY);
             }
         }
+        // to keep the consistence with refresh, need to converse the deltaY
         movePos(-deltaY);
     }
 
@@ -2071,6 +2081,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     tryToPerformRefresh();
             }
         }
+        if (mUIPositionChangedListener != null) {
+            mUIPositionChangedListener.onChanged(mStatus, mIndicator);
+        }
         boolean materialStyleInOverScrolling = (isEnabledPinContentView() && isEnabledOverScroll()
                 && mOverScrollChecker.isScrolling());
         //check mode
@@ -2130,9 +2143,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 invalidate();
                 break;
-        }
-        if (mUIPositionChangedListener != null) {
-            mUIPositionChangedListener.onChanged(mStatus, mIndicator);
         }
     }
 

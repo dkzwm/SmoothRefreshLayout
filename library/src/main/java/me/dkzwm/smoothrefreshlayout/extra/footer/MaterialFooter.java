@@ -59,7 +59,6 @@ public class MaterialFooter extends FrameLayout implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        mProgress.setProgress(0);
         mProgress.stopSpinning();
     }
 

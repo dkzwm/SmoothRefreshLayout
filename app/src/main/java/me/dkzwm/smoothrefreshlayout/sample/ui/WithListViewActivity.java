@@ -14,6 +14,7 @@ import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
+import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.ListViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
