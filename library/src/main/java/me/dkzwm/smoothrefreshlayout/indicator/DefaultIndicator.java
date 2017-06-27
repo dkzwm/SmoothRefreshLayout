@@ -261,7 +261,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public boolean crossRefreshLineFromBottomToTop() {
-        return mLastPos < getOffsetToLoadMore() && mLastPos >= getOffsetToLoadMore();
+        return mLastPos < getOffsetToLoadMore() && mCurrentPos >= getOffsetToLoadMore();
     }
 
     @Override
@@ -393,7 +393,7 @@ public class DefaultIndicator implements IIndicator {
 
     private void updateHeight() {
         mOffsetToRefresh = (int) (mRatioOfHeaderHeightToRefresh * mHeaderHeight);
-        mOffsetToLoadMore = (int) (mRatioOfHeaderHeightToRefresh * mFooterHeight);
+        mOffsetToLoadMore = (int) (mRatioOfFooterHeightToLoadMore * mFooterHeight);
     }
 
     private void processOnMove(float offsetY) {
