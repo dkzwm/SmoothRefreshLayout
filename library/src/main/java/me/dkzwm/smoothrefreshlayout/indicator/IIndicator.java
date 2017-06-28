@@ -91,6 +91,7 @@ public interface IIndicator {
     boolean hasJustBackToStartPosition();
 
     boolean isOverOffsetToRefresh();
+
     boolean isOverOffsetToLoadMore();
 
     boolean hasMovedAfterPressedDown();

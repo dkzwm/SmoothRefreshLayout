@@ -38,6 +38,7 @@ public class WithWebViewActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
@@ -12,10 +13,12 @@ import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.sample.BuildConfig;
 import me.dkzwm.smoothrefreshlayout.sample.R;
+import me.dkzwm.smoothrefreshlayout.utils.SRLog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Handler mHandler = new Handler();
     private MaterialSmoothRefreshLayout mRefreshLayout;
+    private Button mButtonDebug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置模式
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mRefreshLayout.materialStyle();
+        mRefreshLayout.setEnablePinContentView(false);
+        mRefreshLayout.setOnHookUIRefreshCompleteCallback(null);
+        mRefreshLayout.setDurationToCloseHeader(500);
         //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
@@ -60,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_activity_style).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_web_style).setOnClickListener(this);
+        mButtonDebug = (Button) findViewById(R.id.button_main_debug);
+        mButtonDebug.setOnClickListener(this);
     }
 
     @Override
@@ -125,6 +133,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.imageView_main_bottom_icon:
                 Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,
                         Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.button_main_debug:
+                SmoothRefreshLayout.debug(!SmoothRefreshLayout.isDebug());
+                if (SmoothRefreshLayout.isDebug()) {
+                    SRLog.setLevel(SRLog.LEVEL_VERBOSE);
+                    mButtonDebug.setText(R.string.debug_off);
+                } else {
+                    SRLog.setLevel(SRLog.LEVEL_WARNING);
+                    mButtonDebug.setText(R.string.debug_on);
+                }
                 break;
         }
 

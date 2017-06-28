@@ -2,8 +2,10 @@ package me.dkzwm.smoothrefreshlayout;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.extra.footer.MaterialFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
@@ -50,5 +52,4 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setEnableNextPtrAtOnce(true);
         mMaterialHeader.doHookUIRefreshComplete(this);
     }
-
 }

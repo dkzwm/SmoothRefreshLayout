@@ -16,6 +16,7 @@ import java.util.List;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
+import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
@@ -110,6 +111,17 @@ public class TestNestedActivity extends AppCompatActivity {
             public boolean onScroll(View content, float deltaY) {
                 LoadMoreScrollCompat.scrollCompact(mRecyclerView, deltaY);
                 return true;
+            }
+        });
+        mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
+            @Override
+            public void onChanged(byte status, IIndicator indicator) {
+                if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
+                    mRefreshLayout.setEnablePinContentView(false);
+                } else {
+                    mRefreshLayout.setEnablePinContentView(true);
+                    mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
+                }
             }
         });
     }

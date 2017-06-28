@@ -147,4 +147,12 @@
         android:src="@mipmap/ic_launcher_round"
         app:sr_layout_gravity="bottom|end"/>
 
+    <Button
+        android:id="@+id/button_main_debug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:text="@string/debug_on"
+        android:textSize="12sp"
+        app:sr_layout_gravity="end"/>
 </me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout>

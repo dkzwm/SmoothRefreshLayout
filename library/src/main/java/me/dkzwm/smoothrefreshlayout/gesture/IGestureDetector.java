@@ -9,8 +9,5 @@ import android.view.MotionEvent;
  */
 public interface IGestureDetector {
     void onTouchEvent(MotionEvent ev);
-
-    int getScaledMinimumFlingVelocity();
-
     void onDetached();
 }

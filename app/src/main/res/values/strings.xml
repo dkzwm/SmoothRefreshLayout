@@ -30,5 +30,7 @@
     <string name="activity_style">Activity style</string>
     <string name="current_version">Current version:</string>
     <string name="test_qq_web_style">Test QQ web style</string>
+    <string name="debug_on">Debug: on</string>
+    <string name="debug_off">Debug: off</string>
 
 </resources>

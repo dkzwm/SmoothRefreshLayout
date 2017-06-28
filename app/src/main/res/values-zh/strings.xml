@@ -29,4 +29,6 @@
     <string name="activity_style">做活动</string>
     <string name="current_version">当前版本:</string>
     <string name="test_qq_web_style">测试QQ网页样式</string>
+    <string name="debug_on">Debug: 开</string>
+    <string name="debug_off">Debug: 关</string>
 </resources>
