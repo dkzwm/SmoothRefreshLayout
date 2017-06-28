@@ -80,8 +80,10 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     public void release() {
-        if (mRefreshLayout.equalsOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack))
-            mRefreshLayout.setOnHookUIRefreshCompleteCallback(null);
+        if (mRefreshLayout!=null) {
+            if (mRefreshLayout.equalsOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack))
+                mRefreshLayout.setOnHookUIRefreshCompleteCallback(null);
+        }
     }
 
     @Override
