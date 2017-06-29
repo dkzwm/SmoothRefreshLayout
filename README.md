@@ -16,18 +16,22 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
  5.Support DrawerStyle;    
  
 ## Snapshot
+* Test QQBrowserStyle , newly added!
+	<div class='row'>
+		<img src='snapshot/test_qq_web_browser_style.gif' width="300px"/>
+	</div>
 * Test drawerStyle , newly added!
-   <div class='row'>
-       <img src='snapshot/test_qq_style.gif' width="300px"/>
-   </div>
+	<div class='row'>
+		<img src='snapshot/test_qq_style.gif' width="300px"/>
+	</div>
 * Test two-level refresh , newly added !     
-   <div class='row'>
-       <img src='snapshot/test_two_level_refresh.gif' width="300px"/>
-   </div>
+	<div class='row'>
+		<img src='snapshot/test_two_level_refresh.gif' width="300px"/>
+	</div>
 * With frameLayout    
-   <div class='row'>
-       <img src='snapshot/with_frameLayout.gif' width="300px"/>
-   </div>
+	<div class='row'>
+		<img src='snapshot/with_frameLayout.gif' width="300px"/>
+	</div>
 * With textView     
 	<div class='row'>
     	<img src='snapshot/with_textView.gif' width="300px"/>
@@ -42,7 +46,7 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 	</div>
 * With recyclerView    
 	<div class='row'> 
-   		<img src='snapshot/with_recyclerView.gif' width="300px"/>
+		<img src='snapshot/with_recyclerView.gif' width="300px"/>
 	</div>
 * With viewPager    
 	<div class='row'> 
@@ -60,7 +64,10 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 	<div class='row'> 
     	<img src='snapshot/test_overScroll.gif' width="300px"/>
 	</div>
-
+* Test nestedScroll   
+	<div class='row'> 
+	   	<img src='snapshot/test_nested_scroll.gif' width="300px"/>
+	</div>
 ## How to use    
 #### Gradle
 ````
@@ -150,7 +157,7 @@ Use `app:sr_mode` to set the mode, default is `none`.
     app:sr_resistance_of_pull_down="1.7"
     app:sr_resistance_of_pull_up="1.7">
 
-    <TextView
+	<TextView
         android:id="@+id/textView_with_textView_activity_desc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

@@ -43,6 +43,7 @@ public class TestNestedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_nested);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +51,6 @@ public class TestNestedActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        setSupportActionBar(toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_nested_activity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);

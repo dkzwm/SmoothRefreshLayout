@@ -745,7 +745,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param atOnce Auto refresh at once
      */
     public void autoRefresh(boolean atOnce) {
-        if (mMode == MODE_NONE || mMode == MODE_LOAD_MORE)
+        if (mMode != MODE_REFRESH && mMode != MODE_BOTH)
             throw new SRUnsupportedOperationException("perform auto refresh , the mode" +
                     "must be MODE_REFRESH or MODE_BOTH");
         if (mStatus != SR_STATUS_INIT) {

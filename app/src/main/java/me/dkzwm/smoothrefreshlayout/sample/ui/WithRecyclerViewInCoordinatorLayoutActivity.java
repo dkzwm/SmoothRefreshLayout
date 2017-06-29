@@ -39,6 +39,7 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_with_recyclerview_in_coordinatorlayout);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +47,6 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
                 onBackPressed();
             }
         });
-        setSupportActionBar(toolbar);
         mRecyclerView = (RecyclerView) findViewById(R.id
                 .recyclerView_with_recyclerView_in_coordinatorLayout_activity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

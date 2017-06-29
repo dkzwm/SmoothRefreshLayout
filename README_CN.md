@@ -15,18 +15,22 @@
  5.支持抽屉样式; 
  
 ## 快照
+* 测试QQ浏览器样式,新添加的效果！
+	<div class='row'>
+		<img src='snapshot/test_qq_web_browser_style.gif' width="300px"/>
+	</div>
 * 测试QQ活动样式,新添加的效果！
-   <div class='row'>
-       <img src='snapshot/test_qq_style.gif' width="300px"/>
-   </div>
+	<div class='row'>
+	   <img src='snapshot/test_qq_style.gif' width="300px"/>
+	</div>
 * 测试2级刷新,新添加的效果!     
-   <div class='row'>
-       <img src='snapshot/test_two_level_refresh.gif' width="300px"/>
-   </div>
+	<div class='row'>
+		<img src='snapshot/test_two_level_refresh.gif' width="300px"/>
+	</div>
 * 包含FrameLayout    
-   <div class='row'>
-       <img src='snapshot/with_frameLayout.gif' width="300px"/>
-   </div>
+	<div class='row'>
+	   <img src='snapshot/with_frameLayout.gif' width="300px"/>
+	</div>
 * 包含TextView     
 	<div class='row'>
     	<img src='snapshot/with_textView.gif' width="300px"/>
@@ -40,8 +44,8 @@
 		<img src='snapshot/with_gridView.gif' width="300px"/>
 	</div>
 * 包含RecyclerView    
-	<div class='row'> 
-   		<img src='snapshot/with_recyclerView.gif' width="300px"/>
+	<div class='row'>
+		<img src='snapshot/with_recyclerView.gif' width="300px"/>
 	</div>
 * 包含ViewPager    
 	<div class='row'> 
@@ -58,6 +62,10 @@
 * 越界回弹模式    
 	<div class='row'> 
     	<img src='snapshot/test_overScroll.gif' width="300px"/>
+	</div>
+* 测试嵌套滑动   
+	<div class='row'> 
+	   	<img src='snapshot/test_nested_scroll.gif' width="300px"/>
 	</div>
 ## 使用   
 #### Gradle
