@@ -14,6 +14,7 @@ import android.view.View;
 
 import java.util.List;
 
+import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
@@ -30,7 +31,7 @@ import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
  */
 public class TestNestedActivity extends AppCompatActivity {
     int mMinOffset;
-    private SmoothRefreshLayout mRefreshLayout;
+    private MaterialSmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private AppBarLayout mAppBarLayout;
     private RecyclerViewAdapter mAdapter;
@@ -56,7 +57,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
+        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_test_nested_activity);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
@@ -84,6 +85,7 @@ public class TestNestedActivity extends AppCompatActivity {
             public void onRefreshComplete() {
             }
         });
+        mRefreshLayout.setHeaderViewPadding(80,10);
         mRefreshLayout.autoRefresh(false);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout_test_nested_activity);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -109,8 +111,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRefreshLayout.setOnLoadMoreScrollCallback(new SmoothRefreshLayout.OnLoadMoreScrollCallback() {
             @Override
             public boolean onScroll(View content, float deltaY) {
-                LoadMoreScrollCompat.scrollCompact(mRecyclerView, deltaY);
-                return true;
+                return LoadMoreScrollCompat.scrollCompact(mRecyclerView, deltaY);
             }
         });
         mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {

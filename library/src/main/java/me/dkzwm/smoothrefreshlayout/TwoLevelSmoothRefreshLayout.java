@@ -14,6 +14,7 @@ import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
  * Created by dkzwm on 2017/6/12.
  * <p>
  * Support Two-Level refresh feature;<br/>
+ * </p>
  *
  * @author dkzwm
  */
@@ -45,14 +46,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                     .SmoothRefreshLayout_sr_enable_two_level_pull_to_refresh, false));
             arr.recycle();
         }
-    }
-
-    @Override
-    public void addView(View child) {
-        if (child instanceof TwoLevelRefreshView) {
-            mTwoLevelRefreshView = (TwoLevelRefreshView) child;
-        }
-        super.addView(child);
     }
 
     public void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio) {
@@ -89,6 +82,14 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public boolean isTwoLevelRefreshing() {
         return super.isRefreshing() && mOnTwoLevelRefreshing;
+    }
+
+    @Override
+    protected void ensureFreshView(View child) {
+        super.ensureFreshView(child);
+        if (child instanceof TwoLevelRefreshView) {
+            mTwoLevelRefreshView = (TwoLevelRefreshView) child;
+        }
     }
 
     @Override

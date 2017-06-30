@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
  * @author dkzwm
  */
 public class LoadMoreScrollCompat {
-    public static void scrollCompact(View view, float deltaY) {
+    public static boolean scrollCompact(View view, float deltaY) {
         if (view != null) {
             if (view instanceof AbsListView) {
                 AbsListView listView = (AbsListView) view;
@@ -37,10 +37,13 @@ public class LoadMoreScrollCompat {
                         e.printStackTrace();
                     }
                 }
+                return true;
             } else if (view instanceof RecyclerView) {
                 RecyclerView recyclerView = (RecyclerView) view;
                 recyclerView.scrollBy(0, Math.round(deltaY));
+                return true;
             }
         }
+        return false;
     }
 }

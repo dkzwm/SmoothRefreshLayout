@@ -65,9 +65,9 @@ public class MaterialHeader extends View implements IRefreshView {
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mScale = (float) animation.getAnimatedValue();
-                mDrawable.setAlpha((int) (255 * mScale));
-                invalidate();
+                    mScale = (float) animation.getAnimatedValue();
+                    mDrawable.setAlpha((int) (255 * mScale));
+                    invalidate();
             }
         });
     }

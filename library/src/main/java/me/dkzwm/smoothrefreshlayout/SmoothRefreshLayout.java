@@ -254,8 +254,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    public void addView(View child) {
-        this.addView(child, -1);
+    final public void addView(View child) {
+        addView(child, -1);
     }
 
     @Override
@@ -1722,7 +1722,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    private void ensureFreshView(View child) {
+    protected void ensureFreshView(View child) {
         if (child instanceof IRefreshView) {
             IRefreshView view = (IRefreshView) child;
             switch (view.getType()) {
@@ -2098,7 +2098,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 else
                     LoadMoreScrollCompat.scrollCompact(mContentView, deltaY);
             } else {
-                mLoadMoreScrollCallback.onScroll(mContentView, deltaY);
+                if (!mLoadMoreScrollCallback.onScroll(mContentView, deltaY))
+                    LoadMoreScrollCompat.scrollCompact(mContentView, deltaY);
             }
         }
         // to keep the consistence with refresh, need to converse the deltaY
