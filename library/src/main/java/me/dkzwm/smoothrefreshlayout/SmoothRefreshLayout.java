@@ -2794,6 +2794,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mScrolling) {
                 destroy();
             }
+            mTimes = 0;
         }
 
         @Override
@@ -2803,8 +2804,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SmoothRefreshLayout layout = mLayoutWeakRf.get();
             layout.removeCallbacks(this);
             if (Math.abs(mVelocityY) <= OVER_SCROLL_MIN_VX || mScrolling
-                    || mDirection == 0 || mTimes > 150)
+                    || mDirection == 0 || mTimes > 150) {
+                mTimes = 0;
                 return;
+            }
             mScrolling = false;
             mClamped = false;
             if (mDirection > 0) {
