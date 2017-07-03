@@ -32,5 +32,6 @@
     <string name="test_qq_web_style">Test QQ web style</string>
     <string name="debug_on">Debug: on</string>
     <string name="debug_off">Debug: off</string>
+    <string name="has_been_triggered_to_load_more">Has been triggered to load more</string>
 
 </resources>

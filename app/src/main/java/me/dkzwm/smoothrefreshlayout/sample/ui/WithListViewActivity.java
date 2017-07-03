@@ -6,7 +6,9 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -14,10 +16,10 @@ import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
-import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.ListViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
+import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -51,9 +53,14 @@ public class WithListViewActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setFooterView(footer);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setEnableWhenScrollingToBottomToPerformLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
+                if (!isRefresh) {
+                    Toast.makeText(WithListViewActivity.this, R.string.has_been_triggered_to_load_more,
+                            Toast.LENGTH_SHORT).show();
+                }
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -75,6 +82,22 @@ public class WithListViewActivity extends AppCompatActivity {
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
+            }
+        });
+        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (scrollState == SCROLL_STATE_IDLE) {
+                    if (!ScrollCompat.canChildScrollDown(view)) {
+                        mRefreshLayout.autoLoadMore(true);
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+
             }
         });
         //Hook刷新完成，可以实现延迟完成加载

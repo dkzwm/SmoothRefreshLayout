@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.gesture;
 
 import android.content.Context;
+import android.support.v4.view.MotionEventCompat;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
@@ -17,7 +18,8 @@ public class GestureDetector implements IGestureDetector {
     private final int mMaximumFlingVelocity;
     private final int mMinimumFlingVelocity;
     private VelocityTracker mVelocityTracker;
-    private MotionEvent mDownEvent;
+    private float mLastFocusY;
+    private float mLastScrollY = 0;
 
     public GestureDetector(Context context, OnGestureListener listener) {
         mGestureListener = listener;
@@ -33,7 +35,20 @@ public class GestureDetector implements IGestureDetector {
             mVelocityTracker = VelocityTracker.obtain();
         }
         mVelocityTracker.addMovement(ev);
+        final boolean pointerUp =
+                (action & MotionEventCompat.ACTION_MASK) == MotionEventCompat.ACTION_POINTER_UP;
+        final int skipIndex = pointerUp ? MotionEventCompat.getActionIndex(ev) : -1;
+
+        // Determine focal point
+        float sumX = 0, sumY = 0;
         final int count = ev.getPointerCount();
+        for (int i = 0; i < count; i++) {
+            if (skipIndex == i) continue;
+            sumX += ev.getX(i);
+            sumY += ev.getY(i);
+        }
+        final int div = pointerUp ? count - 1 : count;
+        final float focusY = sumY / div;
         switch (action & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_POINTER_UP:
                 // Check the dot product of current velocities.
@@ -57,12 +72,15 @@ public class GestureDetector implements IGestureDetector {
                     }
                 }
                 break;
-            case MotionEvent.ACTION_DOWN:
-                if (mDownEvent != null) {
-                    mDownEvent.recycle();
+            case MotionEvent.ACTION_MOVE:
+                final float scrollY = mLastFocusY - focusY;
+                if ((Math.abs(scrollY) >= 1)) {
+                    mLastFocusY = focusY;
+                    mLastScrollY = scrollY;
                 }
-                mDownEvent = MotionEvent.obtain(ev);
-                mGestureListener.onDown(ev);
+                break;
+            case MotionEvent.ACTION_DOWN:
+                mLastFocusY = focusY;
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
@@ -70,8 +88,8 @@ public class GestureDetector implements IGestureDetector {
                 mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                 float vy = mVelocityTracker.getYVelocity(pointerId);
                 float vx = mVelocityTracker.getXVelocity(pointerId);
-                if ((Math.abs(vy) > mMinimumFlingVelocity) && mDownEvent != null) {
-                    mGestureListener.onFling(mDownEvent, ev, vx, vy);
+                if ((Math.abs(vy) > mMinimumFlingVelocity)) {
+                    mGestureListener.onFling(mLastScrollY, vx, vy);
                 }
                 onDetached();
                 break;

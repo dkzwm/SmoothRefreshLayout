@@ -31,4 +31,5 @@
     <string name="test_qq_web_style">测试QQ网页样式</string>
     <string name="debug_on">Debug: 开</string>
     <string name="debug_off">Debug: 关</string>
+    <string name="has_been_triggered_to_load_more">触发了加载更多</string>
 </resources>
