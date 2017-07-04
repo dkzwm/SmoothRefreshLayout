@@ -89,6 +89,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 13;
     private static final int FLAG_ENABLE_WHEN_SCROLLING_TO_BOTTOM_TO_PERFORM_LOAD_MORE = 0x01 << 14;
     private static final byte MASK_AUTO_REFRESH = 0x03;
+    private static final int[] LAYOUT_ATTRS = new int[]{
+            android.R.attr.enabled
+    };
     private static boolean sDebug = false;
     private final List<View> mCachedViews = new ArrayList<>(1);
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
@@ -236,11 +239,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mGestureDetector = new GestureDetector(context, this);
         mScrollChecker = new ScrollChecker(this);
         mOverScrollChecker = new OverScrollChecker(this);
-
+        setWillNotDraw(false);
+        ViewCompat.setChildrenDrawingOrderEnabled(this, true);
         //supports nested scroll
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         setNestedScrollingEnabled(true);
+
+        final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
+        setEnabled(a.getBoolean(0, true));
+        a.recycle();
     }
 
     public static void debug(boolean debug) {
@@ -1462,6 +1470,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
+
     @Override
     public void onNestedScrollAccepted(View child, View target, int axes) {
         if (sDebug) {
@@ -1666,10 +1675,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onNestedPreFling(View target, float velocityX,
                                     float velocityY) {
+        mNestedFling = false;
         if (sDebug) {
             SRLog.d(TAG, "onNestedPreFling(): velocityX: %s, velocityY: %s", velocityX, velocityY);
         }
-        mNestedFling = false;
         //When the content view can not scroll up, ignore the fling to scroll down.
         if ((!canChildScrollUp() && velocityY < 0) ||
                 //When the content view can not scroll down, ignore the fling to scroll up.
@@ -1681,7 +1690,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             //Or is fling to scroll up and is refreshing, ignore the fling.
             if ((velocityY > 0 && isRefreshing()) || (velocityY < 0 && isLoadingMore()))
                 return dispatchNestedPreFling(velocityX, velocityY);
-            mOverScrollChecker.updateVelocityY(-velocityY / 5, velocityY > 0 ? -1 : 1);
+            float newVelocityY = velocityY * mGestureDetector.getFriction();
+            mOverScrollChecker.updateVelocityY(-newVelocityY / 5, newVelocityY > 0 ? -1 : 1);
         }
         return dispatchNestedPreFling(velocityX, velocityY);
     }
@@ -2140,12 +2150,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
 
     private void moveHeaderPos(float deltaY) {
+        if (sDebug) {
+            SRLog.d(TAG, "moveHeaderPos(): deltaY: %s", deltaY);
+        }
         mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
         // to keep the consistence with refresh, need to converse the deltaY
         movePos(deltaY);
     }
 
     private void moveFooterPos(float deltaY) {
+        if (sDebug) {
+            SRLog.d(TAG, "moveFooterPos(): deltaY: %s", deltaY);
+        }
         mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
         //check if it is needed to compatible scroll
         if (!isEnabledPinContentView() && mIsLastRefreshSuccessful
@@ -2324,7 +2340,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 break;
         }
-        if (mStatus == SR_STATUS_PREPARE && change < 0 && !canChildScrollDown()
+        if (mStatus == SR_STATUS_PREPARE && change < 0 && isMovingFooter() && !canChildScrollDown()
                 && isEnabledWhenScrollingToBottomToPerformLoadMore()) {
             mStatus = SR_STATUS_LOADING_MORE;
             performRefresh();
@@ -2332,7 +2348,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * when moving, only the specified mode needs to check the position
+     * When moving, only the specified mode needs to check the position
      *
      * @return Need check position
      */
@@ -2352,6 +2368,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mIndicator.getMovingStatus() == IIndicator.MOVING_FOOTER;
     }
 
+    /**
+     * Check in over scrolling needs to scroll back to the start position
+     *
+     * @return Needs
+     */
     private boolean needScrollBackToTop() {
         if (mOverScrollChecker.hasClamped() && !mIndicator.isInStartPosition()) {
             if (sDebug) {
@@ -2484,7 +2505,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * if need auto refresh , make a release event
+     * If need auto refresh , make a release event
      */
     protected void onPtrScrollAbort() {
         if (mIndicator.hasLeftStartPosition() && isAutoRefresh()) {
@@ -2500,26 +2521,64 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @interface Mode {
     }
 
+    /**
+     * Classes that wish to override {@link SmoothRefreshLayout#canChildScrollUp()} method
+     * behavior should implement this interface.
+     */
     public interface OnChildScrollUpCallback {
+        /**
+         * Callback that will be called when {@link SmoothRefreshLayout#canChildScrollUp()} method
+         * is called to allow the implementer to override its behavior.
+         *
+         * @param parent SmoothRefreshLayout that this callback is overriding.
+         * @param child  The child view.
+         * @param header The header view.
+         * @return Whether it is possible for the child view of parent layout to scroll up.
+         */
         boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child,
                                  @Nullable IRefreshView header);
     }
 
+    /**
+     * Classes that wish to override {@link SmoothRefreshLayout#canChildScrollDown()} method
+     * behavior should implement this interface.
+     */
     public interface OnChildScrollDownCallback {
+        /**
+         * Callback that will be called when {@link SmoothRefreshLayout#canChildScrollDown()} method
+         * is called to allow the implementer to override its behavior.
+         *
+         * @param parent SmoothRefreshLayout that this callback is overriding.
+         * @param child  The child view.
+         * @param footer The footer view.
+         * @return Whether it is possible for the child view of parent layout to scroll down.
+         */
         boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child,
                                    @Nullable IRefreshView footer);
     }
 
+    /**
+     * Classes that wish to be notified when the swipe gesture correctly triggers a refresh
+     * should implement this interface.
+     */
     public interface OnRefreshListener {
         /**
+         * Called when a swipe gesture triggers a refresh.
+         *
          * @param isRefresh Refresh is true , load more is false
          */
         void onRefreshBegin(boolean isRefresh);
 
+        /**
+         * Called when refresh completed.
+         */
         void onRefreshComplete();
     }
 
-
+    /**
+     * Classes that wish to be notified when the views position changes should implement this
+     * interface
+     */
     public interface OnUIPositionChangedListener {
         /**
          * UI position changed
@@ -2600,17 +2659,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mLayoutWeakRf.get() == null)
                 return;
             SmoothRefreshLayout layout = mLayoutWeakRf.get();
-            boolean finish = !mScroller.computeScrollOffset() || mScroller.isFinished();
+            boolean finished = !mScroller.computeScrollOffset() || mScroller.isFinished();
             int curY = mScroller.getCurrY();
             int deltaY = curY - mLastY;
             if (sDebug) {
                 SRLog.d(TAG,
-                        "ScrollChecker: run(): finish: %s, start: %s, to: %s, currentPos: %s, " +
+                        "ScrollChecker: run(): finished: %s, start: %s, to: %s, currentPos: %s, " +
                                 "currentY:%s, last: %s, delta: %s",
-                        finish, mLastStart, mLastTo, layout.mIndicator.getCurrentPosY(), curY,
+                        finished, mLastStart, mLastTo, layout.mIndicator.getCurrentPosY(), curY,
                         mLastY, deltaY);
             }
-            if (!finish) {
+            if (!finished) {
                 mLastY = curY;
                 if (layout.isRefreshing() || layout.isMovingHeader()) {
                     layout.moveHeaderPos(deltaY);
@@ -2873,7 +2932,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SmoothRefreshLayout layout = mLayoutWeakRf.get();
             layout.removeCallbacks(this);
             if (Math.abs(mVelocityY) <= OVER_SCROLL_MIN_VX || mScrolling
-                    || mDirection == 0 || mTimes > 150) {
+                    || mDirection == 0 || mTimes > 110) {
                 mTimes = 0;
                 return;
             }

@@ -32,4 +32,5 @@
     <string name="debug_on">Debug: 开</string>
     <string name="debug_off">Debug: 关</string>
     <string name="has_been_triggered_to_load_more">触发了加载更多</string>
+    <string name="test_refresh_layout_in_viewPager_under_nested_layout">测试嵌套布局下ViewPager内的刷新</string>
 </resources>

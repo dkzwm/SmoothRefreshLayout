@@ -75,6 +75,13 @@
                 android:text="@string/in_coordinatorLayout_with_recyclerView"/>
 
             <Button
+                android:id="@+id/button_main_test_nested_view_pager"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/test_refresh_layout_in_viewPager_under_nested_layout"/>
+
+            <Button
                 android:id="@+id/button_main_test_over_scroll"
                 style="@style/MainButtonStyle"
                 android:paddingLeft="6dp"

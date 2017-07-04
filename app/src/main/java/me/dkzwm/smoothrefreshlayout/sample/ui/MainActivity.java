@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_activity_style).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_web_style).setOnClickListener(this);
+        findViewById(R.id.button_main_test_nested_view_pager).setOnClickListener(this);
         mButtonDebug = (Button) findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
@@ -129,6 +130,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_QQ_web_style:
                 startActivity(new Intent(MainActivity.this, TestQQWebStyleActivity.class));
+                break;
+            case R.id.button_main_test_nested_view_pager:
+                startActivity(new Intent(MainActivity.this, TestNestedViewPagerActivity.class));
                 break;
             case R.id.imageView_main_bottom_icon:
                 Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,

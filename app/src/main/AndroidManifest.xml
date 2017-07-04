@@ -73,6 +73,10 @@
             android:name=".ui.TestQQActivityStyleActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".ui.TestNestedViewPagerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".ui.TestNestedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>

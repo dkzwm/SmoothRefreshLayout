@@ -6,8 +6,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import java.util.List;
 
-import me.dkzwm.smoothrefreshlayout.sample.ui.fragment.PageFragment;
-
 /**
  * Created by dkzwm on 2017/6/2.
  *
@@ -15,9 +13,9 @@ import me.dkzwm.smoothrefreshlayout.sample.ui.fragment.PageFragment;
  */
 
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
-    private List<PageFragment> mViewPagerFragments;
+    private List<? extends Fragment> mViewPagerFragments;
 
-    public ViewPagerAdapter(FragmentManager fm, List<PageFragment> list) {
+    public ViewPagerAdapter(FragmentManager fm, List<? extends Fragment> list) {
         super(fm);
         mViewPagerFragments = list;
     }

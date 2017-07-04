@@ -86,8 +86,8 @@ public class DefaultIndicator implements IIndicator {
     public void setRatioOfRefreshViewHeightToRefresh(float ratio) {
         mRatioOfHeaderHeightToRefresh = ratio;
         mRatioOfFooterHeightToLoadMore = ratio;
-        mOffsetToRefresh = (int) (mHeaderHeight * ratio);
-        mOffsetToLoadMore = (int) (mFooterHeight * ratio);
+        mOffsetToRefresh = (int) Math.ceil((mHeaderHeight * ratio));
+        mOffsetToLoadMore = (int) Math.ceil(mFooterHeight * ratio);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public void setRatioOfHeaderHeightToRefresh(float ratio) {
         mRatioOfHeaderHeightToRefresh = ratio;
-        mOffsetToRefresh = (int) (mHeaderHeight * ratio);
+        mOffsetToRefresh = (int) Math.ceil((mHeaderHeight * ratio));
     }
 
     @Override
@@ -109,19 +109,12 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public void setRatioOfFooterHeightToRefresh(float ratio) {
         mRatioOfFooterHeightToLoadMore = ratio;
-        mOffsetToLoadMore = (int) (mFooterHeight * ratio);
+        mOffsetToLoadMore = (int) Math.ceil(mFooterHeight * ratio);
     }
 
     @Override
     public int getOffsetToRefresh() {
         return mOffsetToRefresh;
-    }
-
-    @Override
-    public void setOffsetToRefresh(int offset) {
-        mRatioOfHeaderHeightToRefresh = mHeaderHeight * 1f / offset;
-        mOffsetToRefresh = offset;
-        mOffsetToLoadMore = offset;
     }
 
     @Override

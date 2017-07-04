@@ -53,6 +53,7 @@ public class WithListViewActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setFooterView(footer);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setRatioOfFooterHeightToRefresh(0.001f);
         mRefreshLayout.setEnableWhenScrollingToBottomToPerformLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

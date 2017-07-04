@@ -56,8 +56,6 @@ public interface IIndicator {
 
     int getOffsetToRefresh();
 
-    void setOffsetToRefresh(int offset);
-
     int getOffsetToLoadMore();
 
     void onFingerDown();
