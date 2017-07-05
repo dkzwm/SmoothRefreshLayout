@@ -2220,7 +2220,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (!mLoadMoreScrollCallback.onScroll(mContentView, deltaY))
                     ScrollCompat.scrollCompat(mContentView, deltaY);
             }
-            Log.d(getClass().getSimpleName(), "-------------------Y:" + deltaY);
         }
         // to keep the consistence with refresh, need to converse the deltaY
         movePos(-deltaY);
