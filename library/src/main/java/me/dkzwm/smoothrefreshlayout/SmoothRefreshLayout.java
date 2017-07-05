@@ -2356,13 +2356,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mUIPositionChangedListener.onChanged(mStatus, mIndicator);
         }
         final MarginLayoutParams lp = (MarginLayoutParams) mContentView.getLayoutParams();
-        mNeedScrollCompat = false;
         //check mode
         switch (mMode) {
             case MODE_NONE:
                 //no moving
                 invalidate();
-                break;
+                return;
             case MODE_REFRESH:
                 if (mHeaderView != null && !isDisabledRefresh() && (isRefreshing() || isMovingHeader())) {
                     if (!isEnabledHeaderDrawerStyle() && lp.bottomMargin == 0)
@@ -2371,13 +2370,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 if (!isEnabledPinContentView()) {
                     mContentView.offsetTopAndBottom(change);
-                }
-                //check if the margin is zero, we need relayout to change the content height
-                if (isMovingHeader() || isRefreshing()) {
-                    if (lp.bottomMargin != 0) {
-                        mNeedScrollCompat = true;
-                        requestLayout();
-                    }
                 }
                 invalidate();
                 break;
@@ -2392,15 +2384,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mLoadMoreScrollTargetView.offsetTopAndBottom(change);
                     } else {
                         mContentView.offsetTopAndBottom(change);
-                    }
-                }
-                if (mLoadMoreScrollTargetView == null && isMovingFooter()) {
-                    //check if the margin is zero, we need relayout to change the content height
-                    if (isMovingFooter() || isLoadingMore()) {
-                        if (lp.topMargin != 0) {
-                            mNeedScrollCompat = true;
-                            requestLayout();
-                        }
                     }
                 }
                 invalidate();
@@ -2425,20 +2408,21 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mContentView.offsetTopAndBottom(change);
                     }
                 }
-                //check if the margin is zero, we need relayout to change the content height
-                if (isMovingHeader() || isRefreshing()) {
-                    if (lp.bottomMargin != 0) {
-                        mNeedScrollCompat = true;
-                        requestLayout();
-                    }
-                } else if ((isMovingFooter() || isLoadingMore())) {
-                    if (lp.topMargin != 0) {
-                        mNeedScrollCompat = true;
-                        requestLayout();
-                    }
-                }
                 invalidate();
                 break;
+        }
+        mNeedScrollCompat = false;
+        //check if the margin is zero, we need relayout to change the content height
+        if (isMovingHeader() || isRefreshing()) {
+            if (lp.bottomMargin != 0) {
+                mNeedScrollCompat = true;
+                requestLayout();
+            }
+        } else if ((isMovingFooter() || isLoadingMore())) {
+            if (lp.topMargin != 0) {
+                mNeedScrollCompat = true;
+                requestLayout();
+            }
         }
         //check need perform load more
         if (mStatus == SR_STATUS_PREPARE && change < 0 && isMovingFooter() && !canChildScrollDown()
