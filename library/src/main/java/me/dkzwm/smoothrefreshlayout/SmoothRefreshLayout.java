@@ -15,7 +15,6 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -88,6 +87,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_DISABLE_REFRESH = 0x01 << 12;
     private static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 13;
     private static final int FLAG_ENABLE_WHEN_SCROLLING_TO_BOTTOM_TO_PERFORM_LOAD_MORE = 0x01 << 14;
+    private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 15;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
@@ -441,7 +441,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     child.layout(left, top, right, bottom);
                     //If content view is moving and top margin is not zero.we need scroll to the
                     // bottom to fix margin not working
-                    if (offsetFooterY != 0 && lp.topMargin != 0 && mNeedScrollCompat) {
+                    if (!pin && offsetFooterY != 0 && lp.topMargin != 0 && mNeedScrollCompat) {
                         final int deltaY = offsetFooterY - mIndicator.getLastPosY();
                         if (!(mIndicator.hasTouched() && deltaY < 0)) {
                             ScrollCompat.scrollCompat(mContentView, deltaY);
@@ -530,6 +530,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (needInterceptTouchEvent())
+            return true;
         if (!isEnabled() || mContentView == null || mMode == MODE_NONE
                 || (isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || mNestedScrollInProgress) {
@@ -651,7 +653,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.d(TAG, "refreshComplete(): isSuccessful: " + isSuccessful);
         }
-//        mNeedScrollToBottom = false;
         mIsLastRefreshSuccessful = isSuccessful;
         long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
         if (delay <= 0) {
@@ -1056,6 +1057,28 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * The flag has set enabled to intercept the touch event while loading
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledInterceptEventWhileLoading() {
+        return (mFlag & FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true. Will intercept the touch event while loading
+     *
+     * @param enable Enable
+     */
+    public void setEnabledInterceptEventWhileLoading(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING;
+        }
+    }
+
+    /**
      * The flag has been set to pull to refresh
      *
      * @return Enabled
@@ -1443,7 +1466,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.d(TAG, "onStartNestedScroll(): nestedScrollAxes: %s", nestedScrollAxes);
         }
-        return isEnabled() && isNestedScrollingEnabled()
+        return isEnabled() && isNestedScrollingEnabled() && !needInterceptTouchEvent()
                 && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;
     }
 
@@ -1468,6 +1491,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.d(TAG, "onNestedPreScroll(): dx: %s, dy: %s, consumed: %s",
                     dx, dy, Arrays.toString(consumed));
+        }
+        if (needInterceptTouchEvent()) {
+            // Now let our nested parent consume the leftovers
+            final int[] parentConsumed = mParentScrollConsumed;
+            if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
+                consumed[0] += parentConsumed[0];
+                consumed[1] += parentConsumed[1];
+            }
+            return;
         }
         if (dy > 0 && mTotalRefreshingUnconsumed >= 0
                 && !isDisabledRefresh()
@@ -1583,7 +1615,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow);
-        if (mScrollChecker.mIsRunning)
+        if (mScrollChecker.mIsRunning || needInterceptTouchEvent())
             return;
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         if (dy < 0 && !isDisabledRefresh() && !canChildScrollUp()
@@ -1667,7 +1699,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 //When the content view can not scroll down, ignore the fling to scroll up.
                 (!canChildScrollDown() && velocityY > 0))
             return dispatchNestedPreFling(velocityX, velocityY);
-        if (isEnabledOverScroll()) {
+        if (isEnabledOverScroll() && !needInterceptTouchEvent()) {
             mNestedFling = Math.abs(velocityY) > 500;
             //IF is fling to scroll down and is loading more, ignore the fling.
             //Or is fling to scroll up and is refreshing, ignore the fling.
@@ -1741,8 +1773,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
         final int currentPosY = mIndicator.getCurrentPosY();
         final int childHeightMeasureSpec;
-        if ((isMovingHeader() || isRefreshing()) && lp.bottomMargin != 0 && lp.topMargin != 0
-                && currentPosY > 0) {
+        if ((isMovingHeader() || isRefreshing()) && !isEnabledPinContentView()
+                && lp.bottomMargin != 0 && lp.topMargin != 0 && currentPosY > 0) {
             childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
                     getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin
                             + currentPosY, lp.height);
@@ -1878,6 +1910,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean processDispatchTouchEvent(MotionEvent ev) {
         mGestureDetector.onTouchEvent(ev);
         int action = ev.getAction();
+        if (sDebug) {
+            SRLog.d(TAG, "processDispatchTouchEvent(): action: %s", action);
+        }
         switch (action) {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -1958,7 +1993,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (currentY >= maxFooterDistance)
                         return super.dispatchTouchEvent(ev);
                     else if (currentY - offsetY > maxFooterDistance) {
-                        moveFooterPos(-(maxFooterDistance - currentY));
+                        moveFooterPos(currentY - maxFooterDistance);
                         return true;
                     }
                 }
@@ -2017,6 +2052,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    private boolean needInterceptTouchEvent() {
+        return isEnabledInterceptEventWhileLoading() && (isRefreshing() || isLoadingMore());
     }
 
     private boolean canChildScrollUp() {
@@ -2317,6 +2356,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mUIPositionChangedListener.onChanged(mStatus, mIndicator);
         }
         final MarginLayoutParams lp = (MarginLayoutParams) mContentView.getLayoutParams();
+        mNeedScrollCompat = false;
         //check mode
         switch (mMode) {
             case MODE_NONE:
@@ -2331,14 +2371,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 if (!isEnabledPinContentView()) {
                     mContentView.offsetTopAndBottom(change);
-                    //check if the margin is zero, we need relayout to change the content height
-                    if (isMovingHeader() || isRefreshing()) {
-                        if (lp.bottomMargin != 0) {
-                            mNeedScrollCompat = true;
-                            requestLayout();
-                        }
-                    } else {
-                        mNeedScrollCompat = false;
+                }
+                //check if the margin is zero, we need relayout to change the content height
+                if (isMovingHeader() || isRefreshing()) {
+                    if (lp.bottomMargin != 0) {
+                        mNeedScrollCompat = true;
+                        requestLayout();
                     }
                 }
                 invalidate();
@@ -2350,18 +2388,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 }
                 if (!isEnabledPinContentView()) {
-                    if (mLoadMoreScrollTargetView != null && isMovingFooter())
+                    if (mLoadMoreScrollTargetView != null && isMovingFooter()) {
                         mLoadMoreScrollTargetView.offsetTopAndBottom(change);
-                    else
+                    } else {
                         mContentView.offsetTopAndBottom(change);
+                    }
+                }
+                if (mLoadMoreScrollTargetView == null && isMovingFooter()) {
                     //check if the margin is zero, we need relayout to change the content height
                     if (isMovingFooter() || isLoadingMore()) {
                         if (lp.topMargin != 0) {
                             mNeedScrollCompat = true;
                             requestLayout();
                         }
-                    } else {
-                        mNeedScrollCompat = false;
                     }
                 }
                 invalidate();
@@ -2385,19 +2424,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     } else {
                         mContentView.offsetTopAndBottom(change);
                     }
-                    //check if the margin is zero, we need relayout to change the content height
-                    if (isMovingHeader() || isRefreshing()) {
-                        if (lp.bottomMargin != 0) {
-                            mNeedScrollCompat = true;
-                            requestLayout();
-                        }
-                    } else if (isMovingFooter() || isLoadingMore()) {
-                        if (lp.topMargin != 0) {
-                            mNeedScrollCompat = true;
-                            requestLayout();
-                        }
-                    } else {
-                        mNeedScrollCompat = false;
+                }
+                //check if the margin is zero, we need relayout to change the content height
+                if (isMovingHeader() || isRefreshing()) {
+                    if (lp.bottomMargin != 0) {
+                        mNeedScrollCompat = true;
+                        requestLayout();
+                    }
+                } else if ((isMovingFooter() || isLoadingMore())) {
+                    if (lp.topMargin != 0) {
+                        mNeedScrollCompat = true;
+                        requestLayout();
                     }
                 }
                 invalidate();
