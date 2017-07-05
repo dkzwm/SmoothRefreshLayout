@@ -1608,8 +1608,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mTotalLoadMoreUnconsumed += dy;
             mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                     mIndicator.getLastMovePoint()[1] - dy);
-            Log.d(getClass().getSimpleName(), "-----------" + mIndicator.getCurrentPosY() + " "
-                    + mIndicator.getOffsetY());
             if (distance > 0 && (mIndicator.getCurrentPosY() - mIndicator.getOffsetY() > distance))
                 moveFooterPos(mIndicator.getCurrentPosY() - distance);
             else
