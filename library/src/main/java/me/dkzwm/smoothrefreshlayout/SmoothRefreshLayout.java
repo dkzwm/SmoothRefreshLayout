@@ -1595,19 +1595,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mTotalRefreshingUnconsumed += Math.abs(dy);
             mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                     mIndicator.getLastMovePoint()[1] + Math.abs(dy));
-            moveHeaderPos(mIndicator.getOffsetY());
+            if (distance > 0 && (mIndicator.getCurrentPosY() + mIndicator.getOffsetY() > distance))
+                moveHeaderPos(distance - mIndicator.getCurrentPosY());
+            else
+                moveHeaderPos(mIndicator.getOffsetY());
         } else if (dy > 0 && !isDisabledLoadMore() && !canChildScrollDown()
                 && (isMovingFooter() || mTotalLoadMoreUnconsumed == 0 && isMovingContent())
                 && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore())) {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-            if (distance > 0 &&mIndicator.getCurrentPosY()>distance)
+            if (distance > 0 && mIndicator.getCurrentPosY() > distance)
                 return;
             mTotalLoadMoreUnconsumed += dy;
             mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                     mIndicator.getLastMovePoint()[1] - dy);
-            if (distance>0&&(mIndicator.getCurrentPosY()+mIndicator.getOffsetY()>distance))
-                moveFooterPos(distance-mIndicator.getCurrentPosY());
-            moveFooterPos(mIndicator.getOffsetY());
+            Log.d(getClass().getSimpleName(), "-----------" + mIndicator.getCurrentPosY() + " "
+                    + mIndicator.getOffsetY());
+            if (distance > 0 && (mIndicator.getCurrentPosY() - mIndicator.getOffsetY() > distance))
+                moveFooterPos(mIndicator.getCurrentPosY() - distance);
+            else
+                moveFooterPos(mIndicator.getOffsetY());
         }
     }
 
@@ -1645,7 +1651,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
+    public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed,
+                                           int[] offsetInWindow) {
         return mNestedScrollingChildHelper.dispatchNestedPreScroll(
                 dx, dy, consumed, offsetInWindow);
     }
