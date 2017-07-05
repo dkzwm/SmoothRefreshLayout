@@ -21,7 +21,6 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
-import me.dkzwm.smoothrefreshlayout.utils.LoadMoreScrollCompat;
 import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
 
 /**
@@ -111,7 +110,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRefreshLayout.setOnLoadMoreScrollCallback(new SmoothRefreshLayout.OnLoadMoreScrollCallback() {
             @Override
             public boolean onScroll(View content, float deltaY) {
-                return LoadMoreScrollCompat.scrollCompact(mRecyclerView, deltaY);
+                return ScrollCompat.scrollCompat(mRecyclerView, deltaY);
             }
         });
         mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
