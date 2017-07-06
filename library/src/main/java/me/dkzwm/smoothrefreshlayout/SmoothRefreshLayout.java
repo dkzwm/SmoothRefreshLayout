@@ -631,6 +631,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mRefreshCompleteHook.setHookCallBack(callback);
     }
 
+
     public boolean equalsOnHookUIRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
         return mRefreshCompleteHook != null && mRefreshCompleteHook.mCallBack == callBack;
     }
@@ -1520,6 +1521,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             return;
         }
+        mIndicator.onFingerDown();
         if (dy > 0 && mTotalRefreshingUnconsumed >= 0
                 && !isDisabledRefresh()
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing())
@@ -1636,6 +1638,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mParentOffsetInWindow);
         if (mScrollChecker.mIsRunning || needInterceptTouchEvent())
             return;
+        mIndicator.onFingerDown();
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         if (dy < 0 && !isDisabledRefresh() && !canChildScrollUp()
                 && (isMovingHeader() || isMovingContent())
@@ -2901,7 +2904,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
 
-        private void setHookCallBack(@NonNull OnHookUIRefreshCompleteCallBack callBack) {
+        private void setHookCallBack(OnHookUIRefreshCompleteCallBack callBack) {
             mCallBack = callBack;
         }
 
