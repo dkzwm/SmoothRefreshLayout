@@ -65,9 +65,9 @@ public class MaterialHeader extends View implements IRefreshView {
         mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                    mScale = (float) animation.getAnimatedValue();
-                    mDrawable.setAlpha((int) (255 * mScale));
-                    invalidate();
+                mScale = (float) animation.getAnimatedValue();
+                mDrawable.setAlpha((int) (255 * mScale));
+                invalidate();
             }
         });
     }
@@ -80,9 +80,9 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     public void release() {
-        if (mRefreshLayout!=null) {
-            if (mRefreshLayout.equalsOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack))
-                mRefreshLayout.setOnHookUIRefreshCompleteCallback(null);
+        if (mRefreshLayout != null) {
+            if (mRefreshLayout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack))
+                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(null);
         }
     }
 
@@ -126,7 +126,7 @@ public class MaterialHeader extends View implements IRefreshView {
 
     public void doHookUIRefreshComplete(SmoothRefreshLayout layout) {
         mRefreshLayout = layout;
-        layout.setOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
+        layout.setOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
     }
 
     @Override
@@ -147,7 +147,7 @@ public class MaterialHeader extends View implements IRefreshView {
     @Override
     public void onReset(SmoothRefreshLayout layout) {
         resetDrawable();
-        if (layout.equalsOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)
+        if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)
                 && mCachedDuration > 0) {
             layout.setDurationToCloseHeader(mCachedDuration);
         }
@@ -168,7 +168,7 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout layout) {
-        if (layout.equalsOnHookUIRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)) {
+        if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)) {
             int duration = layout.getDurationToCloseHeader();
             if (duration > 0)
                 mCachedDuration = duration;

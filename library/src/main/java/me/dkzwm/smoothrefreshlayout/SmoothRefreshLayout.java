@@ -107,6 +107,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected byte mStatus = SR_STATUS_INIT;
     protected boolean mTriggeredAutoRefresh = true;
     protected boolean mTriggeredAutoLoadMore = true;
+    protected boolean mAutoRefreshUseSmoothScroll = false;
     protected boolean mNeedNotifyRefreshComplete = true;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
@@ -124,7 +125,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private ScrollChecker mScrollChecker;
     private OverScrollChecker mOverScrollChecker;
     private DelayToRefreshComplete mDelayToRefreshComplete;
-    private RefreshCompleteHook mRefreshCompleteHook;
+    private RefreshCompleteHook mHeaderRefreshCompleteHook;
+    private RefreshCompleteHook mFooterRefreshCompleteHook;
     private boolean mHasSendCancelEvent = false;
     private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
@@ -625,15 +627,37 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollDownCallback = callback;
     }
 
-    public void setOnHookUIRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callback) {
-        if (mRefreshCompleteHook == null)
-            mRefreshCompleteHook = new RefreshCompleteHook(this);
-        mRefreshCompleteHook.setHookCallBack(callback);
+    /**
+     * Set a hook callback when the refresh complete event be triggered. Only can be called on
+     * refreshing
+     *
+     * @param callback Callback that should be called when refreshComplete() is called.
+     */
+    public void setOnHookHeaderRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callback) {
+        if (mHeaderRefreshCompleteHook == null)
+            mHeaderRefreshCompleteHook = new RefreshCompleteHook(this);
+        mHeaderRefreshCompleteHook.setHookCallBack(callback);
+    }
+
+    /**
+     * Set a hook callback when the refresh complete event be triggered. Only can be called on
+     * loading more
+     *
+     * @param callback Callback that should be called when refreshComplete() is called.
+     */
+    public void setOnHookFooterRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callback) {
+        if (mFooterRefreshCompleteHook == null)
+            mFooterRefreshCompleteHook = new RefreshCompleteHook(this);
+        mFooterRefreshCompleteHook.setHookCallBack(callback);
     }
 
 
-    public boolean equalsOnHookUIRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
-        return mRefreshCompleteHook != null && mRefreshCompleteHook.mCallBack == callBack;
+    public boolean equalsOnHookHeaderRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
+        return mHeaderRefreshCompleteHook != null && mHeaderRefreshCompleteHook.mCallBack == callBack;
+    }
+
+    public boolean equalsOnHookFooterRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
+        return mFooterRefreshCompleteHook != null && mFooterRefreshCompleteHook.mCallBack == callBack;
     }
 
     /**
@@ -748,6 +772,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param atOnce Auto refresh at once
      */
     public void autoRefresh(boolean atOnce) {
+        autoRefresh(atOnce, true);
+    }
+
+    /**
+     * If @param atOnce has been set to true. Auto perform refresh at once.
+     * If @param smooth has been set to true. Auto perform refresh will using smooth scrolling.
+     *
+     * @param atOnce Auto refresh at once
+     * @param smooth Auto refresh use smooth scrolling
+     */
+    public void autoRefresh(boolean atOnce, boolean smooth) {
         if (mMode != MODE_REFRESH && mMode != MODE_BOTH)
             throw new SRUnsupportedOperationException("Perform auto refresh , the mode" +
                     "must be MODE_REFRESH or MODE_BOTH");
@@ -767,12 +802,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mFooterView != null)
             mFooterView.onRefreshPrepare(this);
         mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
+        mAutoRefreshUseSmoothScroll = smooth;
         int offsetToRefresh = mIndicator.getOffsetToRefresh();
         if (offsetToRefresh <= 0) {
             mTriggeredAutoRefresh = false;
         } else {
             mTriggeredAutoRefresh = true;
-            mScrollChecker.tryToScrollTo(offsetToRefresh, mDurationToCloseHeader);
+            mScrollChecker.tryToScrollTo(offsetToRefresh, smooth ? mDurationToCloseHeader : 0);
         }
         if (atOnce) {
             mStatus = SR_STATUS_REFRESHING;
@@ -793,6 +829,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param atOnce Auto load more at once
      */
     public void autoLoadMore(boolean atOnce) {
+        autoLoadMore(atOnce, true);
+    }
+
+    /**
+     * If @param atOnce has been set to true. Auto perform load more at once.
+     * If @param smooth has been set to true. Auto perform load more will using smooth scrolling.
+     *
+     * @param atOnce Auto load more at once
+     * @param smooth Auto load more use smooth scrolling
+     */
+    public void autoLoadMore(boolean atOnce, boolean smooth) {
         if (mMode != MODE_LOAD_MORE && mMode != MODE_BOTH)
             throw new SRUnsupportedOperationException("Perform auto load more , the mode" +
                     "must be MODE_LOAD_MORE or MODE_BOTH");
@@ -812,12 +859,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mFooterView != null)
             mFooterView.onRefreshPrepare(this);
         mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
+        mAutoRefreshUseSmoothScroll = smooth;
         int offsetToLoadMore = mIndicator.getOffsetToLoadMore();
         if (offsetToLoadMore <= 0) {
             mTriggeredAutoLoadMore = false;
         } else {
             mTriggeredAutoLoadMore = true;
-            mScrollChecker.tryToScrollTo(offsetToLoadMore, mDurationToCloseFooter);
+            mScrollChecker.tryToScrollTo(offsetToLoadMore, smooth ? mDurationToCloseFooter : 0);
         }
         if (atOnce) {
             mStatus = SR_STATUS_LOADING_MORE;
@@ -1856,8 +1904,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         removeCallbacks(mOverScrollChecker);
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
-        if (mRefreshCompleteHook != null)
-            mRefreshCompleteHook.mLayoutWeakRf.clear();
+        if (mHeaderRefreshCompleteHook != null)
+            mHeaderRefreshCompleteHook.mLayoutWeakRf.clear();
+        if (mFooterRefreshCompleteHook != null)
+            mFooterRefreshCompleteHook.mLayoutWeakRf.clear();
         if (getHandler() != null)
             getHandler().removeCallbacksAndMessages(null);
         if (sDebug) {
@@ -1873,11 +1923,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (!mTriggeredAutoRefresh) {
                 mTriggeredAutoRefresh = true;
                 mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
-                mScrollChecker.tryToScrollTo(mIndicator.getOffsetToRefresh(), mDurationToCloseHeader);
+                mScrollChecker.tryToScrollTo(mIndicator.getOffsetToRefresh(),
+                        mAutoRefreshUseSmoothScroll ? mDurationToCloseHeader : 0);
             } else if (!mTriggeredAutoLoadMore) {
                 mTriggeredAutoLoadMore = true;
                 mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
-                mScrollChecker.tryToScrollTo(mIndicator.getOffsetToLoadMore(), mDurationToCloseFooter);
+                mScrollChecker.tryToScrollTo(mIndicator.getOffsetToLoadMore(),
+                        mAutoRefreshUseSmoothScroll ? mDurationToCloseFooter : 0);
             }
         }
     }
@@ -2337,7 +2389,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
 
         // back to initiated position
-        if (mIndicator.hasJustBackToStartPosition()) {
+        if (!(isAutoRefresh() && mStatus != SR_STATUS_COMPLETE)
+                && mIndicator.hasJustBackToStartPosition()) {
             tryToNotifyReset();
             // recover event to children
             if (mIndicator.hasTouched() && !mNestedScrollInProgress) {
@@ -2516,10 +2569,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.i(TAG, "performRefreshComplete()");
         }
-        if ((isRefreshing() || isLoadingMore()) && hook && mRefreshCompleteHook != null
-                && !mRefreshCompleteHook.isEmpty()) {
-            mRefreshCompleteHook.setLayout(this);
-            mRefreshCompleteHook.doHook();
+        if (isRefreshing() && hook && mHeaderRefreshCompleteHook != null
+                && !mHeaderRefreshCompleteHook.isEmpty()) {
+            mHeaderRefreshCompleteHook.setLayout(this);
+            mHeaderRefreshCompleteHook.doHook();
+            return;
+        }
+        if (isLoadingMore() && hook && mFooterRefreshCompleteHook != null
+                && !mFooterRefreshCompleteHook.isEmpty()) {
+            mFooterRefreshCompleteHook.setLayout(this);
+            mFooterRefreshCompleteHook.doHook();
             return;
         }
         mStatus = SR_STATUS_COMPLETE;

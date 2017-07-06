@@ -101,8 +101,7 @@ public class WithListViewActivity extends AppCompatActivity {
 
             }
         });
-        //Hook刷新完成，可以实现延迟完成加载
-        mRefreshLayout.setOnHookUIRefreshCompleteCallback(new SmoothRefreshLayout
+        SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack completeCallBack = new SmoothRefreshLayout
                 .OnHookUIRefreshCompleteCallBack() {
             @Override
             public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
@@ -117,7 +116,10 @@ public class WithListViewActivity extends AppCompatActivity {
                     }
                 }, 500);
             }
-        });
+        };
+        //Hook刷新完成，可以实现延迟完成加载
+        mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(completeCallBack);
+        mRefreshLayout.setOnHookFooterRefreshCompleteCallback(completeCallBack);
         mRefreshLayout.autoRefresh(false);
     }
 

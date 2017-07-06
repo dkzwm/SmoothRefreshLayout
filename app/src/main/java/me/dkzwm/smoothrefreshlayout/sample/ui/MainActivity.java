@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnablePinContentView(false);
-        mRefreshLayout.setOnHookUIRefreshCompleteCallback(null);
+        mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(null);
         mRefreshLayout.setDurationToCloseHeader(500);
         //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         //自动刷新
-        mRefreshLayout.autoRefresh();
+        mRefreshLayout.autoRefresh(true, false);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);
