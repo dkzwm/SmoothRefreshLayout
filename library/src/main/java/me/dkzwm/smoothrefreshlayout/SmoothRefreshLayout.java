@@ -426,11 +426,29 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 final int left = paddingLeft + lp.leftMargin;
                 final int right = left + child.getMeasuredWidth();
                 int top, bottom;
-                if (isMovingHeader() || isRefreshing()) {
-                    top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
-                    bottom = top + child.getMeasuredHeight();
+                if (isMovingHeader()) {
+                    if (lp.bottomMargin == 0) {
+                        top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
+                        bottom = top + child.getMeasuredHeight();
+                    } else {
+                        top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
+                        bottom = top + child.getMeasuredHeight() - (pin ? 0 : offsetHeaderY);
+                    }
                     child.layout(left, top, right, bottom);
-                } else if (isMovingFooter() || isLoadingMore()) {
+                    //If content view is moving and bottom margin is not zero.we need scroll to the
+                    // top to fix margin not working
+                    if (!pin && offsetHeaderY != 0 && lp.bottomMargin != 0 && mNeedScrollCompat) {
+                        final int deltaY = offsetHeaderY - mIndicator.getLastPosY();
+                        if (deltaY != 0 && !(mIndicator.hasTouched() && deltaY < 0)
+                                && ScrollCompat.canChildScrollUp(mContentView)) {
+                            ScrollCompat.scrollCompat(mContentView, -deltaY);
+                            if (sDebug) {
+                                SRLog.d(TAG, "onLayout(): do scroll compat top deltaY: %s", -deltaY);
+                            }
+                        }
+                        mNeedScrollCompat = false;
+                    }
+                } else if (isMovingFooter()) {
                     if (lp.topMargin == 0) {
                         top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
                         bottom = top + child.getMeasuredHeight();
@@ -443,10 +461,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     // bottom to fix margin not working
                     if (!pin && offsetFooterY != 0 && lp.topMargin != 0 && mNeedScrollCompat) {
                         final int deltaY = offsetFooterY - mIndicator.getLastPosY();
-                        if (!(mIndicator.hasTouched() && deltaY < 0)) {
+                        if (deltaY != 0 && !(mIndicator.hasTouched() && deltaY < 0)
+                                && ScrollCompat.canChildScrollDown(mContentView)) {
                             ScrollCompat.scrollCompat(mContentView, deltaY);
                             if (sDebug) {
-                                SRLog.d(TAG, "onLayout(): do scroll compat deltaY: %s", deltaY);
+                                SRLog.d(TAG, "onLayout(): do scroll compat bottom deltaY: %s", deltaY);
                             }
                         }
                         mNeedScrollCompat = false;
@@ -1771,17 +1790,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
         final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
                 getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
-        final int currentPosY = mIndicator.getCurrentPosY();
-        final int childHeightMeasureSpec;
-        if ((isMovingHeader() || isRefreshing()) && !isEnabledPinContentView()
-                && lp.bottomMargin != 0 && lp.topMargin != 0 && currentPosY > 0) {
-            childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
-                    getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin
-                            + currentPosY, lp.height);
-        } else {
-            childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
-                    getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin, lp.height);
-        }
+        final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
+                getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin, lp.height);
         child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
     }
 
@@ -2282,9 +2292,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPosY();
-        if (isRefreshing() || isMovingHeader())
+        if (isMovingHeader())
             updatePos(change);
-        else if (isLoadingMore() || isMovingFooter())
+        else if (isMovingFooter())
             updatePos(-change);
     }
 
@@ -2363,7 +2373,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 return;
             case MODE_REFRESH:
-                if (mHeaderView != null && !isDisabledRefresh() && (isRefreshing() || isMovingHeader())) {
+                if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()) {
                     if (!isEnabledHeaderDrawerStyle() && lp.bottomMargin == 0)
                         mHeaderView.getView().offsetTopAndBottom(change);
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -2374,7 +2384,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 invalidate();
                 break;
             case MODE_LOAD_MORE:
-                if (mFooterView != null && !isDisabledLoadMore() && (isLoadingMore() || isMovingFooter())) {
+                if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()) {
                     if (!isEnabledFooterDrawerStyle() && lp.topMargin == 0)
                         mFooterView.getView().offsetTopAndBottom(change);
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -2391,12 +2401,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             case MODE_BOTH:
             case MODE_OVER_SCROLL:
                 if (mHeaderView != null && mMode == MODE_BOTH && !isDisabledRefresh()
-                        && (isRefreshing() || isMovingHeader())) {
+                        && isMovingHeader()) {
                     if (!isEnabledHeaderDrawerStyle() && lp.bottomMargin == 0)
                         mHeaderView.getView().offsetTopAndBottom(change);
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 } else if (mFooterView != null && mMode == MODE_BOTH && !isDisabledLoadMore()
-                        && (isLoadingMore() || isMovingFooter())) {
+                        && isMovingFooter()) {
                     if (!isEnabledFooterDrawerStyle() && lp.topMargin == 0)
                         mFooterView.getView().offsetTopAndBottom(change);
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
@@ -2413,12 +2423,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         mNeedScrollCompat = false;
         //check if the margin is zero, we need relayout to change the content height
-        if (isMovingHeader() || isRefreshing()) {
+        if (isMovingHeader()) {
             if (lp.bottomMargin != 0) {
                 mNeedScrollCompat = true;
                 requestLayout();
             }
-        } else if ((isMovingFooter() || isLoadingMore())) {
+        } else if (isMovingFooter()) {
             if (lp.topMargin != 0) {
                 mNeedScrollCompat = true;
                 requestLayout();
@@ -2427,6 +2437,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //check need perform load more
         if (mStatus == SR_STATUS_PREPARE && change < 0 && isMovingFooter() && !canChildScrollDown()
                 && !isDisabledLoadMore() && !isDisabledPerformLoadMore()
+                && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
                 && isEnabledWhenScrollingToBottomToPerformLoadMore()) {
             mStatus = SR_STATUS_LOADING_MORE;
             performRefresh();
@@ -2449,7 +2460,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean isMovingHeader() {
-        return mIndicator.getMovingStatus() == IIndicator.MOVING_HEADER;
+        return mIndicator.getMovingStatus() == IIndicator.MOVING_HEADER || isRefreshing();
     }
 
     protected boolean isMovingContent() {
@@ -2457,7 +2468,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean isMovingFooter() {
-        return mIndicator.getMovingStatus() == IIndicator.MOVING_FOOTER;
+        return mIndicator.getMovingStatus() == IIndicator.MOVING_FOOTER || isLoadingMore();
     }
 
     /**
@@ -2763,9 +2774,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             if (!finished) {
                 mLastY = curY;
-                if (layout.isRefreshing() || layout.isMovingHeader()) {
+                if (layout.isMovingHeader()) {
                     layout.moveHeaderPos(deltaY);
-                } else if (layout.isLoadingMore() || layout.isMovingFooter()) {
+                } else if (layout.isMovingFooter()) {
                     layout.moveFooterPos(-deltaY);
                 }
                 layout.post(this);
@@ -2790,9 +2801,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (sDebug) {
                     SRLog.d(TAG, "ScrollChecker: checkInStartPosition(): deltaY: %s", deltaY);
                 }
-                if (layout.isRefreshing() || layout.isMovingHeader()) {
+                if (layout.isMovingHeader()) {
                     layout.moveHeaderPos(deltaY);
-                } else if (layout.isLoadingMore() || layout.isMovingFooter()) {
+                } else if (layout.isMovingFooter()) {
                     layout.moveFooterPos(-deltaY);
                 }
             }
