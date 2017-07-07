@@ -8,14 +8,14 @@
  - 理论上支持所有的视图，且可根据具体需求高效适配.
  - 支持5种模式,NONE（做为FrameLayout使用）、REFRESH（头部刷新）、LOAD_MORE（底部刷新）、BOTH（头部刷新和底部刷新）、OVER_SCROLL（越界回弹）.
  - 支持嵌套滑动,完整实现了NestedScrollingChild，NestedScrollingParent 接口,玩转CoordinatorLayout.
- - 支持类FameLayout的特性（Gravity、Margin).
+ - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现）.
  - 支持越界回弹.
  - 支持抽屉效果.
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）.
  - 支持ListView，RecyclerView加载更多的平滑滚动.
  - 支持内容视图的Margin,PS:滚动中没有了Margin效果？SmoothRefreshLayout不存在这种问题.
- - 丰富的回调接口和调试信息.
+ - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
 
 ## 演示程序
 下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
@@ -51,7 +51,7 @@
 - 包含WebView    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_webView.gif)
 
-- CoordinatorLayout里面嵌套RecyclerView
+- CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
 
 - 越界回弹模式    
@@ -123,34 +123,34 @@ public interface IRefreshView {
      */
     View getView();
 
-	/**
-	 * 手指离开屏幕
-	 */
+    /**
+     * 手指离开屏幕
+     */
     void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
 
-	/**
-	 * 重置视图
-	 */
+    /**
+     * 重置视图
+     */
     void onReset(SmoothRefreshLayout layout);
 
-	/**
-	 * 重新配置视图，准备刷新
-	 */
+    /**
+     * 重新配置视图，准备刷新
+     */
     void onRefreshPrepare(SmoothRefreshLayout layout);
 
-	/**
-	 * 开始刷新
-	 */
+    /**
+     * 开始刷新
+     */
     void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
 
-	/**
-	 * 刷新完成
-	 */
+    /**
+     * 刷新完成
+     */
     void onRefreshComplete(SmoothRefreshLayout layout);
 
-	/**
-	 * 当头部或者尾部视图发生位置变化
-	 */
+    /**
+     * 当头部或者尾部视图发生位置变化
+     */
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
 
 }
@@ -165,8 +165,8 @@ public interface IRefreshView {
   * 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断
  
 #### Xml属性 
-- SmoothRefreshLayout 自身配置
-|名称-name|类型-type|描述-desc|
+##### SmoothRefreshLayout 自身配置
+|名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_mode|enum|模式设置（默认:`none`）|
 |sr_content|integer|指定内容视图的资源ID|
@@ -176,12 +176,12 @@ public interface IRefreshView {
 |sr_ratio_of_refresh_height_to_refresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
 |sr_ratio_of_header_height_to_refresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
 |sr_ratio_of_footer_height_to_refresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
-|sr_offset_ratio_to_keep_refresh_while_Loading|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|sr_offset_ratio_to_keep_header_while_Loading|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|sr_offset_ratio_to_keep_footer_while_Loading|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|sr_can_move_the_max_ratio_of_refresh_height|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|sr_can_move_the_max_ratio_of_header_height|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Header刷新高度比才会有效果|
-|sr_can_move_the_max_ratio_of_footer_height|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Footer刷新高度比才会有效果|
+|sr_offset_ratio_to_keep_refresh_while_Loading|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
+|sr_offset_ratio_to_keep_header_while_Loading|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
+|sr_offset_ratio_to_keep_footer_while_Loading|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
+|sr_can_move_the_max_ratio_of_refresh_height|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）|
+|sr_can_move_the_max_ratio_of_header_height|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）|
+|sr_can_move_the_max_ratio_of_footer_height|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）|
 |sr_duration_to_close_of_refresh|integer|指定收缩刷新视图到起始位置的时长（默认:`500`）|
 |sr_duration_to_close_of_header|integer|指定收缩Header视图到起始位置的时长（默认:`500`）|
 |sr_duration_to_close_of_footer|integer|指定收缩Footer视图到起始位置的时长（默认:`500`）|
@@ -193,13 +193,13 @@ public interface IRefreshView {
 |sr_enable_pull_to_refresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
 |sr_enable_over_scroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
 
-- SmoothRefreshLayout包裹内部其他View支持配置
-|名称-name|格式-format|描述-description|
+##### SmoothRefreshLayout包裹内部其他View支持配置
+|名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_layout_gravity|flag|指定其它被包裹视图的对齐属性(非content view、非refresh view)|
 
 #### Java属性设置方法
-|名称-name|参数-params|描述-desc|
+|名称|参数|描述|
 |:---:|:---:|:---:|
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
@@ -211,12 +211,12 @@ public interface IRefreshView {
 |setRatioOfRefreshViewHeightToRefresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
 |setRatioOfHeaderHeightToRefresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
 |setRatioOfFooterHeightToRefresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
-|setOffsetRatioToKeepRefreshViewWhileLoading|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|setOffsetRatioToKeepHeaderWhileLoading|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|setOffsetRatioToKeepFooterWhileLoading|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|setCanMoveTheMaxRatioOfRefreshViewHeight|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发刷新高度比才会有效果|
-|setCanMoveTheMaxRatioOfHeaderHeight|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Header刷新高度比才会有效果|
-|setCanMoveTheMaxRatioOfFooterHeight|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Footer刷新高度比才会有效果|
+|setOffsetRatioToKeepRefreshViewWhileLoading|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
+|setOffsetRatioToKeepHeaderWhileLoading|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
+|setOffsetRatioToKeepFooterWhileLoading|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
+|setCanMoveTheMaxRatioOfRefreshViewHeight|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）|
+|setCanMoveTheMaxRatioOfHeaderHeight|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）|
+|setCanMoveTheMaxRatioOfFooterHeight|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）|
 |setDurationToClose|int|指定收缩刷新视图到起始位置的时长（默认:`500`）|
 |setDurationToCloseHeader|int|指定收缩Header视图到起始位置的时长（默认:`500`）|
 |setDurationToCloseFooter|int|指定收缩Footer视图到起始位置的时长（默认:`500`）|
@@ -224,7 +224,7 @@ public interface IRefreshView {
 |setDurationOfBackToHeaderHeight|integer|收缩刷新视图到触发Header刷新位置的时长（默认:`200`）|
 |setDurationOfBackToFooterHeight|integer|收缩刷新视图到触发Footer刷新位置的时长（默认:`200`）|
 |setEnablePinContentView|boolean|固定内容视图（默认:`false`）|
-|isEnabledPullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
+|setEnabledPullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
 |setEnableOverScroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
 |setEnabledInterceptEventWhileLoading|boolean|刷新中拦截不响应触摸操作（默认:`false`）|
 |setEnableHeaderDrawerStyle|boolean|Header抽屉样式,即Header视图在内容视图下面（默认:`false`）|
@@ -238,7 +238,7 @@ public interface IRefreshView {
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 
 #### 回调
-|名称-name|参数-params|描述-desc|
+|名称|参数|描述|
 |:---:|:---:|:---:|
 |setOnRefreshListener|T extends OnRefreshListener|刷新事件监听回调|
 |addOnUIPositionChangedListener|OnUIPositionChangedListener|添加视图位置变化的监听回调|
@@ -246,12 +246,13 @@ public interface IRefreshView {
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Footer完成刷新后进行平滑滚动的回调|
 |setOnChildScrollUpCallback|OnChildScrollUpCallback|检查内容视图是否在顶部的回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
 |setOnChildScrollDownCallback|OnChildScrollDownCallback|检查内容视图是否在底部的回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
-|setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调|
-|setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调|
+|setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
+|setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
 
 #### 其它
-|名称-name|参数-params|描述-desc|
+|名称|参数|描述|
 |:---:|:---:|:---:|
+|debug|boolean|Debug开关|
 |autoRefresh|无参|自动触发Header刷新,立即触发刷新事件并滚动到应该停留的位置|
 |autoRefresh|boolean|自动触发Header刷新,参数:是否立即触发刷新事件,会滚动到应该停留的位置|
 |autoRefresh|boolean,boolean|自动触发Header刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到应该停留的位置|
