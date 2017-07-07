@@ -6,12 +6,26 @@ import android.util.AttributeSet;
 
 import me.dkzwm.smoothrefreshlayout.extra.footer.MaterialFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
+import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 
 /**
  * @author dkzwm
  */
 public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
+    private MaterialHeader mMaterialHeader;
+    private MaterialFooter mMaterialFooter;
+    private OnUIPositionChangedListener mOnUIPositionChangedListener = new OnUIPositionChangedListener() {
+        @Override
+        public void onChanged(byte status, IIndicator indicator) {
+            if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
+                setEnablePinContentView(false);
+            } else {
+                setEnablePinContentView(true);
+                setEnablePinRefreshViewWhileLoading(true);
+            }
+        }
+    };
 
     public MaterialSmoothRefreshLayout(Context context) {
         this(context, null);
@@ -23,18 +37,19 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public MaterialSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initViews();
+        initViews(context);
     }
 
-    private void initViews() {
+    private void initViews(Context context) {
         mMode = MODE_BOTH;
-        MaterialHeader header = new MaterialHeader(getContext());
-        header.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
+        mMaterialHeader = new MaterialHeader(context);
+        mMaterialHeader.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});
-        header.setPadding(0, PixelUtl.dp2px(getContext(), 25), 0,
-                PixelUtl.dp2px(getContext(), 20));
-        setHeaderView(header);
-        setFooterView(new MaterialFooter(getContext()));
+        mMaterialHeader.setPadding(0, PixelUtl.dp2px(context, 25), 0,
+                PixelUtl.dp2px(context, 20));
+        setHeaderView(mMaterialHeader);
+        mMaterialFooter = new MaterialFooter(context);
+        setFooterView(mMaterialFooter);
     }
 
     /**
@@ -51,6 +66,10 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         }
     }
 
+    /**
+     * Quickly set to material style. Before you change the configuration, you must know which
+     * parameters have been configured
+     */
     public void materialStyle() {
         setRatioOfFooterHeightToRefresh(.95f);
         setCanMoveTheMaxRatioOfFooterHeight(1f);
@@ -60,5 +79,21 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setEnableNextPtrAtOnce(true);
         if (mHeaderView != null && mHeaderView instanceof MaterialHeader)
             ((MaterialHeader) mHeaderView).doHookUIRefreshComplete(this);
+        if (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE) {
+            removeOnUIPositionChangedListener(mOnUIPositionChangedListener);
+            addOnUIPositionChangedListener(mOnUIPositionChangedListener);
+        }
+    }
+
+    public MaterialHeader getDefaultHeader() {
+        return mMaterialHeader;
+    }
+
+    public MaterialFooter getDefaultFooter() {
+        return mMaterialFooter;
+    }
+
+    public OnUIPositionChangedListener getDefaultOnUIPositionChangedListener() {
+        return mOnUIPositionChangedListener;
     }
 }

@@ -2,10 +2,19 @@
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_with_listView_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F2F2F2"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="12dp"
+    app:sr_content="@+id/listView_with_listView_activity">
+
+    <me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader
+        android:id="@+id/classicHeader_with_listView_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"/>
 
     <ListView
         android:id="@+id/listView_with_listView_activity"
@@ -14,6 +23,23 @@
         android:layout_marginBottom="12dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="12dp"
+        android:background="@android:color/white"
+        android:overScrollMode="never"/>
 
+    <me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter
+        android:id="@+id/classicFooter_with_listView_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="Header为抽屉样式并定义在Xml中\n Footer为默认样式并定义在Xml中\n ListView设置了Margin\n SmoothRefreshLayout开启了到底自动加载更多"
+        android:textColor="@android:color/holo_green_light"
+        android:textSize="16sp"
+        app:sr_layout_gravity="center"/>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

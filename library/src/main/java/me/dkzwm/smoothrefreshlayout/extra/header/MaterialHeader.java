@@ -31,7 +31,7 @@ public class MaterialHeader extends View implements IRefreshView {
         @Override
         public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
             if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
-                mAnimator.setDuration(320);
+                mAnimator.setDuration(180);
                 mAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {

@@ -53,6 +53,7 @@ public class NestedPageFragment extends Fragment {
         mRefreshLayout = (MaterialSmoothRefreshLayout) view.findViewById(R.id
                 .smoothRefreshLayout_nested_page_fragment);
         mRefreshLayout.materialStyle();
+        mRefreshLayout.setEnableNextPtrAtOnce(false);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -74,17 +75,7 @@ public class NestedPageFragment extends Fragment {
                 }, 2000);
             }
         });
-        mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
-            @Override
-            public void onChanged(byte status, IIndicator indicator) {
-                if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
-                    mRefreshLayout.setEnablePinContentView(false);
-                } else {
-                    mRefreshLayout.setEnablePinContentView(true);
-                    mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
-                }
-            }
-        });
+
         mRefreshLayout.setBackgroundColor(mColor);
         return view;
     }

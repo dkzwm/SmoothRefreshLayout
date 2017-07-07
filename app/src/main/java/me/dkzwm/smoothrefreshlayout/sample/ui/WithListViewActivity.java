@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.sample.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -46,14 +47,14 @@ public class WithListViewActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-        final ClassicHeader header = new ClassicHeader(this);
+        final ClassicHeader header = (ClassicHeader) findViewById(R.id.classicHeader_with_listView_activity);
         header.setLastUpdateTimeKey("header_last_update_time");
-        final ClassicFooter footer = new ClassicFooter(this);
+        final ClassicFooter footer = (ClassicFooter) findViewById(R.id.classicFooter_with_listView_activity);
         footer.setLastUpdateTimeKey("footer_last_update_time");
-        mRefreshLayout.setHeaderView(header);
-        mRefreshLayout.setFooterView(footer);
+        header.setTitleTextColor(Color.WHITE);
+        header.setLastUpdateTextColor(Color.GRAY);
         mRefreshLayout.setEnableKeepRefreshView(true);
-        mRefreshLayout.setRatioOfFooterHeightToRefresh(0.001f);
+        mRefreshLayout.setEnableHeaderDrawerStyle(true);
         mRefreshLayout.setEnableWhenScrollingToBottomToPerformLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

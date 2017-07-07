@@ -9,6 +9,9 @@
         <attr name="sr_ratio_of_refresh_height_to_refresh" format="float"/>
         <attr name="sr_ratio_of_header_height_to_refresh" format="float"/>
         <attr name="sr_ratio_of_footer_height_to_refresh" format="float"/>
+        <attr name="sr_offset_ratio_to_keep_refresh_while_Loading" format="float"/>
+        <attr name="sr_offset_ratio_to_keep_header_while_Loading" format="float"/>
+        <attr name="sr_offset_ratio_to_keep_footer_while_Loading" format="float"/>
         <attr name="sr_can_move_the_max_ratio_of_refresh_height" format="float"/>
         <attr name="sr_can_move_the_max_ratio_of_header_height" format="float"/>
         <attr name="sr_can_move_the_max_ratio_of_footer_height" format="float"/>

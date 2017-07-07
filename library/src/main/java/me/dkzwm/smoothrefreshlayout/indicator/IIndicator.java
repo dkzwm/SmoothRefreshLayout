@@ -14,6 +14,7 @@ import java.lang.annotation.RetentionPolicy;
 public interface IIndicator {
     float DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH = 1.1f;
     float DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT = 0f;
+    float DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING = 1;
     float DEFAULT_RESISTANCE = 1.65f;
     int DEFAULT_START_POS = 0;
     int MOVING_CONTENT = 0;
@@ -112,15 +113,19 @@ public interface IIndicator {
 
     int getOffsetToKeepFooterWhileLoading();
 
-    void setOffsetRatioToKeepHeaderWhileLoading(float ratio);
+    float getOffsetRatioToKeepFooterWhileLoading();
 
     void setOffsetRatioToKeepFooterWhileLoading(float ratio);
+
+    float getOffsetRatioToKeepHeaderWhileLoading();
+
+    void setOffsetRatioToKeepHeaderWhileLoading(float ratio);
 
     boolean isAlreadyHere(int to);
 
     boolean willOverTop(int to);
 
-    void setCanMoveTheMaxRatioOfRefreshHeight(float ratio);
+    void setCanMoveTheMaxRatioOfRefreshViewHeight(float ratio);
 
     float getCanMoveTheMaxRatioOfHeaderHeight();
 

@@ -58,7 +58,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_test_nested_activity);
-        mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -113,17 +113,7 @@ public class TestNestedActivity extends AppCompatActivity {
                 return ScrollCompat.scrollCompat(mRecyclerView, deltaY);
             }
         });
-        mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
-            @Override
-            public void onChanged(byte status, IIndicator indicator) {
-                if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
-                    mRefreshLayout.setEnablePinContentView(false);
-                } else {
-                    mRefreshLayout.setEnablePinContentView(true);
-                    mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
-                }
-            }
-        });
+
     }
 
     @Override

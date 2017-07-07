@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.extra.header;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -73,6 +74,15 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         }
         mRotateAniTime = time;
         buildAnimation();
+    }
+
+
+    public void setTitleTextColor(@ColorInt int color) {
+        mTitleTextView.setTextColor(color);
+    }
+
+    public void setLastUpdateTextColor(@ColorInt int color) {
+        mLastUpdateTextView.setTextColor(color);
     }
 
     public void setLastUpdateTimeKey(String key) {

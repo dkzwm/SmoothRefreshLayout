@@ -22,8 +22,8 @@ public class DefaultIndicator implements IIndicator {
     protected int mStatus = MOVING_CONTENT;
     private int mOffsetToRefresh = 1;
     private int mOffsetToLoadMore = 1;
-    private float mOffsetRatioToKeepHeaderWhileLoading = 1;
-    private float mOffsetRatioToKeepFooterWhileLoading = 1;
+    private float mOffsetRatioToKeepHeaderWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
+    private float mOffsetRatioToKeepFooterWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
     private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH;
     private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH;
     private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT;
@@ -283,18 +283,28 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setOffsetRatioToKeepHeaderWhileLoading(float ratio) {
-        mOffsetRatioToKeepHeaderWhileLoading = ratio;
-    }
-
-    @Override
     public int getOffsetToKeepFooterWhileLoading() {
         return (int) (mOffsetRatioToKeepFooterWhileLoading * mFooterHeight);
     }
 
     @Override
+    public float getOffsetRatioToKeepFooterWhileLoading() {
+        return mOffsetRatioToKeepFooterWhileLoading;
+    }
+
+    @Override
     public void setOffsetRatioToKeepFooterWhileLoading(float ratio) {
         mOffsetRatioToKeepFooterWhileLoading = ratio;
+    }
+
+    @Override
+    public float getOffsetRatioToKeepHeaderWhileLoading() {
+        return mOffsetRatioToKeepHeaderWhileLoading;
+    }
+
+    @Override
+    public void setOffsetRatioToKeepHeaderWhileLoading(float ratio) {
+        mOffsetRatioToKeepHeaderWhileLoading = ratio;
     }
 
     @Override
@@ -328,7 +338,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setCanMoveTheMaxRatioOfRefreshHeight(float ratio) {
+    public void setCanMoveTheMaxRatioOfRefreshViewHeight(float ratio) {
         setCanMoveTheMaxRatioOfHeaderHeight(ratio);
         setCanMoveTheMaxRatioOfFooterHeight(ratio);
     }

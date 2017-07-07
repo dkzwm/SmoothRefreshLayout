@@ -1,238 +1,265 @@
 # SmoothRefreshLayout
-## English | [中文](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README_CN.md)
+## [English](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README_EN.md) | 中文
+一个高效的Android刷新库，理论上支持所有的视图，比官方的SwipeRefreshLayout更强大且使用方便.    
+本开源库的部分代码来自[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
+非常感谢他提供的这么棒的开源项目！    
 
-A highly efficient refresh library for Android.In theory,Can support all Views.It's easy to use and more powerful than SwipeRefreshLayout.    
-Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
-Thank him for providing such a great open source library ！
+## 特性:
+ - 理论上支持所有的视图，且可根据具体需求高效适配.
+ - 支持5种模式,NONE（做为FrameLayout使用）、REFRESH（头部刷新）、LOAD_MORE（底部刷新）、BOTH（头部刷新和底部刷新）、OVER_SCROLL（越界回弹）.
+ - 支持嵌套滑动,完整实现了NestedScrollingChild，NestedScrollingParent 接口,玩转CoordinatorLayout.
+ - 支持类FameLayout的特性（Gravity、Margin).
+ - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现）.
+ - 支持越界回弹.
+ - 支持抽屉效果.
+ - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）.
+ - 支持ListView，RecyclerView加载更多的平滑滚动.
+ - 支持内容视图的Margin,PS:滚动中没有了Margin效果？SmoothRefreshLayout不存在这种问题.
+ - 丰富的回调接口和调试信息.
 
-## Demo
-Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
+## 演示程序
+下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
-## Features
- 1.Support 5 modes: refresh,loadMore,overScroll,both(refresh & loadMore),none;    
- 2.Support nestedScroll;    
- 3.Support all views;    
- 4.Support Two-Level refresh;    
- 5.Support DrawerStyle;    
- 
-## Snapshot
-* Test QQBrowserStyle , newly added!
-	<div class='row'>
-		<img src='snapshot/test_qq_web_browser_style.gif' width="300px"/>
-	</div>
-* Test drawerStyle , newly added!
-	<div class='row'>
-		<img src='snapshot/test_qq_style.gif' width="300px"/>
-	</div>
-* Test two-level refresh , newly added !     
-	<div class='row'>
-		<img src='snapshot/test_two_level_refresh.gif' width="300px"/>
-	</div>
-* With frameLayout    
-	<div class='row'>
-		<img src='snapshot/with_frameLayout.gif' width="300px"/>
-	</div>
-* With textView     
-	<div class='row'>
-    	<img src='snapshot/with_textView.gif' width="300px"/>
-	</div>
-* With listView    
-	<div class='row'>
-    	<img src='snapshot/with_listView.gif' width="300px"/>
-	</div>
-* With gridView    
-	<div class='row'>
-		<img src='snapshot/with_gridView.gif' width="300px"/>
-	</div>
-* With recyclerView    
-	<div class='row'> 
-		<img src='snapshot/with_recyclerView.gif' width="300px"/>
-	</div>
-* With viewPager    
-	<div class='row'> 
-	   	<img src='snapshot/with_viewPager.gif' width="300px"/>
-	</div>
-* With webView    
-	<div class='row'> 
-    	<img src='snapshot/with_webView.gif' width="300px"/>
-	</div>
-* With recyclerView in coordinatorLayout
-	<div class='row'> 
-    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.gif' width="300px"/>
-	</div>
-* OverScroll  
-	<div class='row'> 
-    	<img src='snapshot/test_overScroll.gif' width="300px"/>
-	</div>
-* Test nestedScroll   
-	<div class='row'> 
-	   	<img src='snapshot/test_nested_scroll.gif' width="300px"/>
-	</div>
-## How to use    
+## 快照
+- 测试QQ浏览器样式    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
+
+- 测试QQ活动样式    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_style.gif)
+
+- 测试2级刷新    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
+
+- 包含FrameLayout    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_frameLayout.gif)
+
+- 包含TextView     
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_textView.gif)
+
+- 包含ListView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
+
+- 包含GridView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_gridView.gif)
+
+- 包含RecyclerView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView.gif)
+
+- 包含ViewPager    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
+
+- 包含WebView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_webView.gif)
+
+- CoordinatorLayout里面嵌套RecyclerView
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
+
+- 越界回弹模式    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_overScroll.gif)
+
+- 测试嵌套滑动   
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
+
+## 使用   
 #### Gradle
-````
+```
 repositories {  
     ...
     maven { url 'https://jitpack.io' }  
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.1'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.2'
 }
-````
-#### Config
-The attr:    
-Use `app:sr_content` to specifies the resource ID of the content view.    
-
-Use `app:sr_resistance` to set the resistence while you are moving(pull up or pull down),default is `1.65f`.   
- 
-Use `app:sr_resistance_of_pull_up` to set the resistence while you are moving footer,default is `1.65f`.    
-
-Use `app:sr_resistance_of_pull_down` to set the resistence while you are moving header,default is `1.65f`.    
-
-Use `app:sr_ratio_of_refresh_height_to_refresh` to set the ratio of the height to trigger refresh, default is: `1.1f`.   
- 
-Use `app:sr_ratio_of_header_height_to_refresh` to set the ratio of the height of the header to trigger refresh, default is: `1.1f`.    
-
-Use `app:sr_ratio_of_footer_height_to_refresh` to set the ratio of the height of the footer to trigger refresh, default is: `1.1f`.    
-
-Use `app:sr_can_move_the_max_ratio_of_refresh_height` to set the max ratio of height of the refresh view when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
-
-Use `app:sr_can_move_the_max_ratio_of_header_height` to set the max ratio of height of the header when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
-
-Use `app:sr_can_move_the_max_ratio_of_footer_height` to set the max ratio of height of the footer when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
-
-Use `app:sr_duration_to_close_of_refresh` to set the duration of refresh view to return back to the start position, default is `500`.    
-
-Use `app:sr_duration_to_close_of_header` to set the duration of header to return back to the start position, default is `500`.    
-
-Use `app:sr_duration_to_close_of_footer` to set the duration of footer to return back to the start position, default is `500`.    
-
-Use `app:sr_duration_of_back_to_refresh_height` to set the duration of the refresh view to return back to the trigger the refresh position, default is `200`.    
-
-Use `app:sr_duration_of_back_to_header_height` to set the duration of the header to return back to the trigger the refresh position, default is `200`.    
- 
-Use `app:sr_duration_of_back_to_footer_height` to set the duration of the footer to return back to the trigger the refresh position,
- default is `200`.    
- 
-Use `app:sr_enable_pin_content` to set enable pinned the content, default is `false`.    
-
-Use `app:sr_enable_pull_to_refresh` to set enable pull to refresh, default is `false`.    
-
-Use `app:sr_enable_keep_refresh_view` to set enable keep the refresh view, default is `true`.   
-
-Use `app:sr_enable_over_scroll` to set enable over scroll feature, default is `true`.   
-
-Use `app:sr_layout_gravity` to set the gravity of the other views in the viewgroup.    
-
-Use `app:sr_mode` to set the mode, default is `none`.   
-
-* Config in xml
-````
+```
+#### 在Xml中配置
+```
+<?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_with_textView_activity"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:sr_can_move_the_max_ratio_of_footer_height="2"
-    app:sr_can_move_the_max_ratio_of_header_height="2"
-    app:sr_can_move_the_max_ratio_of_refresh_height="2"
-    app:sr_content="@+id/textView_with_textView_activity_desc"
-    app:sr_duration_of_back_to_footer_height="300"
-    app:sr_duration_of_back_to_header_height="300"
-    app:sr_duration_of_back_to_refresh_height="300"
-    app:sr_duration_to_close_of_footer="1000"
-    app:sr_duration_to_close_of_header="1000"
-    app:sr_duration_to_close_of_refresh="1000"
-    app:sr_enable_keep_refresh_view="true"
-    app:sr_enable_over_scroll="true"
-    app:sr_enable_pin_content="false"
-    app:sr_enable_pull_to_refresh="false"
-    app:sr_mode="both"
-    app:sr_ratio_of_footer_height_to_refresh="1.5"
-    app:sr_ratio_of_header_height_to_refresh="1.5"
-    app:sr_ratio_of_refresh_height_to_refresh="1.5"
-    app:sr_resistance="1.7"
-    app:sr_resistance_of_pull_down="1.7"
-    app:sr_resistance_of_pull_up="1.7">
-
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/smoothRefreshLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 	<TextView
-        android:id="@+id/textView_with_textView_activity_desc"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round"
-        app:sr_layout_gravity="center"/>
+		android:id="@+id/textView_"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
-````
-* Config in code
-````
-mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);    
-mRefreshLayout.setEnableOverScroll(true);    
-mRefreshLayout.setEnablePinContentView(false);    
-mRefreshLayout.setEnablePullToRefresh(false);    
-mRefreshLayout.setEnableKeepRefreshView(true);    
-mRefreshLayout.setDurationOfBackToHeaderHeight(300);    
-mRefreshLayout.setDurationOfBackToFooterHeight(300);    
-mRefreshLayout.setDurationToClose(1000);    
-mRefreshLayout.setDurationToCloseHeader(1000);    
-mRefreshLayout.setDurationToCloseFooter(1000);    
-mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(2);    
-mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(2);    
-mRefreshLayout.setCanMoveTheMaxRatioOfFooterHeight(2);    
-mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1.5f);    
-mRefreshLayout.setRatioOfHeaderHeightToRefresh(1.5f);    
-mRefreshLayout.setRatioOfFooterHeightToRefresh(1.5f);    
-mRefreshLayout.setResistance(1.7f);    
-mRefreshLayout.setResistanceOfPullUp(1.7f);    
-mRefreshLayout.setResistanceOfPullDown(1.7f);    
-````
-* Other config:    
-`setEnablePinRefreshViewWhileLoading(boolean enable)` this method can only be enabled if setEnablePinContentView and setEnableKeepRefreshView are set be true, materialStyle need set this.    
-`setFooterView(IRefreshView footer)` set the footer.    
-`setHeaderView(IRefreshView header)` set the header.   
-`setContentView(View content)` set the content.
-`setLoadMoreScrollTargetView(View view)` set loadMore scroll target view, for example the content view is a FrameLayout, with a 
-listView in it. You can call this method, set the listView as load more scroll target view. Load more compat will try to make it 
-smooth scrolling.     
-* Set refresh listener
-````
-mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-       @Override
-       public void onRefreshBegin(final boolean isRefresh) {
-            //to do something.
-       }
+```
+
+####  Java代码配置
+```
+SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoothRefreshLayout);
+refreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
+refreshLayout.setHeaderView(new ClassicHeader(this));
+refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
+	@Override
+	public void onRefreshBegin(boolean isRefresh) {
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				refreshLayout.refreshComplete();
+			}
+		}, 4000);
+	}
 });
-Or
-mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefreshBegin(final boolean isRefresh) {
-            //to do something.
-        }
-        @Override
-        public void onRefreshComplete() {
-            //to do something.
-        }
-});
-````
-* Callbacks
-````
-public interface OnChildScrollUpCallback {
-        boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child,
-                                 @Nullable IRefreshView header);
+```
+
+#### 自定义刷新视图
+- 接口定义
+```
+public interface IRefreshView {
+    byte TYPE_HEADER = 0;
+    byte TYPE_FOOTER = 1;
+
+    /**
+     * 返回是头部视图还是尾部视图
+     */
+    int getType();
+
+    /**
+     * 一般情况都是View实现本接口，所以返回this;
+     */
+    View getView();
+
+	/**
+	 * 手指离开屏幕
+	 */
+    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
+
+	/**
+	 * 重置视图
+	 */
+    void onReset(SmoothRefreshLayout layout);
+
+	/**
+	 * 重新配置视图，准备刷新
+	 */
+    void onRefreshPrepare(SmoothRefreshLayout layout);
+
+	/**
+	 * 开始刷新
+	 */
+    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
+
+	/**
+	 * 刷新完成
+	 */
+    void onRefreshComplete(SmoothRefreshLayout layout);
+
+	/**
+	 * 当头部或者尾部视图发生位置变化
+	 */
+    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
+
 }
-public interface OnChildScrollDownCallback {
-        boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child,
-                                   @Nullable IRefreshView footer);
-}
-public interface OnLoadMoreScrollCallback {
-        boolean onScroll(View content, float deltaY);
-}
-````
+```
+
+- 添加自定义刷新视图
+  * 代码添加
+  ```
+  setHeaderView(@NonNull IRefreshView header);
+  setFooterView(@NonNull IRefreshView footer);
+  ```
+  * 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断
+ 
+#### Xml属性 
+- SmoothRefreshLayout 自身配置
+|名称-name|类型-type|描述-desc|
+|:---:|:---:|:---:|
+|sr_mode|enum|模式设置（默认:`none`）|
+|sr_content|integer|指定内容视图的资源ID|
+|sr_resistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
+|sr_resistance_of_pull_up|float|Footer视图的移动阻尼（默认:`1.65f`）|
+|sr_resistance_of_pull_down|float|Header视图的移动阻尼（默认:`1.65f`）|
+|sr_ratio_of_refresh_height_to_refresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
+|sr_ratio_of_header_height_to_refresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
+|sr_ratio_of_footer_height_to_refresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
+|sr_offset_ratio_to_keep_refresh_while_Loading|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|sr_offset_ratio_to_keep_header_while_Loading|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|sr_offset_ratio_to_keep_footer_while_Loading|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|sr_can_move_the_max_ratio_of_refresh_height|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|sr_can_move_the_max_ratio_of_header_height|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Header刷新高度比才会有效果|
+|sr_can_move_the_max_ratio_of_footer_height|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Footer刷新高度比才会有效果|
+|sr_duration_to_close_of_refresh|integer|指定收缩刷新视图到起始位置的时长（默认:`500`）|
+|sr_duration_to_close_of_header|integer|指定收缩Header视图到起始位置的时长（默认:`500`）|
+|sr_duration_to_close_of_footer|integer|指定收缩Footer视图到起始位置的时长（默认:`500`）|
+|sr_duration_of_back_to_refresh_height|integer|收缩刷新视图到触发刷新位置的时长（默认:`200`）|
+|sr_duration_of_back_to_header_height|integer|收缩刷新视图到触发Header刷新位置的时长（默认:`200`）|
+|sr_duration_of_back_to_footer_height|integer|收缩刷新视图到触发Footer刷新位置的时长（默认:`200`）|
+|sr_enable_pin_content|boolean|固定内容视图（默认:`false`）|
+|sr_enable_keep_refresh_view|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
+|sr_enable_pull_to_refresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
+|sr_enable_over_scroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
+
+- SmoothRefreshLayout包裹内部其他View支持配置
+|名称-name|格式-format|描述-description|
+|:---:|:---:|:---:|
+|sr_layout_gravity|flag|指定其它被包裹视图的对齐属性(非content view、非refresh view)|
+
+#### Java属性设置方法
+|名称-name|参数-params|描述-desc|
+|:---:|:---:|:---:|
+|setHeaderView|IRefreshView|配置头部视图|
+|setFooterView|IRefreshView|配置尾部视图|
+|setContentView|View|配置内容视图|
+|setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
+|setResistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
+|setResistanceOfPullUp|float|Footer视图的移动阻尼（默认:`1.65f`）|
+|setResistanceOfPullDown|float|Header视图的移动阻尼（默认:`1.65f`）|
+|setRatioOfRefreshViewHeightToRefresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
+|setRatioOfHeaderHeightToRefresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
+|setRatioOfFooterHeightToRefresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
+|setOffsetRatioToKeepRefreshViewWhileLoading|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|setOffsetRatioToKeepHeaderWhileLoading|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|setOffsetRatioToKeepFooterWhileLoading|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|setCanMoveTheMaxRatioOfRefreshViewHeight|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发刷新高度比才会有效果|
+|setCanMoveTheMaxRatioOfHeaderHeight|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Header刷新高度比才会有效果|
+|setCanMoveTheMaxRatioOfFooterHeight|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）,该属性的值必须大于等于触发Footer刷新高度比才会有效果|
+|setDurationToClose|int|指定收缩刷新视图到起始位置的时长（默认:`500`）|
+|setDurationToCloseHeader|int|指定收缩Header视图到起始位置的时长（默认:`500`）|
+|setDurationToCloseFooter|int|指定收缩Footer视图到起始位置的时长（默认:`500`）|
+|setDurationOfBackToRefreshViewHeight|integer|收缩刷新视图到触发刷新位置的时长（默认:`200`）|
+|setDurationOfBackToHeaderHeight|integer|收缩刷新视图到触发Header刷新位置的时长（默认:`200`）|
+|setDurationOfBackToFooterHeight|integer|收缩刷新视图到触发Footer刷新位置的时长（默认:`200`）|
+|setEnablePinContentView|boolean|固定内容视图（默认:`false`）|
+|isEnabledPullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
+|setEnableOverScroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
+|setEnabledInterceptEventWhileLoading|boolean|刷新中拦截不响应触摸操作（默认:`false`）|
+|setEnableHeaderDrawerStyle|boolean|Header抽屉样式,即Header视图在内容视图下面（默认:`false`）|
+|setEnableFooterDrawerStyle|boolean|Footer抽屉样式,即Footer视图在内容视图下面（默认:`false`）|
+|setDisablePerformRefresh|boolean|关闭触发Header刷新（默认:`false`）|
+|setDisablePerformLoadMore|boolean|关闭触发Footer刷新（默认:`false`）|
+|setDisableRefresh|boolean|禁用Header刷新（默认:`false`）|
+|setDisableLoadMore|boolean|禁用Footer刷新（默认:`false`）|
+|setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
+|setEnableWhenScrollingToBottomToPerformLoadMore|boolean|到底部自动加载（默认:`false`）|
+|setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
+
+#### 回调
+|名称-name|参数-params|描述-desc|
+|:---:|:---:|:---:|
+|setOnRefreshListener|T extends OnRefreshListener|刷新事件监听回调|
+|addOnUIPositionChangedListener|OnUIPositionChangedListener|添加视图位置变化的监听回调|
+|removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
+|setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Footer完成刷新后进行平滑滚动的回调|
+|setOnChildScrollUpCallback|OnChildScrollUpCallback|检查内容视图是否在顶部的回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
+|setOnChildScrollDownCallback|OnChildScrollDownCallback|检查内容视图是否在底部的回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
+|setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调|
+|setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调|
+
+#### 其它
+|名称-name|参数-params|描述-desc|
+|:---:|:---:|:---:|
+|autoRefresh|无参|自动触发Header刷新,立即触发刷新事件并滚动到应该停留的位置|
+|autoRefresh|boolean|自动触发Header刷新,参数:是否立即触发刷新事件,会滚动到应该停留的位置|
+|autoRefresh|boolean,boolean|自动触发Header刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到应该停留的位置|
+|autoLoadMore|无参|自动触发Footer刷新,立即触发刷新事件并滚动到应该停留的位置|
+|autoLoadMore|boolean|自动触发Footer刷新,参数:是否立即触发刷新事件,会滚动到应该停留的位置|
+|autoLoadMore|boolean,boolean|自动触发Footer刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到应该停留的位置|
+|setLoadMoreScrollTargetView|View|设置Footer移动时,响应移动事件的内容视图,例如在SmoothRefreshLayout中有一个CoordinatorLayout,CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerView而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可|
+
 ## Thanks
 - [liaohuqiu android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)    
 - [pnikosis material-progress](https://github.com/pnikosis/materialish-progress)      

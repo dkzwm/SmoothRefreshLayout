@@ -68,7 +68,6 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
         mClassicFooter = new ClassicFooter(this);
         mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
-        mClassicFooter.setBackgroundColor(Color.WHITE);
         mRefreshLayout.setHeaderView(mClassicHeader);
         mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableKeepRefreshView(true);
@@ -94,7 +93,7 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
             }
 
         });
-        mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
+        mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
             @Override
             public void onChanged(byte status, IIndicator indicator) {
                 if (mRefreshLayout.isInStartPosition()) {
@@ -109,7 +108,6 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
             }
         });
         mRefreshLayout.autoRefresh(false);
-        mRefreshLayout.setNestedScrollingEnabled(false);
     }
 
 

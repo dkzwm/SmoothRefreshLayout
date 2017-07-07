@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import java.util.List;
 
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
@@ -44,7 +45,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
                 mHandler.postDelayed(new Runnable() {
@@ -64,23 +65,8 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                     }
                 }, 2000);
             }
-
-            @Override
-            public void onRefreshComplete() {
-            }
         });
         mRefreshLayout.autoRefresh(false);
-        mRefreshLayout.setOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
-            @Override
-            public void onChanged(byte status, IIndicator indicator) {
-                if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
-                    mRefreshLayout.setEnablePinContentView(false);
-                } else {
-                    mRefreshLayout.setEnablePinContentView(true);
-                    mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
-                }
-            }
-        });
     }
 
 

@@ -23,14 +23,14 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initViews();
+        initViews(context);
     }
 
-    private void initViews() {
+    private void initViews(Context context) {
         mMode = MODE_BOTH;
-        mClassicHeader = new ClassicHeader(getContext());
+        mClassicHeader = new ClassicHeader(context);
         setHeaderView(mClassicHeader);
-        mClassicFooter = new ClassicFooter(getContext());
+        mClassicFooter = new ClassicFooter(context);
         setFooterView(mClassicFooter);
     }
 
@@ -50,6 +50,14 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mClassicFooter != null) {
             mClassicFooter.setLastUpdateTimeKey(key);
         }
+    }
+
+    public ClassicHeader getDefaultHeader() {
+        return mClassicHeader;
+    }
+
+    public ClassicFooter getDefaultFooter() {
+        return mClassicFooter;
     }
 
 }
