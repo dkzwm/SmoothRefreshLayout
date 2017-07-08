@@ -253,12 +253,15 @@ public interface IRefreshView {
 |名称|参数|描述|
 |:---:|:---:|:---:|
 |debug|boolean|Debug开关|
-|autoRefresh|无参|自动触发Header刷新,立即触发刷新事件并滚动到应该停留的位置|
-|autoRefresh|boolean|自动触发Header刷新,参数:是否立即触发刷新事件,会滚动到应该停留的位置|
-|autoRefresh|boolean,boolean|自动触发Header刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到应该停留的位置|
-|autoLoadMore|无参|自动触发Footer刷新,立即触发刷新事件并滚动到应该停留的位置|
-|autoLoadMore|boolean|自动触发Footer刷新,参数:是否立即触发刷新事件,会滚动到应该停留的位置|
-|autoLoadMore|boolean,boolean|自动触发Footer刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到应该停留的位置|
+|refreshComplete|无参|刷新完成,且设置最后一次刷新状态为成功|
+|refreshComplete|boolean|刷新完成,参数:设置最后一次刷新是否刷新成功|
+|setLoadingMinTime|long|设置开始刷新到结束刷新的最小时间差(默认:`500`),参数:时间差|
+|autoRefresh|无参|自动触发Header刷新,立即触发刷新事件并滚动到触发Header刷新位置|
+|autoRefresh|boolean|自动触发Header刷新,参数:是否立即触发刷新事件,会滚动到触发Header刷新位置|
+|autoRefresh|boolean,boolean|自动触发Header刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到触发Header刷新位置|
+|autoLoadMore|无参|自动触发Footer刷新,立即触发刷新事件并滚动到触发Footer刷新位置|
+|autoLoadMore|boolean|自动触发Footer刷新,参数:是否立即触发刷新事件,会滚动到触发Footer刷新位置|
+|autoLoadMore|boolean,boolean|自动触发Footer刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到触发Footer刷新位置|
 |setLoadMoreScrollTargetView|View|设置Footer移动时,响应移动事件的内容视图,例如在SmoothRefreshLayout中有一个CoordinatorLayout,CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerView而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可|
 
 ## Thanks
