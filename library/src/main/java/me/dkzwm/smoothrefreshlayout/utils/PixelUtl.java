@@ -2,6 +2,7 @@ package me.dkzwm.smoothrefreshlayout.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 
 /**
@@ -18,4 +19,15 @@ public class PixelUtl {
             r = context.getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, offSet, r.getDisplayMetrics()));
     }
+
+    public static int getDisplayHeight(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.heightPixels;
+    }
+
+    public static int getDisplayWidth(Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        return dm.widthPixels;
+    }
+
 }

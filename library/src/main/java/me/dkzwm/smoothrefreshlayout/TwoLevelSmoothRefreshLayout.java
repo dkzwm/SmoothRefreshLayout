@@ -93,7 +93,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void updatePos(int change) {
+    protected void updateYPos(int change) {
         if (canPerformTwoLevelPullToRefresh()
                 && (mStatus == SR_STATUS_PREPARE
                 || (mStatus == SR_STATUS_COMPLETE && mTwoLevelIndicator.crossTwoLevelCompletePos()
@@ -105,7 +105,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                     tryToPerformRefresh();
             }
         }
-        super.updatePos(change);
+        super.updateYPos(change);
     }
 
 

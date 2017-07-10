@@ -11,26 +11,21 @@ import android.widget.Toast;
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.WaveSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.sample.BuildConfig;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.utils.SRLog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Handler mHandler = new Handler();
-    private MaterialSmoothRefreshLayout mRefreshLayout;
+    private WaveSmoothRefreshLayout mRefreshLayout;
     private Button mButtonDebug;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
-        //设置模式
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
-        mRefreshLayout.materialStyle();
-        mRefreshLayout.setEnablePinContentView(false);
-        mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(null);
-        mRefreshLayout.setDurationToCloseHeader(500);
+        mRefreshLayout = (WaveSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
         //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
