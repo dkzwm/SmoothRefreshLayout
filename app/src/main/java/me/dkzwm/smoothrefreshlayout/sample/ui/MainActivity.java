@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.WaveSmoothRefreshLayout;
@@ -36,6 +35,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mRefreshLayout.refreshComplete();
                     }
                 }, 4000);
+            }
+        });
+        mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(new SmoothRefreshLayout
+                .OnHookUIRefreshCompleteCallBack() {
+            @Override
+            public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
+                mRefreshLayout.getDefaultHeader().onRefreshComplete(mRefreshLayout);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        hook.onHookComplete();
+                    }
+                }, 800);
             }
         });
         //自动刷新

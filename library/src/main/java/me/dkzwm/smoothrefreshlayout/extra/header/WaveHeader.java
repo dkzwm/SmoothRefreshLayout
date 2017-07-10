@@ -66,7 +66,7 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
         mTextView = new TextView(context);
         mTextView.setTextColor(Color.WHITE);
         mTextView.setTextSize(14);
-        mTextView.setPadding(0, dip2, 0, dip2 * 3);
+        mTextView.setPadding(0, dip2, 0, dip2 * 5);
         addView(mWheel, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         addView(mTextView, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         mDefaultHeight = PixelUtl.getDisplayHeight(context) / 2;
