@@ -16,12 +16,13 @@ import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.TextView;
 
+import com.pnikosis.materialishprogress.ProgressWheel;
+
 import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
-import me.dkzwm.smoothrefreshlayout.view.ProgressWheel;
 
 /**
  * Created by dkzwm on 2017/7/10.
@@ -30,7 +31,6 @@ import me.dkzwm.smoothrefreshlayout.view.ProgressWheel;
  */
 
 public class WaveHeader extends ViewGroup implements IRefreshView {
-    private byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
     private float[] mLastPoint = new float[]{0, 0};
     private float mFingerUpY = 0;
     private int mCurrentPosY = 0;
@@ -159,7 +159,6 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         mFingerUpY = 0;
         mCurrentPosY = 0;
         mLastPoint[0] = 0;
@@ -173,7 +172,6 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
-        mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         mFingerUpY = 0;
         mCurrentPosY = 0;
         mWheel.stopSpinning();
@@ -188,14 +186,12 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
-        mStatus = SmoothRefreshLayout.SR_STATUS_REFRESHING;
         mWheel.setVisibility(VISIBLE);
         mWheel.spin();
     }
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout layout) {
-        mStatus = SmoothRefreshLayout.SR_STATUS_COMPLETE;
         if (layout.isRefreshSuccessful()) {
             mTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);
         } else {
@@ -208,7 +204,6 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mStatus = status;
         mCurrentPosY = indicator.getCurrentPosY();
         final int width = getWidth();
         final float[] lastMovePoint = indicator.getLastMovePoint();

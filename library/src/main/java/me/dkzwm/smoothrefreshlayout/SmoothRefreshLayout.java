@@ -947,15 +947,30 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicator.setRatioOfFooterHeightToRefresh(ratio);
     }
 
+    /**
+     * Set in the refresh to keep the refresh view's position of the ratio of the view's height
+     *
+     * @param ratio Height ratio
+     */
     public void setOffsetRatioToKeepRefreshViewWhileLoading(float ratio) {
         mIndicator.setOffsetRatioToKeepHeaderWhileLoading(ratio);
         mIndicator.setOffsetRatioToKeepFooterWhileLoading(ratio);
     }
 
+    /**
+     * Set in the refresh to keep the header view's position of the ratio of the view's height
+     *
+     * @param ratio Height ratio
+     */
     public void setOffsetRatioToKeepHeaderWhileLoading(float ratio) {
         mIndicator.setOffsetRatioToKeepHeaderWhileLoading(ratio);
     }
 
+    /**
+     * Set in the refresh to keep the footer view's position of the ratio of the view's height
+     *
+     * @param ratio Height ratio
+     */
     public void setOffsetRatioToKeepFooterWhileLoading(float ratio) {
         mIndicator.setOffsetRatioToKeepFooterWhileLoading(ratio);
     }
@@ -1510,12 +1525,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Update scroller's interpolator,Can only be called after the scroll stopped
      *
-     * @param interpolator
+     * @param interpolator Scroller's interpolator
      */
     public void updateScrollerInterpolator(Interpolator interpolator) {
         mScrollChecker.updateInterpolator(interpolator);
     }
 
+    /**
+     * Is in over scrolling
+     *
+     * @return Is
+     */
     public boolean isOverScrolling() {
         return mOverScrollChecker.isScrolling();
     }
@@ -2439,6 +2459,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    /**
+     * Update view's Y position
+     *
+     * @param change The changed value
+     */
     protected void updateYPos(int change) {
         // once moved, cancel event will be sent to child
         tryToSendCancelEventToChild();
@@ -2586,6 +2611,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    /**
+     * We need to notify the X pos changed
+     */
     private void updateXPos() {
         switch (mMode) {
             case MODE_NONE:
@@ -2970,8 +2998,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 int timePassed = mScroller.timePassed();
                 int duration = mScroller.getDuration();
                 destroy();
+                mLastStart = layout.mIndicator.getCurrentPosY();
+                int distance = mLastTo - mLastStart;
                 mScroller = new Scroller(mLayoutWeakRf.get().getContext(), interpolator);
-                mScroller.startScroll(0, 0, 0, layout.mIndicator.getCurrentPosY(), duration - timePassed);
+                mScroller.startScroll(0, 0, 0, distance, duration - timePassed);
                 layout.post(this);
             } else {
                 destroy();

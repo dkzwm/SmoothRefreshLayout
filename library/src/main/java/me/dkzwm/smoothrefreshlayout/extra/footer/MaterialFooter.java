@@ -8,11 +8,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.pnikosis.materialishprogress.ProgressWheel;
+
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
-import me.dkzwm.smoothrefreshlayout.view.ProgressWheel;
 
 /**
  * @author dkzwm
