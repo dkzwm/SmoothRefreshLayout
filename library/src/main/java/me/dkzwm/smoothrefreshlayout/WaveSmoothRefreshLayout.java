@@ -33,9 +33,9 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mWaveHeader);
         setEnableHeaderDrawerStyle(true);
         setEnableKeepRefreshView(true);
-        setCanMoveTheMaxRatioOfHeaderHeight(.4f);
-        setRatioOfHeaderHeightToRefresh(.22f);
-        setOffsetRatioToKeepHeaderWhileLoading(.22f);
+        setCanMoveTheMaxRatioOfHeaderHeight(.2f);
+        setRatioOfHeaderHeightToRefresh(.11f);
+        setOffsetRatioToKeepHeaderWhileLoading(.11f);
         setDurationToCloseHeader(1000);
         setDurationOfBackToHeaderHeight(1000);
     }
@@ -64,7 +64,4 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         mWaveHeader.setProgressBarColor(color);
     }
 
-    public void setWaveHeaderProgressRimWidth(int width) {
-        mWaveHeader.setProgressRimWidth(width);
-    }
 }

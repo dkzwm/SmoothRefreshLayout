@@ -5,18 +5,19 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.TextView;
-
-import com.pnikosis.materialishprogress.ProgressWheel;
 
 import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
@@ -30,15 +31,22 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  * @author dkzwm
  */
 
-public class WaveHeader extends ViewGroup implements IRefreshView {
+public class WaveHeader extends View implements IRefreshView {
+    private byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
     private float[] mLastPoint = new float[]{0, 0};
+    private float mProgress = 0.0f;
     private float mFingerUpY = 0;
     private int mCurrentPosY = 0;
+    private int mCircleRadius;
     private int mDefaultHeight;
-    private Paint mPaint;
-    private Path mPath;
-    private ProgressWheel mWheel;
-    private TextView mTextView;
+    private int mBarWidth = 4;
+    private int mDip2;
+    private Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    private RectF mProgressBounds = new RectF();
+    private Path mPath = new Path();
+    private String mText;
 
     public WaveHeader(Context context) {
         this(context, null);
@@ -50,77 +58,54 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
 
     public WaveHeader(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mPath = new Path();
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
-        mPaint.setDither(true);
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        mWavePaint.setStyle(Paint.Style.FILL);
+        mWavePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        mWavePaint.setDither(true);
+        mBarPaint.setColor(Color.WHITE);
+        mBarPaint.setStyle(Paint.Style.STROKE);
+        mBarPaint.setStrokeWidth(mBarWidth);
+        mBarPaint.setDither(true);
+        mTextPaint.setColor(Color.WHITE);
+        mTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, metrics));
+        mTextPaint.setDither(true);
+        mTextPaint.setTextAlign(Paint.Align.CENTER);
         setWillNotDraw(false);
-        mWheel = new ProgressWheel(context);
-        mWheel.setBarColor(Color.WHITE);
-        final int dip2 = PixelUtl.dp2px(context, 2);
-        mWheel.setBarWidth(dip2);
-        mWheel.setRimWidth(dip2);
-        mWheel.setCircleRadius(dip2 * 14);
-        mWheel.setPadding(0, 0, 0, dip2 * 3);
-        mTextView = new TextView(context);
-        mTextView.setTextColor(Color.WHITE);
-        mTextView.setTextSize(14);
-        mTextView.setPadding(0, dip2, 0, dip2 * 5);
-        addView(mWheel, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        addView(mTextView, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        mDefaultHeight = PixelUtl.getDisplayHeight(context) / 2;
+        mDip2 = PixelUtl.dp2px(context, 2);
+        mCircleRadius = mDip2 * 6;
+        mDefaultHeight = metrics.heightPixels;
     }
 
     public void setWaveColor(@ColorInt int color) {
-        mPaint.setColor(color);
+        mWavePaint.setColor(color);
         invalidate();
     }
 
     public void setTextColor(@ColorInt int color) {
-        mTextView.setTextColor(color);
+        mTextPaint.setColor(color);
+        invalidate();
     }
 
     public void setTextSize(float size) {
-        mTextView.setTextSize(size);
+        mTextPaint.setTextSize(size);
+        invalidate();
     }
 
     public void setProgressBarWidth(int width) {
-        mWheel.setBarWidth(width);
+        mBarWidth = width;
+        mBarPaint.setStrokeWidth(mBarWidth);
+        invalidate();
     }
 
     public void setProgressBarColor(@ColorInt int color) {
-        mWheel.setBarColor(color);
-    }
-
-    public void setProgressRimWidth(int width) {
-        mWheel.setRimWidth(width);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        if (mWheel.getVisibility() != GONE) {
-            mWheel.layout(r / 2 - mWheel.getMeasuredWidth() / 2,
-                    mCurrentPosY - mWheel.getMeasuredHeight(),
-                    r / 2 + mWheel.getMeasuredWidth() / 2,
-                    mCurrentPosY);
-        } else if (mTextView.getVisibility() != GONE) {
-            mTextView.layout(r / 2 - mTextView.getMeasuredWidth() / 2,
-                    mCurrentPosY - mTextView.getMeasuredHeight(),
-                    r / 2 + mTextView.getMeasuredWidth() / 2,
-                    mCurrentPosY);
-        }
-
+        mBarPaint.setColor(color);
+        invalidate();
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int height = mDefaultHeight + getPaddingTop() + getPaddingBottom();
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-        if (mWheel.getVisibility() != GONE)
-            measureChild(mWheel, widthMeasureSpec, heightMeasureSpec);
-        else if (mTextView.getVisibility() != GONE)
-            measureChild(mTextView, widthMeasureSpec, heightMeasureSpec);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
@@ -131,14 +116,46 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         mPath.reset();
         mPath.moveTo(0, 0);
         mPath.quadTo(mLastPoint[0], mLastPoint[1] * 2, getWidth(), 0);
         mPath.lineTo(0, 0);
-        canvas.drawPath(mPath, mPaint);
-        super.draw(canvas);
+        canvas.drawPath(mPath, mWavePaint);
+        if (mStatus == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
+            drawProgress(canvas);
+        } else {
+            if (mStatus == SmoothRefreshLayout.SR_STATUS_COMPLETE
+                    && !TextUtils.isEmpty(mText)) {
+                drawText(canvas);
+            }
+            mProgress = 0;
+        }
     }
+
+    private void drawProgress(Canvas canvas) {
+        canvas.save();
+        canvas.restore();
+        mProgress += 6.5f;
+        if (mProgress > 360) {
+            mProgress -= 360f;
+        }
+        float from = mProgress - 90;
+        canvas.drawArc(mProgressBounds, from, 300, false, mBarPaint);
+        canvas.save();
+        invalidate();
+    }
+
+    private void drawText(Canvas canvas) {
+        canvas.save();
+        canvas.restore();
+        float textCenterY = mCurrentPosY + ((mTextPaint.descent() + mTextPaint.ascent()) / 2)
+                - mDip2 * 5;
+        canvas.drawText(mText, getWidth() / 2, textCenterY, mTextPaint);
+        canvas.save();
+    }
+
 
     @NonNull
     @Override
@@ -155,51 +172,44 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
                 layout.updateScrollerInterpolator(new BounceInterpolator());
             }
         }
+        invalidate();
     }
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
+        mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         mFingerUpY = 0;
         mCurrentPosY = 0;
         mLastPoint[0] = 0;
         mLastPoint[1] = 0;
         mPath.reset();
         invalidate();
-        mWheel.stopSpinning();
-        mWheel.setVisibility(GONE);
-        mTextView.setVisibility(GONE);
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
+        mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         mFingerUpY = 0;
         mCurrentPosY = 0;
-        mWheel.stopSpinning();
-        mWheel.setVisibility(GONE);
-        mTextView.setVisibility(GONE);
-        if (layout.isEnabledPullToRefresh()) {
-            mTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down_to_refresh);
-        } else {
-            mTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_pull_down);
-        }
+        invalidate();
     }
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
-        mWheel.setVisibility(VISIBLE);
-        mWheel.spin();
+        mStatus = SmoothRefreshLayout.SR_STATUS_REFRESHING;
+        invalidate();
     }
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout layout) {
+        mStatus = SmoothRefreshLayout.SR_STATUS_COMPLETE;
         if (layout.isRefreshSuccessful()) {
-            mTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);
+            mText = getContext().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);
         } else {
-            mTextView.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_failed);
+            mText = getContext().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_failed);
         }
-        mTextView.setVisibility(VISIBLE);
-        mWheel.setVisibility(GONE);
         layout.updateScrollerInterpolator(new DecelerateInterpolator());
+        invalidate();
     }
 
     @Override
@@ -224,7 +234,8 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
                 if (mFingerUpY > 0) {
                     if (mFingerUpY > offsetToKeepHeader) {
                         if (mCurrentPosY > offsetToKeepHeader) {
-                            percent = (mCurrentPosY - offsetToKeepHeader) / (mFingerUpY - offsetToKeepHeader);
+                            percent = (mCurrentPosY - offsetToKeepHeader)
+                                    / (mFingerUpY - offsetToKeepHeader);
                         } else {
                             percent = 0;
                         }
@@ -247,15 +258,18 @@ public class WaveHeader extends ViewGroup implements IRefreshView {
                 mLastPoint[0] = x;
                 mLastPoint[1] = mCurrentPosY;
             }
-            invalidate();
         } else if (status == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
+            mProgressBounds.setEmpty();
+            mProgressBounds = new RectF(width / 2 - mCircleRadius - mBarWidth,
+                    mCurrentPosY - mCircleRadius * 2 - mDip2 * 5 - mBarWidth * 2,
+                    width / 2 + mCircleRadius + mBarWidth,
+                    mCurrentPosY - mDip2 * 5);
             mLastPoint[0] = width / 2;
             mLastPoint[1] = mCurrentPosY;
-            requestLayout();
         } else if (status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             mLastPoint[0] = width / 2;
             mLastPoint[1] = mCurrentPosY;
-            requestLayout();
         }
+        invalidate();
     }
 }

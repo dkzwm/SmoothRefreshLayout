@@ -100,6 +100,8 @@ public class StoreHouseHeader extends View implements IRefreshView {
         super.onDetachedFromWindow();
         if (getHandler() != null)
             getHandler().removeCallbacksAndMessages(null);
+        mAnimations.clear();
+        mMatrices.clear();
     }
 
     @Override
