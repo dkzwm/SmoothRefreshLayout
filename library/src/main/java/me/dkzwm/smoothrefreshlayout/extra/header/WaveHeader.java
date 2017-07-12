@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.os.SystemClock;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,7 +18,7 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.Interpolator;
 
 import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
@@ -30,12 +31,16 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  *
  * @author dkzwm
  */
-
 public class WaveHeader extends View implements IRefreshView {
+    private Interpolator mInterpolator = new BounceInterpolator();
     private byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
+    private boolean mFromFront = true;
+    private double mGrowingTime = 0;
     private float[] mLastPoint = new float[]{0, 0};
+    private float mBarExtraLength = 0;
     private float mProgress = 0.0f;
     private float mFingerUpY = 0;
+    private long mLastDrawProgressTime = 0;
     private int mCurrentPosY = 0;
     private int mCircleRadius;
     private int mDefaultHeight;
@@ -109,7 +114,6 @@ public class WaveHeader extends View implements IRefreshView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-
     @Override
     public int getType() {
         return TYPE_HEADER;
@@ -130,19 +134,48 @@ public class WaveHeader extends View implements IRefreshView {
                     && !TextUtils.isEmpty(mText)) {
                 drawText(canvas);
             }
-            mProgress = 0;
         }
     }
 
     private void drawProgress(Canvas canvas) {
         canvas.save();
         canvas.restore();
-        mProgress += 6.5f;
+        long deltaTime;
+        if (mLastDrawProgressTime <= 0) {
+            deltaTime = 0;
+        } else {
+            deltaTime = (SystemClock.uptimeMillis() - mLastDrawProgressTime);
+        }
+        float spinSpeed = 180.0f;
+        float deltaNormalized = deltaTime * spinSpeed / 1000.0f;
+        int barLength = 16;
+        mGrowingTime += deltaTime;
+        double barSpinCycleTime = 600;
+        if (mGrowingTime > barSpinCycleTime) {
+            mGrowingTime -= barSpinCycleTime;
+            mFromFront = !mFromFront;
+        }
+        float distance = (float) Math.cos((mGrowingTime / barSpinCycleTime + 1)
+                * Math.PI) / 2 + 0.5f;
+        int barMaxLength = 270;
+        float destLength = (barMaxLength - barLength);
+
+        if (mFromFront) {
+            mBarExtraLength = distance * destLength;
+        } else {
+            float newLength = destLength * (1 - distance);
+            mProgress += (mBarExtraLength - newLength);
+            mBarExtraLength = newLength;
+        }
+        mProgress += deltaNormalized;
         if (mProgress > 360) {
             mProgress -= 360f;
         }
-        float from = mProgress - 90;
-        canvas.drawArc(mProgressBounds, from, 300, false, mBarPaint);
+        mLastDrawProgressTime = SystemClock.uptimeMillis();
+
+        float startAngle = mProgress - 90;
+        float sweepAngle = barLength + mBarExtraLength;
+        canvas.drawArc(mProgressBounds, startAngle, sweepAngle, false, mBarPaint);
         canvas.save();
         invalidate();
     }
@@ -169,7 +202,7 @@ public class WaveHeader extends View implements IRefreshView {
         if (layout.isEnabledKeepRefreshView()) {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
             if (mFingerUpY > offsetToKeepHeader) {
-                layout.updateScrollerInterpolator(new BounceInterpolator());
+                layout.updateScrollerInterpolator(mInterpolator);
             }
         }
         invalidate();
@@ -179,6 +212,9 @@ public class WaveHeader extends View implements IRefreshView {
     public void onReset(SmoothRefreshLayout layout) {
         mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         mFingerUpY = 0;
+        mProgress = 0;
+        mLastDrawProgressTime = 0;
+        mBarExtraLength = 0;
         mCurrentPosY = 0;
         mLastPoint[0] = 0;
         mLastPoint[1] = 0;
@@ -190,6 +226,9 @@ public class WaveHeader extends View implements IRefreshView {
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
         mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         mFingerUpY = 0;
+        mProgress = 0;
+        mLastDrawProgressTime = 0;
+        mBarExtraLength = 0;
         mCurrentPosY = 0;
         invalidate();
     }
@@ -208,7 +247,7 @@ public class WaveHeader extends View implements IRefreshView {
         } else {
             mText = getContext().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_failed);
         }
-        layout.updateScrollerInterpolator(new DecelerateInterpolator());
+        layout.resetScrollerInterpolator();
         invalidate();
     }
 
