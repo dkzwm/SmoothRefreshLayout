@@ -12,6 +12,7 @@
         android:id="@+id/recyclerView_test_QQ_activity_style_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         android:background="@android:color/white"/>
 
     <RadioGroup

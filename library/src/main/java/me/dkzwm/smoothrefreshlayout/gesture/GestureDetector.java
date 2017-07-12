@@ -14,7 +14,7 @@ import android.view.ViewConfiguration;
  * @see android.support.v4.view.GestureDetectorCompat
  */
 public class GestureDetector implements IGestureDetector {
-    private static final float MAX_FLING_VELOCITY = 20000f;
+    private static final float MAX_FLING_VELOCITY = 22000f;
     private final OnGestureListener mGestureListener;
     private final int mMaximumFlingVelocity;
     private final int mMinimumFlingVelocity;
@@ -28,7 +28,7 @@ public class GestureDetector implements IGestureDetector {
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMaximumFlingVelocity = configuration.getScaledMaximumFlingVelocity();
         mMinimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
-        mFriction = MAX_FLING_VELOCITY / mMaximumFlingVelocity;
+        mFriction = MAX_FLING_VELOCITY/mMaximumFlingVelocity ;
     }
 
     @Override

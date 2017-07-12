@@ -6,7 +6,9 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
@@ -34,12 +36,26 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.with_frameLayout);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_frameLayout_activity);
         mTextView = (TextView) findViewById(R.id.textView_with_frameLayout_activity_desc);
+        mTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(WithFrameLayoutActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+            }
+        });
+        mTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(WithFrameLayoutActivity.this, "LongClicked", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setEnabledInterceptEventWhileLoading(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
@@ -48,7 +64,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mRefreshLayout.refreshComplete();
-                        String times=getString(R.string.number_of_refresh) + mCount;
+                        String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
                     }
                 }, 2000);
