@@ -2257,11 +2257,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean needInterceptTouchEvent() {
-        Log.d(TAG, "-------" + ((isEnabledInterceptEventWhileLoading() && (isRefreshing() ||
-                isLoadingMore()))
-                || (mOverScrollChecker.isScrolling() && isMovingFooter() && mMode == MODE_REFRESH)
-                || (mOverScrollChecker.isScrolling() && isMovingHeader() && mMode ==
-                MODE_LOAD_MORE)) + "        " + mHasSendCancelEvent);
         return (isEnabledInterceptEventWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || (mOverScrollChecker.isScrolling() && isMovingFooter() && mMode == MODE_REFRESH)
                 || (mOverScrollChecker.isScrolling() && isMovingHeader() && mMode == MODE_LOAD_MORE);
