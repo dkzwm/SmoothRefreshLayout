@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sr_classic_header_default_height">64dp</dimen>
+    <dimen name="sr_classic_footer_default_height">64dp</dimen>
+</resources>

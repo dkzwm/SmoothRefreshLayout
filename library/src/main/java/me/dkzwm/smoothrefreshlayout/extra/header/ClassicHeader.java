@@ -25,15 +25,17 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
     protected RotateAnimation mFlipAnimation;
     protected RotateAnimation mReverseFlipAnimation;
     protected TextView mTitleTextView;
-    private int mRotateAniTime = 200;
-    private View mRotateView;
-    private View mProgressBar;
-    private long mLastUpdateTime = -1;
-    private TextView mLastUpdateTextView;
-    private String mLastUpdateTimeKey;
-    private boolean mShouldShowLastUpdate;
-
+    protected TextView mLastUpdateTextView;
+    protected View mRotateView;
+    protected View mProgressBar;
+    protected String mLastUpdateTimeKey;
+    protected boolean mShouldShowLastUpdate;
+    protected long mLastUpdateTime = -1;
+    protected int mRotateAniTime = 200;
+    @RefreshViewStyle
+    protected int mStyle = STYLE_DEFAULT;
     private LastUpdateTimeUpdater mLastUpdateTimeUpdater;
+
 
     public ClassicHeader(Context context) {
         this(context, null);
@@ -54,6 +56,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         resetView();
     }
+
 
     @Override
     protected void onDetachedFromWindow() {
@@ -93,12 +96,14 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
     }
 
     protected void buildAnimation() {
-        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         mFlipAnimation.setInterpolator(new LinearInterpolator());
         mFlipAnimation.setDuration(mRotateAniTime);
         mFlipAnimation.setFillAfter(true);
 
-        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
@@ -114,10 +119,24 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         mRotateView.setVisibility(INVISIBLE);
     }
 
-
     @Override
     public int getType() {
         return TYPE_HEADER;
+    }
+
+    @Override
+    public int getStyle() {
+        return mStyle;
+    }
+
+    public void setStyle(@RefreshViewStyle int style) {
+        mStyle = style;
+        requestLayout();
+    }
+
+    @Override
+    public int getCustomHeight() {
+        return getResources().getDimensionPixelOffset(R.dimen.sr_classic_header_default_height);
     }
 
     @NonNull
@@ -184,7 +203,6 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, IIndicator indicator) {
-
         final int mOffsetToRefresh = indicator.getOffsetToRefresh();
         final int currentPos = indicator.getCurrentPosY();
         final int lastPos = indicator.getLastPosY();

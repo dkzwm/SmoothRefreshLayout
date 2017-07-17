@@ -278,6 +278,16 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
+    public boolean isInKeepFooterWhileLoadingPos() {
+        return mCurrentPos==getOffsetToKeepFooterWhileLoading();
+    }
+
+    @Override
+    public boolean isInKeepHeaderWhileLoadingPos() {
+        return mCurrentPos==getOffsetToKeepHeaderWhileLoading();
+    }
+
+    @Override
     public int getOffsetToKeepHeaderWhileLoading() {
         return (int) (mOffsetRatioToKeepHeaderWhileLoading * mHeaderHeight);
     }

@@ -45,6 +45,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
         mRefreshLayout.materialStyle();
+        mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {

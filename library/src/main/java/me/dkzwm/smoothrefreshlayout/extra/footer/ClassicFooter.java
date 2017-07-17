@@ -23,15 +23,17 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 public class ClassicFooter extends FrameLayout implements IRefreshView {
     protected RotateAnimation mFlipAnimation;
     protected RotateAnimation mReverseFlipAnimation;
+    protected TextView mLastUpdateTextView;
     protected TextView mTitleTextView;
+    protected View mRotateView;
+    protected View mProgressBar;
+    protected String mLastUpdateTimeKey;
+    protected boolean mShouldShowLastUpdate;
+    protected long mLastUpdateTime = -1;
+    protected int mRotateAniTime = 200;
+    @RefreshViewStyle
+    protected int mStyle = STYLE_DEFAULT;
     private LastUpdateTimeUpdater mLastUpdateTimeUpdater;
-    private int mRotateAniTime = 200;
-    private View mRotateView;
-    private View mProgressBar;
-    private long mLastUpdateTime = -1;
-    private TextView mLastUpdateTextView;
-    private String mLastUpdateTimeKey;
-    private boolean mShouldShowLastUpdate;
 
     public ClassicFooter(Context context) {
         this(context, null);
@@ -83,12 +85,14 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     }
 
     protected void initAnimation() {
-        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         mFlipAnimation.setInterpolator(new LinearInterpolator());
         mFlipAnimation.setDuration(mRotateAniTime);
         mFlipAnimation.setFillAfter(true);
 
-        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
         mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
@@ -107,6 +111,21 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     @Override
     public int getType() {
         return TYPE_FOOTER;
+    }
+
+    @Override
+    public int getStyle() {
+        return mStyle;
+    }
+
+    public void setStyle(@RefreshViewStyle int style) {
+        mStyle = style;
+        requestLayout();
+    }
+
+    @Override
+    public int getCustomHeight() {
+        return getResources().getDimensionPixelOffset(R.dimen.sr_classic_header_default_height);
     }
 
     @NonNull

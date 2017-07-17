@@ -10,7 +10,6 @@ import android.os.SystemClock;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -20,7 +19,6 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 
-import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
@@ -32,26 +30,29 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  * @author dkzwm
  */
 public class WaveHeader extends View implements IRefreshView {
-    private Interpolator mInterpolator = new BounceInterpolator();
-    private byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
+    protected Interpolator mInterpolator = new BounceInterpolator();
+    protected Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    protected Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    protected RectF mProgressBounds = new RectF();
+    protected Path mPath = new Path();
+    protected String mText;
+    protected byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
+    protected float[] mLastPoint = new float[]{0, 0};
+    protected int mDefaultHeight;
+    @RefreshViewStyle
+    protected int mStyle = STYLE_DEFAULT;
+    protected float mFingerUpY = 0;
+    protected float mProgress = 0f;
+    protected int mCurrentPosY = 0;
+    protected int mCircleRadius;
     private boolean mFromFront = true;
     private double mGrowingTime = 0;
-    private float[] mLastPoint = new float[]{0, 0};
     private float mBarExtraLength = 0;
-    private float mProgress = 0.0f;
-    private float mFingerUpY = 0;
     private long mLastDrawProgressTime = 0;
-    private int mCurrentPosY = 0;
-    private int mCircleRadius;
-    private int mDefaultHeight;
     private int mBarWidth = 4;
     private int mDip2;
-    private Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-    private RectF mProgressBounds = new RectF();
-    private Path mPath = new Path();
-    private String mText;
+
 
     public WaveHeader(Context context) {
         this(context, null);
@@ -65,7 +66,7 @@ public class WaveHeader extends View implements IRefreshView {
         super(context, attrs, defStyleAttr);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mWavePaint.setStyle(Paint.Style.FILL);
-        mWavePaint.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
+        mWavePaint.setColor(Color.BLUE);
         mWavePaint.setDither(true);
         mBarPaint.setColor(Color.WHITE);
         mBarPaint.setStyle(Paint.Style.STROKE);
@@ -78,7 +79,12 @@ public class WaveHeader extends View implements IRefreshView {
         setWillNotDraw(false);
         mDip2 = PixelUtl.dp2px(context, 2);
         mCircleRadius = mDip2 * 6;
-        mDefaultHeight = metrics.heightPixels;
+        mDefaultHeight = metrics.heightPixels/2;
+    }
+
+    public void setDefaultHeight(int height) {
+        mDefaultHeight = height;
+        requestLayout();
     }
 
     public void setWaveColor(@ColorInt int color) {
@@ -109,14 +115,36 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int height = mDefaultHeight + getPaddingTop() + getPaddingBottom();
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        if (getStyle() == STYLE_DEFAULT) {
+            int height = mDefaultHeight + getPaddingTop() + getPaddingBottom();
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
     public int getType() {
         return TYPE_HEADER;
+    }
+
+    @Override
+    public int getStyle() {
+        return mStyle;
+    }
+
+    public void setStyle(@RefreshViewStyle int style) {
+        mStyle = style;
+        requestLayout();
+    }
+
+    @Override
+    public int getCustomHeight() {
+        return mDefaultHeight;
+    }
+
+    public void setCustomHeight(int height) {
+        mDefaultHeight = height;
+        requestLayout();
     }
 
     @Override
@@ -215,6 +243,7 @@ public class WaveHeader extends View implements IRefreshView {
         mProgress = 0;
         mLastDrawProgressTime = 0;
         mBarExtraLength = 0;
+        mGrowingTime = 0;
         mCurrentPosY = 0;
         mLastPoint[0] = 0;
         mLastPoint[1] = 0;
@@ -227,6 +256,7 @@ public class WaveHeader extends View implements IRefreshView {
         mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         mFingerUpY = 0;
         mProgress = 0;
+        mGrowingTime = 0;
         mLastDrawProgressTime = 0;
         mBarExtraLength = 0;
         mCurrentPosY = 0;

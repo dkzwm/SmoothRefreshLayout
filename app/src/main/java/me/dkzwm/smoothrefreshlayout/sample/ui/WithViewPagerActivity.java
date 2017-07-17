@@ -48,6 +48,7 @@ public class WithViewPagerActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setDisableWhenHorizontalMove(true);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

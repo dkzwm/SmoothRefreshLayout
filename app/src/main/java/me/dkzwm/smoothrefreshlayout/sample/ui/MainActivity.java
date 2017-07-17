@@ -3,7 +3,10 @@ package me.dkzwm.smoothrefreshlayout.sample.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.WaveSmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.sample.BuildConfig;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.utils.SRLog;
@@ -50,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, 800);
             }
         });
+        mRefreshLayout.setWaveHeaderWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        mRefreshLayout.setWaveHeaderBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+        mRefreshLayout.setWaveHeaderStyle(IRefreshView.STYLE_DEFAULT);
         //自动刷新
         mRefreshLayout.autoRefresh(true, false);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
@@ -156,6 +163,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
         }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == Menu.FIRST) {
+            if (mRefreshLayout.getWaveHeaderStyle() == IRefreshView.STYLE_SCALE)
+                mRefreshLayout.setWaveHeaderStyle(IRefreshView.STYLE_DEFAULT);
+            else
+                mRefreshLayout.setWaveHeaderStyle(IRefreshView.STYLE_SCALE);
+            return true;
+        }
+        return false;
     }
 }

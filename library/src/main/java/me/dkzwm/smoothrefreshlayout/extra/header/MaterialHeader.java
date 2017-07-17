@@ -134,6 +134,16 @@ public class MaterialHeader extends View implements IRefreshView {
         return TYPE_HEADER;
     }
 
+    @Override
+    public int getStyle() {
+        return STYLE_DEFAULT;
+    }
+
+    @Override
+    public int getCustomHeight() {
+        return 0;
+    }
+
     @NonNull
     @Override
     public View getView() {

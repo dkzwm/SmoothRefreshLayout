@@ -14,7 +14,7 @@ import android.view.ViewConfiguration;
  * @see android.support.v4.view.GestureDetectorCompat
  */
 public class GestureDetector implements IGestureDetector {
-    private static final float MAX_FLING_VELOCITY = 22000f;
+    private static final float MAX_FLING_VELOCITY = 25000f;
     private final OnGestureListener mGestureListener;
     private final int mMaximumFlingVelocity;
     private final int mMinimumFlingVelocity;
@@ -28,7 +28,8 @@ public class GestureDetector implements IGestureDetector {
         ViewConfiguration configuration = ViewConfiguration.get(context);
         mMaximumFlingVelocity = configuration.getScaledMaximumFlingVelocity();
         mMinimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
-        mFriction = MAX_FLING_VELOCITY/mMaximumFlingVelocity ;
+        mFriction = MAX_FLING_VELOCITY / mMaximumFlingVelocity
+                * ViewConfiguration.getScrollFriction();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class GestureDetector implements IGestureDetector {
             case MotionEvent.ACTION_POINTER_UP:
                 // Check the dot product of current velocities.
                 // If the pointer that left was opposing another velocity vector, clear.
-                mVelocityTracker.computeCurrentVelocity(1000, MAX_FLING_VELOCITY);
+                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                 final int upIndex = ev.getActionIndex();
                 final int id1 = ev.getPointerId(upIndex);
                 final float x1 = mVelocityTracker.getXVelocity(id1);
@@ -88,7 +89,7 @@ public class GestureDetector implements IGestureDetector {
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 final int pointerId = ev.getPointerId(0);
-                mVelocityTracker.computeCurrentVelocity(1000, MAX_FLING_VELOCITY);
+                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
                 float vy = mVelocityTracker.getYVelocity(pointerId);
                 float vx = mVelocityTracker.getXVelocity(pointerId);
                 if ((Math.abs(vy) > mMinimumFlingVelocity)) {

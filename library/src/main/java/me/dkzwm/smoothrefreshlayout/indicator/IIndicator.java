@@ -109,6 +109,10 @@ public interface IIndicator {
 
     boolean isOverOffsetToKeepFooterWhileLoading();
 
+    boolean isInKeepFooterWhileLoadingPos();
+
+    boolean isInKeepHeaderWhileLoadingPos();
+
     int getOffsetToKeepHeaderWhileLoading();
 
     int getOffsetToKeepFooterWhileLoading();

@@ -3,7 +3,9 @@ package me.dkzwm.smoothrefreshlayout;
 import android.content.Context;
 import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.extra.header.WaveHeader;
 
 /**
@@ -33,9 +35,9 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mWaveHeader);
         setEnableHeaderDrawerStyle(true);
         setEnableKeepRefreshView(true);
-        setCanMoveTheMaxRatioOfHeaderHeight(.2f);
-        setRatioOfHeaderHeightToRefresh(.11f);
-        setOffsetRatioToKeepHeaderWhileLoading(.11f);
+        setCanMoveTheMaxRatioOfHeaderHeight(.4f);
+        setRatioOfHeaderHeightToRefresh(.22f);
+        setOffsetRatioToKeepHeaderWhileLoading(.22f);
         setDurationToCloseHeader(1000);
         setDurationOfBackToHeaderHeight(1000);
     }
@@ -44,8 +46,21 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         return mWaveHeader;
     }
 
-    public void setWaveHeaderBackgroudColor(@ColorInt int color) {
+    public void setWaveHeaderBackgroundColor(@ColorInt int color) {
         mWaveHeader.setBackgroundColor(color);
+    }
+
+    public void setWaveHeaderWaveColor(@ColorInt int color) {
+        mWaveHeader.setWaveColor(color);
+    }
+
+    @IRefreshView.RefreshViewStyle
+    public int getWaveHeaderStyle() {
+        return mWaveHeader.getStyle();
+    }
+
+    public void setWaveHeaderStyle(@IRefreshView.RefreshViewStyle int style) {
+        mWaveHeader.setStyle(style);
     }
 
     public void setWaveHeaderTextColor(@ColorInt int color) {

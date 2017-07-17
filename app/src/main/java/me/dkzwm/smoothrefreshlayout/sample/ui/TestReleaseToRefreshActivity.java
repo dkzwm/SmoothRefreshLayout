@@ -38,7 +38,7 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         StoreHouseHeader header = new StoreHouseHeader(this);
         header.initPathWithString("RELEASE TO REFRESH");
-        header.setTextColor(Color.BLACK);
+        header.setTextColor(Color.WHITE);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {

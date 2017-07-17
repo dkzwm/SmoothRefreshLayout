@@ -22,10 +22,9 @@ import me.dkzwm.smoothrefreshlayout.utils.StoreHousePath;
  * Modify by dkzwm
  */
 public class StoreHouseHeader extends View implements IRefreshView {
-
+    private int mCurrentPosY;
     private ArrayList<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
     private ArrayList<Matrix> mMatrices = new ArrayList<>();
-
     private int mLineWidth = -1;
     private float mScale = .5f;
     private int mDropHeight = -1;
@@ -39,13 +38,11 @@ public class StoreHouseHeader extends View implements IRefreshView {
     private float mBarDarkAlpha = 0.5f;
     private float mFromAlpha = 1.0f;
     private float mToAlpha = 0.5f;
-
     private int mLoadingAniDuration = 1000;
     private int mLoadingAniSegDuration = 1000;
     private int mLoadingAniItemDuration = 400;
-    private float mTopOffset = 10;
-    private float mBottomOffset = 10;
-
+    private float mTopOffset = 25;
+    private float mBottomOffset = 25;
     private AniController mAniController = new AniController();
     private int mTextColor = Color.WHITE;
 
@@ -61,6 +58,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
         super(context, attrs, defStyleAttr);
         mLineWidth = PixelUtl.dp2px(context, 1);
         mDropHeight = PixelUtl.dp2px(context, 40);
+        setBackgroundColor(Color.DKGRAY);
         mHorizontalRandomness = context.getResources().getDisplayMetrics().widthPixels / 2;
     }
 
@@ -106,16 +104,22 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int height = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset)
-                + mDrawZoneHeight + getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        if (getStyle() == STYLE_DEFAULT) {
+            int height = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset)
+                    + mDrawZoneHeight + getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
-        mOffsetY = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
+        if (getStyle() == STYLE_DEFAULT)
+            mOffsetY = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
+        else {
+            mOffsetY = (mCurrentPosY - mDrawZoneHeight) / 2;
+        }
         mDropHeight = getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
     }
 
@@ -253,10 +257,21 @@ public class StoreHouseHeader extends View implements IRefreshView {
         canvas.restoreToCount(c1);
     }
 
-
     @Override
     public int getType() {
         return TYPE_HEADER;
+    }
+
+    @Override
+    public int getStyle() {
+        return STYLE_SCALE;
+    }
+
+    @Override
+    public int getCustomHeight() {
+        return getStyle() == STYLE_SCALE ? mDrawZoneHeight
+                + PixelUtl.dp2px(getContext(), mTopOffset)
+                + PixelUtl.dp2px(getContext(), mBottomOffset) : 0;
     }
 
     @NonNull
@@ -295,6 +310,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        mCurrentPosY = indicator.getCurrentPosY();
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             float currentPercent = Math.min(1f, indicator.getCurrentPercentOfHeader());

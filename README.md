@@ -12,6 +12,7 @@
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现）.
  - 支持越界回弹.
  - 支持抽屉效果.
+ - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）.
  - 支持ListView，RecyclerView加载更多的平滑滚动.
  - 支持内容视图的Margin,PS:滚动中没有了Margin效果？SmoothRefreshLayout不存在这种问题.
@@ -69,7 +70,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.2'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.3'
 }
 ```
 #### 在Xml中配置
@@ -107,11 +108,15 @@ refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 ```
 
 #### 自定义刷新视图
-- 接口定义
+##### 接口定义
 ```
-public interface IRefreshView {
+public interface IRefreshView {    
+
     byte TYPE_HEADER = 0;
     byte TYPE_FOOTER = 1;
+
+    byte STYLE_DEFAULT = 0;
+    byte STYLE_SCALE = 1;
 
     /**
      * 返回是头部视图还是尾部视图
@@ -122,6 +127,16 @@ public interface IRefreshView {
      * 一般情况都是View实现本接口，所以返回this;
      */
     View getView();
+
+    /**
+     * 获取视图样式，现支持2种样式，默认样式和缩放样式。
+     */
+    int getStyle();
+
+    /**
+     * 获取视图的自定义高度，当视图样式为STYLE_SCALE时，必须返回一个确切且大于0的值
+     */
+    int getCustomHeight();
 
     /**
      * 手指离开屏幕
@@ -156,13 +171,14 @@ public interface IRefreshView {
 }
 ```
 
-- 添加自定义刷新视图
-  * 代码添加
-  ```
-  setHeaderView(@NonNull IRefreshView header);
-  setFooterView(@NonNull IRefreshView footer);
-  ```
-  * 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断
+##### 添加自定义刷新视图
+- 代码添加
+```    
+    setHeaderView(@NonNull IRefreshView header);
+    setFooterView(@NonNull IRefreshView footer);
+```    
+
+- 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断
  
 #### Xml属性 
 ##### SmoothRefreshLayout 自身配置
@@ -204,6 +220,7 @@ public interface IRefreshView {
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
 |setContentView|View|配置内容视图|
+|setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置改属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setResistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
 |setResistanceOfPullUp|float|Footer视图的移动阻尼（默认:`1.65f`）|
@@ -234,7 +251,7 @@ public interface IRefreshView {
 |setDisableRefresh|boolean|禁用Header刷新（默认:`false`）|
 |setDisableLoadMore|boolean|禁用Footer刷新（默认:`false`）|
 |setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
-|setEnableWhenScrollingToBottomToPerformLoadMore|boolean|到底部自动加载（默认:`false`）|
+|setEnableScrollToBottomAutoLoadMore|boolean|到底部自动加载（默认:`false`）|
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 
 #### 回调

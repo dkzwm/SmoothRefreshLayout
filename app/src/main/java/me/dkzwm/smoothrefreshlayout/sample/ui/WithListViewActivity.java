@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -15,12 +15,12 @@ import java.util.List;
 
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.ListViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
-import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -33,7 +33,8 @@ public class WithListViewActivity extends AppCompatActivity {
     private ListViewAdapter mAdapter;
     private Handler mHandler = new Handler();
     private int mCount = 0;
-    private int mFailedCount = 0;
+    private ClassicFooter mClassicFooter;
+    private ClassicHeader mClassicHeader;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,15 +48,14 @@ public class WithListViewActivity extends AppCompatActivity {
         mListView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-        final ClassicHeader header = (ClassicHeader) findViewById(R.id.classicHeader_with_listView_activity);
-        header.setLastUpdateTimeKey("header_last_update_time");
-        final ClassicFooter footer = (ClassicFooter) findViewById(R.id.classicFooter_with_listView_activity);
-        footer.setLastUpdateTimeKey("footer_last_update_time");
-        header.setTitleTextColor(Color.WHITE);
-        header.setLastUpdateTextColor(Color.GRAY);
+        mClassicHeader = (ClassicHeader) findViewById(R.id.classicHeader_with_listView_activity);
+        mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
+        mClassicFooter = (ClassicFooter) findViewById(R.id.classicFooter_with_listView_activity);
+        mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
+        mClassicHeader.setTitleTextColor(Color.WHITE);
+        mClassicHeader.setLastUpdateTextColor(Color.GRAY);
         mRefreshLayout.setEnableKeepRefreshView(true);
-        mRefreshLayout.setEnableHeaderDrawerStyle(true);
-        mRefreshLayout.setEnableWhenScrollingToBottomToPerformLoadMore(true);
+        mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -66,11 +66,6 @@ public class WithListViewActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mFailedCount++;
-                        if (mFailedCount % 2 == 0) {
-                            mRefreshLayout.refreshComplete(false);
-                            return;
-                        }
                         if (isRefresh) {
                             mCount = 0;
                             List<String> list = DataUtil.createList(mCount, 20);
@@ -83,23 +78,7 @@ public class WithListViewActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 2000);
-            }
-        });
-        mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_IDLE) {
-                    if (!ScrollCompat.canChildScrollDown(view)) {
-                        mRefreshLayout.autoLoadMore(true);
-                    }
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-
+                }, 8000);
             }
         });
         SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack completeCallBack = new SmoothRefreshLayout
@@ -107,9 +86,9 @@ public class WithListViewActivity extends AppCompatActivity {
             @Override
             public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
                 if (mRefreshLayout.isRefreshing())
-                    header.onRefreshComplete(mRefreshLayout);
+                    mClassicHeader.onRefreshComplete(mRefreshLayout);
                 else
-                    footer.onRefreshComplete(mRefreshLayout);
+                    mClassicFooter.onRefreshComplete(mRefreshLayout);
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -121,6 +100,8 @@ public class WithListViewActivity extends AppCompatActivity {
         //Hook刷新完成，可以实现延迟完成加载
         mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(completeCallBack);
         mRefreshLayout.setOnHookFooterRefreshCompleteCallback(completeCallBack);
+        mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
+        mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
         mRefreshLayout.autoRefresh(false);
     }
 
@@ -131,9 +112,25 @@ public class WithListViewActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case Menu.FIRST:
+                if (mClassicHeader.getStyle()== IRefreshView.STYLE_SCALE)
+                    mClassicHeader.setStyle(IRefreshView.STYLE_DEFAULT);
+                else
+                    mClassicHeader.setStyle(IRefreshView.STYLE_SCALE);
+                if (mClassicFooter.getStyle()==IRefreshView.STYLE_DEFAULT)
+                    mClassicFooter.setStyle(IRefreshView.STYLE_DEFAULT);
+                else
+                    mClassicFooter.setStyle(IRefreshView.STYLE_SCALE);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

@@ -19,7 +19,8 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  * @author dkzwm
  */
 public class MaterialFooter extends FrameLayout implements IRefreshView {
-    private ProgressWheel mProgress;
+    protected ProgressWheel mProgress;
+    protected int mDefaultHeight;
 
     public MaterialFooter(Context context) {
         this(context, null);
@@ -35,8 +36,8 @@ public class MaterialFooter extends FrameLayout implements IRefreshView {
         mProgress.setBarColor(Color.BLUE);
         mProgress.setCircleRadius(PixelUtl.dp2px(context, 20));
         mProgress.setBarWidth(PixelUtl.dp2px(context, 3));
-        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, PixelUtl.dp2px
-                (context, 64));
+        mDefaultHeight = PixelUtl.dp2px(context, 64);
+        LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, mDefaultHeight);
         layoutParams.gravity = Gravity.CENTER;
         addView(mProgress, layoutParams);
     }
@@ -50,6 +51,16 @@ public class MaterialFooter extends FrameLayout implements IRefreshView {
     @Override
     public int getType() {
         return TYPE_FOOTER;
+    }
+
+    @Override
+    public int getStyle() {
+        return STYLE_DEFAULT;
+    }
+
+    @Override
+    public int getCustomHeight() {
+        return mDefaultHeight;
     }
 
     @NonNull

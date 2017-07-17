@@ -35,5 +35,6 @@
     <string name="has_been_triggered_to_load_more">Has been triggered to load more</string>
     <string name="test_refresh_layout_in_viewPager_under_nested_layout">Test refresh layout
     in ViewPager under nested layout</string>
+    <string name="change_style">Change header style</string>
 
 </resources>

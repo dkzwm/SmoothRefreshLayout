@@ -54,6 +54,7 @@ public class NestedPageFragment extends Fragment {
                 .smoothRefreshLayout_nested_page_fragment);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableNextPtrAtOnce(false);
+        mRefreshLayout.setDisableWhenHorizontalMove(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
