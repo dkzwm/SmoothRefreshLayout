@@ -106,6 +106,7 @@ public interface IRefreshView {
     }
 
     @IntDef({IRefreshView.STYLE_DEFAULT, IRefreshView.STYLE_SCALE})
+    @Retention(RetentionPolicy.SOURCE)
     @interface RefreshViewStyle {
     }
 }
