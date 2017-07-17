@@ -6,11 +6,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.extra.header.StoreHouseHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
@@ -25,6 +27,7 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
     private TextView mTextView;
     private Handler mHandler = new Handler();
     private int mCount = 0;
+    private StoreHouseHeader mStoreHouseHeader;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,11 +39,12 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
-        StoreHouseHeader header = new StoreHouseHeader(this);
-        header.initPathWithString("RELEASE TO REFRESH");
-        header.setTextColor(Color.WHITE);
-        header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
-        mRefreshLayout.setHeaderView(header);
+        mStoreHouseHeader = new StoreHouseHeader(this);
+        mStoreHouseHeader.initPathWithString("RELEASE TO REFRESH");
+        mStoreHouseHeader.setTextColor(Color.WHITE);
+        mStoreHouseHeader.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
+        mRefreshLayout.setHeaderView(mStoreHouseHeader);
+        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(1);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
@@ -49,7 +53,7 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mRefreshLayout.refreshComplete();
-                        String times=getString(R.string.number_of_refresh) + mCount;
+                        String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
                     }
                 }, 2000);
@@ -65,9 +69,21 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case Menu.FIRST:
+                if (mStoreHouseHeader.getStyle() == IRefreshView.STYLE_SCALE)
+                    mStoreHouseHeader.setStyle(IRefreshView.STYLE_DEFAULT);
+                else
+                    mStoreHouseHeader.setStyle(IRefreshView.STYLE_SCALE);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

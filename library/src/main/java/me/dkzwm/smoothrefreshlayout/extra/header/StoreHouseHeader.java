@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.extra.header;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -10,6 +11,7 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.animation.StoreHouseBarItemAnimation;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
@@ -22,19 +24,21 @@ import me.dkzwm.smoothrefreshlayout.utils.StoreHousePath;
  * Modify by dkzwm
  */
 public class StoreHouseHeader extends View implements IRefreshView {
-    private int mCurrentPosY;
-    private ArrayList<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
-    private ArrayList<Matrix> mMatrices = new ArrayList<>();
-    private int mLineWidth = -1;
-    private float mScale = .5f;
-    private int mDropHeight = -1;
+    @RefreshViewStyle
+    protected int mStyle = STYLE_DEFAULT;
+    protected int mCurrentPosY;
+    protected ArrayList<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
+    protected ArrayList<Matrix> mMatrices = new ArrayList<>();
+    protected int mLineWidth = -1;
+    protected float mScale = .5f;
+    protected int mDropHeight = -1;
+    protected float mProgress = 0;
+    protected int mDrawZoneWidth = 0;
+    protected int mDrawZoneHeight = 0;
+    protected int mOffsetX = 0;
+    protected int mOffsetY = 0;
     private float mInternalAnimationFactor = 0.7f;
     private int mHorizontalRandomness = -1;
-    private float mProgress = 0;
-    private int mDrawZoneWidth = 0;
-    private int mDrawZoneHeight = 0;
-    private int mOffsetX = 0;
-    private int mOffsetY = 0;
     private float mBarDarkAlpha = 0.5f;
     private float mFromAlpha = 1.0f;
     private float mToAlpha = 0.5f;
@@ -56,6 +60,13 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     public StoreHouseHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (attrs != null) {
+            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
+            @RefreshViewStyle
+            int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
+            mStyle = style;
+            arr.recycle();
+        }
         mLineWidth = PixelUtl.dp2px(context, 1);
         mDropHeight = PixelUtl.dp2px(context, 40);
         setBackgroundColor(Color.DKGRAY);
@@ -104,7 +115,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (getStyle() == STYLE_DEFAULT) {
+        if (mStyle == STYLE_DEFAULT) {
             int height = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset)
                     + mDrawZoneHeight + getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
@@ -115,7 +126,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
-        if (getStyle() == STYLE_DEFAULT)
+        if (mStyle == STYLE_DEFAULT)
             mOffsetY = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
         else {
             mOffsetY = (mCurrentPosY - mDrawZoneHeight) / 2;
@@ -264,12 +275,17 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public int getStyle() {
-        return STYLE_SCALE;
+        return mStyle;
+    }
+
+    public void setStyle(@RefreshViewStyle int style) {
+        mStyle = style;
+        requestLayout();
     }
 
     @Override
     public int getCustomHeight() {
-        return getStyle() == STYLE_SCALE ? mDrawZoneHeight
+        return mStyle == STYLE_SCALE ? mDrawZoneHeight
                 + PixelUtl.dp2px(getContext(), mTopOffset)
                 + PixelUtl.dp2px(getContext(), mBottomOffset) : 0;
     }
