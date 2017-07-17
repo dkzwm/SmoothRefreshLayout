@@ -113,11 +113,11 @@ public class WithListViewActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mClassicHeader.getStyle()== IRefreshView.STYLE_SCALE)
+                if (mClassicHeader.getStyle() == IRefreshView.STYLE_SCALE)
                     mClassicHeader.setStyle(IRefreshView.STYLE_DEFAULT);
                 else
                     mClassicHeader.setStyle(IRefreshView.STYLE_SCALE);
-                if (mClassicFooter.getStyle()==IRefreshView.STYLE_DEFAULT)
+                if (mClassicFooter.getStyle() == IRefreshView.STYLE_SCALE)
                     mClassicFooter.setStyle(IRefreshView.STYLE_DEFAULT);
                 else
                     mClassicFooter.setStyle(IRefreshView.STYLE_SCALE);

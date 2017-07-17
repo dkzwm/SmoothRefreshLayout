@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
@@ -59,5 +60,6 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
     public ClassicFooter getDefaultFooter() {
         return mClassicFooter;
     }
+
 
 }

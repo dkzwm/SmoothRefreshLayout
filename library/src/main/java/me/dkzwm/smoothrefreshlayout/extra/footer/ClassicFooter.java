@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.extra.footer;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -45,6 +46,13 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
 
     public ClassicFooter(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        if (attrs != null) {
+            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
+            @RefreshViewStyle
+            int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
+            mStyle = style;
+            arr.recycle();
+        }
         initAnimation();
         View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_footer, this);
         mRotateView = header.findViewById(R.id.view_footer_rotate);
@@ -54,7 +62,6 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         resetView();
     }
-
 
     @Override
     protected void onDetachedFromWindow() {

@@ -245,6 +245,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 setEnableOverScroll(true);
             }
             arr.recycle();
+            arr = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS, 0, 0);
+            setEnabled(arr.getBoolean(0, true));
+            arr.recycle();
         } else {
             setEnablePullToRefresh(true);
             setEnableKeepRefreshView(true);
@@ -263,9 +266,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         setNestedScrollingEnabled(true);
 
-        final TypedArray a = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
-        setEnabled(a.getBoolean(0, true));
-        a.recycle();
     }
 
     public static void debug(boolean debug) {
@@ -2247,6 +2247,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             mDealHorizontalMove = true;
                             mPreventForHorizontal = false;
                         }
+                    }
+                } else {
+                    if (Math.abs(offsetX) < mTouchSlop
+                            && Math.abs(offsetY) < mTouchSlop) {
+                        return super.dispatchTouchEvent(ev);
                     }
                 }
                 if (mPreventForHorizontal) {

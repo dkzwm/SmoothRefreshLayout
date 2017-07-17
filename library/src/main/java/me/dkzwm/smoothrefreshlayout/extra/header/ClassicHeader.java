@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.extra.header;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -47,6 +48,13 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
     public ClassicHeader(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        if (attrs != null) {
+            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
+            @RefreshViewStyle
+            int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
+            mStyle = style;
+            arr.recycle();
+        }
         buildAnimation();
         View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_header, this);
         mRotateView = header.findViewById(R.id.view_header_rotate);

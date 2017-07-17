@@ -14,7 +14,8 @@
         android:id="@+id/classicHeader_with_listView_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"/>
+        android:background="@color/colorPrimary"
+        app:sr_style="style_scale"/>
 
     <ListView
         android:id="@+id/listView_with_listView_activity"
@@ -31,7 +32,8 @@
         android:id="@+id/classicFooter_with_listView_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"/>
+        android:background="@color/colorAccent"
+        app:sr_style="style_scale"/>
 
     <TextView
         android:layout_width="wrap_content"

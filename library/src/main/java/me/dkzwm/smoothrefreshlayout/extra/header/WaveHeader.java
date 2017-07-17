@@ -1,6 +1,7 @@
 package me.dkzwm.smoothrefreshlayout.extra.header;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 
+import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
@@ -64,6 +66,13 @@ public class WaveHeader extends View implements IRefreshView {
 
     public WaveHeader(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        if (attrs != null) {
+            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
+            @RefreshViewStyle
+            int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
+            mStyle = style;
+            arr.recycle();
+        }
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mWavePaint.setStyle(Paint.Style.FILL);
         mWavePaint.setColor(Color.BLUE);
