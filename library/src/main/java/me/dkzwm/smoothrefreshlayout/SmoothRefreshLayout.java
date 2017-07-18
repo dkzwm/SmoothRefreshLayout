@@ -342,6 +342,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         int maxHeight = 0;
         int maxWidth = 0;
         int childState = 0;
+        final int paddingLeft = getPaddingLeft();
+        final int paddingRight = getPaddingRight();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (mHeaderView != null && child == mHeaderView) {
@@ -349,6 +351,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 } else {
+                    final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
+                            paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
                     final int heightSpec;
                     if (isMovingHeader()) {
                         heightSpec = makeMeasureSpec(mIndicator.getCurrentPosY()
@@ -356,7 +360,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     } else {
                         heightSpec = makeMeasureSpec(0, MeasureSpec.EXACTLY);
                     }
-                    child.measure(widthMeasureSpec, heightSpec);
+                    child.measure(childWidthMeasureSpec, heightSpec);
                 }
                 if (mHeaderView.getCustomHeight() > 0) {
                     mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
@@ -374,6 +378,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 } else {
+                    final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
+                            paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
                     final int heightSpec;
                     if (isMovingFooter()) {
                         heightSpec = makeMeasureSpec(mIndicator.getCurrentPosY()
@@ -381,7 +387,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     } else {
                         heightSpec = makeMeasureSpec(0, MeasureSpec.EXACTLY);
                     }
-                    child.measure(widthMeasureSpec, heightSpec);
+                    child.measure(childWidthMeasureSpec, heightSpec);
                 }
                 if (mFooterView.getCustomHeight() > 0) {
                     mIndicator.setFooterHeight(mFooterView.getCustomHeight());
