@@ -46,7 +46,7 @@ public class WithWebViewActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRefreshComplete() {
+            public void onRefreshComplete(boolean isSuccessful) {
 
             }
         });

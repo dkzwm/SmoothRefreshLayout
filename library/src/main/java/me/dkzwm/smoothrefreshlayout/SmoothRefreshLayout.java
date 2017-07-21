@@ -115,6 +115,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean mTriggeredAutoLoadMore = true;
     protected boolean mAutoRefreshUseSmoothScroll = false;
     protected boolean mNeedNotifyRefreshComplete = true;
+    protected boolean mDelayedRefreshComplete = false;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
     protected int mDurationToCloseHeader = 500;
@@ -419,7 +420,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
             }
         }
-        maxWidth += getPaddingLeft() + getPaddingRight();
+        maxWidth += paddingLeft + paddingRight;
         maxHeight += getPaddingTop() + getPaddingBottom();
         maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
         maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
@@ -603,7 +604,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
             }
         }
-        postDelayed(mDelayToPerformAutoRefresh, 100);
+        postDelayed(mDelayToPerformAutoRefresh, 50);
     }
 
     @Override
@@ -763,24 +764,70 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Perform refresh complete ,to reset
+     * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT},
+     * and set the last refresh operation successfully
      */
     final public void refreshComplete() {
         refreshComplete(true);
     }
 
+    /**
+     * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT}
+     *
+     * @param isSuccessful Set the last refresh operation status
+     */
     final public void refreshComplete(boolean isSuccessful) {
+        refreshComplete(isSuccessful, 0);
+    }
+
+    /**
+     * Perform refresh complete, delay to reset the state to
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation successfully
+     *
+     * @param delayDurationToChangeState Delay to change the state to
+     *                                   {@link SmoothRefreshLayout#SR_STATUS_INIT}
+     */
+    final public void refreshComplete(long delayDurationToChangeState) {
+        refreshComplete(true, delayDurationToChangeState);
+    }
+
+    /**
+     * Perform refresh complete, delay to reset the state to
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation
+     *
+     * @param delayDurationToChangeState Delay to change the state to
+     *                                   {@link SmoothRefreshLayout#SR_STATUS_INIT}
+     * @param isSuccessful               Set the last refresh operation
+     */
+    final public void refreshComplete(boolean isSuccessful, long delayDurationToChangeState) {
         if (sDebug) {
             SRLog.d(TAG, "refreshComplete(): isSuccessful: " + isSuccessful);
         }
         mIsLastRefreshSuccessful = isSuccessful;
-        long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
-        if (delay <= 0) {
-            performRefreshComplete(true);
+        if (delayDurationToChangeState <= 0) {
+            long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
+            if (delay <= 0) {
+                performRefreshComplete(true);
+            } else {
+                if (mDelayToRefreshComplete == null)
+                    mDelayToRefreshComplete = new DelayToRefreshComplete(this);
+                postDelayed(mDelayToRefreshComplete, delay);
+            }
         } else {
+            if (isRefreshing() && mHeaderView != null) {
+                mHeaderView.onRefreshComplete(this);
+                mNeedNotifyRefreshComplete = false;
+            } else if (isLoadingMore() && mFooterView != null) {
+                mFooterView.onRefreshComplete(this);
+                mNeedNotifyRefreshComplete = false;
+            }
+            mDelayedRefreshComplete = true;
+            long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
+            if (delayDurationToChangeState < delay)
+                delayDurationToChangeState = delay;
             if (mDelayToRefreshComplete == null)
                 mDelayToRefreshComplete = new DelayToRefreshComplete(this);
-            postDelayed(mDelayToRefreshComplete, delay);
+            postDelayed(mDelayToRefreshComplete, delayDurationToChangeState);
         }
     }
 
@@ -2089,6 +2136,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mGestureDetector.onDetached();
         removeCallbacks(mScrollChecker);
         removeCallbacks(mOverScrollChecker);
+        if (mDelayToPerformAutoRefresh != null)
+            removeCallbacks(mDelayToPerformAutoRefresh);
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
         if (mHeaderRefreshCompleteHook != null)
@@ -2535,9 +2584,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mFooterView.onRefreshComplete(this);
             }
             if (mRefreshListener != null) {
-                mRefreshListener.onRefreshComplete();
+                mRefreshListener.onRefreshComplete(mIsLastRefreshSuccessful);
             }
             mNeedNotifyRefreshComplete = false;
+        } else if (mDelayedRefreshComplete) {
+            if (mRefreshListener != null) {
+                mRefreshListener.onRefreshComplete(mIsLastRefreshSuccessful);
+            }
         }
         tryScrollBackToTopByPercentDuration(0);
         tryToNotifyReset();
@@ -2859,6 +2912,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mIndicator.setMovingStatus(IIndicator.MOVING_CONTENT);
             mStatus = SR_STATUS_INIT;
             mNeedNotifyRefreshComplete = true;
+            mDelayedRefreshComplete = false;
             mOverScrollChecker.destroy();
             clearAutoRefreshFlag();
             return true;
@@ -2866,7 +2920,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return false;
     }
 
-    private void performRefreshComplete(boolean hook) {
+    protected void performRefreshComplete(boolean hook) {
         if (sDebug) {
             SRLog.i(TAG, "performRefreshComplete()");
         }
@@ -2920,6 +2974,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())
                 || (mIndicator.isOverOffsetToRefresh() && !isDisabledPerformRefresh()))) {
             mStatus = SR_STATUS_REFRESHING;
+            mDelayedRefreshComplete = false;
             performRefresh();
             return;
         }
@@ -2929,6 +2984,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())
                 || (mIndicator.isOverOffsetToLoadMore() && !isDisabledPerformLoadMore()))) {
             mStatus = SR_STATUS_LOADING_MORE;
+            mDelayedRefreshComplete = false;
             performRefresh();
         }
     }
@@ -3042,8 +3098,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
         /**
          * Called when refresh completed.
+         *
+         * @param isSuccessful refresh state
          */
-        void onRefreshComplete();
+        void onRefreshComplete(boolean isSuccessful);
     }
 
     /**

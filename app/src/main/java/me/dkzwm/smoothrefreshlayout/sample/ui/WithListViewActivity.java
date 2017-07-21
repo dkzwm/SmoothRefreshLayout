@@ -76,30 +76,18 @@ public class WithListViewActivity extends AppCompatActivity {
                             mCount += 20;
                             mAdapter.appendData(list);
                         }
-                        mRefreshLayout.refreshComplete();
+                        mRefreshLayout.refreshComplete(1200);
                     }
-                }, 8000);
+                }, 5000);
+            }
+
+            @Override
+            public void onRefreshComplete(boolean isSuccessful) {
+                Toast.makeText(WithListViewActivity.this, R.string.sr_refresh_complete,
+                        Toast.LENGTH_SHORT).show();
             }
         });
-        SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack completeCallBack = new SmoothRefreshLayout
-                .OnHookUIRefreshCompleteCallBack() {
-            @Override
-            public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
-                if (mRefreshLayout.isRefreshing())
-                    mClassicHeader.onRefreshComplete(mRefreshLayout);
-                else
-                    mClassicFooter.onRefreshComplete(mRefreshLayout);
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        hook.onHookComplete();
-                    }
-                }, 500);
-            }
-        };
-        //Hook刷新完成，可以实现延迟完成加载
-        mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(completeCallBack);
-        mRefreshLayout.setOnHookFooterRefreshCompleteCallback(completeCallBack);
+
         mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
         mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
         mRefreshLayout.autoRefresh(false);

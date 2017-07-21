@@ -85,7 +85,7 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
             }
 
             @Override
-            public void onRefreshComplete() {
+            public void onRefreshComplete(boolean isSuccessful) {
             }
         });
         mRefreshLayout.autoRefresh(false);

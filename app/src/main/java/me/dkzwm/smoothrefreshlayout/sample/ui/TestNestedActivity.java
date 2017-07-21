@@ -81,7 +81,7 @@ public class TestNestedActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRefreshComplete() {
+            public void onRefreshComplete(boolean isSuccessful) {
             }
         });
         mRefreshLayout.setHeaderViewPadding(80,10);

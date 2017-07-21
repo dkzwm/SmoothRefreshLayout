@@ -96,7 +96,13 @@ public interface IRefreshView {
     /**
      * This method will be triggered when the position of the refresh view changes.
      *
-     * @param layout The layout {@link SmoothRefreshLayout}
+     * @param layout    The layout {@link SmoothRefreshLayout}
+     * @param status    Current status @see{@link SmoothRefreshLayout#SR_STATUS_INIT},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_PREPARE},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_REFRESHING},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_LOADING_MORE},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_COMPLETE}.
+     * @param indicator The indicator {@link IIndicator}
      */
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
 

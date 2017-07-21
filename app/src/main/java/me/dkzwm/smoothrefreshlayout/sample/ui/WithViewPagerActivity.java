@@ -62,7 +62,7 @@ public class WithViewPagerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRefreshComplete() {
+            public void onRefreshComplete(boolean isSuccessful) {
 
             }
         });
