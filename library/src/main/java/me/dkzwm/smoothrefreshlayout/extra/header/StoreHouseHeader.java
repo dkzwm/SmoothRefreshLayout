@@ -320,7 +320,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout) {
+    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
         loadFinish();
     }
 

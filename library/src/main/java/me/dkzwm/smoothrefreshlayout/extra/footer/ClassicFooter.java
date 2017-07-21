@@ -180,7 +180,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout frame) {
+    public void onRefreshComplete(SmoothRefreshLayout frame,boolean isSuccessful) {
         hideRotateView();
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);

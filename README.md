@@ -14,7 +14,7 @@
  - 支持抽屉效果.
  - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）.
- - 支持ListView，RecyclerView加载更多的平滑滚动.
+ - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
  - 支持内容视图的Margin,PS:滚动中没有了Margin效果？SmoothRefreshLayout不存在这种问题.
  - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
 
@@ -161,7 +161,7 @@ public interface IRefreshView {
     /**
      * 刷新完成
      */
-    void onRefreshComplete(SmoothRefreshLayout layout);
+    void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful);
 
     /**
      * 当头部或者尾部视图发生位置变化

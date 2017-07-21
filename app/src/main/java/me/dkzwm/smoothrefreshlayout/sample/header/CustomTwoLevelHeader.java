@@ -101,7 +101,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout frame) {
+    public void onRefreshComplete(SmoothRefreshLayout frame,boolean isSuccessful) {
         mTextViewTitle.setVisibility(VISIBLE);
         mTextViewTitle.setText(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);
     }

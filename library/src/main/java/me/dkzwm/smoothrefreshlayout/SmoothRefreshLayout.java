@@ -2579,9 +2579,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicator.onRefreshComplete();
         if (mNeedNotifyRefreshComplete) {
             if (isMovingHeader() && mHeaderView != null) {
-                mHeaderView.onRefreshComplete(this);
+                mHeaderView.onRefreshComplete(this, mIsLastRefreshSuccessful);
             } else if (isMovingFooter() && mFooterView != null) {
-                mFooterView.onRefreshComplete(this);
+                mFooterView.onRefreshComplete(this, mIsLastRefreshSuccessful);
             }
             if (mRefreshListener != null) {
                 mRefreshListener.onRefreshComplete(mIsLastRefreshSuccessful);

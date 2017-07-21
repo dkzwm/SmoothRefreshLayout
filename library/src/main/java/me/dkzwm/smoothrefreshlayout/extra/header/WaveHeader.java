@@ -279,7 +279,7 @@ public class WaveHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout) {
+    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
         mStatus = SmoothRefreshLayout.SR_STATUS_COMPLETE;
         if (layout.isRefreshSuccessful()) {
             mText = getContext().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);

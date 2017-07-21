@@ -177,7 +177,7 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout) {
+    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
         if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)) {
             int duration = layout.getDurationToCloseHeader();
             if (duration > 0)

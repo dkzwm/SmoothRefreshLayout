@@ -89,9 +89,10 @@ public interface IRefreshView {
     /**
      * This method will be triggered when the frame is refresh completed.
      *
-     * @param layout The layout {@link SmoothRefreshLayout}
+     * @param layout       The layout {@link SmoothRefreshLayout}
+     * @param isSuccessful The layout refresh state
      */
-    void onRefreshComplete(SmoothRefreshLayout layout);
+    void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful);
 
     /**
      * This method will be triggered when the position of the refresh view changes.
