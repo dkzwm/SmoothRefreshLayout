@@ -16,6 +16,7 @@ import java.lang.reflect.Method;
  * @author dkzwm
  */
 public class ScrollCompat {
+
     public static boolean canChildScrollDown(View view) {
         if (view instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) view;
@@ -100,7 +101,6 @@ public class ScrollCompat {
         }
         return false;
     }
-
 
 
 }

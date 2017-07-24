@@ -1,4 +1,4 @@
-package me.dkzwm.smoothrefreshlayout.utils;
+package me.dkzwm.smoothrefreshlayout.sample.utils;
 
 import android.util.SparseArray;
 
@@ -9,7 +9,7 @@ import java.util.ArrayList;
  *
  * The default list only included A-Z a-z 0-9 blank - .
  * The other characters need to be included by yourself
- * Modify by dkzwm on 6/6/17
+ * Modified by dkzwm on 6/6/17
  *
  * @author srain;dkzwm
  */

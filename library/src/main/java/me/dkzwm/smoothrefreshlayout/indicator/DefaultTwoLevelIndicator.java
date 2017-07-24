@@ -43,16 +43,6 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     }
 
     @Override
-    public float getRatioOfHeaderHeightToHintTwoLevelRefresh() {
-        return mRatioOfHeaderHeightToHintTwoLevelRefresh;
-    }
-
-    @Override
-    public float getRatioOfHeaderHeightToTwoLevelRefresh() {
-        return mRatioOfHeaderHeightToTwoLevelRefresh;
-    }
-
-    @Override
     public int getOffsetToTwoLevelRefresh() {
         return mOffsetToTwoLevelRefresh == 0
                 ? Math.round(mHeaderHeight * mRatioOfHeaderHeightToTwoLevelRefresh)

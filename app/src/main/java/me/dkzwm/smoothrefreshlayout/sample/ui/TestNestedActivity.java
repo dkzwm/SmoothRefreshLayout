@@ -17,10 +17,10 @@ import java.util.List;
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
-import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
-import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
+import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
+import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
 
 /**
@@ -84,7 +84,8 @@ public class TestNestedActivity extends AppCompatActivity {
             public void onRefreshComplete(boolean isSuccessful) {
             }
         });
-        mRefreshLayout.setHeaderViewPadding(80,10);
+        mRefreshLayout.getDefaultHeader().setPadding(0, PixelUtl.dp2px(this, 80),
+                0, PixelUtl.dp2px(this, 10));
         mRefreshLayout.autoRefresh(false);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout_test_nested_activity);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {

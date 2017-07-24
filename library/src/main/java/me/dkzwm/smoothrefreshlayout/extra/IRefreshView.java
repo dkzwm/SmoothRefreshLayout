@@ -109,11 +109,11 @@ public interface IRefreshView {
 
     @IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
     @Retention(RetentionPolicy.SOURCE)
-    @interface RefreshViewType {
+    public @interface RefreshViewType {
     }
 
     @IntDef({IRefreshView.STYLE_DEFAULT, IRefreshView.STYLE_SCALE})
     @Retention(RetentionPolicy.SOURCE)
-    @interface RefreshViewStyle {
+    public @interface RefreshViewStyle {
     }
 }

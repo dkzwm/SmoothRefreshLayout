@@ -4,14 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -20,7 +17,7 @@ import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
-import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
+import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -56,12 +53,6 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_with_recyclerView_in_coordinatorLayout_activity);
         mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
-        ClassicHeader header = new ClassicHeader(this);
-        header.setLastUpdateTimeKey("header_last_update_time");
-        ClassicFooter footer = new ClassicFooter(this);
-        footer.setLastUpdateTimeKey("footer_last_update_time");
-        mRefreshLayout.setHeaderView(header);
-        mRefreshLayout.setFooterView(footer);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override

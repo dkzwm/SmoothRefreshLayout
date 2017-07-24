@@ -14,11 +14,9 @@ import java.util.List;
 
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
-import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
-import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
+import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
 
 /**
  * Created by dkzwm on 2017/6/2.

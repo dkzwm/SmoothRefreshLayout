@@ -1,7 +1,6 @@
 package me.dkzwm.smoothrefreshlayout.sample.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IdRes;
@@ -24,7 +23,7 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.header.CustomQQActivityHeader;
-import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
+import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
 
 /**
  * Created by dkzwm on 2017/6/20.

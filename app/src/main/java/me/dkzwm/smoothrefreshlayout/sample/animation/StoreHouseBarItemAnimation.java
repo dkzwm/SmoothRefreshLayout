@@ -1,4 +1,4 @@
-package me.dkzwm.smoothrefreshlayout.animation;
+package me.dkzwm.smoothrefreshlayout.sample.animation;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -14,14 +14,14 @@ import java.util.Random;
  * @author srain;dkzwm
  */
 public class StoreHouseBarItemAnimation extends Animation {
-    private final  float[] mMiddlePoint = new float[2];
-    private final float[] mStartPoint = new float[2];
-    private final float[] mEndPoint = new float[2];
-    private final int mIndex;
-    private final Paint mPaint;
-    private float mFromAlpha = 1.0f;
-    private float mToAlpha = 0.4f;
-    private float mTranslationX;
+    protected final float[] mMiddlePoint = new float[2];
+    protected final float[] mStartPoint = new float[2];
+    protected final float[] mEndPoint = new float[2];
+    protected final int mIndex;
+    protected final Paint mPaint;
+    protected float mFromAlpha = 1.0f;
+    protected float mToAlpha = 0.4f;
+    protected float mTranslationX;
 
 
     public StoreHouseBarItemAnimation(int index,
@@ -46,10 +46,6 @@ public class StoreHouseBarItemAnimation extends Animation {
 
     public float[] getMiddlePoint() {
         return mMiddlePoint;
-    }
-
-    public int getIndex() {
-        return mIndex;
     }
 
     public float getTranslationX() {

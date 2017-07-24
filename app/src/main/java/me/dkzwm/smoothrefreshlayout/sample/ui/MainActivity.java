@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, 4000);
             }
         });
-        mRefreshLayout.setWaveHeaderWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        mRefreshLayout.setWaveHeaderBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
-        mRefreshLayout.setWaveHeaderStyle(IRefreshView.STYLE_DEFAULT);
+        mRefreshLayout.getDefaultHeader().setWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+        mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_DEFAULT);
         //自动刷新
         mRefreshLayout.autoRefresh(true, false);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
@@ -161,10 +161,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == Menu.FIRST) {
-            if (mRefreshLayout.getWaveHeaderStyle() == IRefreshView.STYLE_SCALE)
-                mRefreshLayout.setWaveHeaderStyle(IRefreshView.STYLE_DEFAULT);
+            if (mRefreshLayout.getDefaultHeader().getStyle() == IRefreshView.STYLE_SCALE)
+                mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_DEFAULT);
             else
-                mRefreshLayout.setWaveHeaderStyle(IRefreshView.STYLE_SCALE);
+                mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_SCALE);
             return true;
         }
         return false;

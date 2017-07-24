@@ -13,7 +13,7 @@ import android.widget.TextView;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
-import me.dkzwm.smoothrefreshlayout.extra.header.StoreHouseHeader;
+import me.dkzwm.smoothrefreshlayout.sample.header.StoreHouseHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 

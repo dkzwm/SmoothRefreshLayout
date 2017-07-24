@@ -55,14 +55,26 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
             mStyle = style;
             arr.recycle();
         }
-        buildAnimation();
+        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mFlipAnimation.setInterpolator(new LinearInterpolator());
+        mFlipAnimation.setDuration(mRotateAniTime);
+        mFlipAnimation.setFillAfter(true);
+
+        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF,
+                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
+        mReverseFlipAnimation.setDuration(mRotateAniTime);
+        mReverseFlipAnimation.setFillAfter(true);
         View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_header, this);
         mRotateView = header.findViewById(R.id.view_header_rotate);
         mTitleTextView = (TextView) header.findViewById(R.id.textView_header_title);
         mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_header_last_update);
         mProgressBar = header.findViewById(R.id.progressBar_header);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
-        resetView();
+        mRotateView.clearAnimation();
+        mRotateView.setVisibility(INVISIBLE);
+        mProgressBar.setVisibility(INVISIBLE);
     }
 
 
@@ -84,7 +96,8 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
             return;
         }
         mRotateAniTime = time;
-        buildAnimation();
+        mFlipAnimation.setDuration(mRotateAniTime);
+        mReverseFlipAnimation.setDuration(mRotateAniTime);
     }
 
 
@@ -101,30 +114,6 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
             return;
         }
         mLastUpdateTimeKey = key;
-    }
-
-    protected void buildAnimation() {
-        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF,
-                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-        mFlipAnimation.setInterpolator(new LinearInterpolator());
-        mFlipAnimation.setDuration(mRotateAniTime);
-        mFlipAnimation.setFillAfter(true);
-
-        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF,
-                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-        mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
-        mReverseFlipAnimation.setDuration(mRotateAniTime);
-        mReverseFlipAnimation.setFillAfter(true);
-    }
-
-    private void resetView() {
-        hideRotateView();
-        mProgressBar.setVisibility(INVISIBLE);
-    }
-
-    private void hideRotateView() {
-        mRotateView.clearAnimation();
-        mRotateView.setVisibility(INVISIBLE);
     }
 
     @Override
@@ -155,20 +144,19 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout frame) {
-        resetView();
+        mRotateView.clearAnimation();
+        mRotateView.setVisibility(INVISIBLE);
+        mProgressBar.setVisibility(INVISIBLE);
         mShouldShowLastUpdate = true;
         tryUpdateLastUpdateTime();
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
-
         mShouldShowLastUpdate = true;
         tryUpdateLastUpdateTime();
         mLastUpdateTimeUpdater.start();
-
         mProgressBar.setVisibility(INVISIBLE);
-
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isEnabledPullToRefresh()) {
@@ -186,7 +174,8 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
     @Override
     public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
         mShouldShowLastUpdate = false;
-        hideRotateView();
+        mRotateView.clearAnimation();
+        mRotateView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         mTitleTextView.setText(R.string.sr_refreshing);
@@ -196,8 +185,9 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout frame,boolean isSuccessful) {
-        hideRotateView();
+    public void onRefreshComplete(SmoothRefreshLayout frame, boolean isSuccessful) {
+        mRotateView.clearAnimation();
+        mRotateView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isRefreshSuccessful()) {
@@ -217,7 +207,12 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
         if (currentPos < mOffsetToRefresh && lastPos >= mOffsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
-                crossRotateLineFromBottomUnderTouch(frame);
+                mTitleTextView.setVisibility(VISIBLE);
+                if (frame.isEnabledPullToRefresh()) {
+                    mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
+                } else {
+                    mTitleTextView.setText(R.string.sr_pull_down);
+                }
                 if (mRotateView != null) {
                     mRotateView.clearAnimation();
                     mRotateView.startAnimation(mReverseFlipAnimation);
@@ -225,7 +220,10 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
             }
         } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
-                crossRotateLineFromTopUnderTouch(frame);
+                if (!frame.isEnabledPullToRefresh()) {
+                    mTitleTextView.setVisibility(VISIBLE);
+                    mTitleTextView.setText(R.string.sr_release_to_refresh);
+                }
                 if (mRotateView != null) {
                     mRotateView.clearAnimation();
                     mRotateView.startAnimation(mFlipAnimation);
@@ -245,23 +243,6 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
                 mLastUpdateTextView.setVisibility(VISIBLE);
                 mLastUpdateTextView.setText(time);
             }
-        }
-    }
-
-
-    private void crossRotateLineFromTopUnderTouch(SmoothRefreshLayout frame) {
-        if (!frame.isEnabledPullToRefresh()) {
-            mTitleTextView.setVisibility(VISIBLE);
-            mTitleTextView.setText(R.string.sr_release_to_refresh);
-        }
-    }
-
-    private void crossRotateLineFromBottomUnderTouch(SmoothRefreshLayout frame) {
-        mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnabledPullToRefresh()) {
-            mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
-        } else {
-            mTitleTextView.setText(R.string.sr_pull_down);
         }
     }
 

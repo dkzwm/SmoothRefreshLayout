@@ -1,4 +1,4 @@
-package me.dkzwm.smoothrefreshlayout.sample.util;
+package me.dkzwm.smoothrefreshlayout.sample.utils;
 
 import java.util.ArrayList;
 import java.util.List;

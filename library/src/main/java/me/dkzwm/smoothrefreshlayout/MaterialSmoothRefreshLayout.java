@@ -37,10 +37,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public MaterialSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initViews(context);
-    }
-
-    private void initViews(Context context) {
         mMode = MODE_BOTH;
         mMaterialHeader = new MaterialHeader(context);
         mMaterialHeader.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
@@ -50,20 +46,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mMaterialHeader);
         mMaterialFooter = new MaterialFooter(context);
         setFooterView(mMaterialFooter);
-    }
-
-    /**
-     * Set the header view padding
-     *
-     * @param top    The padding in dip unit from the top of this view
-     * @param bottom The padding in dip unit from the top of this view
-     */
-    public void setHeaderViewPadding(int top, int bottom) {
-        if (mHeaderView != null) {
-            mHeaderView.getView().setPadding(0, PixelUtl.dp2px(getContext(), top),
-                    0, PixelUtl.dp2px(getContext(), bottom));
-            requestLayout();
-        }
     }
 
     /**

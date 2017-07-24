@@ -88,7 +88,7 @@ public class WaveHeader extends View implements IRefreshView {
         setWillNotDraw(false);
         mDip2 = PixelUtl.dp2px(context, 2);
         mCircleRadius = mDip2 * 6;
-        mDefaultHeight = metrics.heightPixels/2;
+        mDefaultHeight = metrics.heightPixels / 2;
     }
 
     public void setDefaultHeight(int height) {
@@ -236,7 +236,7 @@ public class WaveHeader extends View implements IRefreshView {
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
         mFingerUpY = indicator.getCurrentPosY();
-        if (layout.isEnabledKeepRefreshView()) {
+        if (layout.isEnabledKeepRefreshView() && mStatus != SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
             if (mFingerUpY > offsetToKeepHeader) {
                 layout.updateScrollerInterpolator(mInterpolator);
@@ -279,7 +279,7 @@ public class WaveHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
+    public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
         mStatus = SmoothRefreshLayout.SR_STATUS_COMPLETE;
         if (layout.isRefreshSuccessful()) {
             mText = getContext().getString(me.dkzwm.smoothrefreshlayout.R.string.sr_refresh_complete);

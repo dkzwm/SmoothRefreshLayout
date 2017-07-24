@@ -1,4 +1,4 @@
-package me.dkzwm.smoothrefreshlayout.extra.header;
+package me.dkzwm.smoothrefreshlayout.sample.header;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 import me.dkzwm.smoothrefreshlayout.R;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.animation.StoreHouseBarItemAnimation;
+import me.dkzwm.smoothrefreshlayout.sample.animation.StoreHouseBarItemAnimation;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
+import me.dkzwm.smoothrefreshlayout.sample.utils.StoreHousePath;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
-import me.dkzwm.smoothrefreshlayout.utils.StoreHousePath;
 
 /**
  * Part of the code comes from @see <a href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">

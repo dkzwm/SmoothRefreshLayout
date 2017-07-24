@@ -73,16 +73,6 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public boolean crossCompletePos() {
-        if (mStatus == MOVING_HEADER)
-            return mCurrentPos >= mRefreshCompleteY;
-        else if (mStatus == MOVING_FOOTER)
-            return mCurrentPos <= mRefreshCompleteY;
-        return false;
-    }
-
-
-    @Override
     public void setRatioOfRefreshViewHeightToRefresh(float ratio) {
         mRatioOfHeaderHeightToRefresh = ratio;
         mRatioOfFooterHeightToLoadMore = ratio;
@@ -279,12 +269,12 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public boolean isInKeepFooterWhileLoadingPos() {
-        return mCurrentPos==getOffsetToKeepFooterWhileLoading();
+        return mCurrentPos == getOffsetToKeepFooterWhileLoading();
     }
 
     @Override
     public boolean isInKeepHeaderWhileLoadingPos() {
-        return mCurrentPos==getOffsetToKeepHeaderWhileLoading();
+        return mCurrentPos == getOffsetToKeepHeaderWhileLoading();
     }
 
     @Override
@@ -298,18 +288,8 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getOffsetRatioToKeepFooterWhileLoading() {
-        return mOffsetRatioToKeepFooterWhileLoading;
-    }
-
-    @Override
     public void setOffsetRatioToKeepFooterWhileLoading(float ratio) {
         mOffsetRatioToKeepFooterWhileLoading = ratio;
-    }
-
-    @Override
-    public float getOffsetRatioToKeepHeaderWhileLoading() {
-        return mOffsetRatioToKeepHeaderWhileLoading;
     }
 
     @Override
@@ -323,18 +303,8 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getLastPercentOfHeader() {
-        return mHeaderHeight <= 0 ? 0 : mLastPos * 1f / mHeaderHeight;
-    }
-
-    @Override
     public float getCurrentPercentOfHeader() {
         return mHeaderHeight <= 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
-    }
-
-    @Override
-    public float getLastPercentOfFooter() {
-        return mFooterHeight <= 0 ? 0 : mLastPos * 1f / mFooterHeight;
     }
 
     @Override

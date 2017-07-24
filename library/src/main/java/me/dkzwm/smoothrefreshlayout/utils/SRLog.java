@@ -23,30 +23,6 @@ public class SRLog {
         sLevel = level;
     }
 
-    public static void v(String tag, String msg) {
-        if (sLevel > LEVEL_VERBOSE) {
-            return;
-        }
-        Log.v(tag, msg);
-    }
-
-    public static void v(String tag, String msg, Throwable throwable) {
-        if (sLevel > LEVEL_VERBOSE) {
-            return;
-        }
-        Log.v(tag, msg, throwable);
-    }
-
-    public static void v(String tag, String msg, Object... args) {
-        if (sLevel > LEVEL_VERBOSE) {
-            return;
-        }
-        if (args.length > 0) {
-            msg = String.format(msg, args);
-        }
-        Log.v(tag, msg);
-    }
-
     public static void d(String tag, String msg) {
         if (sLevel > LEVEL_DEBUG) {
             return;
@@ -62,13 +38,6 @@ public class SRLog {
             msg = String.format(msg, args);
         }
         Log.d(tag, msg);
-    }
-
-    public static void d(String tag, String msg, Throwable throwable) {
-        if (sLevel > LEVEL_DEBUG) {
-            return;
-        }
-        Log.d(tag, msg, throwable);
     }
 
     public static void i(String tag, String msg) {
@@ -88,35 +57,11 @@ public class SRLog {
         Log.i(tag, msg);
     }
 
-    public static void i(String tag, String msg, Throwable throwable) {
-        if (sLevel > LEVEL_INFO) {
-            return;
-        }
-        Log.i(tag, msg, throwable);
-    }
-
     public static void w(String tag, String msg) {
         if (sLevel > LEVEL_WARNING) {
             return;
         }
         Log.w(tag, msg);
-    }
-
-    public static void w(String tag, String msg, Object... args) {
-        if (sLevel > LEVEL_WARNING) {
-            return;
-        }
-        if (args.length > 0) {
-            msg = String.format(msg, args);
-        }
-        Log.w(tag, msg);
-    }
-
-    public static void w(String tag, String msg, Throwable throwable) {
-        if (sLevel > LEVEL_WARNING) {
-            return;
-        }
-        Log.w(tag, msg, throwable);
     }
 
 

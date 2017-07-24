@@ -1,7 +1,6 @@
 package me.dkzwm.smoothrefreshlayout;
 
 import android.content.Context;
-import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
 
 import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
@@ -24,17 +23,12 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        initViews(context);
-    }
-
-    private void initViews(Context context) {
         mMode = MODE_BOTH;
         mClassicHeader = new ClassicHeader(context);
         setHeaderView(mClassicHeader);
         mClassicFooter = new ClassicFooter(context);
         setFooterView(mClassicFooter);
     }
-
 
     public void setLastUpdateTimeKey(String key) {
         setLastUpdateTimeHeaderKey(key + "_header");

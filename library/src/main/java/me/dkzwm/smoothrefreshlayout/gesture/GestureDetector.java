@@ -44,11 +44,10 @@ public class GestureDetector implements IGestureDetector {
         final int skipIndex = pointerUp ? MotionEventCompat.getActionIndex(ev) : -1;
 
         // Determine focal point
-        float sumX = 0, sumY = 0;
+        float sumY = 0;
         final int count = ev.getPointerCount();
         for (int i = 0; i < count; i++) {
             if (skipIndex == i) continue;
-            sumX += ev.getX(i);
             sumY += ev.getY(i);
         }
         final int div = pointerUp ? count - 1 : count;

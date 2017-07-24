@@ -20,7 +20,7 @@ import me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter;
 import me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.ListViewAdapter;
-import me.dkzwm.smoothrefreshlayout.sample.util.DataUtil;
+import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.

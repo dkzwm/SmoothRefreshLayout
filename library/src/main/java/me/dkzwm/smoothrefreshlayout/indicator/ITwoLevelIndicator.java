@@ -14,10 +14,6 @@ public interface ITwoLevelIndicator {
 
     void setRatioOfHeaderHeightToTwoLevelRefresh(float ratio);
 
-    float getRatioOfHeaderHeightToHintTwoLevelRefresh();
-
-    float getRatioOfHeaderHeightToTwoLevelRefresh();
-
     int getOffsetToTwoLevelRefresh();
 
     int getOffsetToHintTwoLevelRefresh();

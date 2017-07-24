@@ -43,8 +43,6 @@ public interface IIndicator {
 
     void onRefreshComplete();
 
-    boolean crossCompletePos();
-
     void setRatioOfRefreshViewHeightToRefresh(float ratio);
 
     float getRatioOfHeaderHeightToRefresh();
@@ -117,11 +115,7 @@ public interface IIndicator {
 
     int getOffsetToKeepFooterWhileLoading();
 
-    float getOffsetRatioToKeepFooterWhileLoading();
-
     void setOffsetRatioToKeepFooterWhileLoading(float ratio);
-
-    float getOffsetRatioToKeepHeaderWhileLoading();
 
     void setOffsetRatioToKeepHeaderWhileLoading(float ratio);
 
@@ -149,11 +143,7 @@ public interface IIndicator {
     @NonNull
     float[] getLastMovePoint();
 
-    float getLastPercentOfHeader();
-
     float getCurrentPercentOfHeader();
-
-    float getLastPercentOfFooter();
 
     float getCurrentPercentOfFooter();
 
