@@ -70,7 +70,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.3'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.4'
 }
 ```
 #### 在Xml中配置
@@ -83,7 +83,6 @@ dependencies {
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<TextView
-		android:id="@+id/textView_"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
@@ -222,6 +221,7 @@ public interface IRefreshView {
 |setContentView|View|配置内容视图|
 |setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置改属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
+|setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过屏幕高度的六分之一（默认:`0.8f`）|
 |setResistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
 |setResistanceOfPullUp|float|Footer视图的移动阻尼（默认:`1.65f`）|
 |setResistanceOfPullDown|float|Header视图的移动阻尼（默认:`1.65f`）|
@@ -269,7 +269,8 @@ public interface IRefreshView {
 #### 其它
 |名称|参数|描述|
 |:---:|:---:|:---:|
-|debug|boolean|Debug开关|
+|debug（静态方法）|boolean|Debug开关|
+|setDefaultCreator（静态方法）|IRefreshViewCreator|设置刷新视图创建者,如果没有特殊指定刷新视图且设置的模式需要刷新视图则会调用创建者构建刷新视图|
 |refreshComplete|无参|刷新完成,且设置最后一次刷新状态为成功|
 |refreshComplete|boolean|刷新完成,参数:设置最后一次刷新是否刷新成功|
 |refreshComplete|boolean,long|刷新完成,参数1:设置最后一次刷新是否刷新成功,参数2:设置延迟重置刷新状态的时间（会先触发刷新视图的刷新完成回调，但在延迟的时间内库实际上状态仍是刷新状态）|
