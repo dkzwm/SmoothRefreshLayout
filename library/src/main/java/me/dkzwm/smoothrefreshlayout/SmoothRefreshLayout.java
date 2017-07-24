@@ -15,6 +15,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -815,10 +816,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         } else {
             if (isRefreshing() && mHeaderView != null) {
-                mHeaderView.onRefreshComplete(this);
+                mHeaderView.onRefreshComplete(this, isSuccessful);
                 mNeedNotifyRefreshComplete = false;
             } else if (isLoadingMore() && mFooterView != null) {
-                mFooterView.onRefreshComplete(this);
+                mFooterView.onRefreshComplete(this, isSuccessful);
                 mNeedNotifyRefreshComplete = false;
             }
             mDelayedRefreshComplete = true;
@@ -2674,7 +2675,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         tryToSendCancelEventToChild();
         // leave initiated position or just refresh complete
         if (needCheckPos() && ((mIndicator.hasJustLeftStartPosition() && mStatus == SR_STATUS_INIT)
-                || (mIndicator.crossCompletePos() && mStatus == SR_STATUS_COMPLETE && isEnabledNextPtrAtOnce()))) {
+                || (mStatus == SR_STATUS_COMPLETE && isEnabledNextPtrAtOnce()
+                && ((isMovingHeader() && change > 0) || (isMovingFooter() && change < 0))))) {
             mStatus = SR_STATUS_PREPARE;
             @IIndicator.MovingStatus
             int status = mIndicator.getMovingStatus();

@@ -36,22 +36,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRefreshLayout.refreshComplete();
+                        mRefreshLayout.refreshComplete(800);
                     }
                 }, 4000);
-            }
-        });
-        mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(new SmoothRefreshLayout
-                .OnHookUIRefreshCompleteCallBack() {
-            @Override
-            public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
-                mRefreshLayout.getDefaultHeader().onRefreshComplete(mRefreshLayout);
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        hook.onHookComplete();
-                    }
-                }, 800);
             }
         });
         mRefreshLayout.setWaveHeaderWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
