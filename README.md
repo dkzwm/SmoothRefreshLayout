@@ -219,7 +219,7 @@ public interface IRefreshView {
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
 |setContentView|View|配置内容视图|
-|setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置改属性为ture（默认:`false`）|
+|setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过屏幕高度的六分之一（默认:`0.8f`）|
 |setResistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
@@ -261,6 +261,7 @@ public interface IRefreshView {
 |addOnUIPositionChangedListener|OnUIPositionChangedListener|添加视图位置变化的监听回调|
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Footer完成刷新后进行平滑滚动的回调|
+|setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
 |setOnChildScrollUpCallback|OnChildScrollUpCallback|检查内容视图是否在顶部的回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
 |setOnChildScrollDownCallback|OnChildScrollDownCallback|检查内容视图是否在底部的回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|

@@ -2,9 +2,12 @@ package me.dkzwm.smoothrefreshlayout.utils;
 
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.Adapter;
 import android.widget.ScrollView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -48,6 +51,40 @@ public class ScrollCompat {
         }
     }
 
+
+    public static boolean canAutoLoadMore(View view) {
+        if (view instanceof AbsListView) {
+            AbsListView listView = (AbsListView) view;
+            final int lastVisiblePosition = listView.getLastVisiblePosition();
+            final Adapter adapter = listView.getAdapter();
+            return adapter != null && lastVisiblePosition > 0
+                    && lastVisiblePosition == adapter.getCount() - 1;
+        } else if (view instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null)
+                return false;
+            int lastVisiblePosition = 0;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                lastVisiblePosition = linearManager.findLastVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findLastVisibleItemPositions(lastPositions);
+                lastVisiblePosition = lastPositions[0];
+                for (int value : lastPositions) {
+                    if (value > lastVisiblePosition) {
+                        lastVisiblePosition = value;
+                    }
+                }
+            }
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null && lastVisiblePosition > 0
+                    && lastVisiblePosition >= adapter.getItemCount() - 1;
+        }
+        return false;
+    }
 
     public static boolean canChildScrollUp(View view) {
         if (android.os.Build.VERSION.SDK_INT < 14) {

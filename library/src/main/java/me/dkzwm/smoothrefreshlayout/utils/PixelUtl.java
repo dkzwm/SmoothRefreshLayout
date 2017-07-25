@@ -22,9 +22,4 @@ public class PixelUtl {
                 offSet, r.getDisplayMetrics()));
     }
 
-    public static int getDisplayHeight(Context context) {
-        DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        return dm.heightPixels;
-    }
-
 }

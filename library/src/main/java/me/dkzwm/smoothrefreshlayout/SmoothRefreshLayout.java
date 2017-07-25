@@ -15,6 +15,7 @@ import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,7 +44,6 @@ import me.dkzwm.smoothrefreshlayout.gesture.IGestureDetector;
 import me.dkzwm.smoothrefreshlayout.gesture.OnGestureListener;
 import me.dkzwm.smoothrefreshlayout.indicator.DefaultIndicator;
 import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
-import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 import me.dkzwm.smoothrefreshlayout.utils.SRLog;
 import me.dkzwm.smoothrefreshlayout.utils.ScrollCompat;
 
@@ -127,6 +127,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private OnChildScrollUpCallback mScrollUpCallback;
     private OnChildScrollDownCallback mScrollDownCallback;
     private OnLoadMoreScrollCallback mLoadMoreScrollCallback;
+    private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private View mContentView;
     private View mLoadMoreScrollTargetView;
@@ -747,6 +748,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollUpCallback = callback;
     }
 
+
     /**
      * Set a callback to override {@link SmoothRefreshLayout#canChildScrollDown()} method. Non-null
      * callback will return the value provided by the callback and ignore all internal logic.
@@ -756,6 +758,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setOnChildScrollDownCallback(OnChildScrollDownCallback callback) {
         mScrollDownCallback = callback;
     }
+
+    /**
+     * Set a callback to make sure you need to customize the specified trigger the auto load more
+     * rule
+     *
+     * @param callBack Customize the specified triggered rule
+     */
+    public void setOnPerformAutoLoadMoreCallBack(OnPerformAutoLoadMoreCallBack callBack) {
+        mAutoLoadMoreCallBack = callBack;
+    }
+
 
     /**
      * Set a hook callback when the refresh complete event be triggered. Only can be called on
@@ -965,6 +978,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (atOnce) {
             mStatus = SR_STATUS_REFRESHING;
+            mDelayedRefreshComplete = false;
             performRefresh();
         }
     }
@@ -1022,6 +1036,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (atOnce) {
             mStatus = SR_STATUS_LOADING_MORE;
+            mDelayedRefreshComplete = false;
             performRefresh();
         }
     }
@@ -2446,14 +2461,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return ScrollCompat.canChildScrollDown(mContentView);
     }
 
-    private void clearAutoRefreshFlag() {
-        //Remove auto fresh flag
-        mFlag = mFlag & ~MASK_AUTO_REFRESH;
-        if (sDebug) {
-            SRLog.i(TAG, "clearAutoRefreshFlag()");
-        }
-    }
-
     private void sendCancelEvent() {
         if (sDebug) {
             SRLog.i(TAG, "sendCancelEvent()");
@@ -2831,6 +2838,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
                 && isEnabledScrollToBottomAutoLoadMore()) {
             mStatus = SR_STATUS_LOADING_MORE;
+            mDelayedRefreshComplete = false;
             performRefresh();
         }
         if (!mOverScrollChecker.mScrolling && mIndicator.isInStartPosition() && !mNeedScrollCompat) {
@@ -2929,7 +2937,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mNeedNotifyRefreshComplete = true;
             mDelayedRefreshComplete = false;
             mOverScrollChecker.destroy();
-            clearAutoRefreshFlag();
+            mFlag = mFlag & ~MASK_AUTO_REFRESH;
             return true;
         }
         return false;
@@ -2940,14 +2948,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.i(TAG, "performRefreshComplete()");
         }
         if (isRefreshing() && hook && mHeaderRefreshCompleteHook != null
-                && !mHeaderRefreshCompleteHook.isEmpty()) {
-            mHeaderRefreshCompleteHook.setLayout(this);
+                && mHeaderRefreshCompleteHook.mCallBack != null) {
             mHeaderRefreshCompleteHook.doHook();
             return;
         }
         if (isLoadingMore() && hook && mFooterRefreshCompleteHook != null
-                && !mFooterRefreshCompleteHook.isEmpty()) {
-            mFooterRefreshCompleteHook.setLayout(this);
+                && mFooterRefreshCompleteHook.mCallBack != null) {
             mFooterRefreshCompleteHook.doHook();
             return;
         }
@@ -3048,9 +3054,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+
     @Override
     public void onScrollChanged() {
-        mOverScrollChecker.computeScrollOffset(25);
+        if (isEnabledScrollToBottomAutoLoadMore()
+                && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
+            if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mContentView))
+                    || (mAutoLoadMoreCallBack != null
+                    && mAutoLoadMoreCallBack.canAutoLoadMore(this, mContentView))) {
+                mStatus = SR_STATUS_LOADING_MORE;
+                mDelayedRefreshComplete = false;
+                performRefresh();
+            }
+        }
+        mOverScrollChecker.computeScrollOffset();
     }
 
     @IntDef({MODE_NONE, MODE_REFRESH, MODE_LOAD_MORE, MODE_OVER_SCROLL, MODE_BOTH})
@@ -3129,13 +3146,41 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         void onChanged(byte status, IIndicator indicator);
     }
 
+    /**
+     * Classes that wish to be called when load more completed spring back to start position
+     */
     public interface OnLoadMoreScrollCallback {
+        /**
+         * Called when load more completed spring back to start position, each move triggers a
+         * callback once
+         *
+         * @param content The content view
+         * @param deltaY  The scroll distance in Y-axis
+         * @return Whether it has been processed
+         */
         boolean onScroll(View content, float deltaY);
     }
 
     public interface OnHookUIRefreshCompleteCallBack {
         @MainThread
         void onHook(RefreshCompleteHook hook);
+    }
+
+    /**
+     * Classes that wish to be called when {@link SmoothRefreshLayout#setEnableScrollToBottomAutoLoadMore(boolean)}
+     * has been set true and mode has been set {@link SmoothRefreshLayout#MODE_LOAD_MORE} or
+     * {@link SmoothRefreshLayout#MODE_BOTH} and sure you need to customize the specified trigger
+     * rule
+     */
+    public interface OnPerformAutoLoadMoreCallBack {
+        /**
+         * Whether need trigger auto load more
+         *
+         * @param parent The frame
+         * @param child  the child view
+         * @return whether need trigger
+         */
+        boolean canAutoLoadMore(SmoothRefreshLayout parent, @Nullable View child);
     }
 
     @SuppressWarnings("unused")
@@ -3360,15 +3405,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mCallBack = callBack;
         }
 
-        private void setLayout(SmoothRefreshLayout layout) {
-            if (mLayoutWeakRf.get() == null)
-                mLayoutWeakRf = new WeakReference<>(layout);
-        }
-
-        private boolean isEmpty() {
-            return null == mCallBack;
-        }
-
         private void doHook() {
             if (mCallBack != null) {
                 if (sDebug) {
@@ -3415,7 +3451,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
         private OverScrollChecker(SmoothRefreshLayout layout) {
             mLayoutWeakRf = new WeakReference<>(layout);
-            mDisplayHeight = PixelUtl.getDisplayHeight(layout.getContext());
+            DisplayMetrics dm = layout.getContext().getResources().getDisplayMetrics();
+            mDisplayHeight = dm.heightPixels;
             mOverScroller = new OverScroller(layout.getContext());
         }
 
@@ -3472,18 +3509,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mOverScroller.forceFinished(true);
         }
 
-        private void computeScrollOffset(long delay) {
+        private void computeScrollOffset() {
             if (mFling && mOverScroller.computeScrollOffset()) {
                 if (sDebug) {
-                    SRLog.d(TAG, "OverScrollChecker: computeScrollOffset(): delay: %s, fling: %s, " +
-                            "finished: %s", delay, mFling, mOverScroller.isFinished());
+                    SRLog.d(TAG, "OverScrollChecker: computeScrollOffset(): fling: %s, " +
+                            "finished: %s", mFling, mOverScroller.isFinished());
                 }
                 mFling = true;
                 if (mLayoutWeakRf.get() == null)
                     return;
                 SmoothRefreshLayout layout = mLayoutWeakRf.get();
                 layout.removeCallbacks(this);
-                layout.postDelayed(this, delay);
+                layout.postDelayed(this, 20);
             } else {
                 mFling = false;
             }
