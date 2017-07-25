@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import me.dkzwm.smoothrefreshlayout.exception.SRUIRuntimeException;
-import me.dkzwm.smoothrefreshlayout.exception.SRUnsupportedOperationException;
 import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
 import me.dkzwm.smoothrefreshlayout.gesture.GestureDetector;
@@ -300,13 +298,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     final public void addView(View child, int index) {
         if (child == null) {
-            throw new SRUnsupportedOperationException("Cannot add a null child view to a ViewGroup");
+            throw new IllegalArgumentException("Cannot add a null child view to a ViewGroup");
         }
         ViewGroup.LayoutParams params = child.getLayoutParams();
         if (params == null) {
             params = generateDefaultLayoutParams();
             if (params == null) {
-                throw new SRUnsupportedOperationException("generateDefaultLayoutParams() cannot return null");
+                throw new IllegalArgumentException("generateDefaultLayoutParams() cannot return null");
             }
         }
         addView(child, index, params);
@@ -327,7 +325,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     final public void addView(View child, int width, int height) {
         final ViewGroup.LayoutParams params = generateDefaultLayoutParams();
         if (params == null) {
-            throw new SRUnsupportedOperationException("generateDefaultLayoutParams() cannot return null");
+            throw new IllegalArgumentException("generateDefaultLayoutParams() cannot return null");
         }
         params.width = width;
         params.height = height;
@@ -382,7 +380,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
                 } else {
                     if (mHeaderView.getStyle() == IRefreshView.STYLE_SCALE)
-                        throw new SRUnsupportedOperationException("If header view's type is " +
+                        throw new IllegalArgumentException("If header view's type is " +
                                 "STYLE_SCALE, you must set a accurate height");
                     mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
@@ -408,7 +406,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mIndicator.setFooterHeight(mFooterView.getCustomHeight());
                 } else {
                     if (mFooterView.getStyle() == IRefreshView.STYLE_SCALE)
-                        throw new SRUnsupportedOperationException("If footer view's type is " +
+                        throw new IllegalArgumentException("If footer view's type is " +
                                 "STYLE_SCALE, you must set a accurate height");
                     mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
@@ -688,7 +686,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @SuppressWarnings({"unused"})
     public void setLoadMoreScrollTargetView(View view) {
         if (mMode == MODE_NONE || mMode == MODE_REFRESH || mMode == MODE_OVER_SCROLL)
-            throw new SRUnsupportedOperationException("Set load more scroll target view ,the mode" +
+            throw new IllegalArgumentException("Set load more scroll target view ,the mode" +
                     " must be MODE_LOAD_MORE or MODE_BOTH");
         mLoadMoreScrollTargetView = view;
     }
@@ -949,13 +947,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     public void autoRefresh(boolean atOnce, boolean smooth) {
         if (mMode != MODE_REFRESH && mMode != MODE_BOTH)
-            throw new SRUnsupportedOperationException("Perform auto refresh , the mode" +
+            throw new IllegalArgumentException("Perform auto refresh , the mode" +
                     "must be MODE_REFRESH or MODE_BOTH");
         if (mStatus != SR_STATUS_INIT) {
             return;
         }
         if (!mTriggeredAutoLoadMore)
-            throw new SRUnsupportedOperationException("Can not trigger refresh and load at" +
+            throw new IllegalArgumentException("Can not trigger refresh and load at" +
                     " the same time");
         if (sDebug) {
             SRLog.d(TAG, "autoRefresh(): atOnce:", atOnce);
@@ -1007,13 +1005,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     public void autoLoadMore(boolean atOnce, boolean smooth) {
         if (mMode != MODE_LOAD_MORE && mMode != MODE_BOTH)
-            throw new SRUnsupportedOperationException("Perform auto load more , the mode" +
+            throw new IllegalArgumentException("Perform auto load more , the mode" +
                     "must be MODE_LOAD_MORE or MODE_BOTH");
         if (mStatus != SR_STATUS_INIT) {
             return;
         }
         if (!mTriggeredAutoRefresh)
-            throw new SRUnsupportedOperationException("Can not trigger refresh and load at" +
+            throw new IllegalArgumentException("Can not trigger refresh and load at" +
                     " the same time");
         if (sDebug) {
             SRLog.d(TAG, "autoLoadMore(): atOnce:", atOnce);
@@ -1593,7 +1591,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (isEnabledPinContentView() && isEnabledKeepRefreshView()) {
                 mFlag = mFlag | FLAG_ENABLE_PIN_REFRESH_VIEW_WHILE_LOADING;
             } else {
-                throw new SRUnsupportedOperationException("This method can only be enabled if setEnablePinContentView" +
+                throw new IllegalArgumentException("This method can only be enabled if setEnablePinContentView" +
                         " and setEnableKeepRefreshView are set be true");
             }
         } else {
@@ -1636,10 +1634,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFooterView = null;
         }
         if (footer.getType() != IRefreshView.TYPE_FOOTER)
-            throw new SRUnsupportedOperationException("Wrong type,FooterView's type must be " +
+            throw new IllegalArgumentException("Wrong type,FooterView's type must be " +
                     "TYPE_FOOTER");
         if (mMode != MODE_LOAD_MORE && mMode != MODE_BOTH)
-            throw new SRUnsupportedOperationException("You can set the FooterView only if the " +
+            throw new IllegalArgumentException("You can set the FooterView only if the " +
                     "mode is MODE_BOTH or MODE_LOAD_MORE !");
         View view = footer.getView();
         ViewGroup.LayoutParams lp = view.getLayoutParams();
@@ -1665,10 +1663,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mHeaderView = null;
         }
         if (header.getType() != IRefreshView.TYPE_HEADER)
-            throw new SRUnsupportedOperationException("Wrong type,HeaderView's type must be " +
+            throw new IllegalArgumentException("Wrong type,HeaderView's type must be " +
                     "TYPE_HEADER");
         if (mMode != MODE_REFRESH && mMode != MODE_BOTH)
-            throw new SRUnsupportedOperationException("You can set the HeaderView only if the " +
+            throw new IllegalArgumentException("You can set the HeaderView only if the " +
                     "mode is MODE_BOTH or MODE_REFRESH !");
         View view = header.getView();
         ViewGroup.LayoutParams lp = view.getLayoutParams();
@@ -2198,13 +2196,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             switch (view.getType()) {
                 case IRefreshView.TYPE_HEADER:
                     if (mHeaderView != null)
-                        throw new SRUnsupportedOperationException("Unsupported operation , " +
+                        throw new IllegalArgumentException("Unsupported operation , " +
                                 "HeaderView only can be add once !!");
                     mHeaderView = view;
                     break;
                 case IRefreshView.TYPE_FOOTER:
                     if (mFooterView != null)
-                        throw new SRUnsupportedOperationException("Unsupported operation , " +
+                        throw new IllegalArgumentException("Unsupported operation , " +
                                 "FooterView only can be add once !!");
                     mFooterView = view;
                     break;
@@ -2229,7 +2227,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         if (mContentView == null) {
-            throw new SRUIRuntimeException("The content view is empty." +
+            throw new RuntimeException("The content view is empty." +
                     " Do you forget to added it in the XML layout file or add it in code ?");
         }
         ViewTreeObserver observer = mContentView.getViewTreeObserver();

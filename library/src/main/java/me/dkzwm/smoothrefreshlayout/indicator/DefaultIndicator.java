@@ -2,8 +2,6 @@ package me.dkzwm.smoothrefreshlayout.indicator;
 
 import android.support.annotation.NonNull;
 
-import me.dkzwm.smoothrefreshlayout.exception.SRUIRuntimeException;
-
 /**
  * @author dkzwm
  */
@@ -332,7 +330,7 @@ public class DefaultIndicator implements IIndicator {
     public void setCanMoveTheMaxRatioOfHeaderHeight(float ratio) {
         if (mCanMoveTheMaxRatioOfHeaderHeight > 0
                 && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh)
-            throw new SRUIRuntimeException("If mCanMoveTheMaxRatioOfHeaderHeight less than " +
+            throw new RuntimeException("If mCanMoveTheMaxRatioOfHeaderHeight less than " +
                     "RatioOfHeaderHeightToRefresh, refresh will be never trigger!");
         mCanMoveTheMaxRatioOfHeaderHeight = ratio;
     }
@@ -346,7 +344,7 @@ public class DefaultIndicator implements IIndicator {
     public void setCanMoveTheMaxRatioOfFooterHeight(float ratio) {
         if (mCanMoveTheMaxRatioOfFooterHeight > 0
                 && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore)
-            throw new SRUIRuntimeException("If MaxRatioOfFooterWhenFingerMoves less than " +
+            throw new RuntimeException("If MaxRatioOfFooterWhenFingerMoves less than " +
                     "RatioOfFooterHeightToLoadMore, load more will be never trigger!");
         mCanMoveTheMaxRatioOfFooterHeight = ratio;
     }

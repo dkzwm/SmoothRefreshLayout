@@ -1,7 +1,5 @@
 package me.dkzwm.smoothrefreshlayout.indicator;
 
-import me.dkzwm.smoothrefreshlayout.exception.SRUIRuntimeException;
-
 /**
  * Created by dkzwm on 2017/6/12.
  *
@@ -34,7 +32,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     @Override
     public void setRatioOfHeaderHeightToTwoLevelRefresh(float ratio) {
         if (mRatioOfHeaderHeightToHintTwoLevelRefresh >= mRatioOfHeaderHeightToTwoLevelRefresh) {
-            throw new SRUIRuntimeException("If RatioOfHeaderHeightToTwoLevelRefresh less than " +
+            throw new RuntimeException("If RatioOfHeaderHeightToTwoLevelRefresh less than " +
                     "RatioOfHeaderHeightToHintTwoLevelRefresh, Two level refresh will never be " +
                     "trigger!");
         }
