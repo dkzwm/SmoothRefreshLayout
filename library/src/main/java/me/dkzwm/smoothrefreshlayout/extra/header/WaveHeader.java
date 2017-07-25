@@ -338,7 +338,7 @@ public class WaveHeader extends View implements IRefreshView {
             }
         } else if (status == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
             mProgressBounds.setEmpty();
-            mProgressBounds = new RectF(width / 2 - mCircleRadius - mBarWidth,
+            mProgressBounds.set(width / 2 - mCircleRadius - mBarWidth,
                     mCurrentPosY - mCircleRadius * 2 - mDip2 * 5 - mBarWidth * 2,
                     width / 2 + mCircleRadius + mBarWidth,
                     mCurrentPosY - mDip2 * 5);

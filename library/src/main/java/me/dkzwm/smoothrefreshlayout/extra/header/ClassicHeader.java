@@ -133,7 +133,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
     @Override
     public int getCustomHeight() {
-        return getResources().getDimensionPixelOffset(R.dimen.sr_classic_header_default_height);
+        return getResources().getDimensionPixelOffset(R.dimen.sr_header_default_height);
     }
 
     @NonNull

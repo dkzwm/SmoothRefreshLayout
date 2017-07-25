@@ -389,7 +389,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 continue;
             }
             if (mFooterView != null && child == mFooterView) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
                 if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);

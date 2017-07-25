@@ -16,14 +16,21 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
     private MaterialHeader mMaterialHeader;
     private MaterialFooter mMaterialFooter;
     private OnUIPositionChangedListener mOnUIPositionChangedListener = new OnUIPositionChangedListener() {
+        int mLastMovingStatus = IIndicator.MOVING_CONTENT;
+
         @Override
         public void onChanged(byte status, IIndicator indicator) {
-            if (indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
-                setEnablePinContentView(false);
+            int movingStatus = indicator.getMovingStatus();
+            if (movingStatus == IIndicator.MOVING_HEADER) {
+                if (movingStatus != mLastMovingStatus) {
+                    setEnablePinContentView(true);
+                    setEnablePinRefreshViewWhileLoading(true);
+                }
             } else {
-                setEnablePinContentView(true);
-                setEnablePinRefreshViewWhileLoading(true);
+                if (movingStatus != mLastMovingStatus)
+                    setEnablePinContentView(false);
             }
+            mLastMovingStatus = movingStatus;
         }
     };
 
