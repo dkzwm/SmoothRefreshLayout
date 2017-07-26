@@ -35,6 +35,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     @RefreshViewStyle
     protected int mStyle = STYLE_DEFAULT;
     private LastUpdateTimeUpdater mLastUpdateTimeUpdater;
+    private boolean mNoMoreDataChangedView = false;
 
     public ClassicFooter(Context context) {
         this(context, null);
@@ -104,7 +105,6 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mLastUpdateTimeKey = key;
     }
 
-
     @Override
     public int getType() {
         return TYPE_FOOTER;
@@ -137,18 +137,23 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mRotateView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mShouldShowLastUpdate = true;
+        mNoMoreDataChangedView = false;
+        mLastUpdateTimeUpdater.stop();
         tryUpdateLastUpdateTime();
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
         mShouldShowLastUpdate = true;
+        mNoMoreDataChangedView = false;
         tryUpdateLastUpdateTime();
         mLastUpdateTimeUpdater.start();
         mProgressBar.setVisibility(INVISIBLE);
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnabledPullToRefresh()) {
+        if (frame.isEnabledLoadMoreNoMoreData()) {
+            mTitleTextView.setText(R.string.sr_no_more_data);
+        } else if (frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
             mTitleTextView.setText(R.string.sr_pull_up_to_load);
         } else {
             mTitleTextView.setText(R.string.sr_pull_up);
@@ -207,10 +212,22 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         final int currentPos = indicator.getCurrentPosY();
         final int lastPos = indicator.getLastPosY();
 
+        if (frame.isEnabledLoadMoreNoMoreData() && !mNoMoreDataChangedView) {
+            mTitleTextView.setVisibility(VISIBLE);
+            mLastUpdateTextView.setVisibility(GONE);
+            mProgressBar.setVisibility(INVISIBLE);
+            mLastUpdateTimeUpdater.stop();
+            mRotateView.clearAnimation();
+            mRotateView.setVisibility(GONE);
+            mTitleTextView.setText(R.string.sr_no_more_data);
+            mNoMoreDataChangedView = true;
+            return;
+        }
+        mNoMoreDataChangedView = false;
         if (currentPos < mOffsetToRefresh && lastPos >= mOffsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                 mTitleTextView.setVisibility(VISIBLE);
-                if (frame.isEnabledPullToRefresh()) {
+                if (frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
                     mTitleTextView.setText(R.string.sr_pull_up_to_load);
                 } else {
                     mTitleTextView.setText(R.string.sr_pull_up);
@@ -222,7 +239,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
             }
         } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
-                if (!frame.isEnabledPullToRefresh()) {
+                if (!frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
                     mTitleTextView.setVisibility(VISIBLE);
                     mTitleTextView.setText(R.string.sr_release_to_load);
                 }

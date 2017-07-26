@@ -248,6 +248,7 @@ public interface IRefreshView {
 |setEnableFooterDrawerStyle|boolean|Footer抽屉样式,即Footer视图在内容视图下面（默认:`false`）|
 |setDisablePerformRefresh|boolean|关闭触发Header刷新（默认:`false`）|
 |setDisablePerformLoadMore|boolean|关闭触发Footer刷新（默认:`false`）|
+|setEnableLoadMoreNoMoreData|boolean|设置Footer没有更多数据，该选项设置`true`时在Frame层等同`setDisablePerformLoadMore`设置为`true`，只是自定义视图可以根据该标志位改变视图样式,`ClassicFooter`默认实现了对该属性的支持（默认:`false`）|
 |setDisableRefresh|boolean|禁用Header刷新（默认:`false`）|
 |setDisableLoadMore|boolean|禁用Footer刷新（默认:`false`）|
 |setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|

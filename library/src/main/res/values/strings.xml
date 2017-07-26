@@ -18,5 +18,6 @@
     <string name="sr_seconds_ago">&#160;seconds ago</string>
     <string name="sr_minutes_ago">&#160;minutes ago</string>
     <string name="sr_hours_ago">&#160;hours ago</string>
+    <string name="sr_no_more_data">No more data</string>
 
 </resources>

@@ -75,6 +75,8 @@ public class WithListViewActivity extends AppCompatActivity {
                             List<String> list = DataUtil.createList(mCount, 20);
                             mCount += 20;
                             mAdapter.appendData(list);
+                            if (mCount>50)
+                                mRefreshLayout.setEnableLoadMoreNoMoreData(true);
                         }
                         mRefreshLayout.refreshComplete(1200);
                     }

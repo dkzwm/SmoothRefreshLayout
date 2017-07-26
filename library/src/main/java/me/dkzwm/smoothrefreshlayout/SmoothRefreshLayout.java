@@ -92,6 +92,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 13;
     private static final int FLAG_ENABLE_WHEN_SCROLLING_TO_BOTTOM_TO_PERFORM_LOAD_MORE = 0x01 << 14;
     private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 15;
+    private static final int FLAG_DISABLE_WHEN_HORIZONTAL_MOVE = 0x01 << 16;
+    private static final int FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA = 0x01 << 17;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
@@ -144,7 +146,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mViewsZTreeNeedReset = true;
     private boolean mNestedFling = false;
     private boolean mNeedScrollCompat = false;
-    private boolean mDisableWhenHorizontalMove = false;
     private float mOverScrollDistanceRatio = 0.8f;
     private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
@@ -1038,14 +1039,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    /**
-     * Set whether to filter the horizontal move
-     *
-     * @param disable Enable
-     */
-    public void setDisableWhenHorizontalMove(boolean disable) {
-        mDisableWhenHorizontalMove = disable;
-    }
 
     /**
      * The resistance while you are moving
@@ -1525,6 +1518,52 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * The flag has been set to disabled when horizontal move
+     *
+     * @return Disabled
+     */
+    public boolean isDisabledWhenHorizontalMove() {
+        return (mFlag & FLAG_DISABLE_WHEN_HORIZONTAL_MOVE) > 0;
+    }
+
+
+    /**
+     * Set whether to filter the horizontal move
+     *
+     * @param disable Enable
+     */
+    public void setDisableWhenHorizontalMove(boolean disable) {
+        if (disable) {
+            mFlag = mFlag | FLAG_DISABLE_WHEN_HORIZONTAL_MOVE;
+        } else {
+            mFlag = mFlag & ~FLAG_DISABLE_WHEN_HORIZONTAL_MOVE;
+        }
+    }
+
+    /**
+     * The flag has been set to enabled load more has no more data
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledLoadMoreNoMoreData() {
+        return (mFlag & FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true. The footer will show no more data and will never
+     * trigger load more
+     *
+     * @param enable Enable no more data
+     */
+    public void setEnableLoadMoreNoMoreData(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA;
+        }
+    }
+
+    /**
      * The flag has been set to keep refresh view while loading
      *
      * @return Enabled
@@ -1764,7 +1803,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    public void onFling(float lastScrollY, float vx, float vy) {
+    public void onFling(float vx, float vy) {
         if (!isEnabledOverScroll() || mMode == MODE_NONE || needInterceptTouchEvent()
                 || mNestedScrollInProgress)
             return;
@@ -2092,7 +2131,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mNestedScrollingChildHelper.dispatchNestedPreFling(velocityX, velocityY);
     }
 
+    @Override
+    public void onScrollChanged() {
+        if (isEnabledScrollToBottomAutoLoadMore() && !isDisabledLoadMore()
+                && !isEnabledLoadMoreNoMoreData() && isDisabledPerformLoadMore()
+                && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
+            if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mContentView))
+                    || (mAutoLoadMoreCallBack != null
+                    && mAutoLoadMoreCallBack.canAutoLoadMore(this, mContentView))) {
+                mStatus = SR_STATUS_LOADING_MORE;
+                mDelayedRefreshComplete = false;
+                performRefresh();
+            }
+        }
+        mOverScrollChecker.computeScrollOffset();
+    }
 
+    /**
+     * Check the Z-Axis relationships of the views need to be rearranged
+     */
     protected void checkViewsZTreeNeedReset() {
         final int count = getChildCount();
         if (mContentView == null)
@@ -2311,7 +2368,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 float[] pressDownPoint = mIndicator.getFingerDownPoint();
                 offsetX = ev.getX() - pressDownPoint[0];
                 offsetY = ev.getY() - pressDownPoint[1];
-                if (mDisableWhenHorizontalMove) {
+                if (isDisabledWhenHorizontalMove()) {
                     boolean needProcess = (mIndicator.isInStartPosition()
                             || (isRefreshing() && !isEnabledPullToRefresh()
                             && mIndicator.isInKeepHeaderWhileLoadingPos())
@@ -2513,7 +2570,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mDurationOfBackToHeaderHeight);
             } else if (isMovingFooter() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                 if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())
-                        || isDisabledPerformLoadMore()) {
+                        || isEnabledLoadMoreNoMoreData() || isDisabledPerformLoadMore()) {
                     onRelease(0);
                     return;
                 }
@@ -2832,6 +2889,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //check need perform load more
         if (mStatus == SR_STATUS_PREPARE && change < 0 && isMovingFooter() && !canChildScrollDown()
                 && !isDisabledLoadMore() && !isDisabledPerformLoadMore()
+                && !isEnabledLoadMoreNoMoreData()
                 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
                 && isEnabledScrollToBottomAutoLoadMore()) {
             mStatus = SR_STATUS_LOADING_MORE;
@@ -2996,7 +3054,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             performRefresh();
             return;
         }
-        if (isMovingFooter()
+        if (isMovingFooter() && !isEnabledLoadMoreNoMoreData()
                 && ((mIndicator.isOverOffsetToKeepFooterWhileLoading() && isAutoRefresh())
                 || (isEnabledKeepRefreshView() && !isDisabledPerformLoadMore()
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())
@@ -3051,21 +3109,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-
-    @Override
-    public void onScrollChanged() {
-        if (isEnabledScrollToBottomAutoLoadMore()
-                && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
-            if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mContentView))
-                    || (mAutoLoadMoreCallBack != null
-                    && mAutoLoadMoreCallBack.canAutoLoadMore(this, mContentView))) {
-                mStatus = SR_STATUS_LOADING_MORE;
-                mDelayedRefreshComplete = false;
-                performRefresh();
-            }
-        }
-        mOverScrollChecker.computeScrollOffset();
-    }
 
     @IntDef({MODE_NONE, MODE_REFRESH, MODE_LOAD_MORE, MODE_OVER_SCROLL, MODE_BOTH})
     @Retention(RetentionPolicy.SOURCE)

@@ -6,5 +6,5 @@ package me.dkzwm.smoothrefreshlayout.gesture;
  * @author dkzwm
  */
 public interface OnGestureListener {
-    void onFling(float lastScrollY, float vx, float vy);
+    void onFling(float vx, float vy);
 }

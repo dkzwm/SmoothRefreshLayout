@@ -165,7 +165,7 @@ public class MaterialFooter extends View implements IRefreshView {
     @Override
     public void onReset(SmoothRefreshLayout layout) {
         mMustInvalidate = false;
-        mProgress = 0;
+        mProgress = 0f;
         mIsSpinning = false;
         invalidate();
     }
