@@ -88,13 +88,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_FOOTER_DRAWER_STYLE = 0x01 << 9;
     private static final int FLAG_DISABLE_PERFORM_REFRESH = 0x01 << 10;
     private static final int FLAG_DISABLE_PERFORM_LOAD_MORE = 0x01 << 11;
-    private static final int FLAG_DISABLE_REFRESH = 0x01 << 12;
-    private static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 13;
-    private static final int FLAG_ENABLE_WHEN_SCROLLING_TO_BOTTOM_TO_PERFORM_LOAD_MORE = 0x01 << 14;
-    private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 15;
-    private static final int FLAG_DISABLE_WHEN_HORIZONTAL_MOVE = 0x01 << 16;
-    private static final int FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA = 0x01 << 17;
+    private static final int FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA = 0x01 << 12;
+    private static final int FLAG_DISABLE_REFRESH = 0x01 << 13;
+    private static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 14;
+    private static final int FLAG_ENABLE_WHEN_SCROLLING_TO_BOTTOM_TO_PERFORM_LOAD_MORE = 0x01 << 15;
+    private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 16;
+    private static final int FLAG_DISABLE_WHEN_HORIZONTAL_MOVE = 0x01 << 17;
     private static final byte MASK_AUTO_REFRESH = 0x03;
+    private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x03 << 11;
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
@@ -1479,7 +1480,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @return Disabled
      */
     public boolean isDisabledPerformLoadMore() {
-        return (mFlag & FLAG_DISABLE_PERFORM_LOAD_MORE) > 0;
+        return (mFlag & MASK_DISABLE_PERFORM_LOAD_MORE) > 0;
     }
 
     /**
@@ -2134,7 +2135,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public void onScrollChanged() {
         if (isEnabledScrollToBottomAutoLoadMore() && !isDisabledLoadMore()
-                && !isEnabledLoadMoreNoMoreData() && isDisabledPerformLoadMore()
+                && !isDisabledPerformLoadMore()
                 && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
             if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mContentView))
                     || (mAutoLoadMoreCallBack != null
@@ -2570,7 +2571,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mDurationOfBackToHeaderHeight);
             } else if (isMovingFooter() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                 if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())
-                        || isEnabledLoadMoreNoMoreData() || isDisabledPerformLoadMore()) {
+                        || isDisabledPerformLoadMore()) {
                     onRelease(0);
                     return;
                 }
@@ -2889,7 +2890,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //check need perform load more
         if (mStatus == SR_STATUS_PREPARE && change < 0 && isMovingFooter() && !canChildScrollDown()
                 && !isDisabledLoadMore() && !isDisabledPerformLoadMore()
-                && !isEnabledLoadMoreNoMoreData()
                 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
                 && isEnabledScrollToBottomAutoLoadMore()) {
             mStatus = SR_STATUS_LOADING_MORE;
@@ -3044,21 +3044,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             case MODE_BOTH:
                 break;
         }
-        if (isMovingHeader()
+        if (isMovingHeader() && !isDisabledPerformRefresh()
                 && ((mIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh())
-                || (isEnabledKeepRefreshView() && !isDisabledPerformRefresh()
-                && mIndicator.isOverOffsetToKeepHeaderWhileLoading())
-                || (mIndicator.isOverOffsetToRefresh() && !isDisabledPerformRefresh()))) {
+                || (isEnabledKeepRefreshView() && mIndicator.isOverOffsetToKeepHeaderWhileLoading())
+                || mIndicator.isOverOffsetToRefresh())) {
             mStatus = SR_STATUS_REFRESHING;
             mDelayedRefreshComplete = false;
             performRefresh();
             return;
         }
-        if (isMovingFooter() && !isEnabledLoadMoreNoMoreData()
+        if (isMovingFooter() && !isDisabledPerformLoadMore()
                 && ((mIndicator.isOverOffsetToKeepFooterWhileLoading() && isAutoRefresh())
-                || (isEnabledKeepRefreshView() && !isDisabledPerformLoadMore()
-                && mIndicator.isOverOffsetToKeepFooterWhileLoading())
-                || (mIndicator.isOverOffsetToLoadMore() && !isDisabledPerformLoadMore()))) {
+                || (isEnabledKeepRefreshView() && mIndicator.isOverOffsetToKeepFooterWhileLoading())
+                || mIndicator.isOverOffsetToLoadMore())) {
             mStatus = SR_STATUS_LOADING_MORE;
             mDelayedRefreshComplete = false;
             performRefresh();
