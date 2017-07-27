@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.List;
 
 import me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
+import me.dkzwm.smoothrefreshlayout.extra.IRefreshView;
 import me.dkzwm.smoothrefreshlayout.sample.R;
 import me.dkzwm.smoothrefreshlayout.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
@@ -75,9 +77,21 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case Menu.FIRST:
+                if (mRefreshLayout.getDefaultFooter().getStyle() == IRefreshView.STYLE_SCALE)
+                    mRefreshLayout.getDefaultFooter().setStyle(IRefreshView.STYLE_DEFAULT);
+                else
+                    mRefreshLayout.getDefaultFooter().setStyle(IRefreshView.STYLE_SCALE);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

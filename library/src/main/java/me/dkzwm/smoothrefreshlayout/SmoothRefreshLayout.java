@@ -267,7 +267,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         setNestedScrollingEnabled(true);
-
     }
 
     public static void debug(boolean debug) {
@@ -484,7 +483,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin,
                             lp.height);
                 }
-
                 child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
             }
         }
@@ -2888,9 +2886,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         //check need perform load more
-        if (mStatus == SR_STATUS_PREPARE && change < 0 && isMovingFooter() && !canChildScrollDown()
+        if (mStatus == SR_STATUS_PREPARE && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
+                && change < 0 && isMovingFooter() && !canChildScrollDown()
                 && !isDisabledLoadMore() && !isDisabledPerformLoadMore()
-                && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
                 && isEnabledScrollToBottomAutoLoadMore()) {
             mStatus = SR_STATUS_LOADING_MORE;
             mDelayedRefreshComplete = false;
@@ -3106,7 +3104,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             onFingerUp(true);
         }
     }
-
 
     @IntDef({MODE_NONE, MODE_REFRESH, MODE_LOAD_MORE, MODE_OVER_SCROLL, MODE_BOTH})
     @Retention(RetentionPolicy.SOURCE)
@@ -3564,7 +3561,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
 
-
         @Override
         public void run() {
             if (mLayoutWeakRf.get() == null || !mFling)
@@ -3634,5 +3630,4 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mClamped = false;
         }
     }
-
 }

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.SystemClock;
-import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
@@ -21,13 +20,16 @@ import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
  * @author dkzwm
  */
 public class MaterialFooter extends View implements IRefreshView {
+    protected int[] mColors = new int[]{Color.RED, Color.BLUE, Color.GREEN, Color.BLACK};
     protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected RectF mProgressBounds = new RectF();
     protected int mDefaultHeight;
     protected float mProgress = 0f;
     protected int mStyle = STYLE_DEFAULT;
     protected int mCircleRadius;
+    protected int mColorIndex = 0;
     private boolean mFromFront = true;
+    private boolean mGrowing = false;
     private double mGrowingTime = 0;
     private float mBarExtraLength = 0;
     private long mLastDrawProgressTime = 0;
@@ -57,24 +59,26 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (getStyle() == STYLE_DEFAULT) {
+        if (mStyle == STYLE_DEFAULT) {
             int height = mDefaultHeight + getPaddingTop() + getPaddingBottom();
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        mProgressBounds.set(w / 2 - mCircleRadius - mBarWidth,
+                h / 2 - mCircleRadius - mBarWidth,
+                w / 2 + mCircleRadius + mBarWidth,
+                h / 2 + mCircleRadius + mBarWidth);
+    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.save();
         canvas.restore();
-        mProgressBounds.setEmpty();
-        mProgressBounds.set(getWidth() / 2 - mCircleRadius - mBarWidth,
-                getHeight() / 2 - mCircleRadius - mBarWidth,
-                getWidth() / 2 + mCircleRadius + mBarWidth,
-                getHeight() / 2 + mCircleRadius + mBarWidth);
         if (mIsSpinning) {
             long deltaTime;
             if (mLastDrawProgressTime <= 0) {
@@ -88,27 +92,35 @@ public class MaterialFooter extends View implements IRefreshView {
             mGrowingTime += deltaTime;
             double barSpinCycleTime = 600;
             if (mGrowingTime > barSpinCycleTime) {
-                mGrowingTime -= barSpinCycleTime;
+                mGrowingTime = mGrowingTime % barSpinCycleTime;
                 mFromFront = !mFromFront;
             }
             float distance = (float) Math.cos((mGrowingTime / barSpinCycleTime + 1)
                     * Math.PI) / 2 + 0.5f;
             int barMaxLength = 270;
             float destLength = (barMaxLength - barLength);
-
+            float barExtraLength;
             if (mFromFront) {
-                mBarExtraLength = distance * destLength;
+                barExtraLength = distance * destLength;
             } else {
                 float newLength = destLength * (1 - distance);
                 mProgress += (mBarExtraLength - newLength);
-                mBarExtraLength = newLength;
+                barExtraLength = newLength;
             }
             mProgress += deltaNormalized;
             if (mProgress > 360) {
                 mProgress -= 360f;
             }
             mLastDrawProgressTime = SystemClock.uptimeMillis();
-
+            if (mBarExtraLength < destLength / 2 && barExtraLength < destLength / 2) {
+                if ((barExtraLength > mBarExtraLength && !mGrowing) ||
+                        (barExtraLength < mBarExtraLength && mGrowing)) {
+                    mBarPaint.setColor(mColors[mColorIndex % mColors.length]);
+                    mColorIndex++;
+                }
+            }
+            mGrowing = barExtraLength > mBarExtraLength;
+            mBarExtraLength = barExtraLength;
             float startAngle = mProgress - 90;
             float sweepAngle = barLength + mBarExtraLength;
             canvas.drawArc(mProgressBounds, startAngle, sweepAngle, false, mBarPaint);
@@ -123,17 +135,23 @@ public class MaterialFooter extends View implements IRefreshView {
     public void setProgressBarWidth(int width) {
         mBarWidth = width;
         mBarPaint.setStrokeWidth(mBarWidth);
-        invalidate();
+        if (mStyle == STYLE_SCALE)
+            requestLayout();
+        else
+            invalidate();
     }
 
-    public void setProgressBarColor(@ColorInt int color) {
-        mBarPaint.setColor(color);
+    public void setProgressBarColors(@NonNull int[] colors) {
+        mColors = colors;
         invalidate();
     }
 
     public void setProgressBarRadius(int radius) {
         mCircleRadius = radius;
-        invalidate();
+        if (mStyle == STYLE_SCALE)
+            requestLayout();
+        else
+            invalidate();
     }
 
     @Override
