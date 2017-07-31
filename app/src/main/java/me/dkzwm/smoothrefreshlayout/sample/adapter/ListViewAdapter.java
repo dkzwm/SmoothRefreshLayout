@@ -55,7 +55,7 @@ public class ListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ListViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.list_view_item, parent,false);
+            convertView = mInflater.inflate(R.layout.layout_list_view_item, parent,false);
             holder = new ListViewHolder(convertView);
             convertView.setTag(holder);
         } else {

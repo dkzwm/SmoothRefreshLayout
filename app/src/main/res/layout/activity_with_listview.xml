@@ -8,7 +8,10 @@
     android:background="#F2F2F2"
     android:orientation="vertical"
     android:padding="12dp"
-    app:sr_content="@+id/listView_with_listView_activity">
+    app:sr_content="@+id/listView_with_listView_activity"
+    app:sr_empty_layout="@layout/layout_empty_view"
+    app:sr_error_layout="@layout/layout_error_view"
+    app:sr_state="empty">
 
     <me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader
         android:id="@+id/classicHeader_with_listView_activity"
@@ -35,13 +38,30 @@
         android:background="@color/colorAccent"
         app:sr_style="style_scale"/>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:text="Header为抽屉样式并定义在Xml中\n Footer为默认样式并定义在Xml中\n ListView设置了Margin\n SmoothRefreshLayout开启了到底自动加载更多"
-        android:textColor="@android:color/holo_green_light"
-        android:textSize="16sp"
-        app:sr_layout_gravity="center"/>
+        app:sr_layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/button_with_listView_activity_change_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_state_to_empty"
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/button_with_listView_activity_change_content_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_state_to_content"
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/button_with_listView_activity_change_error_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_state_to_error"
+            android:textSize="12sp"/>
+    </LinearLayout>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

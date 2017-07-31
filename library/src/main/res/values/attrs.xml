@@ -70,6 +70,16 @@
         </attr>
         //This attribute only can be used in TwoLevelSmoothRefreshLayout
         <attr name="sr_enable_two_level_pull_to_refresh" format="boolean"/>
+
+        <attr name="sr_empty_layout" format="reference"/>
+        <attr name="sr_error_layout" format="reference"/>
+        <attr name="sr_custom_layout" format="reference"/>
+        <attr name="sr_state" format="enum">
+            <enum name="content" value="0"/>
+            <enum name="error" value="1"/>
+            <enum name="empty" value="2"/>
+            <enum name="custom" value="3"/>
+        </attr>
     </declare-styleable>
     <declare-styleable name="IRefreshView">
         <attr name="sr_style" format="enum">

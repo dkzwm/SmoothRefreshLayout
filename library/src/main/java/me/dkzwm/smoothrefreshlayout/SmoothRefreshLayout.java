@@ -1,8 +1,11 @@
 package me.dkzwm.smoothrefreshlayout;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.SystemClock;
 import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
@@ -17,6 +20,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -57,17 +61,23 @@ import static android.view.View.MeasureSpec.makeMeasureSpec;
  * Support OverScroll feature;<br/>
  * Support Refresh and LoadMore feature;<br/>
  * Support AutoRefresh feature;<br/>
+ * Support scroll to bottom to auto load more feature;<br/>
  *
  * @author dkzwm
  */
 public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener, NestedScrollingChild,
         NestedScrollingParent, ViewTreeObserver.OnScrollChangedListener {
     //mode
-    public static final int MODE_NONE = 0;
-    public static final int MODE_REFRESH = 1;
-    public static final int MODE_LOAD_MORE = 2;
-    public static final int MODE_OVER_SCROLL = 3;
-    public static final int MODE_BOTH = 4;
+    public static final byte MODE_NONE = 0;
+    public static final byte MODE_REFRESH = 1;
+    public static final byte MODE_LOAD_MORE = 2;
+    public static final byte MODE_OVER_SCROLL = 3;
+    public static final byte MODE_BOTH = 4;
+    //state
+    public static final byte STATE_CONTENT = 0;
+    public static final byte STATE_ERROR = 1;
+    public static final byte STATE_EMPTY = 2;
+    public static final byte STATE_CUSTOM = 3;
     //status
     public static final byte SR_STATUS_INIT = 1;
     public static final byte SR_STATUS_PREPARE = 2;
@@ -108,10 +118,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private final int[] mParentOffsetInWindow = new int[2];
     @Mode
     protected int mMode = MODE_NONE;
+    @State
+    protected int mState = STATE_CONTENT;
+    protected int mPreviousState = -1;
     protected IRefreshView mHeaderView;
     protected IRefreshView mFooterView;
     protected IIndicator mIndicator;
     protected OnRefreshListener mRefreshListener;
+    protected OnStateChangedListener mStateChangedListener;
     protected byte mStatus = SR_STATUS_INIT;
     protected boolean mTriggeredAutoRefresh = true;
     protected boolean mTriggeredAutoLoadMore = true;
@@ -122,6 +136,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected long mLoadingStartTime = 0;
     protected int mDurationToCloseHeader = 500;
     protected int mDurationToCloseFooter = 500;
+    protected View mTargetView;
+    protected View mContentView;
+    protected View mEmptyView;
+    protected View mErrorView;
+    protected View mCustomView;
+    protected View mLoadMoreScrollTargetView;
+    protected LayoutInflater mInflater;
+    protected int mContentResId = View.NO_ID;
+    protected int mErrorLayoutResId = View.NO_ID;
+    protected int mEmptyLayoutResId = View.NO_ID;
+    protected int mCustomLayoutResId = View.NO_ID;
     private int mFlag = 0x00;
     private Interpolator mDefaultSpringInterpolator;
     private IGestureDetector mGestureDetector;
@@ -130,15 +155,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
-    private View mContentView;
-    private View mLoadMoreScrollTargetView;
     private MotionEvent mLastMoveEvent;
     private ScrollChecker mScrollChecker;
     private OverScrollChecker mOverScrollChecker;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
-    private ViewTreeObserver mContentViewTreeObserver;
+    private ViewTreeObserver mTargetViewTreeObserver;
+    private ValueAnimator mChangeStateAnimator;
     private boolean mHasSendCancelEvent = false;
     private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
@@ -151,7 +175,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
     private int mDurationOfBackToFooterHeight = 200;
-    private int mContentResId = View.NO_ID;
     private int mTotalRefreshingUnconsumed;
     private int mTotalRefreshingConsumed;
     private int mTotalLoadMoreUnconsumed;
@@ -168,6 +191,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public SmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mIndicator = new DefaultIndicator();
+        mInflater = LayoutInflater.from(context);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout, 0, 0);
         if (arr != null) {
             mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content, mContentResId);
@@ -247,6 +271,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mMode == MODE_OVER_SCROLL) {
                 setEnableOverScroll(true);
             }
+            mErrorLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_error_layout,
+                    NO_ID);
+            mEmptyLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_empty_layout,
+                    NO_ID);
+            mCustomLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_custom_layout,
+                    NO_ID);
+            @State
+            int state = arr.getInt(R.styleable.SmoothRefreshLayout_sr_state, STATE_CONTENT);
+            if (state != STATE_CONTENT)
+                getView(state);
+            mState = state;
             arr.recycle();
             arr = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS, 0, 0);
             setEnabled(arr.getBoolean(0, true));
@@ -348,9 +383,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        ensureContent();
         mCachedViews.clear();
         int count = getChildCount();
+        if (count == 0)
+            return;
+        ensureTarget();
         final boolean measureMatchParentChildren =
                 MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY ||
                         MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
@@ -361,8 +398,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final int paddingRight = getPaddingRight();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
+            if (child.getVisibility() == GONE)
+                continue;
+            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             if (mHeaderView != null && child == mHeaderView) {
-                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
                 if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 } else {
@@ -385,10 +424,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 "STYLE_SCALE, you must set a accurate height");
                     mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
-                continue;
-            }
-            if (mFooterView != null && child == mFooterView) {
-                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            } else if (mFooterView != null && child == mFooterView) {
                 if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 } else {
@@ -411,57 +447,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 "STYLE_SCALE, you must set a accurate height");
                     mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
-                continue;
-            }
-            if (mContentView != null && mContentView == child) {
-                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-                final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                        getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
-                final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
-                        getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin, lp.height);
-                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
-                continue;
-            }
-            if (child.getVisibility() != GONE) {
+            } else if (mTargetView != null && mTargetView == child
+                    || (mPreviousState != -1 && mChangeStateAnimator != null
+                    && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                maxWidth = Math.max(maxWidth,
-                        child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-                maxHeight = Math.max(maxHeight,
-                        child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-                childState = combineMeasuredStates(childState, child.getMeasuredState());
-                if (measureMatchParentChildren) {
-                    if (lp.width == LayoutParams.MATCH_PARENT ||
-                            lp.height == LayoutParams.MATCH_PARENT) {
-                        mCachedViews.add(child);
-                    }
-                }
-            }
-        }
-        maxWidth += paddingLeft + paddingRight;
-        maxHeight += getPaddingTop() + getPaddingBottom();
-        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
-        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
-        final Drawable drawable;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            drawable = getForeground();
-            if (drawable != null) {
-                maxHeight = Math.max(maxHeight, drawable.getMinimumHeight());
-                maxWidth = Math.max(maxWidth, drawable.getMinimumWidth());
-            }
-        }
-        setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
-                resolveSizeAndState(maxHeight, heightMeasureSpec,
-                        childState << MEASURED_HEIGHT_STATE_SHIFT));
-        final int measuredWidth = getMeasuredWidth();
-        final int measuredHeight = getMeasuredHeight();
-        count = mCachedViews.size();
-        if (count > 1) {
-            for (int i = 0; i < count; i++) {
-                final View child = mCachedViews.get(i);
-                final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-
+            } else if (measureMatchParentChildren) {
                 final int childWidthMeasureSpec;
+                final int measuredWidth = getMeasuredWidth();
+                final int measuredHeight = getMeasuredHeight();
                 if (lp.width == LayoutParams.MATCH_PARENT) {
                     final int width = Math.max(0, measuredWidth - getPaddingLeft() - getPaddingRight()
                             - lp.leftMargin - lp.rightMargin);
@@ -472,7 +465,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
                             lp.width);
                 }
-
                 final int childHeightMeasureSpec;
                 if (lp.height == LayoutParams.MATCH_PARENT) {
                     final int height = Math.max(0, measuredHeight - getPaddingTop() - getPaddingRight()
@@ -484,11 +476,23 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             lp.height);
                 }
                 child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            } else {
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             }
+            maxWidth = Math.max(maxWidth,
+                    child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+            maxHeight = Math.max(maxHeight,
+                    child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+            childState = combineMeasuredStates(childState, child.getMeasuredState());
         }
-        mCachedViews.clear();
+        maxWidth += paddingLeft + paddingRight;
+        maxHeight += getPaddingTop() + getPaddingBottom();
+        maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
+        maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
+        setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
+                resolveSizeAndState(maxHeight, heightMeasureSpec,
+                        childState << MEASURED_HEIGHT_STATE_SHIFT));
     }
-
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -502,9 +506,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final int paddingBottom = b - t - getPaddingBottom();
         int offsetHeaderY = 0;
         int offsetFooterY = 0;
-        if ((isMovingHeader() || isRefreshing())) {
+        if (isMovingHeader()) {
             offsetHeaderY = mIndicator.getCurrentPosY();
-        } else if ((isMovingFooter() || isLoadingMore())) {
+        } else if (isMovingFooter()) {
             offsetFooterY = mIndicator.getCurrentPosY();
         }
         int contentBottom = 0;
@@ -513,35 +517,35 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             pin = true;
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-            if (mHeaderView != null && child == mHeaderView) {
-                if ((mMode == MODE_REFRESH || mMode == MODE_BOTH)) {
-                    MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-                    final int left = paddingLeft + lp.leftMargin;
-                    final int offset = (isEnabledHeaderDrawerStyle()
-                            || mHeaderView.getStyle() == IRefreshView.STYLE_SCALE
-                            ? 0 : offsetHeaderY - mIndicator.getHeaderHeight());
-                    final int top = paddingTop + lp.topMargin + offset;
-                    final int right = left + child.getMeasuredWidth();
-                    final int bottom = top + child.getMeasuredHeight();
-                    child.layout(left, top, right, bottom);
-                    if (sDebug) {
-                        SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
-                    }
-                }
+            if (child.getVisibility() == GONE)
                 continue;
-            }
-            if (mContentView != null && child == mContentView) {
-                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            if (mHeaderView != null && child == mHeaderView
+                    && (mMode == MODE_REFRESH || mMode == MODE_BOTH)) {
+                final int left = paddingLeft + lp.leftMargin;
+                final int offset = (isEnabledHeaderDrawerStyle()
+                        || mHeaderView.getStyle() == IRefreshView.STYLE_SCALE
+                        ? 0 : offsetHeaderY - mIndicator.getHeaderHeight());
+                final int top = paddingTop + lp.topMargin + offset;
+                final int right = left + child.getMeasuredWidth();
+                final int bottom = top + child.getMeasuredHeight();
+                child.layout(left, top, right, bottom);
+                if (sDebug) {
+                    SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
+                }
+            } else if (mTargetView != null && child == mTargetView
+                    || (mPreviousState != -1 && mChangeStateAnimator != null
+                    && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
                 final int left = paddingLeft + lp.leftMargin;
                 final int right = left + child.getMeasuredWidth();
                 int top, bottom;
                 if (isMovingHeader()) {
-                    if (lp.bottomMargin == 0) {
-                        top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
-                        bottom = top + child.getMeasuredHeight();
-                    } else {
+                    if (lp.bottomMargin != 0) {
                         top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
                         bottom = top + child.getMeasuredHeight() - (pin ? 0 : offsetHeaderY);
+                    } else {
+                        top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
+                        bottom = top + child.getMeasuredHeight();
                     }
                     child.layout(left, top, right, bottom);
                     // If content view is moving and the bottom margin is not zero. we need
@@ -549,21 +553,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (!pin && offsetHeaderY != 0 && lp.bottomMargin != 0 && mNeedScrollCompat) {
                         final int deltaY = offsetHeaderY - mIndicator.getLastPosY();
                         if (deltaY != 0 && !(mIndicator.hasTouched() && deltaY < 0)
-                                && ScrollCompat.canChildScrollUp(mContentView)) {
-                            ScrollCompat.scrollCompat(mContentView, -deltaY);
+                                && ScrollCompat.canChildScrollUp(child)) {
+                            ScrollCompat.scrollCompat(child, -deltaY);
                             if (sDebug) {
                                 SRLog.d(TAG, "onLayout(): do scroll compat top deltaY: %s", -deltaY);
                             }
                         }
-                        mNeedScrollCompat = false;
                     }
                 } else if (isMovingFooter()) {
-                    if (lp.topMargin == 0) {
-                        top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
-                        bottom = top + child.getMeasuredHeight();
-                    } else {
+                    if (lp.topMargin != 0) {
                         top = paddingTop + lp.topMargin;
                         bottom = top + child.getMeasuredHeight() - (pin ? 0 : offsetFooterY);
+                    } else {
+                        top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
+                        bottom = top + child.getMeasuredHeight();
                     }
                     child.layout(left, top, right, bottom);
                     // If content view is moving and the top margin is not zero. we need scroll to
@@ -571,13 +574,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (!pin && offsetFooterY != 0 && lp.topMargin != 0 && mNeedScrollCompat) {
                         final int deltaY = offsetFooterY - mIndicator.getLastPosY();
                         if (deltaY != 0 && !(mIndicator.hasTouched() && deltaY < 0)
-                                && ScrollCompat.canChildScrollDown(mContentView)) {
-                            ScrollCompat.scrollCompat(mContentView, deltaY);
+                                && ScrollCompat.canChildScrollDown(child)) {
+                            ScrollCompat.scrollCompat(child, deltaY);
                             if (sDebug) {
                                 SRLog.d(TAG, "onLayout(): do scroll compat bottom deltaY: %s", deltaY);
                             }
                         }
-                        mNeedScrollCompat = false;
                     }
                 } else {
                     top = paddingTop + lp.topMargin;
@@ -591,13 +593,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     contentBottom = paddingTop + lp.topMargin + child.getMeasuredHeight();
                 else
                     contentBottom = bottom + lp.bottomMargin;
-                continue;
-            }
-            if (mFooterView != null && mFooterView == child) {
-                continue;
-            }
-            if (child.getVisibility() != GONE) {
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+            } else if (mFooterView == null || mFooterView != child) {
                 final int width = child.getMeasuredWidth();
                 final int height = child.getMeasuredHeight();
                 int childLeft, childTop;
@@ -605,7 +601,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (gravity == -1) {
                     gravity = Gravity.TOP | Gravity.START;
                 }
-
                 final int layoutDirection = ViewCompat.getLayoutDirection(this);
                 final int absoluteGravity = GravityCompat.getAbsoluteGravity(gravity, layoutDirection);
                 final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
@@ -640,6 +635,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         if (mFooterView != null && mFooterView instanceof View
+                && mFooterView.getView().getVisibility() != GONE
                 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)) {
             MarginLayoutParams lp = (MarginLayoutParams) ((View) mFooterView).getLayoutParams();
             final int left = paddingLeft + lp.leftMargin;
@@ -654,12 +650,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
             }
         }
+        if (mNeedScrollCompat)
+            mNeedScrollCompat = false;
         tryToPerformAutoRefresh();
     }
 
     @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        ensureContent();
+        if (mState != STATE_CONTENT && mContentView != null)
+            mContentView.setVisibility(GONE);
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!isEnabled() || mContentView == null || mMode == MODE_NONE
+        if (!isEnabled() || mTargetView == null || mMode == MODE_NONE
                 || (isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || mNestedScrollInProgress) {
             return super.dispatchTouchEvent(ev);
@@ -669,8 +675,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void requestDisallowInterceptTouchEvent(boolean b) {
-        if (!((android.os.Build.VERSION.SDK_INT < 21 && mContentView instanceof AbsListView)
-                || (mContentView != null && !ViewCompat.isNestedScrollingEnabled(mContentView)))) {
+        if (!((android.os.Build.VERSION.SDK_INT < 21 && mTargetView instanceof AbsListView)
+                || (mTargetView != null && !ViewCompat.isNestedScrollingEnabled(mTargetView)))) {
             super.requestDisallowInterceptTouchEvent(b);
         }
     }
@@ -698,6 +704,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     public <T extends OnRefreshListener> void setOnRefreshListener(T listener) {
         mRefreshListener = listener;
+    }
+
+    /**
+     * Set the listener to be notified when the state changed
+     *
+     * @param listener Listener
+     */
+    public void setOnStateChangedListener(OnStateChangedListener listener) {
+        mStateChangedListener = listener;
     }
 
     /**
@@ -765,7 +780,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setOnPerformAutoLoadMoreCallBack(OnPerformAutoLoadMoreCallBack callBack) {
         mAutoLoadMoreCallBack = callBack;
     }
-
 
     /**
      * Set a hook callback when the refresh complete event be triggered. Only can be called on
@@ -1719,18 +1733,47 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * Set the content view
      *
+     * @param state   The state of content view
      * @param content Content view
      */
-    public void setContentView(@NonNull View content) {
-        if (mContentView != null) {
-            removeView(content);
-            mContentResId = View.NO_ID;
-            mContentView = null;
+    public void setContentView(@State int state, @NonNull View content) {
+        switch (state) {
+            case STATE_CONTENT:
+                if (mContentView != null) {
+                    removeView(mContentView);
+                }
+                mContentResId = View.NO_ID;
+                mContentView = content;
+                break;
+            case STATE_EMPTY:
+                if (mEmptyView != null) {
+                    removeView(mEmptyView);
+                }
+                mEmptyLayoutResId = View.NO_ID;
+                mEmptyView = content;
+                break;
+            case STATE_ERROR:
+                if (mErrorView != null) {
+                    removeView(mErrorView);
+                }
+                mErrorLayoutResId = View.NO_ID;
+                mErrorView = content;
+                break;
+            case STATE_CUSTOM:
+                if (mCustomView != null) {
+                    removeView(mCustomView);
+                }
+                mCustomLayoutResId = View.NO_ID;
+                mCustomView = content;
+                break;
         }
         ViewGroup.LayoutParams lp = content.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
             content.setLayoutParams(lp);
+        }
+        if (mState != state) {
+            content.setVisibility(GONE);
         }
         mViewsZTreeNeedReset = true;
         addView(content);
@@ -1799,6 +1842,132 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setMode(@Mode int mode) {
         mMode = mode;
         tryToNotifyReset();
+    }
+
+    /**
+     * Returns the {@link View} associated with the {@link SmoothRefreshLayout.State}
+     *
+     * @param state The view
+     */
+    public View getView(@State int state) {
+        switch (state) {
+            case STATE_CONTENT:
+                ensureContent();
+                return mContentView;
+            case STATE_ERROR:
+                if (mErrorView == null && mErrorLayoutResId != NO_ID) {
+                    mErrorView = mInflater.inflate(mErrorLayoutResId, null, false);
+                    ViewGroup.LayoutParams lp = mErrorView.getLayoutParams();
+                    if (lp == null) {
+                        lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                        mErrorView.setLayoutParams(lp);
+                    }
+                    addView(mErrorView);
+                } else if (mErrorView == null)
+                    throw new IllegalArgumentException("Error view must be not null");
+                return mErrorView;
+            case STATE_EMPTY:
+                if (mEmptyView == null && mEmptyLayoutResId != NO_ID) {
+                    mEmptyView = mInflater.inflate(mEmptyLayoutResId, null, false);
+                    ViewGroup.LayoutParams lp = mEmptyView.getLayoutParams();
+                    if (lp == null) {
+                        lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                        mEmptyView.setLayoutParams(lp);
+                    }
+                    addView(mEmptyView);
+                } else if (mEmptyView == null)
+                    throw new IllegalArgumentException("Empty view must be not null");
+                return mEmptyView;
+            case STATE_CUSTOM:
+            default:
+                if (mCustomView == null && mCustomLayoutResId != NO_ID) {
+                    mCustomView = mInflater.inflate(mCustomLayoutResId, null, false);
+                    ViewGroup.LayoutParams lp = mCustomView.getLayoutParams();
+                    if (lp == null) {
+                        lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+                        mCustomView.setLayoutParams(lp);
+                    }
+                    addView(mCustomView);
+                } else if (mCustomView == null)
+                    throw new IllegalArgumentException("Custom view must be not null");
+                return mCustomView;
+        }
+    }
+
+    /**
+     * Returns the current state
+     *
+     * @return Current state
+     */
+    @State
+    public int getState() {
+        return mState;
+    }
+
+    /**
+     * Set the current state
+     *
+     * @param state Current state
+     */
+    public void setState(@State int state) {
+        setState(state, false);
+    }
+
+    /**
+     * Set the current state
+     *
+     * @param state   Current state
+     * @param animate Use animation
+     */
+    public void setState(@State final int state, final boolean animate) {
+        if (state != mState) {
+            if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning()) {
+                mChangeStateAnimator.cancel();
+                mChangeStateAnimator = null;
+            }
+            final View previousView = getView(mState);
+            final View currentView = getView(state);
+            if (animate) {
+                mChangeStateAnimator = ObjectAnimator.ofFloat(1.0f, 0.0f).setDuration(250L);
+                mChangeStateAnimator.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        currentView.setVisibility(View.VISIBLE);
+                        currentView.setAlpha(0);
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        previousView.setVisibility(View.GONE);
+                        previousView.setAlpha(1);
+                        currentView.setAlpha(1);
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+                        previousView.setVisibility(View.GONE);
+                        previousView.setAlpha(1);
+                    }
+                });
+                mChangeStateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        float value = (float) animation.getAnimatedValue();
+                        previousView.setAlpha(value);
+                        currentView.setAlpha(1f - value);
+                    }
+                });
+                mChangeStateAnimator.start();
+            } else {
+                previousView.setVisibility(GONE);
+                currentView.setVisibility(VISIBLE);
+            }
+            mPreviousState = mState;
+            mState = state;
+            mTargetView = currentView;
+            if (mStateChangedListener != null)
+                mStateChangedListener.onStateChanged(state);
+        }
     }
 
     @Override
@@ -2135,9 +2304,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (isEnabledScrollToBottomAutoLoadMore() && !isDisabledLoadMore()
                 && !isDisabledPerformLoadMore()
                 && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
-            if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mContentView))
+            if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mTargetView))
                     || (mAutoLoadMoreCallBack != null
-                    && mAutoLoadMoreCallBack.canAutoLoadMore(this, mContentView))) {
+                    && mAutoLoadMoreCallBack.canAutoLoadMore(this, mTargetView))) {
                 mStatus = SR_STATUS_LOADING_MORE;
                 mDelayedRefreshComplete = false;
                 performRefresh();
@@ -2151,7 +2320,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     protected void checkViewsZTreeNeedReset() {
         final int count = getChildCount();
-        if (mContentView == null)
+        if (mTargetView == null)
             return;
         mCachedViews.clear();
         if (mViewsZTreeNeedReset && count > 0) {
@@ -2176,7 +2345,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             } else {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
-                    if (view != mContentView)
+                    if (view != mTargetView)
                         mCachedViews.add(view);
                 }
             }
@@ -2277,21 +2446,50 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             } else {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
                     View child = getChildAt(i);
-                    if (!(child instanceof IRefreshView))
+                    if (child.getVisibility() != GONE && !(child instanceof IRefreshView))
                         mContentView = child;
                 }
             }
         }
-        if (mContentView == null) {
+    }
+
+    private void ensureTarget() {
+        if (mTargetView == null) {
+            switch (mState) {
+                case STATE_CONTENT:
+                    ensureContent();
+                    mTargetView = mContentView;
+                    break;
+                case STATE_EMPTY:
+                    if (mEmptyView == null && mEmptyLayoutResId != View.NO_ID) {
+                        mEmptyView = mInflater.inflate(mEmptyLayoutResId, this, false);
+                    }
+                    mTargetView = mEmptyView;
+                    break;
+                case STATE_ERROR:
+                    if (mErrorView == null && mErrorLayoutResId != View.NO_ID) {
+                        mErrorView = mInflater.inflate(mErrorLayoutResId, this, false);
+                    }
+                    mTargetView = mErrorView;
+                    break;
+                case STATE_CUSTOM:
+                    if (mCustomView == null && mCustomLayoutResId != View.NO_ID) {
+                        mCustomView = mInflater.inflate(mCustomLayoutResId, this, false);
+                    }
+                    mTargetView = mCustomView;
+                    break;
+            }
+        }
+        if (mTargetView == null) {
             throw new RuntimeException("The content view is empty." +
                     " Do you forget to added it in the XML layout file or add it in code ?");
         }
-        ViewTreeObserver observer = mContentView.getViewTreeObserver();
-        if (observer != mContentViewTreeObserver) {
-            if (mContentViewTreeObserver != null)
-                mContentViewTreeObserver.removeOnScrollChangedListener(this);
-            mContentViewTreeObserver = observer;
-            mContentViewTreeObserver.addOnScrollChangedListener(this);
+        ViewTreeObserver observer = mTargetView.getViewTreeObserver();
+        if (observer != mTargetViewTreeObserver) {
+            if (mTargetViewTreeObserver != null)
+                mTargetViewTreeObserver.removeOnScrollChangedListener(this);
+            mTargetViewTreeObserver = observer;
+            mTargetViewTreeObserver.addOnScrollChangedListener(this);
         }
         //Use the static default creator to create the header view
         if ((mMode == MODE_REFRESH || mMode == MODE_BOTH) && mHeaderView == null && sCreator != null) {
@@ -2498,20 +2696,21 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected boolean needInterceptTouchEvent() {
         return (isEnabledInterceptEventWhileLoading() && (isRefreshing() || isLoadingMore()))
+                || mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
                 || (mOverScrollChecker.mScrolling && isMovingFooter() && mMode == MODE_REFRESH)
                 || (mOverScrollChecker.mScrolling && isMovingHeader() && mMode == MODE_LOAD_MORE);
     }
 
     protected boolean canChildScrollUp() {
         if (mScrollUpCallback != null)
-            return mScrollUpCallback.canChildScrollUp(this, mContentView, mHeaderView);
-        return ScrollCompat.canChildScrollUp(mContentView);
+            return mScrollUpCallback.canChildScrollUp(this, mTargetView, mHeaderView);
+        return ScrollCompat.canChildScrollUp(mTargetView);
     }
 
     protected boolean canChildScrollDown() {
         if (mScrollDownCallback != null)
-            return mScrollDownCallback.canChildScrollDown(this, mContentView, mFooterView);
-        return ScrollCompat.canChildScrollDown(mContentView);
+            return mScrollDownCallback.canChildScrollDown(this, mTargetView, mFooterView);
+        return ScrollCompat.canChildScrollDown(mTargetView);
     }
 
     private void sendCancelEvent() {
@@ -2701,10 +2900,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (mLoadMoreScrollTargetView != null)
                     ScrollCompat.scrollCompat(mLoadMoreScrollTargetView, deltaY);
                 else
-                    ScrollCompat.scrollCompat(mContentView, deltaY);
+                    ScrollCompat.scrollCompat(mTargetView, deltaY);
             } else {
-                if (!mLoadMoreScrollCallback.onScroll(mContentView, deltaY))
-                    ScrollCompat.scrollCompat(mContentView, deltaY);
+                if (!mLoadMoreScrollCallback.onScroll(mTargetView, deltaY))
+                    ScrollCompat.scrollCompat(mTargetView, deltaY);
             }
         }
         // to keep the consistence with refresh, need to converse the deltaY
@@ -2806,7 +3005,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 listener.onChanged(mStatus, mIndicator);
             }
         }
-        final MarginLayoutParams lp = (MarginLayoutParams) mContentView.getLayoutParams();
+        final MarginLayoutParams lp = (MarginLayoutParams) mTargetView.getLayoutParams();
         //check mode
         switch (mMode) {
             case MODE_NONE:
@@ -2820,7 +3019,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 }
                 if (!isEnabledPinContentView()) {
-                    mContentView.offsetTopAndBottom(change);
+                    mTargetView.offsetTopAndBottom(change);
                 }
                 invalidate();
                 break;
@@ -2834,7 +3033,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (mLoadMoreScrollTargetView != null && isMovingFooter()) {
                         mLoadMoreScrollTargetView.offsetTopAndBottom(change);
                     } else {
-                        mContentView.offsetTopAndBottom(change);
+                        mTargetView.offsetTopAndBottom(change);
                     }
                 }
                 invalidate();
@@ -2856,7 +3055,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (mLoadMoreScrollTargetView != null && isMovingFooter() && mMode == MODE_BOTH) {
                         mLoadMoreScrollTargetView.offsetTopAndBottom(change);
                     } else {
-                        mContentView.offsetTopAndBottom(change);
+                        mTargetView.offsetTopAndBottom(change);
                     }
                 }
                 invalidate();
@@ -3110,6 +3309,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @interface Mode {
     }
 
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({STATE_CONTENT, STATE_ERROR, STATE_EMPTY, STATE_CUSTOM})
+    @interface State {
+    }
+
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#canChildScrollUp()} method
      * behavior should implement this interface.
@@ -3165,6 +3369,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          */
         void onRefreshComplete(boolean isSuccessful);
     }
+
+    /**
+     * Classes that wish to be notified when the state changes should implement this interface.
+     */
+    public interface OnStateChangedListener {
+        /**
+         * Called when the state changes
+         *
+         * @param state The {@link State} that was changed
+         */
+        void onStateChanged(@State int state);
+    }
+
 
     /**
      * Classes that wish to be notified when the views position changes should implement this

@@ -36,5 +36,10 @@
     <string name="test_refresh_layout_in_viewPager_under_nested_layout">Test refresh layout
     in ViewPager under nested layout</string>
     <string name="change_style">Change refresh view style</string>
+    <string name="no_data">No data</string>
+    <string name="get_data_fail">Get data fail</string>
+    <string name="change_state_to_empty">Empty state</string>
+    <string name="change_state_to_content">Content state</string>
+    <string name="change_state_to_error">Error state</string>
 
 </resources>

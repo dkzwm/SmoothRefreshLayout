@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import me.dkzwm.smoothrefreshlayout.sample.utils.DataUtil;
  *
  * @author dkzwm
  */
-public class WithListViewActivity extends AppCompatActivity {
+public class WithListViewActivity extends AppCompatActivity implements View.OnClickListener{
     private SmoothRefreshLayout mRefreshLayout;
     private ListView mListView;
     private ListViewAdapter mAdapter;
@@ -88,14 +89,38 @@ public class WithListViewActivity extends AppCompatActivity {
             public void onRefreshComplete(boolean isSuccessful) {
                 Toast.makeText(WithListViewActivity.this, R.string.sr_refresh_complete,
                         Toast.LENGTH_SHORT).show();
+                if (mRefreshLayout.getState()!=SmoothRefreshLayout.STATE_CONTENT)
+                    mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT,false);
             }
         });
 
         mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
         mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
         mRefreshLayout.autoRefresh(false);
+
+        findViewById(R.id.button_with_listView_activity_change_empty_state)
+                .setOnClickListener(this);
+        findViewById(R.id.button_with_listView_activity_change_content_state)
+                .setOnClickListener(this);
+        findViewById(R.id.button_with_listView_activity_change_error_state)
+                .setOnClickListener(this);
     }
 
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.button_with_listView_activity_change_empty_state:
+                mRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
+                break;
+            case R.id.button_with_listView_activity_change_content_state:
+                mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
+                break;
+            case R.id.button_with_listView_activity_change_error_state:
+                mRefreshLayout.setState(SmoothRefreshLayout.STATE_ERROR, true);
+                break;
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

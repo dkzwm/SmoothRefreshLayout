@@ -2,9 +2,14 @@
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_with_textView_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:sr_content="@+id/textView_with_textView_activity_desc"
+    app:sr_empty_layout="@layout/layout_empty_view"
+    app:sr_error_layout="@layout/layout_error_view"
+    app:sr_state="empty">
 
 
     <TextView
@@ -17,5 +22,31 @@
         android:textColor="#333333"
         android:textSize="42sp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:sr_layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/button_with_textView_activity_change_empty_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_state_to_empty"
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/button_with_textView_activity_change_content_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_state_to_content"
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/button_with_textView_activity_change_error_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_state_to_error"
+            android:textSize="12sp"/>
+    </LinearLayout>
 
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

@@ -16,6 +16,7 @@
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）.
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
  - 支持内容视图的Margin,PS:滚动中没有了Margin效果？SmoothRefreshLayout不存在这种问题.
+ - 支持多状态视图,STATE_CONTENT(默认状态)、STATE_ERROR(异常状态),STATE_EMPTY(空状态),STATE_CUSTOM(自定义状态).
  - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
 
 ## 演示程序
@@ -184,7 +185,7 @@ public interface IRefreshView {
 |名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_mode|enum|模式设置（默认:`none`）|
-|sr_content|integer|指定内容视图的资源ID|
+|sr_content|reference|指定内容视图的资源ID|
 |sr_resistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
 |sr_resistance_of_pull_up|float|Footer视图的移动阻尼（默认:`1.65f`）|
 |sr_resistance_of_pull_down|float|Header视图的移动阻尼（默认:`1.65f`）|
@@ -207,6 +208,10 @@ public interface IRefreshView {
 |sr_enable_keep_refresh_view|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |sr_enable_pull_to_refresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
 |sr_enable_over_scroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
+|sr_empty_layout|reference|指定空状态下对应的布局资源ID|
+|sr_error_layout|reference|指定异常状态下对应的布局资源ID|
+|sr_custom_layout|reference|指定自定义状态下对应的布局资源ID|
+|sr_state|enum|状态设置 （默认:`STATE_CONTENT`）|
 
 ##### SmoothRefreshLayout包裹内部其他View支持配置
 |名称|类型|描述|
@@ -218,7 +223,10 @@ public interface IRefreshView {
 |:---:|:---:|:---:|
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
-|setContentView|View|配置内容视图|
+|setContentView|int,View|配置内容视图,参数1:设置内容视图对应的状态,参数2:状态对应的内容视图|
+|setMode|int|配置模式|
+|setState|int|配置当前状态|
+|setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过屏幕高度的六分之一（默认:`0.8f`）|
@@ -258,13 +266,14 @@ public interface IRefreshView {
 #### 回调
 |名称|参数|描述|
 |:---:|:---:|:---:|
-|setOnRefreshListener|T extends OnRefreshListener|刷新事件监听回调|
+|setOnRefreshListener|T extends OnRefreshListener|设置刷新事件监听回调|
+|setOnStateChangedListener|OnStateChangedListener|设置状态改变回调|
 |addOnUIPositionChangedListener|OnUIPositionChangedListener|添加视图位置变化的监听回调|
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
-|setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Footer完成刷新后进行平滑滚动的回调|
+|setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|
 |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
-|setOnChildScrollUpCallback|OnChildScrollUpCallback|检查内容视图是否在顶部的回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
-|setOnChildScrollDownCallback|OnChildScrollDownCallback|检查内容视图是否在底部的回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
+|setOnChildScrollUpCallback|OnChildScrollUpCallback|设置检查内容视图是否在顶部的回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
+|setOnChildScrollDownCallback|OnChildScrollDownCallback|设置检查内容视图是否在底部的回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
 
