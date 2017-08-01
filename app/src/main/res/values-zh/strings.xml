@@ -39,4 +39,10 @@
     <string name="change_state_to_empty">切换空状态视图</string>
     <string name="change_state_to_content">切换内容状态视图</string>
     <string name="change_state_to_error">切换错误状态视图</string>
+    <string name="custom">自定义</string>
+    <string name="change_state_to_custom">切换自定义状态视图</string>
+    <string name="disable_refresh">关闭下拉刷新</string>
+    <string name="disable_loadMore">关闭加载更多</string>
+    <string name="enable_refresh">打开下拉刷新</string>
+    <string name="enable_loadMore">打开加载更多</string>
 </resources>

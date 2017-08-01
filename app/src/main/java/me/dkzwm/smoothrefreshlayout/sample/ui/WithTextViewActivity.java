@@ -44,6 +44,7 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT,true);
                         mRefreshLayout.refreshComplete();
                         String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);

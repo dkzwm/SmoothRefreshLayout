@@ -41,5 +41,11 @@
     <string name="change_state_to_empty">Empty state</string>
     <string name="change_state_to_content">Content state</string>
     <string name="change_state_to_error">Error state</string>
+    <string name="custom">Custom</string>
+    <string name="change_state_to_custom">Custom state</string>
+    <string name="disable_refresh">Disable refresh</string>
+    <string name="disable_loadMore">Disable loadMore</string>
+    <string name="enable_refresh">Enable refresh</string>
+    <string name="enable_loadMore">Enable loadMore</string>
 
 </resources>
