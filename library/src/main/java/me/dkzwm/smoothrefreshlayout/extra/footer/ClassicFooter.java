@@ -2,6 +2,9 @@ package me.dkzwm.smoothrefreshlayout.extra.footer;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -10,6 +13,8 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import me.dkzwm.smoothrefreshlayout.R;
@@ -26,8 +31,8 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     protected RotateAnimation mReverseFlipAnimation;
     protected TextView mLastUpdateTextView;
     protected TextView mTitleTextView;
-    protected View mRotateView;
-    protected View mProgressBar;
+    protected ImageView mRotateView;
+    protected ProgressBar mProgressBar;
     protected String mLastUpdateTimeKey;
     protected boolean mShouldShowLastUpdate;
     protected long mLastUpdateTime = -1;
@@ -65,11 +70,20 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
+
         View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_footer, this);
-        mRotateView = header.findViewById(R.id.view_footer_rotate);
+        mRotateView = (ImageView) header.findViewById(R.id.view_footer_rotate);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sr_arrow_icon);
+        Matrix matrix = new Matrix();
+        matrix.postRotate(180);
+        Bitmap dstBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
+                matrix, true);
+        if (!bitmap.isRecycled())
+            bitmap.recycle();
+        mRotateView.setImageBitmap(dstBitmap);
         mTitleTextView = (TextView) header.findViewById(R.id.textView_footer_title);
         mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_footer_last_update);
-        mProgressBar = header.findViewById(R.id.progressBar_footer);
+        mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_footer);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         mRotateView.clearAnimation();
         mRotateView.setVisibility(INVISIBLE);

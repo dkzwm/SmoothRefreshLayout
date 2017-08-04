@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/rotate_arrow_down"/>
+            android:src="@drawable/sr_arrow_icon"/>
 
         <ProgressBar
             android:id="@+id/progressBar_header"

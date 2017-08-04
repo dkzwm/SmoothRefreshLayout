@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import me.dkzwm.smoothrefreshlayout.R;
@@ -27,8 +29,8 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
     protected RotateAnimation mReverseFlipAnimation;
     protected TextView mTitleTextView;
     protected TextView mLastUpdateTextView;
-    protected View mRotateView;
-    protected View mProgressBar;
+    protected ImageView mRotateView;
+    protected ProgressBar mProgressBar;
     protected String mLastUpdateTimeKey;
     protected boolean mShouldShowLastUpdate;
     protected long mLastUpdateTime = -1;
@@ -67,10 +69,10 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
         View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_header, this);
-        mRotateView = header.findViewById(R.id.view_header_rotate);
+        mRotateView = (ImageView) header.findViewById(R.id.view_header_rotate);
         mTitleTextView = (TextView) header.findViewById(R.id.textView_header_title);
         mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_header_last_update);
-        mProgressBar = header.findViewById(R.id.progressBar_header);
+        mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_header);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         mRotateView.clearAnimation();
         mRotateView.setVisibility(INVISIBLE);

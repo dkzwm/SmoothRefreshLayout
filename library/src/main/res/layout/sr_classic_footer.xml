@@ -40,8 +40,7 @@
             android:id="@+id/view_footer_rotate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/rotate_arrow_up"/>
+            android:layout_gravity="center"/>
 
         <ProgressBar
             android:id="@+id/progressBar_footer"
