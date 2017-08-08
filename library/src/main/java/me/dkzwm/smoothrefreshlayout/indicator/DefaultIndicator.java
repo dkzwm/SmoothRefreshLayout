@@ -40,7 +40,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setResistanceOfPullDown(float resistance) {
+    public void setResistanceOfHeader(float resistance) {
         mResistanceHeader = resistance;
     }
 
@@ -50,7 +50,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setResistanceOfPullUp(float resistance) {
+    public void setResistanceOfFooter(float resistance) {
         mResistanceFooter = resistance;
     }
 

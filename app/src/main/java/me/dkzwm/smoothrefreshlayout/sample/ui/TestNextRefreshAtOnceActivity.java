@@ -34,10 +34,10 @@ public class TestNextRefreshAtOnceActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.enable_next_pull_to_refresh_at_once);
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
+        mRefreshLayout.setDisableLoadMore(true);
         mRefreshLayout.setEnableNextPtrAtOnce(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

@@ -33,7 +33,6 @@ public class TestMaterialStyleActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.test_material_style);
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

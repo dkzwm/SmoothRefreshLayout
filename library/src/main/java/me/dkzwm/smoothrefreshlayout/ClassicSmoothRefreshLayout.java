@@ -23,11 +23,12 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mMode = MODE_BOTH;
         mClassicHeader = new ClassicHeader(context);
         setHeaderView(mClassicHeader);
         mClassicFooter = new ClassicFooter(context);
         setFooterView(mClassicFooter);
+        setDisableRefresh(false);
+        setDisableLoadMore(false);
     }
 
     public void setLastUpdateTimeKey(String key) {

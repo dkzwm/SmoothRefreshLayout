@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_base_recyclerView_adapter"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.classic.common.MultipleStatusView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView_test_base_recyclerView_adapter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </com.classic.common.MultipleStatusView>
+</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>

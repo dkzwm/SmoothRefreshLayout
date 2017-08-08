@@ -41,8 +41,8 @@ public class WithGridViewActivity extends AppCompatActivity {
         mAdapter = new ListViewAdapter(getLayoutInflater());
         mGridView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {

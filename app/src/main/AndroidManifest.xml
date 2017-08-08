@@ -80,6 +80,9 @@
             android:name=".ui.TestNestedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.TestBaseRecyclerViewAdapterActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

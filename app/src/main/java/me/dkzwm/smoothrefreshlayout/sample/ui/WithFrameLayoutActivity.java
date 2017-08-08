@@ -49,7 +49,6 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                 return true;
             }
         });
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);

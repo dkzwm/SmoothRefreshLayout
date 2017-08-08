@@ -34,11 +34,11 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.pull_to_refresh);
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnablePullToRefresh(true);
+        mRefreshLayout.setDisableLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

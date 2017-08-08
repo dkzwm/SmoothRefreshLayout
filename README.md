@@ -6,7 +6,6 @@
 
 ## 特性:
  - 理论上支持所有的视图，且可根据具体需求高效适配.
- - 支持5种模式,NONE（做为FrameLayout使用）、REFRESH（头部刷新）、LOAD_MORE（底部刷新）、BOTH（头部刷新和底部刷新）、OVER_SCROLL（越界回弹）.
  - 支持嵌套滑动,完整实现了NestedScrollingChild，NestedScrollingParent 接口,玩转CoordinatorLayout.
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现）.
@@ -21,7 +20,9 @@
 
 ## 演示程序
 下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
-
+## 更新日志
+#### 老版本升级务必查看
+ [更新日志](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/ext/UPDATE.md) 
 ## 快照
 - 测试QQ浏览器样式    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
@@ -71,7 +72,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.5.1'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.0'
 }
 ```
 #### 在Xml中配置
@@ -184,11 +185,10 @@ public interface IRefreshView {
 ##### SmoothRefreshLayout 自身配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
-|sr_mode|enum|模式设置（默认:`none`）|
 |sr_content|reference|指定内容视图的资源ID|
-|sr_resistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
-|sr_resistance_of_pull_up|float|Footer视图的移动阻尼（默认:`1.65f`）|
-|sr_resistance_of_pull_down|float|Header视图的移动阻尼（默认:`1.65f`）|
+|sr_resistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
+|sr_resistance_of_footer|float|移动Footer视图时候的移动阻尼（默认:`1.65f`）|
+|sr_resistance_of_header|float|移动Header视图时候的移动阻尼（默认:`1.65f`）|
 |sr_ratio_of_refresh_height_to_refresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
 |sr_ratio_of_header_height_to_refresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
 |sr_ratio_of_footer_height_to_refresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
@@ -201,9 +201,9 @@ public interface IRefreshView {
 |sr_duration_to_close_of_refresh|integer|指定收缩刷新视图到起始位置的时长（默认:`500`）|
 |sr_duration_to_close_of_header|integer|指定收缩Header视图到起始位置的时长（默认:`500`）|
 |sr_duration_to_close_of_footer|integer|指定收缩Footer视图到起始位置的时长（默认:`500`）|
-|sr_duration_of_back_to_refresh_height|integer|收缩刷新视图到触发刷新位置的时长（默认:`200`）|
-|sr_duration_of_back_to_header_height|integer|收缩刷新视图到触发Header刷新位置的时长（默认:`200`）|
-|sr_duration_of_back_to_footer_height|integer|收缩刷新视图到触发Footer刷新位置的时长（默认:`200`）|
+|sr_duration_of_back_to_keep_refresh_pos|integer|设置回顾到保持刷新视图位置的时间（默认:`200`）|
+|sr_duration_of_back_to_keep_header_pos|integer|设置回顾到保持Header视图位置的时间（默认:`200`）|
+|sr_duration_of_back_to_keep_header_pos|integer|设置回顾到保持Footer视图位置的时间（默认:`200`）|
 |sr_enable_pin_content|boolean|固定内容视图（默认:`false`）|
 |sr_enable_keep_refresh_view|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |sr_enable_pull_to_refresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
@@ -212,11 +212,13 @@ public interface IRefreshView {
 |sr_error_layout|reference|指定异常状态下对应的布局资源ID|
 |sr_custom_layout|reference|指定自定义状态下对应的布局资源ID|
 |sr_state|enum|状态设置 （默认:`STATE_CONTENT`）|
+|sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
+|sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
 
 ##### SmoothRefreshLayout包裹内部其他View支持配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
-|sr_layout_gravity|flag|指定其它被包裹视图的对齐属性(非content view、非refresh view)|
+|layout_gravity|flag|指定其它被包裹视图的对齐属性(非 targetView、非refreshView)|
 
 #### Java属性设置方法
 |名称|参数|描述|
@@ -224,15 +226,14 @@ public interface IRefreshView {
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
 |setContentView|int,View|配置内容视图,参数1:设置内容视图对应的状态,参数2:状态对应的内容视图|
-|setMode|int|配置模式|
 |setState|int|配置当前状态|
 |setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过屏幕高度的六分之一（默认:`0.8f`）|
-|setResistance|float|刷新视图的移动阻尼（默认:`1.65f`）|
-|setResistanceOfPullUp|float|Footer视图的移动阻尼（默认:`1.65f`）|
-|setResistanceOfPullDown|float|Header视图的移动阻尼（默认:`1.65f`）|
+|setResistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
+|setResistanceOfFooter|float|移动Footer视图时候的移动阻尼（默认:`1.65f`）|
+|setResistanceOfHeader|float|移动Header视图时候的移动阻尼（默认:`1.65f`）|
 |setRatioOfRefreshViewHeightToRefresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
 |setRatioOfHeaderHeightToRefresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
 |setRatioOfFooterHeightToRefresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
@@ -245,9 +246,9 @@ public interface IRefreshView {
 |setDurationToClose|int|指定收缩刷新视图到起始位置的时长（默认:`500`）|
 |setDurationToCloseHeader|int|指定收缩Header视图到起始位置的时长（默认:`500`）|
 |setDurationToCloseFooter|int|指定收缩Footer视图到起始位置的时长（默认:`500`）|
-|setDurationOfBackToRefreshViewHeight|integer|收缩刷新视图到触发刷新位置的时长（默认:`200`）|
-|setDurationOfBackToHeaderHeight|integer|收缩刷新视图到触发Header刷新位置的时长（默认:`200`）|
-|setDurationOfBackToFooterHeight|integer|收缩刷新视图到触发Footer刷新位置的时长（默认:`200`）|
+|setDurationOfBackToKeepRefreshViewPosition|integer|设置回顾到保持刷新视图位置的时间（默认:`200`）|
+|setDurationOfBackToKeepHeaderPosition|integer|设置回顾到保持Header视图位置的时间（默认:`200`）|
+|setDurationOfBackToKeepFooterPosition|integer|设置回顾到保持Footer视图位置的时间（默认:`200`）|
 |setEnablePinContentView|boolean|固定内容视图（默认:`false`）|
 |setEnabledPullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
 |setEnableOverScroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|

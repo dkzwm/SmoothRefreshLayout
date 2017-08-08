@@ -48,7 +48,6 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mAdapter = new ListViewAdapter(getLayoutInflater());
         mListView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
         mClassicHeader = (ClassicHeader) findViewById(R.id.classicHeader_with_listView_activity);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
         mClassicFooter = (ClassicFooter) findViewById(R.id.classicFooter_with_listView_activity);
@@ -56,6 +55,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mClassicHeader.setTitleTextColor(Color.WHITE);
         mClassicHeader.setLastUpdateTextColor(Color.GRAY);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

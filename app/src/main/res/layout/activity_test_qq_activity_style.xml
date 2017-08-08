@@ -22,7 +22,7 @@
         android:layout_marginBottom="42dp"
         android:layout_marginRight="12dp"
         android:checkedButton="@+id/radioButton_test_QQ_activity_style_normal"
-        app:sr_layout_gravity="bottom|right">
+        android:layout_gravity="bottom|right">
 
         <RadioButton
             android:id="@+id/radioButton_test_QQ_activity_style_normal"

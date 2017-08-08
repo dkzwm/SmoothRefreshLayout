@@ -52,8 +52,8 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_with_recyclerView_in_coordinatorLayout_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {

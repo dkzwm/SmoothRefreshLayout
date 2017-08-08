@@ -4,8 +4,8 @@
     <declare-styleable name="SmoothRefreshLayout">
         <attr name="sr_content" format="reference"/>
         <attr name="sr_resistance" format="float"/>
-        <attr name="sr_resistance_of_pull_up" format="float"/>
-        <attr name="sr_resistance_of_pull_down" format="float"/>
+        <attr name="sr_resistance_of_footer" format="float"/>
+        <attr name="sr_resistance_of_header" format="float"/>
         <attr name="sr_ratio_of_refresh_height_to_refresh" format="float"/>
         <attr name="sr_ratio_of_header_height_to_refresh" format="float"/>
         <attr name="sr_ratio_of_footer_height_to_refresh" format="float"/>
@@ -18,14 +18,14 @@
         <attr name="sr_duration_to_close_of_refresh" format="integer"/>
         <attr name="sr_duration_to_close_of_header" format="integer"/>
         <attr name="sr_duration_to_close_of_footer" format="integer"/>
-        <attr name="sr_duration_of_back_to_refresh_height" format="integer"/>
-        <attr name="sr_duration_of_back_to_header_height" format="integer"/>
-        <attr name="sr_duration_of_back_to_footer_height" format="integer"/>
+        <attr name="sr_duration_of_back_to_keep_refresh_pos" format="integer"/>
+        <attr name="sr_duration_of_back_to_keep_header_pos" format="integer"/>
+        <attr name="sr_duration_of_back_to_keep_footer_pos" format="integer"/>
         <attr name="sr_enable_pull_to_refresh" format="boolean"/>
         <attr name="sr_enable_keep_refresh_view" format="boolean"/>
         <attr name="sr_enable_over_scroll" format="boolean"/>
         <attr name="sr_enable_pin_content" format="boolean"/>
-        <attr name="sr_layout_gravity">
+        <attr name="layout_gravity">
             <!-- Push object to the top of its container, not changing its size. -->
             <flag name="top" value="0x30"/>
             <!-- Push object to the bottom of its container, not changing its size. -->
@@ -61,16 +61,12 @@
             <!-- Push object to the end of its container, not changing its size. -->
             <flag name="end" value="0x00800005"/>
         </attr>
-        <attr name="sr_mode" format="enum">
-            <enum name="none" value="0"/>
-            <enum name="refresh" value="1"/>
-            <enum name="load_more" value="2"/>
-            <enum name="over_scroll" value="3"/>
-            <enum name="both" value="4"/>
-        </attr>
         //This attribute only can be used in TwoLevelSmoothRefreshLayout
         <attr name="sr_enable_two_level_pull_to_refresh" format="boolean"/>
 
+        //Added in 1.4.0 version
+        <attr name="sr_enable_refresh" format="boolean"/>
+        <attr name="sr_enable_load_more" format="boolean"/>
         <attr name="sr_empty_layout" format="reference"/>
         <attr name="sr_error_layout" format="reference"/>
         <attr name="sr_custom_layout" format="reference"/>

@@ -38,13 +38,13 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.release_to_refresh);
         mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mStoreHouseHeader = new StoreHouseHeader(this);
         mStoreHouseHeader.initPathWithString("RELEASE TO REFRESH");
         mStoreHouseHeader.setTextColor(Color.WHITE);
         mStoreHouseHeader.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(mStoreHouseHeader);
         mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(1);
+        mRefreshLayout.setDisableLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

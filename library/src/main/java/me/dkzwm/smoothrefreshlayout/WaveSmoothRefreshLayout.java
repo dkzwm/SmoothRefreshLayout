@@ -23,8 +23,8 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public WaveSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mMode = MODE_REFRESH;
         mWaveHeader = new WaveHeader(context);
+        setDisableRefresh(false);
         setHeaderView(mWaveHeader);
         setEnableHeaderDrawerStyle(true);
         setEnableKeepRefreshView(true);
@@ -32,7 +32,7 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         setRatioOfHeaderHeightToRefresh(.22f);
         setOffsetRatioToKeepHeaderWhileLoading(.22f);
         setDurationToCloseHeader(1000);
-        setDurationOfBackToHeaderHeight(1000);
+        setDurationOfBackToKeepHeaderPosition(1000);
     }
 
     public WaveHeader getDefaultHeader() {

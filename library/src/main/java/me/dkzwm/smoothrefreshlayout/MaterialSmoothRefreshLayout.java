@@ -44,7 +44,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public MaterialSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        mMode = MODE_BOTH;
         mMaterialHeader = new MaterialHeader(context);
         mMaterialHeader.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});
@@ -53,6 +52,8 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mMaterialHeader);
         mMaterialFooter = new MaterialFooter(context);
         setFooterView(mMaterialFooter);
+        setDisableRefresh(false);
+        setDisableLoadMore(false);
     }
 
     /**
@@ -68,7 +69,7 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setEnableNextPtrAtOnce(true);
         if (mHeaderView != null && mHeaderView instanceof MaterialHeader)
             ((MaterialHeader) mHeaderView).doHookUIRefreshComplete(this);
-        if (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE) {
+        if (!isDisabledLoadMore()) {
             removeOnUIPositionChangedListener(mOnUIPositionChangedListener);
             addOnUIPositionChangedListener(mOnUIPositionChangedListener);
         }

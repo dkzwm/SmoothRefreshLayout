@@ -2,17 +2,12 @@ package me.dkzwm.smoothrefreshlayout.sample.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
-import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -28,6 +23,13 @@ public class TestOverScrollActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.over_scroll);
+        SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)
+                findViewById(R.id.smoothRefreshLayout_test_over_scroll);
+        refreshLayout.setDisableLoadMore(false);
+        refreshLayout.setDisablePerformRefresh(true);
+        refreshLayout.setDisablePerformLoadMore(true);
+        refreshLayout.setEnableHideHeaderView(true);
+        refreshLayout.setEnableHideFooterView(true);
     }
 
 

@@ -62,7 +62,6 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mAdapter = new RecyclerViewAdapter(getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_QQ_activity_style_activity);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
         mClassicHeader = new ClassicHeader(this);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
         mClassicFooter = new ClassicFooter(this);
@@ -70,6 +69,7 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setHeaderView(mClassicHeader);
         mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -158,6 +158,7 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setEnableHeaderDrawerStyle(true);
         mRefreshLayout.setEnableFooterDrawerStyle(true);
         mRefreshLayout.setDisablePerformRefresh(true);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDurationToCloseHeader(2500);
         mRefreshLayout.setRatioOfHeaderHeightToRefresh(.22f);
         mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(.55f);
@@ -171,6 +172,8 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setEnableHeaderDrawerStyle(false);
         mRefreshLayout.setEnableFooterDrawerStyle(false);
         mRefreshLayout.setDisablePerformRefresh(false);
+        mRefreshLayout.setDisableLoadMore(false);
+        mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(0f);
         mRefreshLayout.setRatioOfHeaderHeightToRefresh(IIndicator.DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH);
         mRefreshLayout.requestLayout();
     }

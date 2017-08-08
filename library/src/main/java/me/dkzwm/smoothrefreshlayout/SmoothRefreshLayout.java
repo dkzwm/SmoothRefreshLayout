@@ -70,12 +70,6 @@ import static android.view.View.MeasureSpec.makeMeasureSpec;
  */
 public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener, NestedScrollingChild,
         NestedScrollingParent, ViewTreeObserver.OnScrollChangedListener {
-    //mode
-    public static final byte MODE_NONE = 0;
-    public static final byte MODE_REFRESH = 1;
-    public static final byte MODE_LOAD_MORE = 2;
-    public static final byte MODE_OVER_SCROLL = 3;
-    public static final byte MODE_BOTH = 4;
     //state
     public static final byte STATE_CONTENT = 0;
     public static final byte STATE_ERROR = 1;
@@ -107,6 +101,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_WHEN_SCROLLING_TO_BOTTOM_TO_PERFORM_LOAD_MORE = 0x01 << 15;
     private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 16;
     private static final int FLAG_DISABLE_WHEN_HORIZONTAL_MOVE = 0x01 << 17;
+    private static final int FLAG_ENABLE_HIDE_HEADER_VIEW = 0x01 << 18;
+    private static final int FLAG_ENABLE_HIDE_FOOTER_VIEW = 0x01 << 19;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x05 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
@@ -120,8 +116,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private final NestedScrollingChildHelper mNestedScrollingChildHelper;
     private final int[] mParentScrollConsumed = new int[2];
     private final int[] mParentOffsetInWindow = new int[2];
-    @Mode
-    protected int mMode = MODE_NONE;
     @State
     protected int mState = STATE_CONTENT;
     protected int mPreviousState = -1;
@@ -147,11 +141,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected View mCustomView;
     protected View mLoadMoreScrollTargetView;
     protected LayoutInflater mInflater;
+    protected ScrollChecker mScrollChecker;
+    protected OverScrollChecker mOverScrollChecker;
     protected int mContentResId = View.NO_ID;
     protected int mErrorLayoutResId = View.NO_ID;
     protected int mEmptyLayoutResId = View.NO_ID;
     protected int mCustomLayoutResId = View.NO_ID;
-    private int mFlag = 0x00;
+    private int mFlag = FLAG_DISABLE_LOAD_MORE;
     private Interpolator mDefaultSpringInterpolator;
     private IGestureDetector mGestureDetector;
     private OnChildScrollUpCallback mScrollUpCallback;
@@ -160,8 +156,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private MotionEvent mLastMoveEvent;
-    private ScrollChecker mScrollChecker;
-    private OverScrollChecker mOverScrollChecker;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
@@ -204,22 +198,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             float resistance = arr.getFloat(R.styleable
                     .SmoothRefreshLayout_sr_resistance, IIndicator.DEFAULT_RESISTANCE);
             mIndicator.setResistance(resistance);
-            mIndicator.setResistanceOfPullDown(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistance_of_pull_down, resistance));
-            mIndicator.setResistanceOfPullUp(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistance_of_pull_up, resistance));
+            mIndicator.setResistanceOfHeader(arr.getFloat(R.styleable
+                    .SmoothRefreshLayout_sr_resistance_of_header, resistance));
+            mIndicator.setResistanceOfFooter(arr.getFloat(R.styleable
+                    .SmoothRefreshLayout_sr_resistance_of_footer, resistance));
 
             mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
-                            .SmoothRefreshLayout_sr_duration_of_back_to_refresh_height,
+                            .SmoothRefreshLayout_sr_duration_of_back_to_keep_refresh_pos,
                     mDurationOfBackToHeaderHeight);
             mDurationOfBackToFooterHeight = arr.getInt(R.styleable
-                            .SmoothRefreshLayout_sr_duration_of_back_to_refresh_height,
+                            .SmoothRefreshLayout_sr_duration_of_back_to_keep_refresh_pos,
                     mDurationOfBackToFooterHeight);
             mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
-                            .SmoothRefreshLayout_sr_duration_of_back_to_header_height,
+                            .SmoothRefreshLayout_sr_duration_of_back_to_keep_header_pos,
                     mDurationOfBackToHeaderHeight);
             mDurationOfBackToFooterHeight = arr.getInt(R.styleable
-                            .SmoothRefreshLayout_sr_duration_of_back_to_footer_height,
+                            .SmoothRefreshLayout_sr_duration_of_back_to_keep_footer_pos,
                     mDurationOfBackToFooterHeight);
 
             mDurationToCloseHeader = arr.getInt(R.styleable
@@ -271,12 +265,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     .SmoothRefreshLayout_sr_enable_over_scroll, true));
             setEnablePullToRefresh(arr.getBoolean(R.styleable
                     .SmoothRefreshLayout_sr_enable_pull_to_refresh, false));
-            @Mode
-            int mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, MODE_NONE);
-            mMode = mode;
-            if (mMode == MODE_OVER_SCROLL) {
-                setEnableOverScroll(true);
-            }
+
+            setDisableRefresh(arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enable_refresh,
+                    false));
+            setDisableLoadMore(arr.getBoolean(R.styleable
+                    .SmoothRefreshLayout_sr_enable_load_more, true));
+
             mErrorLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_error_layout,
                     NO_ID);
             mEmptyLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_empty_layout,
@@ -317,8 +311,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the static refresh view creator, if the refresh view is null and the mode set be
-     * needed refresh view,frame will use this creator to create refresh view
+     * Set the static refresh view creator, if the refresh view is null and the frame be
+     * needed the refresh view,frame will use this creator to create refresh view<br/>
+     * <p>
+     * 设置默认的刷新视图构造器，当刷新视图为null且需要使用刷新视图时，Frame会使用该构造器构造刷新视图
      *
      * @param creator The static refresh view creator
      */
@@ -401,7 +397,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 continue;
             MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
             if (mHeaderView != null && child == mHeaderView) {
-                if (isDisabledRefresh())
+                if (isDisabledRefresh() || isEnabledHideHeaderView())
                     continue;
                 if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
@@ -426,7 +422,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
             } else if (mFooterView != null && child == mFooterView) {
-                if (isDisabledLoadMore())
+                if (isDisabledLoadMore() || isEnabledHideFooterView())
                     continue;
                 if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT) {
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
@@ -522,9 +518,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (child.getVisibility() == GONE)
                 continue;
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (mHeaderView != null && child == mHeaderView
-                    && (mMode == MODE_REFRESH || mMode == MODE_BOTH)) {
-                if (isDisabledRefresh()) {
+            if (mHeaderView != null && child == mHeaderView) {
+                if (isDisabledRefresh() || isEnabledHideHeaderView()) {
                     child.layout(0, 0, child.getMeasuredWidth(), 0);
                     if (sDebug) {
                         SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0,
@@ -560,6 +555,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     child.layout(left, top, right, bottom);
                     // If content view is moving and the bottom margin is not zero. we need
                     // scroll to the top to fix margin not working
+                    // 如果内容视图在移动中且BottomMargin不为0，那么需要对内部视图做滑动处理使视图的Margin起作用
                     if (!pin && offsetHeaderY != 0 && lp.bottomMargin != 0 && mNeedScrollCompat) {
                         final int deltaY = offsetHeaderY - mIndicator.getLastPosY();
                         if (deltaY != 0 && !(mIndicator.hasTouched() && deltaY < 0)
@@ -581,6 +577,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     child.layout(left, top, right, bottom);
                     // If content view is moving and the top margin is not zero. we need scroll to
                     // the bottom to fix margin not working
+                    // 如果内容视图在移动中且TopMargin不为0，那么需要对内部视图做滑动处理使视图的Margin起作用
                     if (!pin && offsetFooterY != 0 && lp.topMargin != 0 && mNeedScrollCompat) {
                         final int deltaY = offsetFooterY - mIndicator.getLastPosY();
                         if (deltaY != 0 && !(mIndicator.hasTouched() && deltaY < 0)
@@ -644,10 +641,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         if (mFooterView != null && mFooterView instanceof View
-                && mFooterView.getView().getVisibility() != GONE
-                && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)) {
+                && mFooterView.getView().getVisibility() != GONE) {
             View child = (View) mFooterView;
-            if (isDisabledLoadMore()) {
+            if (isDisabledLoadMore() || isEnabledHideFooterView()) {
                 child.layout(0, 0, child.getMeasuredWidth(), 0);
                 if (sDebug) {
                     SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0,
@@ -686,7 +682,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!isEnabled() || mTargetView == null || mMode == MODE_NONE
+        if (!isEnabled() || mTargetView == null || (isDisabledLoadMore() && isDisabledRefresh())
                 || (isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || mNestedScrollInProgress) {
             return super.dispatchTouchEvent(ev);
@@ -706,20 +702,24 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * Set loadMore scroll target view<br/>
      * For example the content view is a FrameLayout,with a listView in it.<br/>
      * You can call this method,set the listView as load more scroll target view.<br/>
-     * Load more compat will try to make it smooth scrolling
+     * Load more compat will try to make it smooth scrolling<br/>
+     * <p>
+     * 设置加载更多时需要做滑动处理的视图。<br/>
+     * 例如在SmoothRefreshLayout中有一个CoordinatorLayout,
+     * CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerVieW
+     * 而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可
      *
      * @param view Target view
      */
     @SuppressWarnings({"unused"})
     public void setLoadMoreScrollTargetView(View view) {
-        if (mMode == MODE_NONE || mMode == MODE_REFRESH || mMode == MODE_OVER_SCROLL)
-            throw new IllegalArgumentException("Set load more scroll target view ,the mode" +
-                    " must be MODE_LOAD_MORE or MODE_BOTH");
         mLoadMoreScrollTargetView = view;
     }
 
     /**
-     * Set the listener to be notified when a refresh is triggered.
+     * Set the listener to be notified when a refresh is triggered.<br/>
+     * <p>
+     * 设置刷新监听回调
      *
      * @param listener Listener
      */
@@ -728,7 +728,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the listener to be notified when the state changed
+     * Set the listener to be notified when the state changed<br/>
+     * <p>
+     * 设置状态改变回调
      *
      * @param listener Listener
      */
@@ -737,7 +739,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Add a listener to listen the views position change event
+     * Add a listener to listen the views position change event<br/>
+     * <p>
+     * 设置UI位置变化回调
      *
      * @param listener Listener
      */
@@ -748,7 +752,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * remove the listener
+     * remove the listener<br/>
+     * <p>
+     * 移除UI位置变化回调
      *
      * @param listener Listener
      */
@@ -763,7 +769,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set a scrolling callback when loading more.
+     * Set a scrolling callback when loading more.<br/>
+     * <p>
+     * 设置当加载更多时滚动回调，可使用该属性对内部视图做滑动处理。例如内部视图是ListView，完成加载更多时，
+     * 需要将加载出的数据显示出来，那么设置该回调，每次Footer
+     * 回滚时拿到滚动的数值对ListView做向上滚动处理，将数据展示处理
      *
      * @param callback Callback that should be called when scrolling on loading more.
      */
@@ -773,7 +783,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a callback to override {@link SmoothRefreshLayout#canChildScrollUp()} method. Non-null
-     * callback will return the value provided by the callback and ignore all internal logic.
+     * callback will return the value provided by the callback and ignore all internal logic.<br/>
+     * <p>
+     * 设置{@link SmoothRefreshLayout#canChildScrollUp()}的重载回调，用来检测内容视图是否在顶部
      *
      * @param callback Callback that should be called when canChildScrollUp() is called.
      */
@@ -783,7 +795,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a callback to override {@link SmoothRefreshLayout#canChildScrollDown()} method. Non-null
-     * callback will return the value provided by the callback and ignore all internal logic.
+     * callback will return the value provided by the callback and ignore all internal logic.<br/>
+     * <p>
+     * 设置{@link SmoothRefreshLayout#canChildScrollDown()}的重载回调，用来检测内容视图是否在底部
      *
      * @param callback Callback that should be called when canChildScrollDown() is called.
      */
@@ -793,7 +807,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a callback to make sure you need to customize the specified trigger the auto load more
-     * rule
+     * rule <br/>
+     * <p>
+     * 设置自动加载更多的触发条件回调，可自定义具体的触发自动加载更多的条件
      *
      * @param callBack Customize the specified triggered rule
      */
@@ -803,7 +819,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a hook callback when the refresh complete event be triggered. Only can be called on
-     * refreshing
+     * refreshing<br/>
+     * <p>
+     * 设置一个头部视图刷新完成前的Hook回调
      *
      * @param callback Callback that should be called when refreshComplete() is called.
      */
@@ -816,7 +834,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a hook callback when the refresh complete event be triggered. Only can be called on
-     * loading more
+     * loading more<br/>
+     * <p>
+     * 设置一个尾部视图刷新完成前的Hook回调
      *
      * @param callback Callback that should be called when refreshComplete() is called.
      */
@@ -836,7 +856,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether it is being refreshed
+     * Whether it is being refreshed<br/>
+     * <p>
+     * 是否在刷新中
      *
      * @return Refreshing
      */
@@ -845,7 +867,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether it is being refreshed
+     * Whether it is being refreshed<br/>
+     * <p>
+     * 是否在加载更多种
      *
      * @return Loading
      */
@@ -853,24 +877,43 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mStatus == SR_STATUS_LOADING_MORE;
     }
 
+    /**
+     * Whether it is in start position<br/>
+     * <p>
+     * 是否在起始位置
+     *
+     * @return Is
+     */
     public boolean isInStartPosition() {
         return mIndicator.isInStartPosition();
     }
 
+    /**
+     * Whether it is refresh successful<br/>
+     * <p>
+     * 是否刷新成功
+     *
+     * @return Is
+     */
     public boolean isRefreshSuccessful() {
         return mIsLastRefreshSuccessful;
     }
 
     /**
      * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT},
-     * and set the last refresh operation successfully
+     * and set the last refresh operation successfully<br/>
+     * <p>
+     * 完成刷新，刷新状态为成功
      */
     final public void refreshComplete() {
         refreshComplete(true);
     }
 
     /**
-     * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT}
+     * Perform refresh complete, to reset the state to
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT}<br/>
+     * <p>
+     * 完成刷新，刷新状态`isSuccessful`
      *
      * @param isSuccessful Set the last refresh operation status
      */
@@ -880,7 +923,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Perform refresh complete, delay to reset the state to
-     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation successfully
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation
+     * successfully<br/>
+     * <p>
+     * 完成刷新，延迟`delayDurationToChangeState`时间
      *
      * @param delayDurationToChangeState Delay to change the state to
      *                                   {@link SmoothRefreshLayout#SR_STATUS_INIT}
@@ -891,7 +937,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Perform refresh complete, delay to reset the state to
-     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation<br/>
+     * <p>
+     * 完成刷新，刷新状态`isSuccessful`，延迟`delayDurationToChangeState`时间
      *
      * @param delayDurationToChangeState Delay to change the state to
      *                                   {@link SmoothRefreshLayout#SR_STATUS_INIT}
@@ -902,6 +950,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.d(TAG, "refreshComplete(): isSuccessful: " + isSuccessful);
         }
         mIsLastRefreshSuccessful = isSuccessful;
+        if (!isRefreshing() && !isLoadingMore())
+            return;
         if (delayDurationToChangeState <= 0) {
             long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
             if (delay <= 0) {
@@ -930,7 +980,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the loading min time
+     * Set the loading min time<br/>
+     * <p>
+     * 设置加载过程的最小持续时间
      *
      * @param time Millis
      */
@@ -940,7 +992,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Get the header height,
-     * After the measurement is completed, the height will have value
+     * After the measurement is completed, the height will have value<br/>
+     * <p>
+     * 获取Header的高度，在布局计算完成前无法得到准确的值
      *
      * @return Height default is -1
      */
@@ -950,7 +1004,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Get the footer height,
-     * After the measurement is completed, the height will have value
+     * After the measurement is completed, the height will have value<br/>
+     * <p>
+     * 获取Footer的高度，在布局计算完成前无法得到准确的值
      *
      * @return Height default is -1
      */
@@ -959,14 +1015,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Perform auto refresh at once
+     * Perform auto refresh at once<br/>
+     * <p>
+     * 自动刷新并立即触发刷新回调
      */
     public void autoRefresh() {
         autoRefresh(true);
     }
 
     /**
-     * If @param atOnce has been set to true. Auto perform refresh at once.
+     * If @param atOnce has been set to true. Auto perform refresh at once.<br/>
+     * <p>
+     * 自动刷新，`atOnce`立即触发刷新回调
      *
      * @param atOnce Auto refresh at once
      */
@@ -976,16 +1036,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param atOnce has been set to true. Auto perform refresh at once.
-     * If @param smooth has been set to true. Auto perform refresh will using smooth scrolling.
+     * If @param smooth has been set to true. Auto perform refresh will using smooth scrolling.<br/>
+     * <p>
+     * 自动刷新，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置
      *
      * @param atOnce Auto refresh at once
      * @param smooth Auto refresh use smooth scrolling
      */
     public void autoRefresh(boolean atOnce, boolean smooth) {
-        if (mMode != MODE_REFRESH && mMode != MODE_BOTH)
-            throw new IllegalArgumentException("Perform auto refresh , the mode" +
-                    "must be MODE_REFRESH or MODE_BOTH");
-        if (mStatus != SR_STATUS_INIT) {
+        if (mStatus != SR_STATUS_INIT || mHeaderView == null) {
             return;
         }
         if (!mTriggeredAutoLoadMore)
@@ -1015,14 +1074,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Perform auto load more at once
+     * Perform auto load more at once<br/>
+     * <p>
+     * 自动加载更多，并立即触发刷新回调
      */
     public void autoLoadMore() {
         autoLoadMore(true);
     }
 
     /**
-     * If @param atOnce has been set to true. Auto perform load more at once.
+     * If @param atOnce has been set to true. Auto perform load more at once.<br/>
+     * <p>
+     * 自动加载更多，`atOnce`立即触发刷新回调
      *
      * @param atOnce Auto load more at once
      */
@@ -1032,16 +1095,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param atOnce has been set to true. Auto perform load more at once.
-     * If @param smooth has been set to true. Auto perform load more will using smooth scrolling.
+     * If @param smooth has been set to true. Auto perform load more will using smooth scrolling
+     * .<br/>
+     * <p>
+     * 自动加载更多，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置
      *
      * @param atOnce Auto load more at once
      * @param smooth Auto load more use smooth scrolling
      */
     public void autoLoadMore(boolean atOnce, boolean smooth) {
-        if (mMode != MODE_LOAD_MORE && mMode != MODE_BOTH)
-            throw new IllegalArgumentException("Perform auto load more , the mode" +
-                    "must be MODE_LOAD_MORE or MODE_BOTH");
-        if (mStatus != SR_STATUS_INIT) {
+        if (mStatus != SR_STATUS_INIT || mFooterView == null) {
             return;
         }
         if (!mTriggeredAutoRefresh)
@@ -1071,9 +1134,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The resistance while you are moving
+     * The resistance while you are moving<br/>
+     * <p>
+     * 移动刷新视图时候的移动阻尼
      *
-     * @param resistance Height ratio
+     * @param resistance Resistance
      */
     @SuppressWarnings({"unused"})
     public void setResistance(float resistance) {
@@ -1081,27 +1146,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The resistance while you are pulling up
+     * The resistance while you are moving footer<br/>
+     * <p>
+     * 移动Footer视图时候的移动阻尼
      *
-     * @param resistance Height ratio
+     * @param resistance Resistance
      */
     @SuppressWarnings({"unused"})
-    public void setResistanceOfPullUp(float resistance) {
-        mIndicator.setResistanceOfPullUp(resistance);
+    public void setResistanceOfFooter(float resistance) {
+        mIndicator.setResistanceOfFooter(resistance);
     }
 
     /**
-     * The resistance while you are pulling down
+     * The resistance while you are moving header<br/>
+     * <p>
+     * 移动Header视图时候的移动阻尼
      *
-     * @param resistance Height ratio
+     * @param resistance Resistance
      */
     @SuppressWarnings({"unused"})
-    public void setResistanceOfPullDown(float resistance) {
-        mIndicator.setResistanceOfPullDown(resistance);
+    public void setResistanceOfHeader(float resistance) {
+        mIndicator.setResistanceOfHeader(resistance);
     }
 
     /**
-     * the height ratio of the trigger refresh
+     * the height ratio of the trigger refresh<br/>
+     * <p>
+     * 设置触发刷新时的位置占刷新视图的高度比
      *
      * @param ratio Height ratio
      */
@@ -1111,7 +1182,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * the height ratio of the trigger refresh
+     * the height ratio of the trigger refresh<br/>
+     * <p>
+     * 设置触发下拉刷新时的位置占Header视图的高度比
      *
      * @param ratio Height ratio
      */
@@ -1131,7 +1204,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The height ratio of the trigger refresh
+     * The height ratio of the trigger refresh<br/>
+     * <p>
+     * 设置触发加载更多时的位置占Footer视图的高度比
      *
      * @param ratio Height ratio
      */
@@ -1141,7 +1216,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set in the refresh to keep the refresh view's position of the ratio of the view's height
+     * Set in the refresh to keep the refresh view's position of the ratio of the view's height<br/>
+     * <p>
+     * 刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
+     * 当开启了{@link SmoothRefreshLayout#isEnabledKeepRefreshView}后，该属性会生效
      *
      * @param ratio Height ratio
      */
@@ -1151,7 +1229,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set in the refresh to keep the header view's position of the ratio of the view's height
+     * Set in the refresh to keep the header view's position of the ratio of the view's height<br/>
+     * <p>
+     * 刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果
      *
      * @param ratio Height ratio
      */
@@ -1160,7 +1240,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set in the refresh to keep the footer view's position of the ratio of the view's height
+     * Set in the refresh to keep the footer view's position of the ratio of the view's height<br/>
+     * <p>
+     * 刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果
      *
      * @param ratio Height ratio
      */
@@ -1173,7 +1255,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of return back to the start position
+     * The duration of return back to the start position <br/>
+     * <p>
+     * 设置刷新完成回滚到起始位置的时间
      *
      * @param duration Millis
      */
@@ -1194,7 +1278,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of header return back to the start position
+     * The duration of header return back to the start position<br/>
+     * <p>
+     * 设置Header刷新完成回滚到起始位置的时间
      *
      * @param duration Millis
      */
@@ -1204,7 +1290,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the  duration of footer return back to the start position
+     * Get the  duration of footer return back to the start position<br/>
+     * <p>
+     * 设置Footer刷新完成回滚到起始位置的时间
      *
      * @return mDuration
      */
@@ -1224,58 +1312,70 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of refresh view to return back to the refresh or loading position
+     * The duration of refresh view to return back to the keep refresh view position<br/>
+     * <p>
+     * 设置回滚到保持刷新视图位置的时间
      *
      * @param duration Millis
      */
     @SuppressWarnings({"unused"})
-    public void setDurationOfBackToRefreshViewHeight(int duration) {
+    public void setDurationOfBackToKeepRefreshViewPosition(int duration) {
         mDurationOfBackToHeaderHeight = duration;
         mDurationOfBackToFooterHeight = duration;
     }
 
     /**
-     * Get the duration of header return back to the refresh position
+     * Get the duration of header return back to the keep header position<br/>
+     * <p>
+     * 得到回滚到保持Header视图位置的时间
      *
-     * @return mDuration
+     * @return Duration
      */
     @SuppressWarnings({"unused"})
-    public int getDurationOfBackToHeaderHeight() {
+    public int getDurationOfBackToKeepHeaderPosition() {
         return mDurationOfBackToHeaderHeight;
     }
 
     /**
-     * The duration of header return back to the refresh position
+     * The duration of header return back to the keep header position<br/>
+     * <p>
+     * 设置回滚到保持Header视图位置的时间
      *
      * @param duration Millis
      */
     @SuppressWarnings({"unused"})
-    public void setDurationOfBackToHeaderHeight(int duration) {
+    public void setDurationOfBackToKeepHeaderPosition(int duration) {
         this.mDurationOfBackToHeaderHeight = duration;
     }
 
     /**
-     * Get the duration of footer return back to the loading position
+     * Get the duration of footer return back to the keep footer position<br/>
+     * <p>
+     * 得到回滚到保持Footer视图位置的时间
      *
      * @return mDuration
      */
     @SuppressWarnings({"unused"})
-    public int getDurationOfBackToFooterHeight() {
+    public int getDurationOfBackToKeepFooterPosition() {
         return mDurationOfBackToFooterHeight;
     }
 
     /**
-     * The duration of footer return back to the loading position
+     * The duration of footer return back to the keep footer position<br/>
+     * <p>
+     * 设置回顾到保持Footer视图位置的时间
      *
      * @param duration Millis
      */
     @SuppressWarnings({"unused"})
-    public void setDurationOfBackToFooterHeight(int duration) {
+    public void setDurationOfBackToKeepFooterPosition(int duration) {
         this.mDurationOfBackToFooterHeight = duration;
     }
 
     /**
-     * The max ratio of height for the refresh view when the finger moves
+     * The max ratio of height for the refresh view when the finger moves<br/>
+     * <p>
+     * 设置最大移动距离占刷新视图的高度比
      *
      * @param ratio The max ratio of refresh view
      */
@@ -1290,7 +1390,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max ratio of height for the header view when the finger moves
+     * The max ratio of height for the header view when the finger moves<br/>
+     * <p>
+     * 最大移动距离占Header视图的高度比
      *
      * @param ratio The max ratio of header view
      */
@@ -1305,7 +1407,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max ratio of height for the footer view when the finger moves
+     * The max ratio of height for the footer view when the finger moves<br/>
+     * <p>
+     * 最大移动距离占Footer视图的高度比
      *
      * @param ratio The max ratio of footer view
      */
@@ -1315,7 +1419,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has set to autoRefresh
+     * The flag has set to autoRefresh<br/>
+     * <p>
+     * 是否处于自动刷新刷新
      *
      * @return Enabled
      */
@@ -1324,7 +1430,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If enable has been set to true. The user can perform next PTR at once.
+     * If enable has been set to true. The user can perform next PTR at once.<br/>
+     * <p>
+     * 是否已经开启完成刷新后即可立即触发刷新
      *
      * @return Is enable
      */
@@ -1333,7 +1441,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. The user can perform next PTR at once.
+     * If @param enable has been set to true. The user can perform next PTR at once.<br/>
+     * <p>
+     * 设置开启完成刷新后即可立即触发刷新
      *
      * @param enable Enable
      */
@@ -1346,7 +1456,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has set enabled overScroll
+     * The flag has set enabled overScroll<br/>
+     * <p>
+     * 是否已经开启越界回弹
      *
      * @return Enabled
      */
@@ -1355,7 +1467,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. Will supports over scroll.
+     * If @param enable has been set to true. Will supports over scroll.<br/>
+     * <p>
+     * 设置开始越界回弹
      *
      * @param enable Enable
      */
@@ -1368,7 +1482,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has set enabled to intercept the touch event while loading
+     * The flag has set enabled to intercept the touch event while loading<br/>
+     * <p>
+     * 是否已经开启刷新中拦截消耗触摸事件
      *
      * @return Enabled
      */
@@ -1377,7 +1493,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. Will intercept the touch event while loading
+     * If @param enable has been set to true. Will intercept the touch event while loading<br/>
+     * <p>
+     * 开启刷新中拦截消耗触摸事件
      *
      * @param enable Enable
      */
@@ -1390,7 +1508,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to pull to refresh
+     * The flag has been set to pull to refresh<br/>
+     * <p>
+     * 是否已经开启拉动刷新，下拉或者上拉到触发刷新位置即立即触发刷新
      *
      * @return Enabled
      */
@@ -1399,7 +1519,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. When the current pos >= refresh offsets, perform refresh
+     * If @param enable has been set to true. When the current pos >= refresh offsets, perform
+     * refresh<br/>
+     * <p>
+     * 设置开启拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新
      *
      * @param enable Pull to refresh
      */
@@ -1412,7 +1535,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled header drawerStyle
+     * The flag has been set to enabled header drawerStyle<br/>
+     * <p>
+     * 是否已经开启Header的抽屉效果，即Header在Content下面且Header固定在顶部
      *
      * @return Enabled
      */
@@ -1421,7 +1546,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.Enable header drawerStyle
+     * If @param enable has been set to true.Enable header drawerStyle<br/>
+     * <p>
+     * 设置开启Header的抽屉效果，即Header在Content下面且Header固定在顶部.
+     * 由于该效果需要改变层级关系，所以需要重新布局
      *
      * @param enable enable header drawerStyle
      */
@@ -1436,7 +1564,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled footer drawerStyle
+     * The flag has been set to enabled footer drawerStyle<br/>
+     * <p>
+     * 是否已经开启Footer的抽屉效果，即Footer在Content下面且Footer固定在底部
      *
      * @return Enabled
      */
@@ -1445,7 +1575,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.Enable footer drawerStyle
+     * If @param enable has been set to true.Enable footer drawerStyle<br/>
+     * <p>
+     * 设置开启Footer的抽屉效果，即Footer在Content下面且Footer固定在底部.
+     * 由于该效果需要改变层级关系，所以需要重新布局
      *
      * @param enable enable footer drawerStyle
      */
@@ -1460,7 +1593,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled perform refresh
+     * The flag has been set to disabled perform refresh<br/>
+     * <p>
+     * 是否已经关闭触发下拉刷新
      *
      * @return Disabled
      */
@@ -1469,7 +1604,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will never perform refresh
+     * If @param disable has been set to true.Will never perform refresh<br/>
+     * <p>
+     * 设置是否关闭触发下拉刷新
      *
      * @param disable Disable perform refresh
      */
@@ -1482,7 +1619,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled refresh
+     * The flag has been set to disabled refresh<br/>
+     * <p>
+     * 是否已经关闭下拉刷新
      *
      * @return Disabled
      */
@@ -1491,7 +1630,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will disable refresh
+     * If @param disable has been set to true.Will disable refresh<br/>
+     * <p>
+     * 设置是否关闭下拉刷新
      *
      * @param disable Disable refresh
      */
@@ -1504,8 +1645,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         requestLayout();
     }
 
+
     /**
-     * The flag has been set to disabled perform load more
+     * The flag has been set to disabled perform load more<br/>
+     * <p>
+     * 是否已经关闭触发加载更多
      *
      * @return Disabled
      */
@@ -1514,7 +1658,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will never perform load more
+     * If @param disable has been set to true.Will never perform load more<br/>
+     * <p>
+     * 设置是否关闭触发加载更多
      *
      * @param disable Disable perform load more
      */
@@ -1527,7 +1673,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled load more
+     * The flag has been set to disabled load more<br/>
+     * <p>
+     * 是否已经关闭加载更多
      *
      * @return Disabled
      */
@@ -1536,7 +1684,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will disable load more
+     * If @param disable has been set to true.Will disable load more<br/>
+     * <p>
+     * 设置关闭加载更多
      *
      * @param disable Disable load more
      */
@@ -1550,7 +1700,63 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled when horizontal move
+     * The flag has been set to hided header view<br/>
+     * <p>
+     * 是否已经开启不显示Header
+     *
+     * @return hided
+     */
+    public boolean isEnabledHideHeaderView() {
+        return (mFlag & FLAG_ENABLE_HIDE_HEADER_VIEW) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true.Will hide the header<br/>
+     * <p>
+     * 设置是否开启不显示Header
+     *
+     * @param enable Enable hide the header
+     */
+    public void setEnableHideHeaderView(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_HIDE_HEADER_VIEW;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_HIDE_HEADER_VIEW;
+        }
+        requestLayout();
+    }
+
+    /**
+     * The flag has been set to hided footer view<br/>
+     * <p>
+     * 是否已经开启不显示Footer
+     *
+     * @return hided
+     */
+    public boolean isEnabledHideFooterView() {
+        return (mFlag & FLAG_ENABLE_HIDE_FOOTER_VIEW) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true.Will hide the footer<br/>
+     * <p>
+     * 设置是否开启不显示Footer
+     *
+     * @param enable Enable hide the footer
+     */
+    public void setEnableHideFooterView(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_HIDE_FOOTER_VIEW;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_HIDE_FOOTER_VIEW;
+        }
+        requestLayout();
+    }
+
+    /**
+     * The flag has been set to disabled when horizontal move<br/>
+     * <p>
+     * 是否已经设置不响应横向滑动
      *
      * @return Disabled
      */
@@ -1559,7 +1765,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set whether to filter the horizontal move
+     * Set whether to filter the horizontal move<br/>
+     * <p>
+     * 设置不响应横向滑动，当内部视图含有需要响应横向滑动的子视图时，需要设置该属性，否则自视图无法响应横向滑动
      *
      * @param disable Enable
      */
@@ -1572,7 +1780,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled load more has no more data
+     * The flag has been set to enabled load more has no more data<br/>
+     * <p>
+     * 是否已经开启加载更多完成已无更多数据，自定义Footer可根据该属性判断是否显示无更多数据的提示
      *
      * @return Enabled
      */
@@ -1582,7 +1792,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param enable has been set to true. The footer will show no more data and will never
-     * trigger load more
+     * trigger load more<br/>
+     * <p>
+     * 设置开启加载更多完成已无更多数据，当该属性设置为`true`时，将不再触发加载更多。
      *
      * @param enable Enable no more data
      */
@@ -1595,7 +1807,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to keep refresh view while loading
+     * The flag has been set to keep refresh view while loading<br/>
+     * <p>
+     * 是否已经开启保持刷新视图
      *
      * @return Enabled
      */
@@ -1604,9 +1818,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.When the current pos> = refresh view height,
-     * it rolls back to the refresh view height to perform refresh and remains until the refresh
-     * completed
+     * If @param enable has been set to true.When the current pos> = keep refresh view pos,
+     * it rolls back to the keep refresh view pos to perform refresh and remains until the refresh
+     * completed<br/>
+     * <p>
+     * 开启刷新中保持刷新视图位置
      *
      * @param enable Keep refresh view
      */
@@ -1620,7 +1836,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to perform load more when the content view scrolling to bottom
+     * The flag has been set to perform load more when the content view scrolling to bottom<br/>
+     * <p>
+     * 是否已经开启到底部自动加载更多
      *
      * @return Enabled
      */
@@ -1630,7 +1848,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param enable has been set to true.When the content view scrolling to bottom,
-     * It will be perform load more
+     * It will be perform load more<br/>
+     * <p>
+     * 开启到底自动加载更多
      *
      * @param enable Enable
      */
@@ -1643,7 +1863,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to pinned refresh view while loading
+     * The flag has been set to pinned refresh view while loading<br/>
+     * <p>
+     * 是否已经开启刷新过程中固定刷新视图且不响应触摸移动
      *
      * @return Enabled
      */
@@ -1652,7 +1874,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.The refresh view will pinned at the refresh offset position
+     * If @param enable has been set to true.The refresh view will pinned at the refresh offset
+     * position<br/>
+     * <p>
+     * 设置开启刷新过程中固定刷新视图且不响应触摸移动，该属性只有在{@link SmoothRefreshLayout#setEnablePinContentView(boolean)}
+     * 和{@link SmoothRefreshLayout#setEnableKeepRefreshView(boolean)}2个属性都为`true`时才能生效
      *
      * @param enable Pin content view
      */
@@ -1670,7 +1896,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to pinned content view while loading
+     * The flag has been set to pinned content view while loading<br/>
+     * <p>
+     * 是否已经开启了固定内容视图
      *
      * @return Enabled
      */
@@ -1680,7 +1908,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param enable has been set to true.The content view will be pinned in the start pos
-     * unless overScroll flag has been set and in overScrolling
+     * unless overScroll flag has been set and in overScrolling<br/>
+     * <p>
+     * 设置开启固定内容视图
      *
      * @param enable Pin content view
      */
@@ -1694,7 +1924,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the load more view
+     * Set the footer view<br/>
+     * <p>
+     * 设置Footer
      *
      * @param footer Footer view
      */
@@ -1706,9 +1938,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (footer.getType() != IRefreshView.TYPE_FOOTER)
             throw new IllegalArgumentException("Wrong type,FooterView's type must be " +
                     "TYPE_FOOTER");
-        if (mMode != MODE_LOAD_MORE && mMode != MODE_BOTH)
-            throw new IllegalArgumentException("You can set the FooterView only if the " +
-                    "mode is MODE_BOTH or MODE_LOAD_MORE !");
         View view = footer.getView();
         ViewGroup.LayoutParams lp = view.getLayoutParams();
         if (lp == null) {
@@ -1720,7 +1949,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the refresh view
+     * Set the header view<br/>
+     * <p>
+     * 设置Header
      *
      * @param header Header view
      */
@@ -1735,9 +1966,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (header.getType() != IRefreshView.TYPE_HEADER)
             throw new IllegalArgumentException("Wrong type,HeaderView's type must be " +
                     "TYPE_HEADER");
-        if (mMode != MODE_REFRESH && mMode != MODE_BOTH)
-            throw new IllegalArgumentException("You can set the HeaderView only if the " +
-                    "mode is MODE_BOTH or MODE_REFRESH !");
         View view = header.getView();
         ViewGroup.LayoutParams lp = view.getLayoutParams();
         if (lp == null) {
@@ -1749,7 +1977,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the content view
+     * Set the content view<br/>
+     * <p>
+     * 设置内容视图，`state`内容视图状态，`content`状态对应的视图
      *
      * @param state   The state of content view
      * @param content Content view
@@ -1798,7 +2028,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Update scroller's interpolator,Can only be called after the scroll stopped
+     * Update scroller's interpolator<br/>
+     * <p>
+     * 设置Scroller的插值器
      *
      * @param interpolator Scroller's interpolator
      */
@@ -1806,6 +2038,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollChecker.updateInterpolator(interpolator);
     }
 
+    /**
+     * Reset scroller's interpolator<br/>
+     * <p>
+     * 重置Scroller的插值器
+     */
     public void resetScrollerInterpolator() {
         mScrollChecker.updateInterpolator(mDefaultSpringInterpolator);
     }
@@ -1840,28 +2077,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get SR mode
-     *
-     * @return Mode SR mode
-     */
-    @SmoothRefreshLayout.Mode
-    @SuppressWarnings({"unused"})
-    public int getMode() {
-        return mMode;
-    }
-
-    /**
-     * Set SR mode
-     *
-     * @param mode SR mode
-     */
-    public void setMode(@Mode int mode) {
-        mMode = mode;
-        tryToNotifyReset();
-    }
-
-    /**
-     * Returns the {@link View} associated with the {@link SmoothRefreshLayout.State}
+     * Returns the {@link View} associated with the {@link SmoothRefreshLayout.State}<br/>
+     * <p>
+     * 得到状态对应的内容视图
      *
      * @param state The view
      */
@@ -1911,7 +2129,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Returns the current state
+     * Returns the current state<br/>
+     * <p>
+     * 获取当前的状态
      *
      * @return Current state
      */
@@ -1921,7 +2141,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the current state
+     * Set the current state<br/>
+     * <p>
+     * 设置当前的状态
      *
      * @param state Current state
      */
@@ -1930,7 +2152,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the current state
+     * Set the current state<br/>
+     * <p>
+     * 设置当前的状态，`state`状态，`animate`动画过渡
      *
      * @param state   Current state
      * @param animate Use animation
@@ -1990,8 +2214,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onFling(float vx, float vy) {
-        if (!isEnabledOverScroll() || mMode == MODE_NONE || needInterceptTouchEvent()
-                || mNestedScrollInProgress)
+        if (!isEnabledOverScroll() || (isDisabledLoadMore() && isDisabledRefresh())
+                || needInterceptTouchEvent() || mNestedScrollInProgress)
             return;
         if ((!canChildScrollUp() && vy > 0) || (!canChildScrollDown() && vy < 0)) {
             return;
@@ -1999,7 +2223,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if ((isRefreshing() && vy < 0) || (isLoadingMore() && vy > 0))
             return;
         if (isEnabledPinContentView()
-                && ((mMode == MODE_REFRESH && vy < 0) || mMode == MODE_LOAD_MORE && vy > 0))
+                && ((isDisabledLoadMore() && vy < 0) || isDisabledRefresh() && vy > 0))
             return;
         if (isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vy < 0)
             vy = vy * 2;
@@ -2060,7 +2284,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && !isDisabledRefresh()
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing())
                 && !mOverScrollChecker.mScrolling
-                && (mMode == MODE_BOTH || mMode == MODE_REFRESH)
                 && (isMovingHeader() || isMovingContent() && mTotalRefreshingUnconsumed == 0)) {
             if (mTotalRefreshingUnconsumed == 0 && mStatus == SR_STATUS_REFRESHING
                     && mTotalRefreshingConsumed / mIndicator.getResistanceOfPullUp()
@@ -2090,11 +2313,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mIndicator.getLastMovePoint()[1]);
             }
         }
-        if (dy < 0 && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
+        if (dy < 0 && mTotalLoadMoreUnconsumed >= 0
                 && !isDisabledLoadMore()
                 && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore())
-                && !mOverScrollChecker.mScrolling
-                && mTotalLoadMoreUnconsumed >= 0) {
+                && !mOverScrollChecker.mScrolling) {
             if (mStatus == SR_STATUS_LOADING_MORE && mTotalLoadMoreUnconsumed == 0
                     && mTotalLoadMoreConsumed / mIndicator.getResistanceOfPullDown()
                     < mIndicator.getFooterHeight()
@@ -2288,8 +2510,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 return dispatchNestedPreFling(velocityX, velocityY);
             float vy = -velocityY;
             if (isEnabledPinContentView()
-                    && ((mMode == MODE_REFRESH && vy < 0)
-                    || mMode == MODE_LOAD_MORE && vy > 0))
+                    && ((isDisabledLoadMore() && vy < 0) || (isDisabledRefresh() && vy > 0)))
                 return dispatchNestedPreFling(velocityX, velocityY);
             if (sDebug) {
                 SRLog.d(TAG, "onNestedPreFling(): newVelocityY: %s", vy);
@@ -2509,11 +2730,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mTargetViewTreeObserver.addOnScrollChangedListener(this);
         }
         //Use the static default creator to create the header view
-        if ((mMode == MODE_REFRESH || mMode == MODE_BOTH) && mHeaderView == null && sCreator != null) {
+        if (!isDisabledRefresh() && mHeaderView == null && sCreator != null) {
             sCreator.createHeader(this);
         }
         //Use the static default creator to create the footer view
-        if ((mMode == MODE_LOAD_MORE || mMode == MODE_BOTH) && mFooterView == null && sCreator != null) {
+        if (!isDisabledLoadMore() && mFooterView == null && sCreator != null) {
             sCreator.createFooter(this);
         }
     }
@@ -2674,12 +2895,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         return true;
                     }
                 }
-                boolean canMoveUp = isMovingHeader() && mIndicator.hasLeftStartPosition()
-                        && (mMode != MODE_LOAD_MORE);
-                boolean canMoveDown = isMovingFooter() && mIndicator.hasLeftStartPosition()
-                        && (mMode != MODE_REFRESH);
-                boolean canHeaderMoveDown = !canChildScrollUp() && mMode != MODE_LOAD_MORE;
-                boolean canFooterMoveUp = !canChildScrollDown() && mMode != MODE_REFRESH;
+                boolean canMoveUp = isMovingHeader() && mIndicator.hasLeftStartPosition();
+                boolean canMoveDown = isMovingFooter() && mIndicator.hasLeftStartPosition();
+                boolean canHeaderMoveDown = !canChildScrollUp() && !isDisabledRefresh();
+                boolean canFooterMoveUp = !canChildScrollDown() && !isDisabledLoadMore();
                 if (!canMoveUp && !canMoveDown) {
                     if (movingDown && !canHeaderMoveDown) {
                         if (isLoadingMore() && mIndicator.hasLeftStartPosition()) {
@@ -2735,9 +2954,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return (isEnabledInterceptEventWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
                 || (mOverScrollChecker.mScrolling
-                && (((isMovingFooter() && mMode == MODE_REFRESH)
-                || (isMovingHeader() && isDisabledRefresh())))
-                || ((isMovingHeader() && mMode == MODE_LOAD_MORE)
+                && (((isMovingHeader() && isDisabledRefresh()))
                 || (isMovingFooter() && isDisabledLoadMore())));
     }
 
@@ -2782,9 +2999,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.i(TAG, "notifyFingerUp()");
         }
-        if (isMovingHeader() && mHeaderView != null && needCheckPos()) {
+        if (isMovingHeader() && mHeaderView != null && !isDisabledRefresh()) {
             mHeaderView.onFingerUp(this, mIndicator);
-        } else if (isMovingFooter() && mFooterView != null && needCheckPos()) {
+        } else if (isMovingFooter() && mFooterView != null && !isDisabledLoadMore()) {
             mFooterView.onFingerUp(this, mIndicator);
         }
     }
@@ -2796,10 +3013,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         notifyFingerUp();
         if (mOverScrollChecker.mScrolling)
             return;
-        if (!stayForLoading && isEnabledKeepRefreshView()
-                && needCheckPos() && mStatus != SR_STATUS_COMPLETE
+        if (!stayForLoading && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE
                 && !isRefreshing() && !isLoadingMore()) {
-            if (isMovingHeader() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
+            if (isMovingHeader() && !isDisabledRefresh() && mIndicator
+                    .isOverOffsetToKeepHeaderWhileLoading()) {
                 if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())
                         || isDisabledPerformRefresh()) {
                     onRelease(0);
@@ -2807,7 +3024,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
                         mDurationOfBackToHeaderHeight);
-            } else if (isMovingFooter() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
+            } else if (isMovingFooter() && !isDisabledLoadMore() && mIndicator
+                    .isOverOffsetToKeepFooterWhileLoading()) {
                 if (mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())
                         || isDisabledPerformLoadMore()) {
                     onRelease(0);
@@ -2827,9 +3045,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.d(TAG, "onRelease(): duration: %s", duration);
         }
-        if (needCheckPos()) {
-            tryToPerformRefresh();
-        }
+        tryToPerformRefresh();
         if (mStatus == SR_STATUS_REFRESHING || mStatus == SR_STATUS_LOADING_MORE) {
             if (isEnabledKeepRefreshView()) {
                 if (isRefreshing() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
@@ -2987,9 +3203,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             sendCancelEvent();
         }
         // leave initiated position or just refresh complete
-        if (needCheckPos() && ((mIndicator.hasJustLeftStartPosition() && mStatus == SR_STATUS_INIT)
+        if ((mIndicator.hasJustLeftStartPosition() && mStatus == SR_STATUS_INIT)
                 || (mStatus == SR_STATUS_COMPLETE && isEnabledNextPtrAtOnce()
-                && ((isMovingHeader() && change > 0) || (isMovingFooter() && change < 0))))) {
+                && ((isMovingHeader() && change > 0) || (isMovingFooter() && change < 0)))) {
             mStatus = SR_STATUS_PREPARE;
             int status = mIndicator.getMovingStatus();
             switch (status) {
@@ -3017,7 +3233,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
 
         // try to perform refresh
-        if (needCheckPos() && !mOverScrollChecker.mScrolling && mStatus == SR_STATUS_PREPARE) {
+        if (!mOverScrollChecker.mScrolling && mStatus == SR_STATUS_PREPARE) {
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
             if (mIndicator.hasTouched() && !isAutoRefresh() && isEnabledPullToRefresh()) {
@@ -3042,60 +3258,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         final MarginLayoutParams lp = (MarginLayoutParams) mTargetView.getLayoutParams();
-        //check mode
-        switch (mMode) {
-            case MODE_NONE:
-                //do nothing
-                return;
-            case MODE_REFRESH:
-                if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()) {
-                    if (!isEnabledHeaderDrawerStyle() && lp.bottomMargin == 0)
-                        mHeaderView.getView().offsetTopAndBottom(change);
-                    mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                }
-                if (!isEnabledPinContentView()) {
-                    mTargetView.offsetTopAndBottom(change);
-                }
-                invalidate();
-                break;
-            case MODE_LOAD_MORE:
-                if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()) {
-                    if (!isEnabledFooterDrawerStyle() && lp.topMargin == 0)
-                        mFooterView.getView().offsetTopAndBottom(change);
-                    mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                }
-                if (!isEnabledPinContentView()) {
-                    if (mLoadMoreScrollTargetView != null && isMovingFooter()) {
-                        mLoadMoreScrollTargetView.offsetTopAndBottom(change);
-                    } else {
-                        mTargetView.offsetTopAndBottom(change);
-                    }
-                }
-                invalidate();
-                break;
-            case MODE_BOTH:
-            case MODE_OVER_SCROLL:
-                if (mHeaderView != null && mMode == MODE_BOTH && !isDisabledRefresh()
-                        && isMovingHeader()) {
-                    if (!isEnabledHeaderDrawerStyle() && lp.bottomMargin == 0)
-                        mHeaderView.getView().offsetTopAndBottom(change);
-                    mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                } else if (mFooterView != null && mMode == MODE_BOTH && !isDisabledLoadMore()
-                        && isMovingFooter()) {
-                    if (!isEnabledFooterDrawerStyle() && lp.topMargin == 0)
-                        mFooterView.getView().offsetTopAndBottom(change);
-                    mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                }
-                if (!isEnabledPinContentView()) {
-                    if (mLoadMoreScrollTargetView != null && isMovingFooter() && mMode == MODE_BOTH) {
-                        mLoadMoreScrollTargetView.offsetTopAndBottom(change);
-                    } else {
-                        mTargetView.offsetTopAndBottom(change);
-                    }
-                }
-                invalidate();
-                break;
+        if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()
+                && !isEnabledHideHeaderView()) {
+            if (!isEnabledHeaderDrawerStyle() && lp.bottomMargin == 0)
+                mHeaderView.getView().offsetTopAndBottom(change);
+            mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
+        } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()
+                && !isEnabledHideFooterView()) {
+            if (!isEnabledFooterDrawerStyle() && lp.topMargin == 0)
+                mFooterView.getView().offsetTopAndBottom(change);
+            mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
         }
+        if (!isEnabledPinContentView()) {
+            if (mLoadMoreScrollTargetView != null && isMovingFooter() && !isDisabledLoadMore()) {
+                mLoadMoreScrollTargetView.offsetTopAndBottom(change);
+            } else {
+                mTargetView.offsetTopAndBottom(change);
+            }
+        }
+        invalidate();
         mNeedScrollCompat = false;
         //check if the margin is zero, we need relayout to change the content height
         if (isMovingHeader()) {
@@ -3110,7 +3291,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         //check need perform load more
-        if (mStatus == SR_STATUS_PREPARE && (mMode == MODE_BOTH || mMode == MODE_LOAD_MORE)
+        if (mStatus == SR_STATUS_PREPARE && !isDisabledLoadMore()
                 && change < 0 && isMovingFooter() && !canChildScrollDown()
                 && !isDisabledPerformLoadMore()
                 && isEnabledScrollToBottomAutoLoadMore()) {
@@ -3130,43 +3311,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * We need to notify the X pos changed
      */
     protected void updateXPos() {
-        switch (mMode) {
-            case MODE_NONE:
-                //no moving
-                invalidate();
-                return;
-            case MODE_REFRESH:
-                if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()) {
-                    mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                }
-                invalidate();
-                break;
-            case MODE_LOAD_MORE:
-                if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()) {
-                    mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                }
-                invalidate();
-                break;
-            case MODE_BOTH:
-            case MODE_OVER_SCROLL:
-                if (mHeaderView != null && mMode == MODE_BOTH && !isDisabledRefresh()
-                        && isMovingHeader()) {
-                    mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                } else if (mFooterView != null && mMode == MODE_BOTH && !isDisabledLoadMore()
-                        && isMovingFooter()) {
-                    mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
-                }
-                break;
+        if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()
+                && !isEnabledHideHeaderView()) {
+            mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
+        } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()
+                && !isEnabledHideFooterView()) {
+            mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
         }
-    }
-
-    /**
-     * When moving, only the specified mode needs to check the position
-     *
-     * @return Need check position
-     */
-    protected boolean needCheckPos() {
-        return mMode == MODE_REFRESH || mMode == MODE_LOAD_MORE || mMode == MODE_BOTH;
     }
 
     protected boolean isMovingHeader() {
@@ -3251,24 +3402,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) {
             SRLog.i(TAG, "tryToPerformRefresh()");
         }
-        //check mode
-        switch (mMode) {
-            case MODE_LOAD_MORE:
-                if (isMovingHeader())
-                    return;
-                break;
-            case MODE_REFRESH:
-                if (isMovingFooter())
-                    return;
-                break;
-            case MODE_NONE:
-                return;
-            case MODE_OVER_SCROLL:
-                return;
-            case MODE_BOTH:
-                break;
-        }
-        if (isMovingHeader() && !isDisabledPerformRefresh()
+        if (isMovingHeader() && !isDisabledRefresh() && !isDisabledPerformRefresh()
                 && ((mIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh())
                 || (isEnabledKeepRefreshView() && mIndicator.isOverOffsetToKeepHeaderWhileLoading())
                 || mIndicator.isOverOffsetToRefresh())) {
@@ -3277,7 +3411,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             performRefresh();
             return;
         }
-        if (isMovingFooter() && !isDisabledPerformLoadMore()
+        if (isMovingFooter() && !isDisabledLoadMore() && !isDisabledPerformLoadMore()
                 && ((mIndicator.isOverOffsetToKeepFooterWhileLoading() && isAutoRefresh())
                 || (isEnabledKeepRefreshView() && mIndicator.isOverOffsetToKeepFooterWhileLoading())
                 || mIndicator.isOverOffsetToLoadMore())) {
@@ -3329,11 +3463,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             onFingerUp(true);
         }
-    }
-
-    @IntDef({MODE_NONE, MODE_REFRESH, MODE_LOAD_MORE, MODE_OVER_SCROLL, MODE_BOTH})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface Mode {
     }
 
     @Retention(RetentionPolicy.SOURCE)
@@ -3447,9 +3576,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Classes that wish to be called when {@link SmoothRefreshLayout#setEnableScrollToBottomAutoLoadMore(boolean)}
-     * has been set true and mode has been set {@link SmoothRefreshLayout#MODE_LOAD_MORE} or
-     * {@link SmoothRefreshLayout#MODE_BOTH} and sure you need to customize the specified trigger
-     * rule
+     * has been set true and {@link SmoothRefreshLayout#isDisabledLoadMore()} not be true and
+     * sure you need to customize the specified trigger rule
      */
     public interface OnPerformAutoLoadMoreCallBack {
         /**
@@ -3470,8 +3598,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         @SuppressWarnings("unused")
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
-            final TypedArray a = c.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout);
-            mGravity = a.getInt(R.styleable.SmoothRefreshLayout_sr_layout_gravity, UNSPECIFIED_GRAVITY);
+            final TypedArray a = c.obtainStyledAttributes(attrs, new int[]{android.R.attr.layout_gravity});
+            mGravity = a.getInt(0, UNSPECIFIED_GRAVITY);
             a.recycle();
         }
 

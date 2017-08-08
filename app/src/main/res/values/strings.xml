@@ -47,5 +47,8 @@
     <string name="disable_loadMore">Disable loadMore</string>
     <string name="enable_refresh">Enable refresh</string>
     <string name="enable_loadMore">Enable loadMore</string>
+    <string name="test_base_recyclerView_adapter">Test BaseRecyclerViewAdapter</string>
+    <string name="enabled_intercept_touch_while_loading">Enabled intercept touch event
+        while loading</string>
 
 </resources>

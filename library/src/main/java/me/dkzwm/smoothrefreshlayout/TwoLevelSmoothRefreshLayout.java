@@ -175,7 +175,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     private boolean canPerformTwoLevelPullToRefresh() {
-        return (mMode == MODE_REFRESH || mMode == MODE_BOTH) && mTwoLevelRefreshView != null
+        return !isDisabledRefresh() && mTwoLevelRefreshView != null
                 && isEnableTwoLevelPullToRefresh() && canPerformRefresh() && isMovingHeader();
     }
 

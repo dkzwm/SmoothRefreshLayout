@@ -32,11 +32,11 @@ public interface IIndicator {
 
     float getResistanceOfPullDown();
 
-    void setResistanceOfPullDown(float resistance);
+    void setResistanceOfHeader(float resistance);
 
     float getResistanceOfPullUp();
 
-    void setResistanceOfPullUp(float resistance);
+    void setResistanceOfFooter(float resistance);
 
     void setResistance(float resistance);
 

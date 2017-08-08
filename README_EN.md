@@ -9,11 +9,10 @@ Thank him for providing such a great open source library ！
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
 ## Features
- 1.Support 5 modes: refresh,loadMore,overScroll,both(refresh & loadMore),none;    
- 2.Support nestedScroll;    
- 3.Support all views;    
- 4.Support Two-Level refresh;    
- 5.Support DrawerStyle;    
+ 1.Support nestedScroll;    
+ 2.Support all views;    
+ 3.Support Two-Level refresh;    
+ 4.Support DrawerStyle;    
  
 ## Snapshot
 * Test QQBrowserStyle , newly added!

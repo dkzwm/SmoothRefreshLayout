@@ -34,7 +34,6 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle(R.string.with_textView);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_textView_activity);
         mTextView = (TextView) findViewById(R.id.textView_with_textView_activity_desc);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mRefreshLayout.setHeaderView(new ClassicHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {

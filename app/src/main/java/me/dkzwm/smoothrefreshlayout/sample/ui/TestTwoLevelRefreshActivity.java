@@ -36,7 +36,6 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.test_two_level_refresh);
         mRefreshLayout = (TwoLevelSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_two_level_refresh_activity);
         mTextView = (TextView) findViewById(R.id.textView_test_two_level_refresh_activity_desc);
-        mRefreshLayout.setMode(SmoothRefreshLayout.MODE_REFRESH);
         mRefreshLayout.setHeaderView(new CustomTwoLevelHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
         //设置启用触发二级刷新
