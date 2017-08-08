@@ -266,10 +266,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             setEnablePullToRefresh(arr.getBoolean(R.styleable
                     .SmoothRefreshLayout_sr_enable_pull_to_refresh, false));
 
-            setDisableRefresh(arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enable_refresh,
-                    false));
-            setDisableLoadMore(arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enable_load_more, true));
+            setDisableRefresh(!arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enable_refresh,
+                    true));
+            setDisableLoadMore(!arr.getBoolean(R.styleable
+                    .SmoothRefreshLayout_sr_enable_load_more, false));
 
             mErrorLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_error_layout,
                     NO_ID);
