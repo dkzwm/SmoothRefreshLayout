@@ -1044,7 +1044,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param smooth Auto refresh use smooth scrolling
      */
     public void autoRefresh(boolean atOnce, boolean smooth) {
-        if (mStatus != SR_STATUS_INIT || mHeaderView == null) {
+        if (mStatus != SR_STATUS_INIT) {
             return;
         }
         if (!mTriggeredAutoLoadMore)
@@ -1104,7 +1104,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param smooth Auto load more use smooth scrolling
      */
     public void autoLoadMore(boolean atOnce, boolean smooth) {
-        if (mStatus != SR_STATUS_INIT || mFooterView == null) {
+        if (mStatus != SR_STATUS_INIT) {
             return;
         }
         if (!mTriggeredAutoRefresh)
@@ -2543,8 +2543,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore()
                 && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
             if ((mAutoLoadMoreCallBack == null && ScrollCompat.canAutoLoadMore(mTargetView))
-                    || (mAutoLoadMoreCallBack != null
-                    && mAutoLoadMoreCallBack.canAutoLoadMore(this, mTargetView))) {
+                    || (mAutoLoadMoreCallBack != null && mAutoLoadMoreCallBack
+                    .canAutoLoadMore(this, mTargetView))) {
                 mStatus = SR_STATUS_LOADING_MORE;
                 mDelayedRefreshComplete = false;
                 performRefresh();
@@ -2560,19 +2560,21 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final int count = getChildCount();
         if (mViewsZAxisNeedReset && count > 0) {
             mCachedViews.clear();
-            if (isEnabledHeaderDrawerStyle() && isEnabledFooterDrawerStyle()) {
+            final boolean isEnabledHeaderDrawer = isEnabledHeaderDrawerStyle();
+            final boolean isEnabledFooterDrawer = isEnabledFooterDrawerStyle();
+            if (isEnabledHeaderDrawer && isEnabledFooterDrawer) {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
                     if (view != mHeaderView && view != mFooterView)
                         mCachedViews.add(view);
                 }
-            } else if (isEnabledHeaderDrawerStyle()) {
+            } else if (isEnabledHeaderDrawer) {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
                     if (view != mHeaderView)
                         mCachedViews.add(view);
                 }
-            } else if (isEnabledFooterDrawerStyle()) {
+            } else if (isEnabledFooterDrawer) {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
                     if (view != mFooterView)
@@ -2641,11 +2643,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             if (!mTriggeredAutoRefresh) {
                 mTriggeredAutoRefresh = true;
+                if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0)
+                    return;
                 mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
                 mScrollChecker.tryToScrollTo(mIndicator.getOffsetToRefresh(),
                         mAutoRefreshUseSmoothScroll ? mDurationToCloseHeader : 0);
             } else if (!mTriggeredAutoLoadMore) {
                 mTriggeredAutoLoadMore = true;
+                if (mFooterView == null || mIndicator.getFooterHeight() <= 0)
+                    return;
                 mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
                 mScrollChecker.tryToScrollTo(mIndicator.getOffsetToLoadMore(),
                         mAutoRefreshUseSmoothScroll ? mDurationToCloseFooter : 0);

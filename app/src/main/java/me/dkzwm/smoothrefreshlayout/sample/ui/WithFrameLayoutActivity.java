@@ -14,6 +14,7 @@ import me.dkzwm.smoothrefreshlayout.RefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.extra.header.MaterialHeader;
 import me.dkzwm.smoothrefreshlayout.sample.R;
+import me.dkzwm.smoothrefreshlayout.sample.header.WaveTextRefreshView;
 import me.dkzwm.smoothrefreshlayout.utils.PixelUtl;
 
 /**
@@ -49,9 +50,8 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                 return true;
             }
         });
-        MaterialHeader header = new MaterialHeader(this);
-        header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
-        mRefreshLayout.setHeaderView(header);
+        WaveTextRefreshView refreshView=new WaveTextRefreshView(this);
+        mRefreshLayout.setHeaderView(refreshView);
         mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnabledInterceptEventWhileLoading(true);
