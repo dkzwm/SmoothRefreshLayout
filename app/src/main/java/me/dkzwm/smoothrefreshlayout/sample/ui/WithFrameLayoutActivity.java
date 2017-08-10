@@ -51,6 +51,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
             }
         });
         WaveTextRefreshView refreshView=new WaveTextRefreshView(this);
+        refreshView.setIncrementalY(.5f);
         mRefreshLayout.setHeaderView(refreshView);
         mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
@@ -66,7 +67,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                         String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
                     }
-                }, 2000);
+                }, 4000);
             }
         });
     }

@@ -42,6 +42,8 @@ public class WaveTextRefreshView extends View implements IRefreshView {
     private Path mMovingPath = new Path();
     private float mAmplitude;
     private float mWaveLength;
+    private float mIncrementalY = 1f;
+    private float mIncrementalX = 1f;
 
     public WaveTextRefreshView(Context context) {
         this(context, null);
@@ -65,6 +67,10 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         mWaveLength = PixelUtl.dp2px(context, 12);
         final int dip20 = PixelUtl.dp2px(context, 20);
         setPadding(0, dip20, 0, dip20);
+    }
+
+    public void setIncrementalY(float incrementalY) {
+        mIncrementalY = incrementalY;
     }
 
     public void setText(String text) {
@@ -145,11 +151,15 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         temp.reset();
         mTextPath.computeBounds(mTextRectF, true);
         mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop());
-        mOffsetX = mWaveLength;
+        mOffsetX = 0;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (mStatus == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
+            mOffsetX = 0;
+            mOffsetY = (mTextRect.height() + mAmplitude * 2 + getPaddingTop());
+        }
         mMovingPath.set(mWavePath);
         mMovingPath.offset(mOffsetX, mOffsetY);
         canvas.drawPath(mTextPath, mTextPaint);
@@ -157,16 +167,18 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         canvas.clipPath(mTextPath);
         canvas.drawPath(mMovingPath, mWavePaint);
         canvas.restore();
-        mOffsetX -= 2f;
-        if (mOffsetX < -mWaveLength)
+        mOffsetX -= mIncrementalX;
+        if (mOffsetX <= -mWaveLength)
             mOffsetX = 0f;
         if (mStatus == SmoothRefreshLayout.SR_STATUS_REFRESHING
                 || mStatus == SmoothRefreshLayout.SR_STATUS_LOADING_MORE) {
-            mOffsetY--;
+            mOffsetY -= mIncrementalY;
             if (mOffsetY <= getPaddingTop())
                 mOffsetY = (mTextRect.height() + mAmplitude * 2 + getPaddingTop());
             mProgress = 1 - mOffsetY / (mTextRect.height() + mAmplitude * 2);
         }
+        if (mStatus == SmoothRefreshLayout.SR_STATUS_COMPLETE)
+            return;
         invalidate();
     }
 
