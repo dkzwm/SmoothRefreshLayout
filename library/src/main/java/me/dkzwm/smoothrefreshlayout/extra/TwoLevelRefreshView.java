@@ -9,8 +9,7 @@ import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
  *
  * @author dkzwm
  */
-public interface TwoLevelRefreshView extends IRefreshView {
-
+public interface TwoLevelRefreshView extends IRefreshView<ITwoLevelIndicator> {
     void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, IIndicator indicator,
                                 ITwoLevelIndicator twoLevelIndicator);
 }

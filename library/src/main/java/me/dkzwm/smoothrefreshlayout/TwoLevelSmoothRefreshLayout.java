@@ -19,12 +19,12 @@ import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
  * @author dkzwm
  */
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
-    private static final byte FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH = 0x01;
-    private static final byte FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE = 0x01 << 1;
-    private int mTwoLevelFlag = 0x00;
     private TwoLevelRefreshView mTwoLevelRefreshView;
     private ITwoLevelIndicator mTwoLevelIndicator;
+    private boolean mEnabledTwoLevelRefresh = true;
     private boolean mOnTwoLevelRefreshing = false;
+    private int mDurationOfBackToTwoLevelHeaderHeight = 500;
+    private int mDurationToCloseTwoLevelHeader = 500;
 
     public TwoLevelSmoothRefreshLayout(Context context) {
         this(context, null);
@@ -40,10 +40,10 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         indicator.convert(indicator);
         mIndicator = indicator;
         mTwoLevelIndicator = indicator;
-        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout, 0, 0);
+        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TwoLevelSmoothRefreshLayout, 0, 0);
         if (arr != null) {
             setEnableTwoLevelPullToRefresh(arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enable_two_level_pull_to_refresh, false));
+                    .TwoLevelSmoothRefreshLayout_sr_enable_two_level_pull_to_refresh, true));
             arr.recycle();
         }
     }
@@ -56,28 +56,24 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mTwoLevelIndicator.setRatioOfHeaderHeightToTwoLevelRefresh(ratio);
     }
 
-    public boolean isEnableBackToStartPosAtOnce() {
-        return (mTwoLevelFlag & FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE) > 0;
-    }
-
-    public void setEnableBackToStartPosAtOnce(boolean enable) {
-        if (enable) {
-            mTwoLevelFlag = mTwoLevelFlag | FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE;
-        } else {
-            mTwoLevelFlag = mTwoLevelFlag & ~FLAG_ENABLE_BACK_TO_START_POS_AT_ONCE;
-        }
+    public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio) {
+        mTwoLevelIndicator.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(ratio);
     }
 
     public boolean isEnableTwoLevelPullToRefresh() {
-        return (mTwoLevelFlag & FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH) > 0;
+        return mEnabledTwoLevelRefresh;
     }
 
     public void setEnableTwoLevelPullToRefresh(boolean enable) {
-        if (enable) {
-            mTwoLevelFlag = mTwoLevelFlag | FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH;
-        } else {
-            mTwoLevelFlag = mTwoLevelFlag & ~FLAG_ENABLE_TWO_LEVEL_PULL_TO_REFRESH;
-        }
+        mEnabledTwoLevelRefresh = enable;
+    }
+
+    public void setDurationOfBackToKeepTwoLeveHeaderViewPosition(int duration) {
+        mDurationOfBackToTwoLevelHeaderHeight = duration;
+    }
+
+    public void setDurationToCloseTwoLevelHeader(int duration) {
+        mDurationToCloseTwoLevelHeader = duration;
     }
 
     public boolean isTwoLevelRefreshing() {
@@ -94,8 +90,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void updateYPos(int change) {
-        if (canPerformTwoLevelPullToRefresh()
-                && (mStatus == SR_STATUS_PREPARE
+        if (canPerformTwoLevelPullToRefresh() && (mStatus == SR_STATUS_PREPARE
                 || (mStatus == SR_STATUS_COMPLETE && mTwoLevelIndicator.crossTwoLevelCompletePos()
                 && isEnabledNextPtrAtOnce()))) {
             // reach fresh height while moving from top to bottom or reach load more height while
@@ -124,15 +119,14 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (canPerformTwoLevelPullToRefresh()) {
             tryToPerformRefresh();
         }
-        if (isEnableTwoLevelPullToRefresh() && mStatus == SR_STATUS_REFRESHING
+        if (isEnableTwoLevelPullToRefresh() && isMovingHeader() && isTwoLevelRefreshing()
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
-            final boolean atOnce = isEnableBackToStartPosAtOnce();
-            if (isEnabledKeepRefreshView() && !atOnce)
-                tryScrollBackToHeaderHeight();
-            else if (!atOnce)
-                tryScrollBackToTop(mDurationToCloseHeader);
+            if (isEnabledKeepRefreshView())
+                tryToScrollTo(mTwoLevelIndicator.getOffsetToKeepTwoLevelHeaderWhileLoading(),
+                        mDurationOfBackToTwoLevelHeaderHeight);
             else
-                tryScrollBackToTop(0);
+                tryToScrollTo(mTwoLevelIndicator.getOffsetToKeepTwoLevelHeaderWhileLoading(),
+                        mDurationToCloseTwoLevelHeader);
             return;
         }
         super.onRelease(duration);
@@ -143,7 +137,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (canPerformTwoLevelPullToRefresh() && mStatus == SR_STATUS_PREPARE
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             mStatus = SR_STATUS_REFRESHING;
+            mOnTwoLevelRefreshing = true;
             performRefresh();
+            return;
         }
         super.tryToPerformRefresh();
     }
@@ -151,7 +147,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void performRefresh() {
-        if (canPerformTwoLevelPullToRefresh() && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
+        if (canPerformTwoLevelPullToRefresh() && isTwoLevelRefreshing()
+                && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             mLoadingStartTime = SystemClock.uptimeMillis();
             mNeedNotifyRefreshComplete = true;
             if (mTwoLevelRefreshView != null) {
@@ -166,12 +163,17 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
 
     @Override
-    protected void notifyUIRefreshComplete() {
+    protected void notifyUIRefreshComplete(boolean scroll) {
         if (mOnTwoLevelRefreshing) {
+            mOnTwoLevelRefreshing = false;
             mTwoLevelIndicator.onTwoLevelRefreshComplete();
+            if (mTwoLevelIndicator.crossTwoLevelCompletePos()) {
+                super.notifyUIRefreshComplete(false);
+                tryScrollBackToTop(mDurationToCloseTwoLevelHeader);
+                return;
+            }
         }
-        mOnTwoLevelRefreshing = false;
-        super.notifyUIRefreshComplete();
+        super.notifyUIRefreshComplete(true);
     }
 
     private boolean canPerformTwoLevelPullToRefresh() {

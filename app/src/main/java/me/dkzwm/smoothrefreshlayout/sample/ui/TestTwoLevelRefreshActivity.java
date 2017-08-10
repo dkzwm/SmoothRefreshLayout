@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.TwoLevelRefreshingListenerAdapter;
 import me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout;
 import me.dkzwm.smoothrefreshlayout.sample.R;
@@ -38,25 +37,32 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mTextView = (TextView) findViewById(R.id.textView_test_two_level_refresh_activity_desc);
         mRefreshLayout.setHeaderView(new CustomTwoLevelHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
-        //设置启用触发二级刷新
-        mRefreshLayout.setEnableTwoLevelPullToRefresh(true);
-        //设置触发二级刷新后立即回到起始位置
-        mRefreshLayout.setEnableBackToStartPosAtOnce(true);
-        //设置保持头部的Offset（占头部的高度比例）
-        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(.35f);
+        //设置保持头部的Offset（占头部的高度比）
+        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(.12f);
         //设置触发刷新的头部高度比
-        mRefreshLayout.setRatioOfHeaderHeightToRefresh(.35f);
+        mRefreshLayout.setRatioOfHeaderHeightToRefresh(.12f);
+        //设置滚动到保持二级刷新的头部位置的时长
+        mRefreshLayout.setDurationOfBackToKeepTwoLeveHeaderViewPosition(1000);
+        //设置关闭二级刷新头部回滚到起始位置的时长
+        mRefreshLayout.setDurationToCloseTwoLevelHeader(350);
+        //设置刷新时保持头部的Offset(占头部的高度比)
+        mRefreshLayout.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(1f);
         //设置触发提示二级刷新的头部高度比
-        mRefreshLayout.setRatioOfHeaderHeightToHintTwoLevelRefresh(.45f);
+        mRefreshLayout.setRatioOfHeaderHeightToHintTwoLevelRefresh(.15f);
         //设置触发二级刷新的头部高度比
-        mRefreshLayout.setRatioOfHeaderHeightToTwoLevelRefresh(.65f);
+        mRefreshLayout.setRatioOfHeaderHeightToTwoLevelRefresh(.25f);
         mRefreshLayout.setOnRefreshListener(new TwoLevelRefreshingListenerAdapter() {
             @Override
             public void onTwoLevelRefreshBegin() {
                 mTwoLevelCount++;
-                mRefreshLayout.refreshComplete();
-                String times = getString(R.string.number_of_two_level_refresh) + mTwoLevelCount;
-                mTextView.setText(times);
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRefreshLayout.refreshComplete();
+                        String times = getString(R.string.number_of_two_level_refresh) + mTwoLevelCount;
+                        mTextView.setText(times);
+                    }
+                }, 1000);
             }
 
             @Override
@@ -69,7 +75,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                         mRefreshLayout.refreshComplete();
                         mTextView.setText(times);
                     }
-                }, 2000);
+                }, 1000);
             }
         });
     }

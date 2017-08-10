@@ -61,9 +61,6 @@
             <!-- Push object to the end of its container, not changing its size. -->
             <flag name="end" value="0x00800005"/>
         </attr>
-        //This attribute only can be used in TwoLevelSmoothRefreshLayout
-        <attr name="sr_enable_two_level_pull_to_refresh" format="boolean"/>
-
         //Added in 1.4.0 version
         <attr name="sr_enable_refresh" format="boolean"/>
         <attr name="sr_enable_load_more" format="boolean"/>
@@ -76,6 +73,10 @@
             <enum name="empty" value="2"/>
             <enum name="custom" value="3"/>
         </attr>
+    </declare-styleable>
+    <declare-styleable name="TwoLevelSmoothRefreshLayout">
+        //This attribute only can be used in TwoLevelSmoothRefreshLayout
+        <attr name="sr_enable_two_level_pull_to_refresh" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="IRefreshView">
         <attr name="sr_style" format="enum">

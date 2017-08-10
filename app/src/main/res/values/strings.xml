@@ -50,5 +50,6 @@
     <string name="test_base_recyclerView_adapter">Test BaseRecyclerViewAdapter</string>
     <string name="enabled_intercept_touch_while_loading">Enabled intercept touch event
         while loading</string>
+    <string name="welcome_to_secondary_menu">Welcome to secondary menu</string>
 
 </resources>

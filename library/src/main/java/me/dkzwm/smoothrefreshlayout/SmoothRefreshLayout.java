@@ -141,8 +141,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected View mCustomView;
     protected View mLoadMoreScrollTargetView;
     protected LayoutInflater mInflater;
-    protected ScrollChecker mScrollChecker;
-    protected OverScrollChecker mOverScrollChecker;
     protected int mContentResId = View.NO_ID;
     protected int mErrorLayoutResId = View.NO_ID;
     protected int mEmptyLayoutResId = View.NO_ID;
@@ -155,6 +153,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
+    private ScrollChecker mScrollChecker;
+    private OverScrollChecker mOverScrollChecker;
     private MotionEvent mLastMoveEvent;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
@@ -171,9 +171,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mNestedFling = false;
     private boolean mNeedScrollCompat = false;
     private float mOverScrollDistanceRatio = 0.8f;
-    private int mTouchSlop;
     private int mDurationOfBackToHeaderHeight = 200;
     private int mDurationOfBackToFooterHeight = 200;
+    private int mTouchSlop;
     private int mTotalRefreshingUnconsumed;
     private int mTotalRefreshingConsumed;
     private int mTotalLoadMoreUnconsumed;
@@ -3067,7 +3067,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 tryScrollBackToTopByPercentDuration(duration);
             }
         } else if (mStatus == SR_STATUS_COMPLETE) {
-            notifyUIRefreshComplete();
+            notifyUIRefreshComplete(true);
         } else {
             tryScrollBackToTopByPercentDuration(duration);
         }
@@ -3089,11 +3089,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    protected void tryScrollBackToHeaderHeight() {
-        mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
-                mDurationOfBackToHeaderHeight);
-    }
-
     protected void tryScrollBackToTop(int duration) {
         if (sDebug) {
             SRLog.d(TAG, "tryScrollBackToTop(): duration: %s", duration);
@@ -3112,7 +3107,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    protected void notifyUIRefreshComplete() {
+    protected void notifyUIRefreshComplete(boolean scroll) {
         if (sDebug) {
             SRLog.i(TAG, "notifyUIRefreshComplete()");
         }
@@ -3132,7 +3127,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mRefreshListener.onRefreshComplete(mIsLastRefreshSuccessful);
             }
         }
-        tryScrollBackToTopByPercentDuration(0);
+        if (scroll)
+            tryScrollBackToTopByPercentDuration(0);
         tryToNotifyReset();
     }
 
@@ -3338,6 +3334,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mIndicator.getMovingStatus() == IIndicator.MOVING_FOOTER || isLoadingMore();
     }
 
+    protected void tryToScrollTo(int to, int duration) {
+        mScrollChecker.tryToScrollTo(to, duration);
+    }
+
     /**
      * Check in over scrolling needs to scroll back to the start position
      *
@@ -3394,7 +3394,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         }
         mStatus = SR_STATUS_COMPLETE;
-        notifyUIRefreshComplete();
+        notifyUIRefreshComplete(true);
     }
 
     /**

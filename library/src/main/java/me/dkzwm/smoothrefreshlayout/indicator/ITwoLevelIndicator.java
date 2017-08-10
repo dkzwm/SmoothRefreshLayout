@@ -5,7 +5,7 @@ package me.dkzwm.smoothrefreshlayout.indicator;
  *
  * @author dkzwm
  */
-public interface ITwoLevelIndicator {
+public interface ITwoLevelIndicator extends IIndicator {
     boolean crossTwoLevelCompletePos();
 
     void onTwoLevelRefreshComplete();
@@ -13,6 +13,10 @@ public interface ITwoLevelIndicator {
     void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio);
 
     void setRatioOfHeaderHeightToTwoLevelRefresh(float ratio);
+
+    void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio);
+
+    int getOffsetToKeepTwoLevelHeaderWhileLoading();
 
     int getOffsetToTwoLevelRefresh();
 

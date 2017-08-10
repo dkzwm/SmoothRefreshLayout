@@ -10,6 +10,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     private int mOffsetToHintTwoLevelRefresh = 0;
     private int mOffsetToTwoLevelRefresh = 0;
     private int mTwoLevelRefreshCompleteY;
+    private float mOffsetRatioToKeepTwoLevelHeaderWhileLoading = 1;
     private float mRatioOfHeaderHeightToHintTwoLevelRefresh = 1.5f;
     private float mRatioOfHeaderHeightToTwoLevelRefresh = 2.0f;
 
@@ -38,6 +39,16 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
         }
         mRatioOfHeaderHeightToTwoLevelRefresh = ratio;
         mOffsetToTwoLevelRefresh = (int) (mHeaderHeight * ratio);
+    }
+
+    @Override
+    public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio) {
+        mOffsetRatioToKeepTwoLevelHeaderWhileLoading=ratio;
+    }
+
+    @Override
+    public int getOffsetToKeepTwoLevelHeaderWhileLoading() {
+        return (int) (mOffsetRatioToKeepTwoLevelHeaderWhileLoading * mHeaderHeight);
     }
 
     @Override

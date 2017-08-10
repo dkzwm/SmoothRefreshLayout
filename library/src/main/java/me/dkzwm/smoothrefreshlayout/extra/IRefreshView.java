@@ -15,7 +15,7 @@ import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
  *
  * @author dkzwm
  */
-public interface IRefreshView {
+public interface IRefreshView<T extends IIndicator> {
 
     byte TYPE_HEADER = 0;
     byte TYPE_FOOTER = 1;
@@ -105,7 +105,7 @@ public interface IRefreshView {
      *                  {@link SmoothRefreshLayout#SR_STATUS_COMPLETE}.
      * @param indicator The indicator {@link IIndicator}
      */
-    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
+    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
     @IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
     @Retention(RetentionPolicy.SOURCE)

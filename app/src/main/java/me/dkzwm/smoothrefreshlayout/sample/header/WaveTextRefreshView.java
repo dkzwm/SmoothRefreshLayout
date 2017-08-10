@@ -44,6 +44,7 @@ public class WaveTextRefreshView extends View implements IRefreshView {
     private float mWaveLength;
     private float mIncrementalY = 1f;
     private float mIncrementalX = 1f;
+    private float mTextSpacing = 5f;
 
     public WaveTextRefreshView(Context context) {
         this(context, null);
@@ -71,6 +72,14 @@ public class WaveTextRefreshView extends View implements IRefreshView {
 
     public void setIncrementalY(float incrementalY) {
         mIncrementalY = incrementalY;
+    }
+
+    public void setIncrementalX(float incrementalX) {
+        mIncrementalX = incrementalX;
+    }
+
+    public void setTextSpacing(float textSpacing) {
+        mTextSpacing = textSpacing;
     }
 
     public void setText(String text) {
@@ -120,7 +129,7 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         mTextPaint.getTextBounds(mText, 0, mText.length(), mTextRect);
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(mTextRect.height() + getPaddingTop() +
                 getPaddingBottom(), MeasureSpec.EXACTLY);
-        setMeasuredDimension(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -145,7 +154,7 @@ public class WaveTextRefreshView extends View implements IRefreshView {
             mTextPaint.getTextPath(str, 0, 1, 0, 0, temp);
             temp.offset(offsetX, -mTextRect.top);
             mTextPath.addPath(temp);
-            offsetX += mTextRect.height() / 5;
+            offsetX += mTextSpacing;
             offsetX += mTextPaint.measureText(str);
         }
         temp.reset();

@@ -47,4 +47,5 @@
     <string name="enable_loadMore">打开加载更多</string>
     <string name="test_base_recyclerView_adapter">测试使用BaseRecyclerViewAdapter</string>
     <string name="enabled_intercept_touch_while_loading">开启刷新过程中拦截消耗触摸事件</string>
+    <string name="welcome_to_secondary_menu">欢迎来到二级菜单</string>
 </resources>
