@@ -62,7 +62,7 @@ Thank him for providing such a great open source library ！
 - Test Nested-Scroll   
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
 
-## 使用   
+## How to use   
 #### Gradle
 ```
 repositories {  
@@ -124,14 +124,14 @@ public interface IRefreshView {
      */
     int getType();
 
-	/**
+    /**
      * Get the target view.
      *
      * @return The returned view must be the view that will be added to the Layout
      */
     View getView();
 
-	/**
+    /**
      * Get the view's style. If return {@link #STYLE_SCALE} SmoothRefreshLayout will dynamically
      * change the height, so the performance will be reduced.
      *
@@ -139,14 +139,14 @@ public interface IRefreshView {
      */
     int getStyle();
 
-	/**
+    /**
      * Get the custom height, If style is {@link #STYLE_SCALE} should return a custom height.
      *
      * @return Custom height
      */
     int getCustomHeight();
 
-	/**
+    /**
      * This method will be triggered when the touched finger is lifted.
      *
      * @param layout    The layout {@link SmoothRefreshLayout}
@@ -154,7 +154,7 @@ public interface IRefreshView {
      */
     void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
 
-	/**
+    /**
      * This method will be triggered when the refresh state is reset to
      * {@link SmoothRefreshLayout#SR_STATUS_INIT}.
      *
@@ -162,14 +162,14 @@ public interface IRefreshView {
      */
     void onReset(SmoothRefreshLayout layout);
 
-	/**
+    /**
      * This method will be triggered when the frame is ready to refreshing.
      *
      * @param layout The layout {@link SmoothRefreshLayout}
      */
     void onRefreshPrepare(SmoothRefreshLayout layout);
 
-	/**
+    /**
      * This method will be triggered when the frame begin to refresh.
      *
      * @param layout    The layout {@link SmoothRefreshLayout}
@@ -177,7 +177,7 @@ public interface IRefreshView {
      */
     void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
 
-	/**
+    /**
      * This method will be triggered when the frame is refresh completed.
      *
      * @param layout       The layout {@link SmoothRefreshLayout}
@@ -185,7 +185,7 @@ public interface IRefreshView {
      */
     void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful);
 
-	/**
+    /**
      * This method will be triggered when the position of the refresh view changes.
      *
      * @param layout    The layout {@link SmoothRefreshLayout}
