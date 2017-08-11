@@ -114,7 +114,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
         final int currentPos = indicator.getCurrentPosY();
         if (layout instanceof TwoLevelSmoothRefreshLayout) {
             TwoLevelSmoothRefreshLayout refreshLayout = (TwoLevelSmoothRefreshLayout) layout;
-            if (refreshLayout.isEnableTwoLevelPullToRefresh()) {
+            if (refreshLayout.isEnabledTwoLevelPullToRefresh()) {
                 final int offSetToHintTwoLevelRefresh = indicator.getOffsetToHintTwoLevelRefresh();
                 final int offSetToTwoLevelRefresh = indicator.getOffsetToTwoLevelRefresh();
                 if (currentPos < offSetToTwoLevelRefresh && currentPos >= offSetToHintTwoLevelRefresh
@@ -155,8 +155,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     }
 
     @Override
-    public void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, IIndicator indicator,
-                                       ITwoLevelIndicator twoLevelIndicator) {
+    public void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, ITwoLevelIndicator twoLevelIndicator) {
         mTextViewTitle.setText(R.string.welcome_to_secondary_menu);
     }
 

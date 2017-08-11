@@ -60,7 +60,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mTwoLevelIndicator.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(ratio);
     }
 
-    public boolean isEnableTwoLevelPullToRefresh() {
+    public boolean isEnabledTwoLevelPullToRefresh() {
         return mEnabledTwoLevelRefresh;
     }
 
@@ -119,7 +119,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (canPerformTwoLevelPullToRefresh()) {
             tryToPerformRefresh();
         }
-        if (isEnableTwoLevelPullToRefresh() && isMovingHeader() && isTwoLevelRefreshing()
+        if (isEnabledTwoLevelPullToRefresh() && isMovingHeader() && isTwoLevelRefreshing()
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             if (isEnabledKeepRefreshView())
                 tryToScrollTo(mTwoLevelIndicator.getOffsetToKeepTwoLevelHeaderWhileLoading(),
@@ -152,7 +152,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mLoadingStartTime = SystemClock.uptimeMillis();
             mNeedNotifyRefreshComplete = true;
             if (mTwoLevelRefreshView != null) {
-                mTwoLevelRefreshView.onTwoLevelRefreshBegin(this, mIndicator, mTwoLevelIndicator);
+                mTwoLevelRefreshView.onTwoLevelRefreshBegin(this, mTwoLevelIndicator);
             }
             if (mRefreshListener != null && mRefreshListener instanceof OnRefreshListener)
                 ((OnRefreshListener) mRefreshListener).onTwoLevelRefreshBegin();
@@ -178,7 +178,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     private boolean canPerformTwoLevelPullToRefresh() {
         return !isDisabledRefresh() && mTwoLevelRefreshView != null
-                && isEnableTwoLevelPullToRefresh() && canPerformRefresh() && isMovingHeader();
+                && isEnabledTwoLevelPullToRefresh() && canPerformRefresh() && isMovingHeader();
     }
 
 

@@ -48,4 +48,6 @@
     <string name="test_base_recyclerView_adapter">测试使用BaseRecyclerViewAdapter</string>
     <string name="enabled_intercept_touch_while_loading">开启刷新过程中拦截消耗触摸事件</string>
     <string name="welcome_to_secondary_menu">欢迎来到二级菜单</string>
+    <string name="disable_two_level_refresh">关闭二级刷新</string>
+    <string name="enable_two_level_refresh">开启二级刷新</string>
 </resources>

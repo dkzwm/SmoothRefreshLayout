@@ -1,237 +1,215 @@
 # SmoothRefreshLayout
 ## English | [中文](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README.md)
 
-A highly efficient refresh library for Android.In theory,Can support all Views.It's easy to use and more powerful than SwipeRefreshLayout.    
+A highly efficient refresh library for Android.Can support all Views.It's easy to use and more powerful than SwipeRefreshLayout.    
 Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
 Thank him for providing such a great open source library ！
 
-## Demo
-Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
+## Features:
+ - Can support all Views, according to the specific needs to adaptation.
+ - Support Nested-Scroll feature, implemented the NestedScrollingChild, NestedScrollingParent interface.
+ - Extends the ViewGroup,has excellent performance,support similar FameLayout featrue（Gravity、Margin).
+ - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）.
+ - Support Cross boundary rebound(OverScroll).
+ - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
+ - Support Refresh view has two styles:STYLE_DEFAULT(Do not change the height by default)、STYLE_SCALE(Dynamically change the height)
+ - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）,PS:TaoBao-Senond-Floor、JD-Activity.
+ - Support ListView,GridView,RecyclerView on LoadMore to smooth scrolling.
+ - Support Margin,PS:No margin effect in scrolling？SmoothRefreshLayout no such problem.
+ - Support Multi-State:STATE_CONTENT(Default state)、STATE_ERROR(Error state),STATE_EMPTY(Empty state),STATE_CUSTOM(Custom state).
+ - Many callback interface and debugging information.
 
-## Features
- 1.Support nestedScroll;    
- 2.Support all views;    
- 3.Support Two-Level refresh;    
- 4.Support DrawerStyle;    
- 
-## Snapshot
-* Test QQBrowserStyle , newly added!
-	<div class='row'>
-		<img src='snapshot/test_qq_web_browser_style.gif' width="300px"/>
-	</div>
-* Test drawerStyle , newly added!
-	<div class='row'>
-		<img src='snapshot/test_qq_style.gif' width="300px"/>
-	</div>
-* Test two-level refresh , newly added !     
-	<div class='row'>
-		<img src='snapshot/test_two_level_refresh.gif' width="300px"/>
-	</div>
-* With frameLayout    
-	<div class='row'>
-		<img src='snapshot/with_frameLayout.gif' width="300px"/>
-	</div>
-* With textView     
-	<div class='row'>
-    	<img src='snapshot/with_textView.gif' width="300px"/>
-	</div>
-* With listView    
-	<div class='row'>
-    	<img src='snapshot/with_listView.gif' width="300px"/>
-	</div>
-* With gridView    
-	<div class='row'>
-		<img src='snapshot/with_gridView.gif' width="300px"/>
-	</div>
-* With recyclerView    
-	<div class='row'> 
-		<img src='snapshot/with_recyclerView.gif' width="300px"/>
-	</div>
-* With viewPager    
-	<div class='row'> 
-	   	<img src='snapshot/with_viewPager.gif' width="300px"/>
-	</div>
-* With webView    
-	<div class='row'> 
-    	<img src='snapshot/with_webView.gif' width="300px"/>
-	</div>
-* With recyclerView in coordinatorLayout
-	<div class='row'> 
-    	<img src='snapshot/with_recyclerView_in_coordinatorLayout.gif' width="300px"/>
-	</div>
-* OverScroll  
-	<div class='row'> 
-    	<img src='snapshot/test_overScroll.gif' width="300px"/>
-	</div>
-* Test nestedScroll   
-	<div class='row'> 
-	   	<img src='snapshot/test_nested_scroll.gif' width="300px"/>
-	</div>
-## How to use    
+## Demo
+下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
+
+## Snapshots
+- Test QQ-WebBrowser style    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
+
+- Test QQ-Activity style    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_style.gif)
+
+- Test Two-Level refresh    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
+
+- Width FrameLayout    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_frameLayout.gif)
+
+- With TextView     
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_textView.gif)
+
+- With ListView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
+
+- With GridView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_gridView.gif)
+
+- With RecyclerView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView.gif)
+
+- With ViewPager    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
+
+- With WebView    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_webView.gif)
+
+- With CoordinatorLayout    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
+
+- Test Cross boundary rebound(OverScroll)     
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_overScroll.gif)
+
+- Test Nested-Scroll   
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
+
+## 使用   
 #### Gradle
-````
+```
 repositories {  
     ...
     maven { url 'https://jitpack.io' }  
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.3.5.1'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.0'
 }
-````
-#### Config
-The attr:    
-Use `app:sr_content` to specifies the resource ID of the content view.    
-
-Use `app:sr_resistance` to set the resistence while you are moving(pull up or pull down),default is `1.65f`.   
- 
-Use `app:sr_resistance_of_pull_up` to set the resistence while you are moving footer,default is `1.65f`.    
-
-Use `app:sr_resistance_of_pull_down` to set the resistence while you are moving header,default is `1.65f`.    
-
-Use `app:sr_ratio_of_refresh_height_to_refresh` to set the ratio of the height to trigger refresh, default is: `1.1f`.   
- 
-Use `app:sr_ratio_of_header_height_to_refresh` to set the ratio of the height of the header to trigger refresh, default is: `1.1f`.    
-
-Use `app:sr_ratio_of_footer_height_to_refresh` to set the ratio of the height of the footer to trigger refresh, default is: `1.1f`.    
-
-Use `app:sr_can_move_the_max_ratio_of_refresh_height` to set the max ratio of height of the refresh view when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
-
-Use `app:sr_can_move_the_max_ratio_of_header_height` to set the max ratio of height of the header when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
-
-Use `app:sr_can_move_the_max_ratio_of_footer_height` to set the max ratio of height of the footer when the finger moves, default is: `0f`,indicates that the condition will never be triggered.    
-
-Use `app:sr_duration_to_close_of_refresh` to set the duration of refresh view to return back to the start position, default is `500`.    
-
-Use `app:sr_duration_to_close_of_header` to set the duration of header to return back to the start position, default is `500`.    
-
-Use `app:sr_duration_to_close_of_footer` to set the duration of footer to return back to the start position, default is `500`.    
-
-Use `app:sr_duration_of_back_to_refresh_height` to set the duration of the refresh view to return back to the trigger the refresh position, default is `200`.    
-
-Use `app:sr_duration_of_back_to_header_height` to set the duration of the header to return back to the trigger the refresh position, default is `200`.    
- 
-Use `app:sr_duration_of_back_to_footer_height` to set the duration of the footer to return back to the trigger the refresh position,
- default is `200`.    
- 
-Use `app:sr_enable_pin_content` to set enable pinned the content, default is `false`.    
-
-Use `app:sr_enable_pull_to_refresh` to set enable pull to refresh, default is `false`.    
-
-Use `app:sr_enable_keep_refresh_view` to set enable keep the refresh view, default is `true`.   
-
-Use `app:sr_enable_over_scroll` to set enable over scroll feature, default is `true`.   
-
-Use `app:sr_layout_gravity` to set the gravity of the other views in the viewgroup.    
-
-Use `app:sr_mode` to set the mode, default is `none`.   
-
-* Config in xml
-````
+```
+#### Use Xml to config
+```
+<?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_with_textView_activity"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:sr_can_move_the_max_ratio_of_footer_height="2"
-    app:sr_can_move_the_max_ratio_of_header_height="2"
-    app:sr_can_move_the_max_ratio_of_refresh_height="2"
-    app:sr_content="@+id/textView_with_textView_activity_desc"
-    app:sr_duration_of_back_to_footer_height="300"
-    app:sr_duration_of_back_to_header_height="300"
-    app:sr_duration_of_back_to_refresh_height="300"
-    app:sr_duration_to_close_of_footer="1000"
-    app:sr_duration_to_close_of_header="1000"
-    app:sr_duration_to_close_of_refresh="1000"
-    app:sr_enable_keep_refresh_view="true"
-    app:sr_enable_over_scroll="true"
-    app:sr_enable_pin_content="false"
-    app:sr_enable_pull_to_refresh="false"
-    app:sr_mode="both"
-    app:sr_ratio_of_footer_height_to_refresh="1.5"
-    app:sr_ratio_of_header_height_to_refresh="1.5"
-    app:sr_ratio_of_refresh_height_to_refresh="1.5"
-    app:sr_resistance="1.7"
-    app:sr_resistance_of_pull_down="1.7"
-    app:sr_resistance_of_pull_up="1.7">
-
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/smoothRefreshLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
 	<TextView
-        android:id="@+id/textView_with_textView_activity_desc"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher_round"
-        app:sr_layout_gravity="center"/>
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
-````
-* Config in code
-````
-mRefreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);    
-mRefreshLayout.setEnableOverScroll(true);    
-mRefreshLayout.setEnablePinContentView(false);    
-mRefreshLayout.setEnablePullToRefresh(false);    
-mRefreshLayout.setEnableKeepRefreshView(true);    
-mRefreshLayout.setDurationOfBackToHeaderHeight(300);    
-mRefreshLayout.setDurationOfBackToFooterHeight(300);    
-mRefreshLayout.setDurationToClose(1000);    
-mRefreshLayout.setDurationToCloseHeader(1000);    
-mRefreshLayout.setDurationToCloseFooter(1000);    
-mRefreshLayout.setCanMoveTheMaxRatioOfRefreshHeight(2);    
-mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(2);    
-mRefreshLayout.setCanMoveTheMaxRatioOfFooterHeight(2);    
-mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1.5f);    
-mRefreshLayout.setRatioOfHeaderHeightToRefresh(1.5f);    
-mRefreshLayout.setRatioOfFooterHeightToRefresh(1.5f);    
-mRefreshLayout.setResistance(1.7f);    
-mRefreshLayout.setResistanceOfPullUp(1.7f);    
-mRefreshLayout.setResistanceOfPullDown(1.7f);    
-````
-* Other config:    
-`setEnablePinRefreshViewWhileLoading(boolean enable)` this method can only be enabled if setEnablePinContentView and setEnableKeepRefreshView are set be true, materialStyle need set this.    
-`setFooterView(IRefreshView footer)` set the footer.    
-`setHeaderView(IRefreshView header)` set the header.   
-`setContentView(View content)` set the content.
-`setLoadMoreScrollTargetView(View view)` set loadMore scroll target view, for example the content view is a FrameLayout, with a 
-listView in it. You can call this method, set the listView as load more scroll target view. Load more compat will try to make it 
-smooth scrolling.     
-* Set refresh listener
-````
-mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-       @Override
-       public void onRefreshBegin(final boolean isRefresh) {
-            //to do something.
-       }
+```
+
+####  Use Java code to config
+```
+SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoothRefreshLayout);
+refreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
+refreshLayout.setHeaderView(new ClassicHeader(this));
+refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
+	@Override
+	public void onRefreshBegin(boolean isRefresh) {
+		mHandler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				refreshLayout.refreshComplete();
+			}
+		}, 4000);
+	}
 });
-Or
-mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
-        @Override
-        public void onRefreshBegin(final boolean isRefresh) {
-            //to do something.
-        }
-        @Override
-        public void onRefreshComplete() {
-            //to do something.
-        }
-});
-````
-* Callbacks
-````
-public interface OnChildScrollUpCallback {
-        boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child,
-                                 @Nullable IRefreshView header);
+```
+
+#### Custom refresh view
+##### Interface define
+```
+public interface IRefreshView {    
+
+    byte TYPE_HEADER = 0;
+    byte TYPE_FOOTER = 1;
+
+    byte STYLE_DEFAULT = 0;
+    byte STYLE_SCALE = 1;
+
+    /**
+     * Get the view's type.
+	 * @return type {@link #TYPE_HEADER}, {@link #TYPE_FOOTER}.
+     */
+    int getType();
+
+	/**
+     * Get the target view.
+     *
+     * @return The returned view must be the view that will be added to the Layout
+     */
+    View getView();
+
+	/**
+     * Get the view's style. If return {@link #STYLE_SCALE} SmoothRefreshLayout will dynamically
+     * change the height, so the performance will be reduced.
+     *
+     * @return style {@link #STYLE_DEFAULT}, {@link #STYLE_SCALE}.
+     */
+    int getStyle();
+
+	/**
+     * Get the custom height, If style is {@link #STYLE_SCALE} should return a custom height.
+     *
+     * @return Custom height
+     */
+    int getCustomHeight();
+
+	/**
+     * This method will be triggered when the touched finger is lifted.
+     *
+     * @param layout    The layout {@link SmoothRefreshLayout}
+     * @param indicator The indicator {@link IIndicator}
+     */
+    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
+
+	/**
+     * This method will be triggered when the refresh state is reset to
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT}.
+     *
+     * @param layout The layout {@link SmoothRefreshLayout}
+     */
+    void onReset(SmoothRefreshLayout layout);
+
+	/**
+     * This method will be triggered when the frame is ready to refreshing.
+     *
+     * @param layout The layout {@link SmoothRefreshLayout}
+     */
+    void onRefreshPrepare(SmoothRefreshLayout layout);
+
+	/**
+     * This method will be triggered when the frame begin to refresh.
+     *
+     * @param layout    The layout {@link SmoothRefreshLayout}
+     * @param indicator The indicator {@link IIndicator}
+     */
+    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
+
+	/**
+     * This method will be triggered when the frame is refresh completed.
+     *
+     * @param layout       The layout {@link SmoothRefreshLayout}
+     * @param isSuccessful The layout refresh state
+     */
+    void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful);
+
+	/**
+     * This method will be triggered when the position of the refresh view changes.
+     *
+     * @param layout    The layout {@link SmoothRefreshLayout}
+     * @param status    Current status @see{@link SmoothRefreshLayout#SR_STATUS_INIT},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_PREPARE},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_REFRESHING},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_LOADING_MORE},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_COMPLETE}.
+     * @param indicator The indicator {@link IIndicator}
+     */
+    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
+
 }
-public interface OnChildScrollDownCallback {
-        boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child,
-                                   @Nullable IRefreshView footer);
-}
-public interface OnLoadMoreScrollCallback {
-        boolean onScroll(View content, float deltaY);
-}
-````
+```
+
+##### Add custom refresh view
+- Use Java code to config
+```    
+    setHeaderView(@NonNull IRefreshView header);
+    setFooterView(@NonNull IRefreshView footer);
+```    
+
+- Please write directly to the xml file,SmoothRefreshLayout will find the view that impl the IRefreshView interface to added inside.
+ 
 ## Thanks
 - [liaohuqiu android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)    
 - [pnikosis material-progress](https://github.com/pnikosis/materialish-progress)      

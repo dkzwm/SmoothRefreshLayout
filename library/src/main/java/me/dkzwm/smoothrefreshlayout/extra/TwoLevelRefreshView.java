@@ -1,7 +1,6 @@
 package me.dkzwm.smoothrefreshlayout.extra;
 
 import me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout;
-import me.dkzwm.smoothrefreshlayout.indicator.IIndicator;
 import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
 
 /**
@@ -10,6 +9,5 @@ import me.dkzwm.smoothrefreshlayout.indicator.ITwoLevelIndicator;
  * @author dkzwm
  */
 public interface TwoLevelRefreshView extends IRefreshView<ITwoLevelIndicator> {
-    void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, IIndicator indicator,
-                                ITwoLevelIndicator twoLevelIndicator);
+    void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, ITwoLevelIndicator twoLevelIndicator);
 }

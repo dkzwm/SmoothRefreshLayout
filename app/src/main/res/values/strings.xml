@@ -51,5 +51,7 @@
     <string name="enabled_intercept_touch_while_loading">Enabled intercept touch event
         while loading</string>
     <string name="welcome_to_secondary_menu">Welcome to secondary menu</string>
+    <string name="disable_two_level_refresh">Disable Two-Level refresh</string>
+    <string name="enable_two_level_refresh">Enable Two-Level refresh</string>
 
 </resources>

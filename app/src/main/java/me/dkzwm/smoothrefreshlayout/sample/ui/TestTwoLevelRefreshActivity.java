@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -54,6 +55,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setOnRefreshListener(new TwoLevelRefreshingListenerAdapter() {
             @Override
             public void onTwoLevelRefreshBegin() {
+                mRefreshLayout.setEnabledInterceptEventWhileLoading(true);
                 mTwoLevelCount++;
                 mHandler.postDelayed(new Runnable() {
                     @Override
@@ -77,6 +79,11 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                     }
                 }, 1000);
             }
+
+            @Override
+            public void onRefreshComplete(boolean isSuccessful) {
+                mRefreshLayout.setEnabledInterceptEventWhileLoading(false);
+            }
         });
     }
 
@@ -87,10 +94,25 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
+            case Menu.FIRST:
+                if (mRefreshLayout.isEnabledTwoLevelPullToRefresh()) {
+                    item.setTitle(R.string.enable_two_level_refresh);
+                    mRefreshLayout.setEnableTwoLevelPullToRefresh(false);
+                } else {
+                    item.setTitle(R.string.disable_two_level_refresh);
+                    mRefreshLayout.setEnableTwoLevelPullToRefresh(true);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.disable_two_level_refresh);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
