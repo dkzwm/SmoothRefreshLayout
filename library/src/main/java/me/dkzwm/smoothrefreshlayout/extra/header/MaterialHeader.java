@@ -156,22 +156,22 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
+        resetLayoutHeaderCloseDuration(layout);
         resetDrawable();
-        if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)
-                && mCachedDuration > 0) {
-            layout.setDurationToCloseHeader(mCachedDuration);
-        }
-        mCachedDuration = -1;
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
+        resetLayoutHeaderCloseDuration(layout);
         resetDrawable();
         cancelAnimator();
     }
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
+        int duration = layout.getDurationToCloseHeader();
+        if (duration > 0)
+            mCachedDuration = duration;
         mDrawable.setAlpha(255);
         mDrawable.start();
     }
@@ -180,14 +180,14 @@ public class MaterialHeader extends View implements IRefreshView {
     public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
         if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)) {
             int duration = layout.getDurationToCloseHeader();
-            if (duration > 0)
+            if (duration > 0 && mCachedDuration <= 0)
                 mCachedDuration = duration;
             layout.setDurationToCloseHeader(0);
-            return;
+        } else {
+            long duration = layout.getDurationToCloseHeader();
+            mAnimator.setDuration(duration);
+            mAnimator.start();
         }
-        long duration = layout.getDurationToCloseHeader();
-        mAnimator.setDuration(duration);
-        mAnimator.start();
     }
 
     @Override
@@ -210,6 +210,14 @@ public class MaterialHeader extends View implements IRefreshView {
         mDrawable.setAlpha(255);
         mDrawable.stop();
         mScale = 1;
+    }
+
+    private void resetLayoutHeaderCloseDuration(SmoothRefreshLayout layout) {
+        if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)
+                && mCachedDuration > 0) {
+            layout.setDurationToCloseHeader(mCachedDuration);
+        }
+        mCachedDuration = -1;
     }
 
     private void cancelAnimator() {

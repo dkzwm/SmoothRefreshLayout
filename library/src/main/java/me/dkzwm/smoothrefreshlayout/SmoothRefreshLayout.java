@@ -2380,11 +2380,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mNestedScrollInProgress) {
             mIndicator.onFingerUp();
         }
-        if (mIndicator.hasLeftStartPosition()) {
-            onFingerUp(false);
-        } else {
-            notifyFingerUp();
-        }
         mGestureDetector.onDetached();
         mNestedScrollInProgress = false;
         mNestedFling = false;
@@ -2394,6 +2389,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mTotalLoadMoreConsumed = 0;
         // Dispatch up our nested parent
         stopNestedScroll();
+        if (isAutoRefresh() && mScrollChecker.mIsRunning)
+            return;
+        if (mIndicator.hasLeftStartPosition()) {
+            onFingerUp(false);
+        } else {
+            notifyFingerUp();
+        }
     }
 
     @Override
@@ -2959,6 +2961,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean needInterceptTouchEvent() {
         return (isEnabledInterceptEventWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
+                || (isAutoRefresh() && mScrollChecker.mIsRunning)
                 || (mOverScrollChecker.mScrolling
                 && (((isMovingHeader() && isDisabledRefresh()))
                 || (isMovingFooter() && isDisabledLoadMore())));
@@ -3280,16 +3283,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         invalidate();
         mNeedScrollCompat = false;
+        boolean needRequestLayout = false;
         //check if the margin is zero, we need relayout to change the content height
         if (isMovingHeader()) {
-            if (lp.bottomMargin != 0 || (mHeaderView != null
-                    && mHeaderView.getStyle() == IRefreshView.STYLE_SCALE)) {
+            if (lp.bottomMargin != 0) {
                 mNeedScrollCompat = true;
+            } else if ((mHeaderView != null && mHeaderView.getStyle() == IRefreshView.STYLE_SCALE)) {
+                needRequestLayout = true;
             }
         } else if (isMovingFooter()) {
-            if (lp.topMargin != 0 || (mFooterView != null
-                    && mFooterView.getStyle() == IRefreshView.STYLE_SCALE)) {
+            if (lp.topMargin != 0) {
                 mNeedScrollCompat = true;
+            } else if ((mFooterView != null && mFooterView.getStyle() == IRefreshView.STYLE_SCALE)) {
+                needRequestLayout = true;
             }
         }
         //check need perform load more
@@ -3301,7 +3307,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mDelayedRefreshComplete = false;
             performRefresh();
         }
-        if (mNeedScrollCompat || (!mOverScrollChecker.mScrolling && mIndicator.isInStartPosition())) {
+        if (mNeedScrollCompat || needRequestLayout
+                || (!mOverScrollChecker.mScrolling && mIndicator.isInStartPosition())) {
             if (sDebug) {
                 SRLog.d(TAG, "movePos(): need relayout");
             }
