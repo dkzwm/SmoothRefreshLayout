@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 
 /**
  * Created by dkzwm on 2017/6/1.

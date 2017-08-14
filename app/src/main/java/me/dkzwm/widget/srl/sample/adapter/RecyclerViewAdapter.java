@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.holder.RecyclerViewHolder;
 
 /**

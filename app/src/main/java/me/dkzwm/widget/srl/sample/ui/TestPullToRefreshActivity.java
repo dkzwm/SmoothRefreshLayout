@@ -11,7 +11,7 @@ import android.widget.TextView;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**

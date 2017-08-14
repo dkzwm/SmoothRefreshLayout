@@ -13,7 +13,7 @@ import me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 
 /**
  * Created by dkzwm on 2017/6/12.

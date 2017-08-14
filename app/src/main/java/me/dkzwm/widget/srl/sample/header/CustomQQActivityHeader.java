@@ -13,7 +13,7 @@ import android.widget.TextView;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 
 /**
  * Created by dkzwm on 2017/6/21.

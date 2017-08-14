@@ -14,7 +14,7 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ViewPagerAdapter;
 import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageFragment;
 

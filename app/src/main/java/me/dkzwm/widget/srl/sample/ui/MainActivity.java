@@ -15,8 +15,8 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.WaveSmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
-import me.dkzwm.widget.sample.BuildConfig;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.BuildConfig;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.utils.SRLog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {

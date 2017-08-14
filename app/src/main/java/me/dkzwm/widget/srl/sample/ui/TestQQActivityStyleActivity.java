@@ -20,7 +20,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
 import me.dkzwm.widget.srl.indicator.IIndicator;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.header.CustomQQActivityHeader;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;

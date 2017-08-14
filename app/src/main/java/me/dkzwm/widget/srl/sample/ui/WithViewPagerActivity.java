@@ -16,7 +16,7 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ViewPagerAdapter;
 import me.dkzwm.widget.srl.sample.ui.fragment.PageFragment;
 import me.dkzwm.widget.srl.utils.PixelUtl;

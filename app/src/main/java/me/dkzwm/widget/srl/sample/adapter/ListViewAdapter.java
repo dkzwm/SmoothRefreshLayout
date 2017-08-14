@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.holder.ListViewHolder;
 
 /**
@@ -55,13 +55,13 @@ public class ListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ListViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_list_view_item, parent,false);
+            convertView = mInflater.inflate(R.layout.layout_list_view_item, parent, false);
             holder = new ListViewHolder(convertView);
             convertView.setTag(holder);
         } else {
             holder = (ListViewHolder) convertView.getTag();
         }
-        holder.setData(mList.get(position),position);
+        holder.setData(mList.get(position), position);
         return convertView;
     }
 

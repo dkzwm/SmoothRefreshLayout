@@ -15,7 +15,7 @@ import java.util.List;
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.extra.IRefreshView;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 

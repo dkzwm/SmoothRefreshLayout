@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.webkit.WebView;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.header.CustomQQWebHeader;
 
 /**

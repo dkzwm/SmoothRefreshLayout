@@ -12,7 +12,7 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ListViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 

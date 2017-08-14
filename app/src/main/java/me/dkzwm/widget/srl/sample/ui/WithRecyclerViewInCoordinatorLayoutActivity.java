@@ -13,7 +13,7 @@ import android.view.View;
 import java.util.List;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 

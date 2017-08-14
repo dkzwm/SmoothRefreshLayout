@@ -3,7 +3,8 @@ package me.dkzwm.widget.srl.sample.adapter;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
+
 
 /**
  * Created by dkzwm on 2017/8/8.

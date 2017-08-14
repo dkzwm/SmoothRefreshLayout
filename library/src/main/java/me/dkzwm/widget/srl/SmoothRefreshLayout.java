@@ -672,10 +672,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         super.onFinishInflate();
         if (mState != STATE_CONTENT) {
             getView(mState);
+            ensureContent();
+            if (mContentView != null)
+                mContentView.setVisibility(GONE);
         }
-        ensureContent();
-        if (mState != STATE_CONTENT && mContentView != null)
-            mContentView.setVisibility(GONE);
     }
 
     @Override

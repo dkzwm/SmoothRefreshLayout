@@ -13,8 +13,8 @@ import android.widget.TextView;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.header.StoreHouseHeader;
-import me.dkzwm.widget.sample.R;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**

@@ -19,7 +19,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ListViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 

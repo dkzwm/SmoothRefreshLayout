@@ -12,7 +12,7 @@ import android.widget.TextView;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 
 /**
  * Created by dkzwm on 2017/6/1.

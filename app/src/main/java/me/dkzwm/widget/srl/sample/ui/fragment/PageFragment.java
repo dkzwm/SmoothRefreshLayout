@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
+
 
 /**
  * Created by dkzwm on 2017/6/2.

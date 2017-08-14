@@ -19,7 +19,7 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.LoadMoreRecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
@@ -78,7 +78,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                     }
                 }, 2000);
             }
-        },mRecyclerView);
+        }, mRecyclerView);
         mRefreshLayout.setOnChildScrollUpCallback(new SmoothRefreshLayout.OnChildScrollUpCallback() {
             @Override
             public boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {

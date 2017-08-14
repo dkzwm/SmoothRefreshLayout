@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import me.dkzwm.widget.srl.TwoLevelRefreshingListenerAdapter;
 import me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout;
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.header.CustomTwoLevelHeader;
 
 /**

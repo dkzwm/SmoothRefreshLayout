@@ -11,10 +11,10 @@ import android.view.View;
 
 import java.util.ArrayList;
 
-import me.dkzwm.widget.sample.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
+import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.animation.StoreHouseBarItemAnimation;
 import me.dkzwm.widget.srl.sample.utils.StoreHousePath;
 import me.dkzwm.widget.srl.utils.PixelUtl;

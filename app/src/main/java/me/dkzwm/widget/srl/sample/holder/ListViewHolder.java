@@ -4,7 +4,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import me.dkzwm.widget.sample.R;
+import me.dkzwm.widget.srl.sample.R;
+
 
 /**
  * Created by dkzwm on 2017/6/1.
