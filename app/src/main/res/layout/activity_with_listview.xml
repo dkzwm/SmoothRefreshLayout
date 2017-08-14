@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+<me.dkzwm.widget.srl.SmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_with_listView_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,7 +14,7 @@
     app:sr_error_layout="@layout/layout_error_view"
     app:sr_state="empty">
 
-    <me.dkzwm.smoothrefreshlayout.extra.header.ClassicHeader
+    <me.dkzwm.widget.srl.extra.header.ClassicHeader
         android:id="@+id/classicHeader_with_listView_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:background="@android:color/white"
         android:overScrollMode="never"/>
 
-    <me.dkzwm.smoothrefreshlayout.extra.footer.ClassicFooter
+    <me.dkzwm.widget.srl.extra.footer.ClassicFooter
         android:id="@+id/classicFooter_with_listView_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -119,4 +119,4 @@
             android:text="@string/enable_loadMore"
             android:textSize="12sp"/>
     </RelativeLayout>
-</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+</me.dkzwm.widget.srl.SmoothRefreshLayout>

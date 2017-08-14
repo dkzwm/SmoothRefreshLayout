@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.WaveSmoothRefreshLayout
+<me.dkzwm.widget.srl.WaveSmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -169,4 +169,4 @@
         android:text="@string/debug_on"
         android:textSize="12sp"
         android:layout_gravity="end"/>
-</me.dkzwm.smoothrefreshlayout.WaveSmoothRefreshLayout>
+</me.dkzwm.widget.srl.WaveSmoothRefreshLayout>

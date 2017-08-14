@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout
+<me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_test_two_level_refresh_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -23,4 +23,4 @@
             android:textSize="25sp"/>
     </FrameLayout>
 
-</me.dkzwm.smoothrefreshlayout.TwoLevelSmoothRefreshLayout>
+</me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout>

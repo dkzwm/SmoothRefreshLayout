@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+<me.dkzwm.widget.srl.SmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_with_frameLayout_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -34,4 +34,4 @@
     </FrameLayout>
 
 
-</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+</me.dkzwm.widget.srl.SmoothRefreshLayout>

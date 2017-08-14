@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+<me.dkzwm.widget.srl.SmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_test_QQ_activity_style_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -36,6 +36,6 @@
             android:layout_height="wrap_content"
             android:text="@string/activity_style"/>
     </RadioGroup>
-</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+</me.dkzwm.widget.srl.SmoothRefreshLayout>
 
 

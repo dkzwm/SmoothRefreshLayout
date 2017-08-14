@@ -1,4 +1,4 @@
-<manifest package="me.dkzwm.smoothrefreshlayout"
+<manifest package="me.dkzwm.widget.srl"
           xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application

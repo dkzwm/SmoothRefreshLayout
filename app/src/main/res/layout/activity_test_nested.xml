@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout
+<me.dkzwm.widget.srl.MaterialSmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_test_nested_activity"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -59,4 +59,4 @@
 
 
     </android.support.design.widget.CoordinatorLayout>
-</me.dkzwm.smoothrefreshlayout.MaterialSmoothRefreshLayout>
+</me.dkzwm.widget.srl.MaterialSmoothRefreshLayout>

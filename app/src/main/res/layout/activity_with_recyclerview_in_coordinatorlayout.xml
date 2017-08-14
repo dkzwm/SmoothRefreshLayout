@@ -44,7 +44,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
+    <me.dkzwm.widget.srl.SmoothRefreshLayout
         android:id="@+id/smoothRefreshLayout_with_recyclerView_in_coordinatorLayout_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -56,5 +56,5 @@
             android:layout_height="match_parent"
             android:overScrollMode="never"/>
 
-    </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
+    </me.dkzwm.widget.srl.SmoothRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>
