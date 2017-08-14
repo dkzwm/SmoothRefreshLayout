@@ -670,9 +670,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        ensureTarget();
         if (mState != STATE_CONTENT) {
-            getView(mState);
-            ensureContent();
             if (mContentView != null)
                 mContentView.setVisibility(GONE);
         }
@@ -2642,16 +2641,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "tryToPerformAutoRefresh()");
             }
             if (!mTriggeredAutoRefresh) {
-                mTriggeredAutoRefresh = true;
                 if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0)
                     return;
+                mTriggeredAutoRefresh = true;
                 mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
                 mScrollChecker.tryToScrollTo(mIndicator.getOffsetToRefresh(),
                         mAutoRefreshUseSmoothScroll ? mDurationToCloseHeader : 0);
             } else if (!mTriggeredAutoLoadMore) {
-                mTriggeredAutoLoadMore = true;
                 if (mFooterView == null || mIndicator.getFooterHeight() <= 0)
                     return;
+                mTriggeredAutoLoadMore = true;
                 mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
                 mScrollChecker.tryToScrollTo(mIndicator.getOffsetToLoadMore(),
                         mAutoRefreshUseSmoothScroll ? mDurationToCloseFooter : 0);
@@ -2730,7 +2729,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         ViewTreeObserver observer = mTargetView.getViewTreeObserver();
         if (observer != mTargetViewTreeObserver) {
-            if (mTargetViewTreeObserver != null)
+            if (mTargetViewTreeObserver != null && mTargetViewTreeObserver.isAlive())
                 mTargetViewTreeObserver.removeOnScrollChangedListener(this);
             mTargetViewTreeObserver = observer;
             mTargetViewTreeObserver.addOnScrollChangedListener(this);
