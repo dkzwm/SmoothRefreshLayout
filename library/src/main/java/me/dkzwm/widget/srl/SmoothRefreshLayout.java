@@ -380,7 +380,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         int count = getChildCount();
         if (count == 0)
             return;
-        ensureTarget();
+        ensureTargetView();
         final boolean measureMatchParentChildren =
                 MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY ||
                         MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
@@ -670,8 +670,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        ensureTarget();
+        ensureTargetView();
         if (mState != STATE_CONTENT) {
+            ensureContentView();
             if (mContentView != null)
                 mContentView.setVisibility(GONE);
         }
@@ -2083,44 +2084,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public View getView(@State int state) {
         switch (state) {
             case STATE_CONTENT:
-                ensureContent();
+                ensureContentView();
                 return mContentView;
             case STATE_ERROR:
-                if (mErrorView == null && mErrorLayoutResId != NO_ID) {
-                    mErrorView = mInflater.inflate(mErrorLayoutResId, null, false);
-                    ViewGroup.LayoutParams lp = mErrorView.getLayoutParams();
-                    if (lp == null) {
-                        lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                        mErrorView.setLayoutParams(lp);
-                    }
-                    addView(mErrorView);
-                } else if (mErrorView == null)
-                    throw new IllegalArgumentException("Error view must be not null");
+                ensureErrorView();
                 return mErrorView;
             case STATE_EMPTY:
-                if (mEmptyView == null && mEmptyLayoutResId != NO_ID) {
-                    mEmptyView = mInflater.inflate(mEmptyLayoutResId, null, false);
-                    ViewGroup.LayoutParams lp = mEmptyView.getLayoutParams();
-                    if (lp == null) {
-                        lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                        mEmptyView.setLayoutParams(lp);
-                    }
-                    addView(mEmptyView);
-                } else if (mEmptyView == null)
-                    throw new IllegalArgumentException("Empty view must be not null");
+                ensureEmptyView();
                 return mEmptyView;
             case STATE_CUSTOM:
             default:
-                if (mCustomView == null && mCustomLayoutResId != NO_ID) {
-                    mCustomView = mInflater.inflate(mCustomLayoutResId, null, false);
-                    ViewGroup.LayoutParams lp = mCustomView.getLayoutParams();
-                    if (lp == null) {
-                        lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-                        mCustomView.setLayoutParams(lp);
-                    }
-                    addView(mCustomView);
-                } else if (mCustomView == null)
-                    throw new IllegalArgumentException("Custom view must be not null");
+                ensureCustomView();
                 return mCustomView;
         }
     }
@@ -2678,7 +2652,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    protected void ensureContent() {
+    protected void ensureContentView() {
         if (mContentView == null) {
             if (mContentResId != View.NO_ID) {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
@@ -2689,6 +2663,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             } else {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
                     View child = getChildAt(i);
+                    if ((mEmptyView != null && child == mEmptyView)
+                            || (mErrorView != null && child == mErrorView)
+                            || (mCustomView != null && child == mCustomView))
+                        continue;
                     if (child.getVisibility() != GONE && !(child instanceof IRefreshView))
                         mContentView = child;
                 }
@@ -2696,29 +2674,61 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    private void ensureTarget() {
+    private void ensureErrorView() {
+        if (mErrorView == null && mErrorLayoutResId != NO_ID) {
+            mErrorView = mInflater.inflate(mErrorLayoutResId, null, false);
+            generateStateViewLayoutParams(mErrorView);
+            addView(mErrorView);
+        } else if (mErrorView == null)
+            throw new IllegalArgumentException("Error view must be not null");
+    }
+
+    private void ensureEmptyView() {
+        if (mEmptyView == null && mEmptyLayoutResId != NO_ID) {
+            mEmptyView = mInflater.inflate(mEmptyLayoutResId, null, false);
+            generateStateViewLayoutParams(mEmptyView);
+            addView(mEmptyView);
+        } else if (mEmptyView == null)
+            throw new IllegalArgumentException("Empty view must be not null");
+    }
+
+
+    private void ensureCustomView() {
+        if (mCustomView == null && mCustomLayoutResId != NO_ID) {
+            mCustomView = mInflater.inflate(mCustomLayoutResId, null, false);
+            generateStateViewLayoutParams(mCustomView);
+            addView(mCustomView);
+        } else if (mCustomView == null)
+            throw new IllegalArgumentException("Custom view must be not null");
+    }
+
+
+    private void generateStateViewLayoutParams(View view) {
+        ViewGroup.LayoutParams lp = view.getLayoutParams();
+        if (lp == null) {
+            lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            view.setLayoutParams(lp);
+        }
+    }
+
+    private void ensureTargetView() {
         if (mTargetView == null) {
             switch (mState) {
                 case STATE_CONTENT:
-                    ensureContent();
+                    ensureContentView();
                     mTargetView = mContentView;
                     break;
                 case STATE_EMPTY:
-                    if (mEmptyView == null && mEmptyLayoutResId != View.NO_ID) {
-                        mEmptyView = mInflater.inflate(mEmptyLayoutResId, this, false);
-                    }
+                    ensureEmptyView();
                     mTargetView = mEmptyView;
                     break;
                 case STATE_ERROR:
-                    if (mErrorView == null && mErrorLayoutResId != View.NO_ID) {
-                        mErrorView = mInflater.inflate(mErrorLayoutResId, this, false);
-                    }
+                    ensureErrorView();
                     mTargetView = mErrorView;
                     break;
                 case STATE_CUSTOM:
-                    if (mCustomView == null && mCustomLayoutResId != View.NO_ID) {
-                        mCustomView = mInflater.inflate(mCustomLayoutResId, this, false);
-                    }
+                default:
+                    ensureCustomView();
                     mTargetView = mCustomView;
                     break;
             }
@@ -2728,7 +2738,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     " Do you forget to added it in the XML layout file or add it in code ?");
         }
         ViewTreeObserver observer = mTargetView.getViewTreeObserver();
-        if (observer != mTargetViewTreeObserver) {
+        if (observer != mTargetViewTreeObserver && observer.isAlive()) {
             if (mTargetViewTreeObserver != null && mTargetViewTreeObserver.isAlive())
                 mTargetViewTreeObserver.removeOnScrollChangedListener(this);
             mTargetViewTreeObserver = observer;
