@@ -240,6 +240,8 @@ public class WaveHeader extends View implements IRefreshView {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
             if (mFingerUpY > offsetToKeepHeader) {
                 layout.updateScrollerInterpolator(mInterpolator);
+            }else {
+                layout.resetScrollerInterpolator();
             }
         }
         invalidate();
@@ -247,6 +249,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
+        layout.resetScrollerInterpolator();
         mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         mFingerUpY = 0;
         mProgress = 0;
