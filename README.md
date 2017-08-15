@@ -76,6 +76,21 @@ dependencies {
 }
 ```
 #### 在Xml中配置
+#####  自v1.4.1版本后
+```
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.SmoothRefreshLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/smoothRefreshLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+</me.dkzwm.widget.srl.SmoothRefreshLayout>
+```
+##### v1.4.1之前的版本
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
@@ -89,7 +104,6 @@ dependencies {
 		android:layout_height="match_parent"/>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
 ```
-
 ####  Java代码配置
 ```
 SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoothRefreshLayout);

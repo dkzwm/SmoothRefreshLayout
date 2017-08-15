@@ -91,6 +91,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 return ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });
+        mRefreshLayout.autoRefresh(true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_base_recyclerView_adapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);

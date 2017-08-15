@@ -56,7 +56,7 @@ Thank him for providing such a great open source library ！
 - With CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
 
-- Test Cross boundary rebound(OverScroll)     
+- Test cross boundary rebound(OverScroll)     
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_overScroll.gif)
 
 - Test Nested-Scroll   
@@ -75,6 +75,21 @@ dependencies {
 }
 ```
 #### Use Xml to config
+#####  Since v1.4.1
+```
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.SmoothRefreshLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/smoothRefreshLayout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"/>
+</me.dkzwm.widget.srl.SmoothRefreshLayout>
+```
+##### Before v1.4.1
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
@@ -88,7 +103,6 @@ dependencies {
 		android:layout_height="match_parent"/>
 </me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
 ```
-
 ####  Use Java code to config
 ```
 SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoothRefreshLayout);
@@ -208,7 +222,7 @@ public interface IRefreshView {
     setFooterView(@NonNull IRefreshView footer);
 ```    
 
-- Please write directly to the xml file,SmoothRefreshLayout will find the view that impl the IRefreshView interface to added inside.
+- Please write directly to the Xml file,SmoothRefreshLayout will find the view that impl the IRefreshView interface to added inside.
  
 ## Thanks
 - [liaohuqiu android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)    

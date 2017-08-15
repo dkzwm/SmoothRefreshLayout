@@ -76,6 +76,7 @@ public class NestedPageFragment extends Fragment {
         });
 
         mRefreshLayout.setBackgroundColor(mColor);
+        mRefreshLayout.autoRefresh(true);
         return view;
     }
 

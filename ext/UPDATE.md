@@ -1,5 +1,23 @@
 # 更新日志
-
+## 1.4.1
+> 修复状态视图填充LayoutParams不一致问题。    
+> 修改包名为`me.dkzwm.widget.srl`,使包名更符合规范。    
+> 修改二级刷新，删除 `setEnableBackToStartPosAtOnce`方法。    
+> 修改二级刷新，添加 `setDurationOfBackToKeepTwoLeveHeaderViewPosition` 方法。    
+> 修改二级刷新，添加 `setDurationToCloseTwoLevelHeader` 方法。    
+> 修改二级刷新，添加 `setOffsetRatioToKeepTwoLevelHeaderWhileLoading` 方法。    
+> 修改二级刷新，添加 `getOffsetToKeepTwoLevelHeaderWhileLoading` 方法。    
+> 删除 `SmoothRefreshLayout` styleable中的 `sr_enable_two_level_pull_to_refresh` 属性。    
+> 修改二级刷新，添加 `TwoLevelSmoothRefreshLayout` styleable，并添加 `sr_enable_two_level_pull_to_refresh` 属性。    
+> 修改二级刷新，修改 `ITwoLevelIndicator` 继承 `IIndicator` 接口。    
+> 修改二级刷新，在 `ITwoLevelIndicator` 中添加 `setOffsetRatioToKeepTwoLevelHeaderWhileLoading` 方法。    
+> 修改二级刷新，在 `ITwoLevelIndicator` 中添加 `getOffsetToKeepTwoLevelHeaderWhileLoading` 方法。    
+> 修改二级刷新，删除 `TwoLevelRefreshView` 接口参数中的 `IIndicator` 参数。    
+> 添加 `WaveTextRefreshView`，存放于Demo的header中。    
+> 更新英语Readme文件.    
+> 修复静态刷新视图构造器在某些特定情况下未很好的工作问题。    
+> 修复 `WaveHeader` 某些场景设置插值器不对问题。    
+> 修复自动刷新可能不打断问题。    
 ## 1.4.0  
 > 删除了MODE属性，功能性和其他属性有重复，导致逻辑复杂度直线上升，去掉后使用其他属性组合替代。    
 > 修复未处于刷新状态调用refreshComplete()方法导致内部视图偏移问题。    

@@ -47,13 +47,13 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         mRefreshLayout.refreshComplete();
-                        String times=getString(R.string.number_of_refresh) + mCount;
+                        String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
                     }
                 }, 2000);
             }
         });
-
+        mRefreshLayout.autoRefresh(false);
     }
 
 

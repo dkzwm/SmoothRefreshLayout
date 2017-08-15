@@ -29,7 +29,7 @@
             android:layout_gravity="center"
             android:text="Test FrameLayout"
             android:textColor="#333333"
-            android:textSize="42sp"/>
+            android:textSize="28sp"/>
 
     </FrameLayout>
 

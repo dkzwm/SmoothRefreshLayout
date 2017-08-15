@@ -59,7 +59,7 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-
+        mRefreshLayout.autoRefresh(false);
     }
 
 

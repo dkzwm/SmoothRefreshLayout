@@ -660,8 +660,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
             }
         }
-        if (mNeedScrollCompat)
-            mNeedScrollCompat = false;
+        mNeedScrollCompat = false;
         tryToPerformAutoRefresh();
     }
 
@@ -730,6 +729,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param listener Listener
      */
+    @SuppressWarnings({"unused"})
     public void setOnStateChangedListener(OnStateChangedListener listener) {
         mStateChangedListener = listener;
     }
@@ -759,6 +759,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mUIPositionChangedListeners.remove(listener);
     }
 
+    @SuppressWarnings({"unused"})
     public void clearOnUIPositionChangedListeners() {
         if (mUIPositionChangedListeners != null)
             mUIPositionChangedListeners.clear();
@@ -809,6 +810,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param callBack Customize the specified triggered rule
      */
+    @SuppressWarnings({"unused"})
     public void setOnPerformAutoLoadMoreCallBack(OnPerformAutoLoadMoreCallBack callBack) {
         mAutoLoadMoreCallBack = callBack;
     }
@@ -836,6 +838,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param callback Callback that should be called when refreshComplete() is called.
      */
+    @SuppressWarnings({"unused"})
     public void setOnHookFooterRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callback) {
         if (mFooterRefreshCompleteHook == null)
             mFooterRefreshCompleteHook = new RefreshCompleteHook();
@@ -847,6 +850,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mHeaderRefreshCompleteHook != null && mHeaderRefreshCompleteHook.mCallBack == callBack;
     }
 
+    @SuppressWarnings({"unused"})
     public boolean equalsOnHookFooterRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
         return mFooterRefreshCompleteHook != null && mFooterRefreshCompleteHook.mCallBack == callBack;
     }
@@ -982,6 +986,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param time Millis
      */
+    @SuppressWarnings({"unused"})
     public void setLoadingMinTime(long time) {
         mLoadingMinTime = time;
     }
@@ -994,6 +999,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @return Height default is -1
      */
+    @SuppressWarnings({"unused"})
     public int getHeaderHeight() {
         return mIndicator.getHeaderHeight();
     }
@@ -1006,6 +1012,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @return Height default is -1
      */
+    @SuppressWarnings({"unused"})
     public int getFooterHeight() {
         return mIndicator.getFooterHeight();
     }
@@ -1076,6 +1083,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * <p>
      * 自动加载更多，并立即触发刷新回调
      */
+    @SuppressWarnings({"unused"})
     public void autoLoadMore() {
         autoLoadMore(true);
     }
@@ -1246,10 +1254,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param ratio Height ratio
      */
+    @SuppressWarnings({"unused"})
     public void setOffsetRatioToKeepFooterWhileLoading(float ratio) {
         mIndicator.setOffsetRatioToKeepFooterWhileLoading(ratio);
     }
 
+    @SuppressWarnings({"unused"})
     public void setOverScrollDistanceRatio(float ratio) {
         mOverScrollDistanceRatio = ratio;
     }
@@ -2109,6 +2119,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param state Current state
      */
+    @SuppressWarnings({"unused"})
     public void setState(@State int state) {
         setState(state, false);
     }
@@ -3213,6 +3224,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param change The changed value
      */
+    @SuppressWarnings({"unchecked"})
     protected void updateYPos(int change) {
         // once moved, cancel event will be sent to child
         if (mIndicator.hasTouched() && !mHasSendCancelEvent
@@ -3331,6 +3343,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * We need to notify the X pos changed
      */
+    @SuppressWarnings({"unchecked"})
     protected void updateXPos() {
         if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()
                 && !isEnabledHideHeaderView()) {

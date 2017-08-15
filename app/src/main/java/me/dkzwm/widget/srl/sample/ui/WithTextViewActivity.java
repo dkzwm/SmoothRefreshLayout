@@ -51,6 +51,7 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                 }, 2000);
             }
         });
+        mRefreshLayout.autoRefresh(true);
         findViewById(R.id.button_with_textView_activity_change_empty_state)
                 .setOnClickListener(this);
         findViewById(R.id.button_with_textView_activity_change_content_state)

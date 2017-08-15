@@ -35,7 +35,7 @@ public class PageFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
         TextView textView = (TextView) view.findViewById(R.id.textView_page_fragment);
         textView.setBackgroundColor(mColor);
-        textView.setText("第" + mPage + "页");
+        textView.setText(String.valueOf(mPage));
         return view;
     }
 }

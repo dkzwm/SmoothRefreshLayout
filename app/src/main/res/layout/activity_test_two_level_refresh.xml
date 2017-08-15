@@ -20,7 +20,7 @@
             android:layout_gravity="center"
             android:text="Test Pull To Refresh"
             android:textColor="#333333"
-            android:textSize="25sp"/>
+            android:textSize="28sp"/>
     </FrameLayout>
 
 </me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout>

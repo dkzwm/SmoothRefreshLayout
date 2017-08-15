@@ -4,7 +4,8 @@
               android:layout_height="match_parent"
               android:background="#ff5555"
               android:gravity="center_horizontal"
-              android:orientation="vertical">
+              android:orientation="vertical"
+              android:weightSum="4">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -19,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="刷一刷"
+            android:text="@string/brush"
             android:textColor="#ffbb00"
             android:textSize="52sp"/>
 
@@ -28,13 +29,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="连刷更容易得红包"
+            android:text="@string/continuous_brush_is_easier_to_get_red_envelopes"
             android:textColor="#ddfafa99"
             android:textSize="15sp"/>
     </LinearLayout>
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="3"/>
 </LinearLayout>

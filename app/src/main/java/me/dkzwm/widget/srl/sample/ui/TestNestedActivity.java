@@ -86,7 +86,6 @@ public class TestNestedActivity extends AppCompatActivity {
         });
         mRefreshLayout.getDefaultHeader().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
-        mRefreshLayout.autoRefresh(false);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout_test_nested_activity);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -114,7 +113,7 @@ public class TestNestedActivity extends AppCompatActivity {
                 return ScrollCompat.scrollCompat(mRecyclerView, deltaY);
             }
         });
-
+        mRefreshLayout.autoRefresh(false);
     }
 
     @Override

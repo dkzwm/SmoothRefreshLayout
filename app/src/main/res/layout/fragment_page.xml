@@ -12,5 +12,5 @@
         android:background="@android:color/darker_gray"
         android:gravity="center"
         android:textColor="#888888"
-        android:textSize="42sp"/>
+        android:textSize="28sp"/>
 </ScrollView>

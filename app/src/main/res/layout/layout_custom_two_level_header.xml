@@ -21,7 +21,6 @@
         android:layout_gravity="bottom"
         android:gravity="center"
         android:padding="12dp"
-        android:text="刷新"
         android:textColor="@android:color/white"
         android:textSize="15sp"/>
 </FrameLayout>

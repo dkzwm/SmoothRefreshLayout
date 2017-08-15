@@ -74,7 +74,7 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        mTextViewTitle.setText(R.string.brush_a_brush);
+        mTextViewTitle.setText(R.string.brush);
         mStartedCounter = false;
         mCount = 0;
     }

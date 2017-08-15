@@ -49,11 +49,11 @@ public class WithGridViewActivity extends AppCompatActivity {
                     public void run() {
                         if (isRefresh) {
                             mCount = 0;
-                            List<String> list = DataUtil.createList(mCount,100);
+                            List<String> list = DataUtil.createList(mCount, 100);
                             mCount += 100;
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount,100);
+                            List<String> list = DataUtil.createList(mCount, 100);
                             mCount += 100;
                             mAdapter.appendData(list);
                         }
@@ -62,7 +62,6 @@ public class WithGridViewActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-
         mRefreshLayout.autoRefresh(false);
     }
 

@@ -68,6 +68,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                 }, 4000);
             }
         });
+        mRefreshLayout.autoRefresh(true);
     }
 
 
