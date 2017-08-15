@@ -294,7 +294,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollChecker = new ScrollChecker(this);
         mOverScrollChecker = new OverScrollChecker(this);
         mDefaultSpringInterpolator = new DecelerateInterpolator();
-        //supports nested scroll
+        //Nested scrolling
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         setNestedScrollingEnabled(true);
@@ -393,8 +393,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE)
                 continue;
-            MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-            if (mHeaderView != null && child == mHeaderView) {
+            final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            if (mHeaderView != null && child == mHeaderView.getView()) {
                 if (isDisabledRefresh() || isEnabledHideHeaderView())
                     continue;
                 if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT) {
@@ -419,7 +419,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 "STYLE_SCALE, you must set a accurate height");
                     mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
-            } else if (mFooterView != null && child == mFooterView) {
+            } else if (mFooterView != null && child == mFooterView.getView()) {
                 if (isDisabledLoadMore() || isEnabledHideFooterView())
                     continue;
                 if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT) {
@@ -516,12 +516,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (child.getVisibility() == GONE)
                 continue;
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            if (mHeaderView != null && child == mHeaderView) {
+            if (mHeaderView != null && child == mHeaderView.getView()) {
                 if (isDisabledRefresh() || isEnabledHideHeaderView()) {
-                    child.layout(0, 0, child.getMeasuredWidth(), 0);
+                    child.layout(0, 0, 0, 0);
                     if (sDebug) {
-                        SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0,
-                                child.getMeasuredWidth(), 0);
+                        SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
                     }
                     continue;
                 }
@@ -598,7 +597,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     contentBottom = paddingTop + lp.topMargin + child.getMeasuredHeight();
                 else
                     contentBottom = bottom + lp.bottomMargin;
-            } else if (mFooterView == null || mFooterView != child) {
+            } else if (mFooterView == null || mFooterView.getView() != child) {
                 final int width = child.getMeasuredWidth();
                 final int height = child.getMeasuredHeight();
                 int childLeft, childTop;
@@ -638,17 +637,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
             }
         }
-        if (mFooterView != null && mFooterView instanceof View
-                && mFooterView.getView().getVisibility() != GONE) {
-            View child = (View) mFooterView;
+        if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
+            View child = mFooterView.getView();
             if (isDisabledLoadMore() || isEnabledHideFooterView()) {
-                child.layout(0, 0, child.getMeasuredWidth(), 0);
+                child.layout(0, 0, 0, 0);
                 if (sDebug) {
-                    SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0,
-                            child.getMeasuredWidth(), 0);
+                    SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
                 }
             } else {
-                MarginLayoutParams lp = (MarginLayoutParams) ((View) mFooterView).getLayoutParams();
+                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
                 final int left = paddingLeft + lp.leftMargin;
                 final int offset = (isEnabledFooterDrawerStyle()
                         ? -mIndicator.getFooterHeight()
@@ -656,7 +653,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 final int top = lp.topMargin + contentBottom + offset;
                 final int right = left + child.getMeasuredWidth();
                 final int bottom = top + child.getMeasuredHeight();
-                ((View) mFooterView).layout(left, top, right, bottom);
+                child.layout(left, top, right, bottom);
                 if (sDebug) {
                     SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
                 }
@@ -1934,14 +1931,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFooterView = null;
         }
         if (footer.getType() != IRefreshView.TYPE_FOOTER)
-            throw new IllegalArgumentException("Wrong type,FooterView's type must be " +
+            throw new IllegalArgumentException("Wrong type,FooterView type must be " +
                     "TYPE_FOOTER");
         View view = footer.getView();
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            view.setLayoutParams(lp);
-        }
+        addFreshViewLayoutParams(view);
         mViewsZAxisNeedReset = true;
         addView(view);
     }
@@ -1962,14 +1955,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mHeaderView = null;
         }
         if (header.getType() != IRefreshView.TYPE_HEADER)
-            throw new IllegalArgumentException("Wrong type,HeaderView's type must be " +
+            throw new IllegalArgumentException("Wrong type,HeaderView type must be " +
                     "TYPE_HEADER");
         View view = header.getView();
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-            view.setLayoutParams(lp);
-        }
+        addFreshViewLayoutParams(view);
         mViewsZAxisNeedReset = true;
         addView(view);
     }
@@ -2006,6 +1995,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mErrorView = content;
                 break;
             case STATE_CUSTOM:
+            default:
                 if (mCustomView != null) {
                     removeView(mCustomView);
                 }
@@ -2013,11 +2003,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mCustomView = content;
                 break;
         }
-        ViewGroup.LayoutParams lp = content.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            content.setLayoutParams(lp);
-        }
+        addStateViewLayoutParams(content);
         if (mState != state) {
             content.setVisibility(GONE);
         }
@@ -2538,19 +2524,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (isEnabledHeaderDrawer && isEnabledFooterDrawer) {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
-                    if (view != mHeaderView && view != mFooterView)
+                    if (view != mHeaderView.getView() && view != mFooterView.getView())
                         mCachedViews.add(view);
                 }
             } else if (isEnabledHeaderDrawer) {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
-                    if (view != mHeaderView)
+                    if (view != mHeaderView.getView())
                         mCachedViews.add(view);
                 }
             } else if (isEnabledFooterDrawer) {
                 for (int i = count - 1; i >= 0; i--) {
                     View view = getChildAt(i);
-                    if (view != mFooterView)
+                    if (view != mFooterView.getView())
                         mCachedViews.add(view);
                 }
             } else {
@@ -2657,8 +2643,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mContentResId != View.NO_ID) {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
                     View child = getChildAt(i);
-                    if (!(child instanceof IRefreshView) && mContentResId == child.getId())
+                    if (!(child instanceof IRefreshView) && mContentResId == child.getId()) {
                         mContentView = child;
+                        break;
+                    }
                 }
             } else {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
@@ -2667,8 +2655,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             || (mErrorView != null && child == mErrorView)
                             || (mCustomView != null && child == mCustomView))
                         continue;
-                    if (child.getVisibility() != GONE && !(child instanceof IRefreshView))
+                    if (child.getVisibility() != GONE && !(child instanceof IRefreshView)) {
                         mContentView = child;
+                        break;
+                    }
                 }
             }
         }
@@ -2677,7 +2667,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void ensureErrorView() {
         if (mErrorView == null && mErrorLayoutResId != NO_ID) {
             mErrorView = mInflater.inflate(mErrorLayoutResId, null, false);
-            generateStateViewLayoutParams(mErrorView);
+            addStateViewLayoutParams(mErrorView);
             addView(mErrorView);
         } else if (mErrorView == null)
             throw new IllegalArgumentException("Error view must be not null");
@@ -2686,7 +2676,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void ensureEmptyView() {
         if (mEmptyView == null && mEmptyLayoutResId != NO_ID) {
             mEmptyView = mInflater.inflate(mEmptyLayoutResId, null, false);
-            generateStateViewLayoutParams(mEmptyView);
+            addStateViewLayoutParams(mEmptyView);
             addView(mEmptyView);
         } else if (mEmptyView == null)
             throw new IllegalArgumentException("Empty view must be not null");
@@ -2696,14 +2686,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void ensureCustomView() {
         if (mCustomView == null && mCustomLayoutResId != NO_ID) {
             mCustomView = mInflater.inflate(mCustomLayoutResId, null, false);
-            generateStateViewLayoutParams(mCustomView);
+            addStateViewLayoutParams(mCustomView);
             addView(mCustomView);
         } else if (mCustomView == null)
             throw new IllegalArgumentException("Custom view must be not null");
     }
 
 
-    private void generateStateViewLayoutParams(View view) {
+    private void addFreshViewLayoutParams(View view) {
+        ViewGroup.LayoutParams lp = view.getLayoutParams();
+        if (lp == null) {
+            lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+            view.setLayoutParams(lp);
+        }
+    }
+
+    private void addStateViewLayoutParams(View view) {
         ViewGroup.LayoutParams lp = view.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
