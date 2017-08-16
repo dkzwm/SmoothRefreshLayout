@@ -20,6 +20,9 @@ import java.lang.reflect.Method;
  */
 public class ScrollCompat {
 
+    private ScrollCompat() {
+    }
+
     public static boolean canChildScrollDown(View view) {
         if (view instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) view;
@@ -43,10 +46,15 @@ public class ScrollCompat {
             } else {
                 return scrollView.getChildCount() == 0 || ViewCompat.canScrollVertically(view, 1);
             }
-        } else if (view instanceof RecyclerView) {
-            final RecyclerView recyclerView = (RecyclerView) view;
-            return recyclerView.getChildCount() == 0 || ViewCompat.canScrollVertically(view, 1);
         } else {
+            try {
+                if (view instanceof RecyclerView) {
+                    final RecyclerView recyclerView = (RecyclerView) view;
+                    return recyclerView.getChildCount() == 0 || ViewCompat.canScrollVertically(view, 1);
+                }
+            } catch (NoClassDefFoundError e) {
+                e.printStackTrace();
+            }
             return ViewCompat.canScrollVertically(view, 1);
         }
     }
@@ -59,31 +67,37 @@ public class ScrollCompat {
             final Adapter adapter = listView.getAdapter();
             return adapter != null && lastVisiblePosition > 0
                     && lastVisiblePosition == adapter.getCount() - 1;
-        } else if (view instanceof RecyclerView) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if (manager == null)
-                return false;
-            int lastVisiblePosition = 0;
-            if (manager instanceof LinearLayoutManager) {
-                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                lastVisiblePosition = linearManager.findLastVisibleItemPosition();
-            } else if (manager instanceof StaggeredGridLayoutManager) {
-                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
-                gridLayoutManager.findLastVisibleItemPositions(lastPositions);
-                lastVisiblePosition = lastPositions[0];
-                for (int value : lastPositions) {
-                    if (value > lastVisiblePosition) {
-                        lastVisiblePosition = value;
+        } else {
+            try {
+                if (view instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) view;
+                    RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                    if (manager == null)
+                        return false;
+                    int lastVisiblePosition = 0;
+                    if (manager instanceof LinearLayoutManager) {
+                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                        lastVisiblePosition = linearManager.findLastVisibleItemPosition();
+                    } else if (manager instanceof StaggeredGridLayoutManager) {
+                        StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                        int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
+                        gridLayoutManager.findLastVisibleItemPositions(lastPositions);
+                        lastVisiblePosition = lastPositions[0];
+                        for (int value : lastPositions) {
+                            if (value > lastVisiblePosition) {
+                                lastVisiblePosition = value;
+                            }
+                        }
                     }
+                    RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                    return adapter != null && lastVisiblePosition > 0
+                            && lastVisiblePosition >= adapter.getItemCount() - 1;
                 }
+            } catch (NoClassDefFoundError e) {
+                e.printStackTrace();
             }
-            RecyclerView.Adapter adapter = recyclerView.getAdapter();
-            return adapter != null && lastVisiblePosition > 0
-                    && lastVisiblePosition >= adapter.getItemCount() - 1;
+            return false;
         }
-        return false;
     }
 
     public static boolean canChildScrollUp(View view) {
@@ -119,17 +133,16 @@ public class ScrollCompat {
                             method.invoke(listView, -Math.round(deltaY), -Math.round(deltaY));
                         }
                     } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
                         return false;
                     } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                         return false;
                     } catch (InvocationTargetException e) {
+                        e.printStackTrace();
                         return false;
                     }
                 }
-                return true;
-            } else if (view instanceof RecyclerView) {
-                final RecyclerView recyclerView = (RecyclerView) view;
-                recyclerView.scrollBy(0, Math.round(deltaY));
                 return true;
             } else {
                 view.scrollBy(0, Math.round(deltaY));

@@ -19,6 +19,9 @@ public class SRLog {
 
     private static int sLevel = LEVEL_VERBOSE;
 
+    private SRLog() {
+    }
+
     public static void setLevel(@Level int level) {
         sLevel = level;
     }

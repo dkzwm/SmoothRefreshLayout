@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -68,6 +69,9 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         mWaveLength = PixelUtl.dp2px(context, 12);
         final int dip20 = PixelUtl.dp2px(context, 20);
         setPadding(0, dip20, 0, dip20);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
     }
 
     public void setIncrementalY(float incrementalY) {

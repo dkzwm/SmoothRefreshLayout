@@ -257,19 +257,19 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
                 return;
             }
             mRunning = true;
-            run();
+            ClassicHeader.this.post(this);
         }
 
         private void stop() {
             mRunning = false;
-            removeCallbacks(this);
+            ClassicHeader.this.removeCallbacks(this);
         }
 
         @Override
         public void run() {
-            tryUpdateLastUpdateTime();
+            ClassicHeader.this.tryUpdateLastUpdateTime();
             if (mRunning) {
-                postDelayed(this, 1000);
+                ClassicHeader.this.postDelayed(this, 1000);
             }
         }
     }

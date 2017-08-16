@@ -274,19 +274,19 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
                 return;
             }
             mRunning = true;
-            run();
+            ClassicFooter.this.post(this);
         }
 
         private void stop() {
             mRunning = false;
-            removeCallbacks(this);
+            ClassicFooter.this.removeCallbacks(this);
         }
 
         @Override
         public void run() {
-            tryUpdateLastUpdateTime();
+            ClassicFooter.this.tryUpdateLastUpdateTime();
             if (mRunning) {
-                postDelayed(this, 1000);
+                ClassicFooter.this.postDelayed(this, 1000);
             }
         }
     }
