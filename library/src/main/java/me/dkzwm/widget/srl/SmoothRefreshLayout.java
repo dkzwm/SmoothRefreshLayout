@@ -2037,14 +2037,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * <p>
      * 设置Scroller的插值器
      *
-     * @param interpolator mOverScroller's interpolator
+     * @param interpolator Scroller interpolator
      */
     public void updateScrollerInterpolator(Interpolator interpolator) {
         mScrollChecker.updateInterpolator(interpolator);
     }
 
     /**
-     * Reset scroller's interpolator<br/>
+     * Reset scroller interpolator<br/>
      * <p>
      * 重置Scroller的插值器
      */
@@ -2521,7 +2521,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onScrollChanged() {
-
+        tryToPerformAutoLoadMore();
         mOverScrollChecker.computeScrollOffset();
     }
 
