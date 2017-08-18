@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -77,8 +78,8 @@ public class MaterialFooter extends View implements IRefreshView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.save();
-        canvas.restore();
+        if (!mMustInvalidate)
+            mColorIndex = 0;
         if (mIsSpinning) {
             long deltaTime;
             if (mLastDrawProgressTime <= 0) {
@@ -129,7 +130,7 @@ public class MaterialFooter extends View implements IRefreshView {
             canvas.drawArc(mProgressBounds, 270, mProgress * 360, false, mBarPaint);
         }
         if (mMustInvalidate)
-            invalidate();
+            ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void setProgressBarWidth(int width) {
@@ -182,19 +183,12 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        mMustInvalidate = false;
-        mProgress = 0f;
-        mColorIndex = 0;
-        mIsSpinning = false;
-        invalidate();
+        reset();
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
-        mMustInvalidate = false;
-        mColorIndex = 0;
-        mProgress = 0f;
-        mIsSpinning = false;
+        reset();
     }
 
     @Override
@@ -227,5 +221,17 @@ public class MaterialFooter extends View implements IRefreshView {
             mProgress = percent;
             invalidate();
         }
+    }
+
+    private void reset() {
+        mMustInvalidate = false;
+        mLastDrawProgressTime = 0;
+        mGrowingTime = 0;
+        mFromFront = true;
+        mBarExtraLength = 0;
+        mProgress = 0f;
+        mColorIndex = 0;
+        mIsSpinning = false;
+        invalidate();
     }
 }

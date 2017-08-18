@@ -169,7 +169,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private ViewTreeObserver mTargetViewTreeObserver;
     private ValueAnimator mChangeStateAnimator;
     private boolean mHasSendCancelEvent = false;
-    private boolean mHasSendDownEvent = false;
+    //    private boolean mHasSendDownEvent = false;
     private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
     private boolean mIsLastRefreshSuccessful = true;
@@ -2786,7 +2786,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mIndicator.onFingerDown(ev.getX(), ev.getY());
                 if (!needInterceptTouchEvent()) {
                     mHasSendCancelEvent = false;
-                    mHasSendDownEvent = true;
                     boolean movingFooter = isMovingFooter();
                     boolean hasLeftStartPosition = mIndicator.hasLeftStartPosition();
                     if ((!movingFooter && hasLeftStartPosition) || mStatus != SR_STATUS_COMPLETE) {
@@ -2796,7 +2795,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     }
                 } else {
                     mHasSendCancelEvent = true;
-                    mHasSendDownEvent = false;
                 }
                 mPreventForHorizontal = false;
                 mDealHorizontalMove = false;
@@ -2848,19 +2846,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     return super.dispatchTouchEvent(ev);
                 }
                 if (needInterceptTouchEvent()) {
-                    mHasSendDownEvent = !(Math.abs(offsetX) > mTouchSlop
-                            || Math.abs(offsetY) > mTouchSlop);
                     if (mOverScrollChecker.mScrolling && !mScrollChecker.mIsRunning) {
-                        if (mIndicator.isInStartPosition()) {
-                            mOverScrollChecker.destroy();
-                        } else {
+                        if (!mIndicator.isInStartPosition()) {
                             mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, 0);
                         }
+                        mOverScrollChecker.destroy();
                     }
                     return true;
-                } else if (!mHasSendDownEvent) {
-                    sendCancelEvent();
-                    sendDownEvent();
                 }
                 if (isMovingFooter() && mIndicator.hasLeftStartPosition()
                         && mStatus == SR_STATUS_COMPLETE) {
@@ -2986,7 +2978,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.i(TAG, "sendDownEvent()");
         }
         if (mLastMoveEvent == null) return;
-        mHasSendDownEvent = true;
         final MotionEvent last = mLastMoveEvent;
         MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());

@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -214,7 +215,7 @@ public class WaveHeader extends View implements IRefreshView {
         float sweepAngle = barLength + mBarExtraLength;
         canvas.drawArc(mProgressBounds, startAngle, sweepAngle, false, mBarPaint);
         canvas.save();
-        invalidate();
+        ViewCompat.postInvalidateOnAnimation(this);
     }
 
     private void drawText(Canvas canvas) {
@@ -240,7 +241,7 @@ public class WaveHeader extends View implements IRefreshView {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
             if (mFingerUpY > offsetToKeepHeader) {
                 layout.updateScrollerInterpolator(mInterpolator);
-            }else {
+            } else {
                 layout.resetScrollerInterpolator();
             }
         }
