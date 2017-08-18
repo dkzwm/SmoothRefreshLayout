@@ -158,6 +158,7 @@ public class MaterialHeader extends View implements IRefreshView {
     public void onReset(SmoothRefreshLayout layout) {
         resetLayoutHeaderCloseDuration(layout);
         resetDrawable();
+        cancelAnimator();
     }
 
     @Override

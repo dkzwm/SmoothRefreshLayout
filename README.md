@@ -8,9 +8,9 @@
  - 理论上支持所有的视图，且可根据具体需求高效适配.
  - 支持嵌套滑动,完整实现了NestedScrollingChild，NestedScrollingParent 接口,玩转CoordinatorLayout.
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
- - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现）.
+ - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
  - 支持越界回弹.
- - 支持抽屉效果.
+ - 支持抽屉效果（即刷新视图固定在内容视图下方）.
  - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout），PS:淘宝二楼、京东活动.
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
@@ -215,9 +215,9 @@ public interface IRefreshView {
 |sr_duration_to_close_of_refresh|integer|指定收缩刷新视图到起始位置的时长（默认:`500`）|
 |sr_duration_to_close_of_header|integer|指定收缩Header视图到起始位置的时长（默认:`500`）|
 |sr_duration_to_close_of_footer|integer|指定收缩Footer视图到起始位置的时长（默认:`500`）|
-|sr_duration_of_back_to_keep_refresh_pos|integer|设置回顾到保持刷新视图位置的时间（默认:`200`）|
-|sr_duration_of_back_to_keep_header_pos|integer|设置回顾到保持Header视图位置的时间（默认:`200`）|
-|sr_duration_of_back_to_keep_header_pos|integer|设置回顾到保持Footer视图位置的时间（默认:`200`）|
+|sr_duration_of_back_to_keep_refresh_pos|integer|设置回滚到保持刷新视图位置的时间（默认:`200`）|
+|sr_duration_of_back_to_keep_header_pos|integer|设置回滚到保持Header视图位置的时间（默认:`200`）|
+|sr_duration_of_back_to_keep_header_pos|integer|设置回滚到保持Footer视图位置的时间（默认:`200`）|
 |sr_enable_pin_content|boolean|固定内容视图（默认:`false`）|
 |sr_enable_keep_refresh_view|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |sr_enable_pull_to_refresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
@@ -228,7 +228,9 @@ public interface IRefreshView {
 |sr_state|enum|状态设置 （默认:`STATE_CONTENT`）|
 |sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
-
+##### TwoLevelSmoothRefreshLayout 自身配置
+|:---:|:---:|:---:|
+|sr_enable_two_level_pull_to_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
 ##### SmoothRefreshLayout包裹内部其他View支持配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
@@ -260,9 +262,9 @@ public interface IRefreshView {
 |setDurationToClose|int|指定收缩刷新视图到起始位置的时长（默认:`500`）|
 |setDurationToCloseHeader|int|指定收缩Header视图到起始位置的时长（默认:`500`）|
 |setDurationToCloseFooter|int|指定收缩Footer视图到起始位置的时长（默认:`500`）|
-|setDurationOfBackToKeepRefreshViewPosition|integer|设置回顾到保持刷新视图位置的时间（默认:`200`）|
-|setDurationOfBackToKeepHeaderPosition|integer|设置回顾到保持Header视图位置的时间（默认:`200`）|
-|setDurationOfBackToKeepFooterPosition|integer|设置回顾到保持Footer视图位置的时间（默认:`200`）|
+|setDurationOfBackToKeepRefreshViewPosition|integer|设置回滚到保持刷新视图位置的时间（默认:`200`）|
+|setDurationOfBackToKeepHeaderPosition|integer|设置回滚到保持Header视图位置的时间（默认:`200`）|
+|setDurationOfBackToKeepFooterPosition|integer|设置回滚到保持Footer视图位置的时间（默认:`200`）|
 |setEnablePinContentView|boolean|固定内容视图（默认:`false`）|
 |setEnabledPullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
 |setEnableOverScroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|

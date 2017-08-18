@@ -389,9 +389,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (count == 0)
             return;
         ensureTargetView();
-        final boolean measureMatchParentChildren =
-                MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY ||
-                        MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
         int maxHeight = 0;
         int maxWidth = 0;
         int childState = 0;
@@ -452,35 +449,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 "STYLE_SCALE, you must set a accurate height");
                     mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
                 }
-            } else if (mTargetView != null && mTargetView == child
-                    || (mPreviousState != -1 && mChangeStateAnimator != null
-                    && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-            } else if (measureMatchParentChildren) {
-                final int childWidthMeasureSpec;
-                final int measuredWidth = getMeasuredWidth();
-                final int measuredHeight = getMeasuredHeight();
-                if (lp.width == LayoutParams.MATCH_PARENT) {
-                    final int width = Math.max(0, measuredWidth - getPaddingLeft() - getPaddingRight()
-                            - lp.leftMargin - lp.rightMargin);
-                    childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
-                            width, MeasureSpec.EXACTLY);
-                } else {
-                    childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                            getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
-                            lp.width);
-                }
-                final int childHeightMeasureSpec;
-                if (lp.height == LayoutParams.MATCH_PARENT) {
-                    final int height = Math.max(0, measuredHeight - getPaddingTop() - getPaddingRight()
-                            - lp.topMargin - lp.bottomMargin);
-                    childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-                } else {
-                    childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
-                            getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin,
-                            lp.height);
-                }
-                child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
             } else {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             }
