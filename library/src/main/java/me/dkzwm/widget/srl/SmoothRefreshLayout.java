@@ -2898,6 +2898,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             moveHeaderPos(offsetY);
                             return true;
                         } else if (isAutoRefresh() && !mAutoRefreshBeenSendTouchEvent) {
+                            // When the Auto-Refresh is in progress, the content view can not
+                            // continue to move up when the content view returns to the top
+                            // 当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动
                             sendCancelEvent();
                             sendDownEvent();
                             mAutoRefreshBeenSendTouchEvent = true;
