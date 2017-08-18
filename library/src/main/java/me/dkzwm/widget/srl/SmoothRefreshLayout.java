@@ -2903,6 +2903,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             // 当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动
                             sendCancelEvent();
                             sendDownEvent();
+                            mHasSendCancelEvent = false;
                             mAutoRefreshBeenSendTouchEvent = true;
                         }
                         return super.dispatchTouchEvent(ev);
@@ -3166,6 +3167,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "movePos(): over top");
             }
         }
+        mAutoRefreshBeenSendTouchEvent=false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPosY();
         if (isMovingHeader())
