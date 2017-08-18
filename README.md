@@ -187,10 +187,31 @@ public interface IRefreshView {
 ```
 
 ##### 添加自定义刷新视图
-- 代码添加
+- 全局静态代码构造    
 ```    
+
+        SmoothRefreshLayout.setDefaultCreator(new IRefreshViewCreator() {
+            @Override
+            public void createHeader(SmoothRefreshLayout layout) {
+                ClassicHeader header = new ClassicHeader(layout.getContext());
+                layout.setHeaderView(header);
+            }
+
+            @Override
+            public void createFooter(SmoothRefreshLayout layout) {
+                ClassicFooter footer = new ClassicFooter(layout.getContext());
+                layout.setFooterView(footer);
+            }
+        });
+
+```   
+
+- 动态代码添加   
+```    
+
     setHeaderView(@NonNull IRefreshView header);
     setFooterView(@NonNull IRefreshView footer);
+
 ```    
 
 - 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断
@@ -229,6 +250,7 @@ public interface IRefreshView {
 |sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
 ##### TwoLevelSmoothRefreshLayout 自身配置
+|名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_enable_two_level_pull_to_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
 ##### SmoothRefreshLayout包裹内部其他View支持配置
