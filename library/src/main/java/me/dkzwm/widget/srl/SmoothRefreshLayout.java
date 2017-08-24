@@ -108,7 +108,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    private static final Interpolator sOverScrollInterpolator = new DecelerateInterpolator(8.5f);
+    private static final Interpolator sOverScrollInterpolator = new DecelerateInterpolator(10f);
     private static boolean sDebug = false;
     private static IRefreshViewCreator sCreator;
     private final List<View> mCachedViews = new ArrayList<>(1);
@@ -171,8 +171,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mNeedScrollCompat = false;
     private boolean mAutoRefreshScrolling = false;
     private boolean mAutoRefreshBeenSendTouchEvent = false;
-    private float mOverScrollDistanceRatio = 0.8f;
-    private float mOverScrollDurationRatio = 0.8f;
+    private float mOverScrollDistanceRatio = 0.68f;
+    private float mOverScrollDurationRatio = 0.68f;
+    private int mMaxOverScrollDuration = 550;
     private int mDurationOfBackToHeaderHeight = 200;
     private int mDurationOfBackToFooterHeight = 200;
     private int mTouchSlop;
@@ -1235,6 +1236,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     public void setOverScrollDurationRatio(float ratio) {
         mOverScrollDurationRatio = ratio;
+    }
+
+    public void setMaxOverScrollDuration(int duration) {
+        mMaxOverScrollDuration = duration;
     }
 
     /**
@@ -2558,6 +2563,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mScrollChecker.destroy();
             mOverScrollChecker.destroy();
         }
+        mPreviousState = -1;
         mGestureDetector.onDetached();
         removeCallbacks(mScrollChecker);
         removeCallbacks(mOverScrollChecker);
@@ -3783,7 +3789,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             .this.mOverScrollDistanceRatio);
                     mDuration = Math.round((mScroller.getDuration() - mScroller.timePassed()) *
                             SmoothRefreshLayout.this.mOverScrollDurationRatio);
-                    mDuration = mDuration > 650 ? 650 : mDuration;
+                    mDuration = mDuration > SmoothRefreshLayout.this.mMaxOverScrollDuration
+                            ? SmoothRefreshLayout.this.mMaxOverScrollDuration : mDuration;
                     float maxHeaderDistance = SmoothRefreshLayout.this.mIndicator
                             .getCanMoveTheMaxDistanceOfHeader();
                     int to = Math.round(distance);
@@ -3810,7 +3817,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             * SmoothRefreshLayout.this.mOverScrollDistanceRatio);
                     mDuration = Math.round((mScroller.getDuration() - mScroller.timePassed()) *
                             SmoothRefreshLayout.this.mOverScrollDurationRatio);
-                    mDuration = mDuration > 650 ? 650 : mDuration;
+                    mDuration = mDuration > SmoothRefreshLayout.this.mMaxOverScrollDuration
+                            ? SmoothRefreshLayout.this.mMaxOverScrollDuration : mDuration;
                     float maxFooterDistance = SmoothRefreshLayout.this.mIndicator
                             .getCanMoveTheMaxDistanceOfFooter();
                     int to = Math.abs(distance);
