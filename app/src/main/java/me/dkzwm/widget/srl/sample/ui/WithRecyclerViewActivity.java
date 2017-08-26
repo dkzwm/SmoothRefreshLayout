@@ -44,6 +44,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mAdapter = new RecyclerViewAdapter(getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
@@ -68,6 +69,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
             }
         });
         mRefreshLayout.autoRefresh(false);
+
     }
 
 

@@ -51,4 +51,5 @@
     <string name="enable_two_level_refresh">开启二级刷新</string>
     <string name="brush">刷一刷</string>
     <string name="continuous_brush_is_easier_to_get_red_envelopes">连刷更容易得红包</string>
+    <string name="has_been_triggered_to_refresh">触发了刷新</string>
 </resources>

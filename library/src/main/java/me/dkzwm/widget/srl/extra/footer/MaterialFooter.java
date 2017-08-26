@@ -52,7 +52,6 @@ public class MaterialFooter extends View implements IRefreshView {
                 .getDimensionPixelOffset(R.dimen.sr_footer_default_height);
         mBarWidth = PixelUtl.dp2px(context, 3);
         mCircleRadius = mBarWidth * 4;
-        mBarPaint.setColor(Color.BLUE);
         mBarPaint.setStyle(Paint.Style.STROKE);
         mBarPaint.setDither(true);
         mBarPaint.setStrokeWidth(mBarWidth);
@@ -201,6 +200,7 @@ public class MaterialFooter extends View implements IRefreshView {
         mProgress = 1f;
         mIsSpinning = true;
         mMustInvalidate = true;
+        mColorIndex = 0;
         invalidate();
     }
 
@@ -232,6 +232,7 @@ public class MaterialFooter extends View implements IRefreshView {
         mProgress = 0f;
         mColorIndex = 0;
         mIsSpinning = false;
+        mBarPaint.setColor(mColors[0]);
         invalidate();
     }
 }

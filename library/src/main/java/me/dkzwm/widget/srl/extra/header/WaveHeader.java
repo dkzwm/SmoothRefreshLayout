@@ -252,33 +252,21 @@ public class WaveHeader extends View implements IRefreshView {
     public void onReset(SmoothRefreshLayout layout) {
         layout.resetScrollerInterpolator();
         mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
-        mFingerUpY = 0;
-        mProgress = 0;
-        mLastDrawProgressTime = 0;
-        mBarExtraLength = 0;
-        mGrowingTime = 0;
-        mCurrentPosY = 0;
-        mLastPoint[0] = 0;
-        mLastPoint[1] = 0;
-        mPath.reset();
+        reset();
         invalidate();
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
         mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
-        mFingerUpY = 0;
-        mProgress = 0;
-        mGrowingTime = 0;
-        mLastDrawProgressTime = 0;
-        mBarExtraLength = 0;
-        mCurrentPosY = 0;
+        reset();
         invalidate();
     }
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
         mStatus = SmoothRefreshLayout.SR_STATUS_REFRESHING;
+        updateProgressBounds();
         invalidate();
     }
 
@@ -341,17 +329,34 @@ public class WaveHeader extends View implements IRefreshView {
                 mLastPoint[1] = mCurrentPosY;
             }
         } else if (status == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
-            mProgressBounds.setEmpty();
-            mProgressBounds.set(width / 2 - mCircleRadius - mBarWidth,
-                    mCurrentPosY - mCircleRadius * 2 - mDip2 * 5 - mBarWidth * 2,
-                    width / 2 + mCircleRadius + mBarWidth,
-                    mCurrentPosY - mDip2 * 5);
-            mLastPoint[0] = width / 2;
-            mLastPoint[1] = mCurrentPosY;
+            updateProgressBounds();
         } else if (status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             mLastPoint[0] = width / 2;
             mLastPoint[1] = mCurrentPosY;
         }
         invalidate();
+    }
+
+    private void updateProgressBounds() {
+        final int width = getWidth();
+        mProgressBounds.setEmpty();
+        mProgressBounds.set(width / 2 - mCircleRadius - mBarWidth,
+                mCurrentPosY - mCircleRadius * 2 - mDip2 * 5 - mBarWidth * 2,
+                width / 2 + mCircleRadius + mBarWidth,
+                mCurrentPosY - mDip2 * 5);
+        mLastPoint[0] = width / 2;
+        mLastPoint[1] = mCurrentPosY;
+    }
+
+    private void reset() {
+        mFingerUpY = 0;
+        mProgress = 0;
+        mLastDrawProgressTime = 0;
+        mBarExtraLength = 0;
+        mGrowingTime = 0;
+        mCurrentPosY = 0;
+        mLastPoint[0] = 0;
+        mLastPoint[1] = 0;
+        mPath.reset();
     }
 }

@@ -1,5 +1,15 @@
 # 更新日志
-## 1.4.2
+## 1.4.3
+> 修改越界回弹实现，优化回弹效果。    
+> 修复移动视图过程中触发刷新刷新逻辑问题（PS：2个判断都少写了括号）。    
+> 修复偶尔 `WaveHeader` 圆环刷新时坐标异常问题。    
+> 添加 `setOverScrollDurationRatio` 方法，用于设置回弹时长比例。    
+> 添加 `setMaxOverScrollDuration` 方法，用于设置最大回弹时长。    
+> 添加 `isEnabledScrollToTopAutoRefresh` 方法。    
+> 添加 `setEnableScrollToTopAutoRefresh` 方法。用于开启到顶自动刷新。    
+> 修复加载更多无更多数据没有正确设置问题（PS：即MASK的值错了，应为`0x07<<10`而不是`0x05<<10`）。    
+> 修复若干触摸事件处理BUG。
+## 1.4.2(已废弃)
 > 修改越界回弹实现，优化回弹效果。    
 > 修复自动刷新下，无越界回弹效果问题。    
 > 修复当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动问题。    
@@ -19,7 +29,7 @@
 > 修改二级刷新，在 `ITwoLevelIndicator` 中添加 `getOffsetToKeepTwoLevelHeaderWhileLoading` 方法。    
 > 修改二级刷新，删除 `TwoLevelRefreshView` 接口参数中的 `IIndicator` 参数。    
 > 添加 `WaveTextRefreshView`，存放于Demo的header中。    
-> 更新英语Readme文件.    
+> 更新英语Readme文件。    
 > 修复静态刷新视图构造器在某些特定情况下未很好的工作问题。    
 > 修复 `WaveHeader` 某些场景设置插值器不对问题。    
 > 修复自动刷新可能被打断问题。    

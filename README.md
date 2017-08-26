@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.2'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.3'
 }
 ```
 #### 在Xml中配置
@@ -268,7 +268,8 @@ public interface IRefreshView {
 |setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
-|setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过屏幕高度的六分之一（默认:`0.8f`）|
+|setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过刷新视图的高度和屏幕高度的八分之一2者的最小值（默认:`0.5f`）|
+|setOverScrollDistanceRatio|float|越界回弹时间比,当触发越界时得到的移动时长乘以该比例得到真实移动时长,该时长最大不超过`mMaxOverScrollDuration`的值（默认:`0.5f`）|
 |setResistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
 |setResistanceOfFooter|float|移动Footer视图时候的移动阻尼（默认:`1.65f`）|
 |setResistanceOfHeader|float|移动Header视图时候的移动阻尼（默认:`1.65f`）|

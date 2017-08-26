@@ -27,8 +27,6 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mClassicHeader);
         mClassicFooter = new ClassicFooter(context);
         setFooterView(mClassicFooter);
-        setDisableRefresh(false);
-        setDisableLoadMore(false);
     }
 
     public void setLastUpdateTimeKey(String key) {

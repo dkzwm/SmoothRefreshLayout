@@ -54,5 +54,6 @@
     <string name="enable_two_level_refresh">Enable Two-Level refresh</string>
     <string name="brush">Brush</string>
     <string name="continuous_brush_is_easier_to_get_red_envelopes">Continuous brush is easier to get red envelopes</string>
+    <string name="has_been_triggered_to_refresh">Has been triggered to refresh</string>
 
 </resources>

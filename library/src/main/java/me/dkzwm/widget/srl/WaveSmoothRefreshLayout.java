@@ -24,7 +24,6 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
     public WaveSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mWaveHeader = new WaveHeader(context);
-        setDisableRefresh(false);
         setHeaderView(mWaveHeader);
         setEnableHeaderDrawerStyle(true);
         setEnableKeepRefreshView(true);

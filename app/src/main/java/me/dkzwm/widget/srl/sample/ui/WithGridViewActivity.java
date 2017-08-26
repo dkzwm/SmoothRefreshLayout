@@ -10,6 +10,7 @@ import android.widget.GridView;
 
 import java.util.List;
 
+import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
@@ -22,7 +23,7 @@ import me.dkzwm.widget.srl.sample.utils.DataUtil;
  * @author dkzwm
  */
 public class WithGridViewActivity extends AppCompatActivity {
-    private SmoothRefreshLayout mRefreshLayout;
+    private MaterialSmoothRefreshLayout mRefreshLayout;
     private GridView mGridView;
     private ListViewAdapter mAdapter;
     private Handler mHandler = new Handler();
@@ -38,9 +39,9 @@ public class WithGridViewActivity extends AppCompatActivity {
         mGridView = (GridView) findViewById(R.id.gridView_with_gridView_activity);
         mAdapter = new ListViewAdapter(getLayoutInflater());
         mGridView.setAdapter(mAdapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView_activity);
-        mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView_activity);
         mRefreshLayout.setDisableLoadMore(false);
+        mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {

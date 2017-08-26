@@ -52,8 +52,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mMaterialHeader);
         mMaterialFooter = new MaterialFooter(context);
         setFooterView(mMaterialFooter);
-        setDisableRefresh(false);
-        setDisableLoadMore(false);
     }
 
     /**
