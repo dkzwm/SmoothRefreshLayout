@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.3'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.4'
 }
 ```
 #### 在Xml中配置
