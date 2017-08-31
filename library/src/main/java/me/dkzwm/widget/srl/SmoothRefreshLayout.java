@@ -2133,8 +2133,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    // NestedScrollingParent
-
     /**
      * Returns the current state<br/>
      * <p>
@@ -2239,6 +2237,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mOverScrollChecker.fling(vy);
     }
 
+    // NestedScrollingChild
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         if (sDebug) {
@@ -2846,7 +2845,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     offsetX = ev.getX() - pressDownPoint[0];
                     offsetY = ev.getY() - pressDownPoint[1];
                     if (Math.abs(offsetX) > mTouchSlop || Math.abs(offsetY) > mTouchSlop) {
-                        sendCancelEvent();
+                        sendCancelEvent(false);
                         return true;
                     } else {
                         return super.dispatchTouchEvent(ev);
@@ -2857,7 +2856,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (mIndicator.hasLeftStartPosition()) {
                         onFingerUp(false);
                         if (mIndicator.hasMovedAfterPressedDown()) {
-                            sendCancelEvent();
+                            sendCancelEvent(false);
                             return true;
                         }
                         return super.dispatchTouchEvent(ev);
@@ -2909,8 +2908,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (mNeedInterceptTouchEventInOnceTouch) {
                     mOverScrollChecker.abortIfWorking();
                     if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning) {
-                        sendCancelEvent();
-                        sendDownEvent();
+                        final boolean isNeedDetectGesture = isEnabledOverScroll();
+                        sendCancelEvent(isNeedDetectGesture);
+                        sendDownEvent(isNeedDetectGesture);
                         mHasSendCancelEvent = false;
                         mNeedInterceptTouchEventInOnceTouch = false;
                     }
@@ -2918,8 +2918,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 if (mIsLastOverScrollCanNotAbort) {
                     if (mIndicator.isInStartPosition() && !mOverScrollChecker.mScrolling) {
-                        sendCancelEvent();
-                        sendDownEvent();
+                        final boolean isNeedDetectGesture = isEnabledOverScroll();
+                        sendCancelEvent(isNeedDetectGesture);
+                        sendDownEvent(isNeedDetectGesture);
                         mHasSendCancelEvent = false;
                         mIsLastOverScrollCanNotAbort = false;
                     }
@@ -3003,11 +3004,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             moveHeaderPos(offsetY);
                             return true;
                         } else if (isAutoRefresh() && !mAutoRefreshBeenSendTouchEvent) {
+                            final boolean isNeedDetectGesture = isEnabledOverScroll();
                             // When the Auto-Refresh is in progress, the content view can not
                             // continue to move up when the content view returns to the top
                             // 当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动
-                            sendCancelEvent();
-                            sendDownEvent();
+                            sendCancelEvent(isNeedDetectGesture);
+                            sendDownEvent(isNeedDetectGesture);
                             mHasSendCancelEvent = false;
                             mAutoRefreshBeenSendTouchEvent = true;
                         }
@@ -3067,28 +3069,34 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return ScrollCompat.canChildScrollDown(mTargetView);
     }
 
-    private void sendCancelEvent() {
+    private void sendCancelEvent(boolean eventNeedDetectGesture) {
         if (sDebug) {
-            SRLog.i(TAG, "sendCancelEvent()");
+            SRLog.i(TAG, "sendCancelEvent(): eventNeedDetectGesture: %s", eventNeedDetectGesture);
         }
         if (mLastMoveEvent == null) return;
         mHasSendCancelEvent = true;
         final MotionEvent last = mLastMoveEvent;
-        MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime() +
+        MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime() +
                         ViewConfiguration.getLongPressTimeout(),
                 MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
-        super.dispatchTouchEvent(e);
+        if (eventNeedDetectGesture) {
+            mGestureDetector.onTouchEvent(ev);
+        }
+        super.dispatchTouchEvent(ev);
     }
 
-    private void sendDownEvent() {
+    private void sendDownEvent(boolean eventNeedDetectGesture) {
         if (sDebug) {
-            SRLog.i(TAG, "sendDownEvent()");
+            SRLog.i(TAG, "sendDownEvent(): eventNeedDetectGesture: %s", eventNeedDetectGesture);
         }
         if (mLastMoveEvent == null) return;
         final MotionEvent last = mLastMoveEvent;
-        MotionEvent e = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
+        MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
-        super.dispatchTouchEvent(e);
+        if (eventNeedDetectGesture) {
+            mGestureDetector.onTouchEvent(ev);
+        }
+        super.dispatchTouchEvent(ev);
     }
 
     private void notifyFingerUp() {
@@ -3295,7 +3303,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         // once moved, cancel event will be sent to child
         if (mIndicator.hasTouched() && !mHasSendCancelEvent
                 && mIndicator.hasMovedAfterPressedDown() && !mNestedScrollInProgress) {
-            sendCancelEvent();
+            sendCancelEvent(false);
         }
         final boolean isMovingHeader = isMovingHeader();
         final boolean isMovingFooter = isMovingFooter();
@@ -3319,7 +3327,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             tryToNotifyReset();
             // recover event to children
             if (mIndicator.hasTouched() && !mNestedScrollInProgress) {
-                sendDownEvent();
+                sendDownEvent(false);
             }
         }
 
