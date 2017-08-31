@@ -3609,7 +3609,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 method.setAccessible(true);
                                 method.invoke(object, this);
                             }
-                            field.set(mTargetViewTreeObserver, null);
+                            method = object.getClass().getDeclaredMethod("size");
+                            if (method != null) {
+                                method.setAccessible(true);
+                                object = method.invoke(object);
+                                if (object != null && object instanceof Integer) {
+                                    int size = (int) object;
+                                    if (size == 0) {
+                                        field.set(mTargetViewTreeObserver, null);
+                                    }
+                                }
+                            }
                         }
                     }
                 } catch (IllegalAccessException e) {
