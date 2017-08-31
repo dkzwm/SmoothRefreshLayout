@@ -50,6 +50,7 @@ public class NestedPageFragment extends Fragment {
         recyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) view.findViewById(R.id
                 .smoothRefreshLayout_nested_page_fragment);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableNextPtrAtOnce(false);
         mRefreshLayout.setDisableWhenHorizontalMove(true);

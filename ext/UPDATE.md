@@ -1,4 +1,7 @@
 # 更新日志
+## 1.4.1
+> 修改 `onNestedPreScroll`方法实现，合并逻辑，提高效率和可读性。
+> 修改 `onNestedPreFling` 方法实现，提高效率。
 ## 1.4.4
 > 优化优化回弹效果    
 > 修复某些情况下 `ViewTreeObserver` 的 `OnScrollChangedListener` 没有完全移除问题。    

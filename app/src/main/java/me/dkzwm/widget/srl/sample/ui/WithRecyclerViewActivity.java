@@ -65,7 +65,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 2000);
+                }, 6000);
             }
         });
         mRefreshLayout.autoRefresh(false);

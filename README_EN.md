@@ -71,7 +71,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.4'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.4.1'
 }
 ```
 #### Use Xml to config
