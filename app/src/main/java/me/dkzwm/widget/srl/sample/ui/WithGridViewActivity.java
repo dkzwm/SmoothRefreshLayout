@@ -7,12 +7,12 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.util.List;
 
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
-import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ListViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
@@ -58,12 +58,17 @@ public class WithGridViewActivity extends AppCompatActivity {
                             mCount += 100;
                             mAdapter.appendData(list);
                         }
-                        mRefreshLayout.refreshComplete();
+                        mRefreshLayout.setDurationToCloseFooter(0);
+                        //由于GridView添加数据后计算量较大，所以延迟30毫秒，滚动上才不会有跳动
+                        mRefreshLayout.refreshComplete(30);
+                        mRefreshLayout.setDurationToCloseFooter(500);
                     }
                 }, 2000);
             }
         });
         mRefreshLayout.autoRefresh(false);
+
+
     }
 
 

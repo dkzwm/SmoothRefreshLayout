@@ -1,4 +1,12 @@
 # 更新日志
+## 1.4.4
+> 优化优化回弹效果
+> 修复某些情况下 `ViewTreeObserver` 的 `OnScrollChangedListener` 没有完全移除问题。
+> 修改 `MaterialSmoothRefreshLayout` 限制Header最大移动距离为1.5倍。
+> 删除 `setOverScrollDistanceRatio` 方法和 `mOverScrollDistanceRatio` 属性。
+> 添加 `setMinOverScrollDuration` 方法。
+> 修复某些特殊情况下，越界回弹未正常终止问题。
+> 删除RefreshCompleteHook中的弱引用，避免某些特殊情况下，引用被回收导致RefreshLayout内部状态异常问题。
 ## 1.4.3
 > 修改越界回弹实现，优化回弹效果。    
 > 修复移动视图过程中触发刷新刷新逻辑问题（PS：2个判断都少写了括号）。    

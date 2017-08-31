@@ -268,8 +268,9 @@ public interface IRefreshView {
 |setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
-|setOverScrollDistanceRatio|float|越界回弹距离比,当触发越界时得到的移动距离乘以该比例得到真实移动距离,该距离最大不超过刷新视图的高度和屏幕高度的八分之一2者的最小值（默认:`0.5f`）|
-|setOverScrollDistanceRatio|float|越界回弹时间比,当触发越界时得到的移动时长乘以该比例得到真实移动时长,该时长最大不超过`mMaxOverScrollDuration`的值（默认:`0.5f`）|
+|setOverScrollDistanceRatio|float|越界回弹时间比,当触发越界时得到的移动时长乘以该比例得到真实移动时长,该时长最大不超过`mMaxOverScrollDuration`的值（默认:`0.5f`）.得到的真实移动时长乘以每毫秒距离（即最大移动距离/最大移动时长）得到真实的移动距离|
+|setMaxOverScrollDuration|int|设置越界回弹动画最长时间（默认:`500`）|
+|setMinOverScrollDuration|int|设置越界回弹动画最短时间（默认:`150`）|
 |setResistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
 |setResistanceOfFooter|float|移动Footer视图时候的移动阻尼（默认:`1.65f`）|
 |setResistanceOfHeader|float|移动Header视图时候的移动阻尼（默认:`1.65f`）|

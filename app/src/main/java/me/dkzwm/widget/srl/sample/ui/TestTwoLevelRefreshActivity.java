@@ -45,7 +45,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         //设置滚动到保持二级刷新的头部位置的时长
         mRefreshLayout.setDurationOfBackToKeepTwoLeveHeaderViewPosition(1000);
         //设置关闭二级刷新头部回滚到起始位置的时长
-        mRefreshLayout.setDurationToCloseTwoLevelHeader(350);
+        mRefreshLayout.setDurationToCloseTwoLevelHeader(0);
         //设置刷新时保持头部的Offset(占头部的高度比)
         mRefreshLayout.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(1f);
         //设置触发提示二级刷新的头部高度比
@@ -64,7 +64,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                         String times = getString(R.string.number_of_two_level_refresh) + mTwoLevelCount;
                         mTextView.setText(times);
                     }
-                }, 1000);
+                }, 2000);
             }
 
             @Override
