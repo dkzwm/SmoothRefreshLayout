@@ -193,7 +193,7 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        float percent = Math.min(1, indicator.getCurrentPercentOfHeader());
+        float percent = Math.min(1, indicator.getCurrentPercentOfRefreshOffset());
         float alphaPercent = Math.min(1, percent * percent * percent);
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mDrawable.setAlpha((int) (255 * alphaPercent));

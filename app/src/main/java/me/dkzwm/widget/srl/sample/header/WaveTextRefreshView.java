@@ -33,7 +33,7 @@ public class WaveTextRefreshView extends View implements IRefreshView {
     private float mOffsetY = 0;
     private float mProgress = 1f;
     private float mOffsetX;
-    private String mText = "ˇωˇ";
+    private String mText = "WAVE VIEW";
     private TextPaint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Path mTextPath = new Path();
@@ -152,18 +152,29 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         mWavePath.offset(0, -mAmplitude * 2);
         mTextPath.reset();
         float offsetX = 0;
-        final Path temp = new Path();
+        final Path tempPath = new Path();
+        final Paint.FontMetrics tempFontMetrics = new Paint.FontMetrics();
+        mTextPaint.getFontMetrics(tempFontMetrics);
         for (int i = 0; i < mText.length(); i++) {
             String str = mText.substring(i, i + 1);
-            mTextPaint.getTextPath(str, 0, 1, 0, 0, temp);
-            temp.offset(offsetX, -mTextRect.top);
-            mTextPath.addPath(temp);
+            mTextPaint.getTextPath(str, 0, 1, 0, 0, tempPath);
+            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N) {
+                mTextPath.addPath(tempPath, offsetX, 0);
+            } else {
+                tempPath.offset(offsetX, -mTextRect.top);
+                mTextPath.addPath(tempPath);
+            }
             offsetX += mTextSpacing;
-            offsetX += mTextPaint.measureText(str);
+            offsetX += mTextPaint.measureText(str,0,1);
         }
-        temp.reset();
+        tempPath.reset();
         mTextPath.computeBounds(mTextRectF, true);
-        mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop());
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N) {
+            mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop()
+                    -mTextRectF.top);
+        } else {
+            mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop());
+        }
         mOffsetX = 0;
     }
 
@@ -252,7 +263,7 @@ public class WaveTextRefreshView extends View implements IRefreshView {
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
-            mProgress = Math.min(1, indicator.getCurrentPercentOfHeader());
+            mProgress = Math.min(1, indicator.getCurrentPercentOfRefreshOffset());
             mProgress = mProgress * mProgress * mProgress;
             mOffsetY = (mTextRectF.height() + mAmplitude * 2) * (1 - mProgress) + getPaddingTop();
             invalidate();

@@ -76,7 +76,7 @@
     </declare-styleable>
     <declare-styleable name="TwoLevelSmoothRefreshLayout">
         //This attribute only can be used in TwoLevelSmoothRefreshLayout
-        <attr name="sr_enable_two_level_pull_to_refresh" format="boolean"/>
+        <attr name="sr_enable_two_level_refresh" format="boolean"/>
     </declare-styleable>
     <declare-styleable name="IRefreshView">
         <attr name="sr_style" format="enum">

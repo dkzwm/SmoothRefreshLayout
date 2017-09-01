@@ -48,9 +48,11 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                 return true;
             }
         });
-        WaveTextRefreshView refreshView=new WaveTextRefreshView(this);
+        WaveTextRefreshView refreshView = new WaveTextRefreshView(this);
         refreshView.setIncrementalY(.5f);
         mRefreshLayout.setHeaderView(refreshView);
+        mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
+        mRefreshLayout.setRatioOfHeaderHeightToRefresh(1);
         mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnabledInterceptEventWhileLoading(true);

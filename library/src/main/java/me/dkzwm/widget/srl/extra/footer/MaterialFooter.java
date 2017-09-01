@@ -214,7 +214,7 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        float percent = Math.min(1f, indicator.getCurrentPercentOfFooter());
+        float percent = Math.min(1f, indicator.getCurrentPercentOfLoadMoreOffset());
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mIsSpinning = false;
             mMustInvalidate = false;

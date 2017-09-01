@@ -143,9 +143,9 @@ public interface IIndicator {
     @NonNull
     float[] getLastMovePoint();
 
-    float getCurrentPercentOfHeader();
+    float getCurrentPercentOfRefreshOffset();
 
-    float getCurrentPercentOfFooter();
+    float getCurrentPercentOfLoadMoreOffset();
 
     @IntDef({MOVING_CONTENT, MOVING_FOOTER, MOVING_HEADER})
     @Retention(RetentionPolicy.SOURCE)

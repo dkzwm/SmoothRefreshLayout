@@ -329,7 +329,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
         mCurrentPosY = indicator.getCurrentPosY();
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
-            float currentPercent = Math.min(1f, indicator.getCurrentPercentOfHeader());
+            float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
             setProgress(currentPercent);
             invalidate();
         }

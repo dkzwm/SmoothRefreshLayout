@@ -301,13 +301,13 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getCurrentPercentOfHeader() {
-        return mHeaderHeight <= 0 ? 0 : mCurrentPos * 1f / mHeaderHeight;
+    public float getCurrentPercentOfRefreshOffset() {
+        return mHeaderHeight <= 0 ? 0 : mCurrentPos * 1f / mOffsetToRefresh;
     }
 
     @Override
-    public float getCurrentPercentOfFooter() {
-        return mFooterHeight <= 0 ? 0 : mCurrentPos * 1f / mFooterHeight;
+    public float getCurrentPercentOfLoadMoreOffset() {
+        return mFooterHeight <= 0 ? 0 : mCurrentPos * 1f / mOffsetToLoadMore;
     }
 
     @Override

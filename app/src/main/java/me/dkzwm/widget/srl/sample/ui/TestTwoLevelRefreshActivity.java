@@ -43,7 +43,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         //设置触发刷新的头部高度比
         mRefreshLayout.setRatioOfHeaderHeightToRefresh(.12f);
         //设置滚动到保持二级刷新的头部位置的时长
-        mRefreshLayout.setDurationOfBackToKeepTwoLeveHeaderViewPosition(1000);
+        mRefreshLayout.setDurationOfBackToKeepTwoLevelHeaderViewPosition(1000);
         //设置关闭二级刷新头部回滚到起始位置的时长
         mRefreshLayout.setDurationToCloseTwoLevelHeader(0);
         //设置刷新时保持头部的Offset(占头部的高度比)
@@ -85,7 +85,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                 mRefreshLayout.setEnabledInterceptEventWhileLoading(false);
             }
         });
-        mRefreshLayout.autoRefresh(false);
+        mRefreshLayout.autoTwoLevelRefreshHint(false, 650);
     }
 
 
@@ -96,12 +96,12 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mRefreshLayout.isEnabledTwoLevelPullToRefresh()) {
+                if (mRefreshLayout.isDisabledTwoLevelRefresh()) {
                     item.setTitle(R.string.enable_two_level_refresh);
-                    mRefreshLayout.setEnableTwoLevelPullToRefresh(false);
+                    mRefreshLayout.setDisableTwoLevelRefresh(true);
                 } else {
                     item.setTitle(R.string.disable_two_level_refresh);
-                    mRefreshLayout.setEnableTwoLevelPullToRefresh(true);
+                    mRefreshLayout.setDisableTwoLevelRefresh(false);
                 }
                 return true;
             default:

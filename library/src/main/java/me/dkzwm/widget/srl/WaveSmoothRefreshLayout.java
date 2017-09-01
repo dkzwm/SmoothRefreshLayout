@@ -30,8 +30,8 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         setCanMoveTheMaxRatioOfHeaderHeight(.4f);
         setRatioOfHeaderHeightToRefresh(.22f);
         setOffsetRatioToKeepHeaderWhileLoading(.22f);
-        setDurationToCloseHeader(1000);
-        setDurationOfBackToKeepHeaderPosition(1000);
+        setDurationToCloseHeader(380);
+        setDurationOfBackToKeepHeaderPosition(850);
     }
 
     public WaveHeader getDefaultHeader() {
