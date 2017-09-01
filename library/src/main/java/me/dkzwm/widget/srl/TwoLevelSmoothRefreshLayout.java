@@ -52,7 +52,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mTwoLevelIndicator = indicator;
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TwoLevelSmoothRefreshLayout, 0, 0);
         if (arr != null) {
-            setDisableTwoLevelRefresh(arr.getBoolean(R.styleable
+            setDisableTwoLevelRefresh(!arr.getBoolean(R.styleable
                     .TwoLevelSmoothRefreshLayout_sr_enable_two_level_refresh, false));
             arr.recycle();
         }
@@ -295,7 +295,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (canPerformTwoLevelPullToRefresh()) {
             tryToPerformRefresh();
         }
-        if (isDisabledTwoLevelRefresh() && isMovingHeader() && isTwoLevelRefreshing()
+        if (mEnabledTwoLevelRefresh && isMovingHeader() && isTwoLevelRefreshing()
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             if (isEnabledKeepRefreshView())
                 tryToScrollTo(mTwoLevelIndicator.getOffsetToKeepTwoLevelHeaderWhileLoading(),
@@ -356,7 +356,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     private boolean canPerformTwoLevelPullToRefresh() {
         return !isDisabledRefresh() && mTwoLevelRefreshView != null
-                && isDisabledTwoLevelRefresh() && canPerformRefresh() && isMovingHeader();
+                && mEnabledTwoLevelRefresh && canPerformRefresh() && isMovingHeader();
     }
 
     private void delayForStay() {

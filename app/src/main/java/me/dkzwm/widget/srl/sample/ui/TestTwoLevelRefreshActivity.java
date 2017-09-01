@@ -96,7 +96,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mRefreshLayout.isDisabledTwoLevelRefresh()) {
+                if (!mRefreshLayout.isDisabledTwoLevelRefresh()) {
                     item.setTitle(R.string.enable_two_level_refresh);
                     mRefreshLayout.setDisableTwoLevelRefresh(true);
                 } else {

@@ -3,6 +3,7 @@ package me.dkzwm.widget.srl.sample.header;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -14,6 +15,8 @@ import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.sample.R;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by dkzwm on 2017/6/12.
@@ -114,7 +117,9 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
         final int currentPos = indicator.getCurrentPosY();
         if (layout instanceof TwoLevelSmoothRefreshLayout) {
             TwoLevelSmoothRefreshLayout refreshLayout = (TwoLevelSmoothRefreshLayout) layout;
-            if (refreshLayout.isDisabledTwoLevelRefresh()) {
+            Log.d(getClass().getSimpleName(),"-------------:"+refreshLayout
+                    .isDisabledPerformRefresh());
+            if (!refreshLayout.isDisabledTwoLevelRefresh()) {
                 final int offSetToHintTwoLevelRefresh = indicator.getOffsetToHintTwoLevelRefresh();
                 final int offSetToTwoLevelRefresh = indicator.getOffsetToTwoLevelRefresh();
                 if (currentPos < offSetToTwoLevelRefresh && currentPos >= offSetToHintTwoLevelRefresh
