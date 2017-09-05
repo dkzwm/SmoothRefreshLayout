@@ -84,7 +84,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * Set in the Two-Level refresh to keep the refresh view's position of the ratio of the view's
      * height<br/>
      * <p>
-     * 二级刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
+     * 二级刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
      * 当开启了{@link SmoothRefreshLayout#isEnabledKeepRefreshView}后，该属性会生效
      *
      * @param ratio Height ratio
@@ -151,17 +151,35 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     /**
      * Auto perform Two-Level refresh hint use smooth scrolling.<br/>
      * <p>
-     * 自动触发二级刷新提示并滚动到触发位置
+     * 自动触发二级刷新提示并滚动到触发提示位置后回滚回起始位置
      */
     public void autoTwoLevelRefreshHint() {
         autoTwoLevelRefreshHint(true, 0);
     }
 
     /**
+     * Auto perform Two-Level refresh hint use smooth scrolling.<br/>
+     * <p>
+     * 自动触发二级刷新提示并是否滚动到触发提示位置, `smoothScroll`是否滚动到触发位置
+     */
+    public void autoTwoLevelRefreshHint(boolean smoothScroll) {
+        autoTwoLevelRefreshHint(smoothScroll, 0);
+    }
+
+    /**
+     * Auto perform Two-Level refresh hint use smooth scrolling.<br/>
+     * <p>
+     * 自动触发二级刷新提示并滚动到触发提示位置, `stayDuration`停留多长时间
+     */
+    public void autoTwoLevelRefreshHint(int stayDuration) {
+        autoTwoLevelRefreshHint(true, stayDuration);
+    }
+
+    /**
      * If @param smoothScroll has been set to true. Auto perform Two-Level refresh hint use
      * smooth scrolling.<br/>
      * <p>
-     * 自动触发二级刷新提示，`smoothScroll`滚动到触发位置，`stayDuration`停留多长时间
+     * 自动触发二级刷新提示，`smoothScroll`是否滚动到触发位置，`stayDuration`停留多长时间
      *
      * @param smoothScroll Auto Two-Level refresh hint use smooth scrolling
      * @param stayDuration The header moved to the position of the hint, and then how long to stay.

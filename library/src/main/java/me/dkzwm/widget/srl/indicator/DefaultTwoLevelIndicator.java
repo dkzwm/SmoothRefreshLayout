@@ -10,9 +10,17 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     private int mOffsetToHintTwoLevelRefresh = 0;
     private int mOffsetToTwoLevelRefresh = 0;
     private int mTwoLevelRefreshCompleteY;
-    private float mOffsetRatioToKeepTwoLevelHeaderWhileLoading = 1;
+    private float mOffsetRatioToKeepTwoLevelHeaderWhileLoading = 1f;
     private float mRatioOfHeaderHeightToHintTwoLevelRefresh = 1.5f;
     private float mRatioOfHeaderHeightToTwoLevelRefresh = 2.0f;
+
+    @Override
+    public void setHeaderHeight(int height) {
+        super.setHeaderHeight(height);
+        mOffsetToHintTwoLevelRefresh = Math.round(mHeaderHeight *
+                mRatioOfHeaderHeightToHintTwoLevelRefresh);
+        mOffsetToTwoLevelRefresh = Math.round(mHeaderHeight * mRatioOfHeaderHeightToTwoLevelRefresh);
+    }
 
     @Override
     public boolean crossTwoLevelCompletePos() {
@@ -43,7 +51,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
 
     @Override
     public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio) {
-        mOffsetRatioToKeepTwoLevelHeaderWhileLoading=ratio;
+        mOffsetRatioToKeepTwoLevelHeaderWhileLoading = ratio;
     }
 
     @Override
@@ -53,26 +61,22 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
 
     @Override
     public int getOffsetToTwoLevelRefresh() {
-        return mOffsetToTwoLevelRefresh == 0
-                ? Math.round(mHeaderHeight * mRatioOfHeaderHeightToTwoLevelRefresh)
-                : mHeaderHeight;
+        return mOffsetToTwoLevelRefresh;
     }
 
     @Override
     public int getOffsetToHintTwoLevelRefresh() {
-        return mOffsetToHintTwoLevelRefresh == 0
-                ? Math.round(mHeaderHeight * mRatioOfHeaderHeightToHintTwoLevelRefresh)
-                : mHeaderHeight;
+        return mOffsetToHintTwoLevelRefresh;
     }
 
     @Override
     public boolean crossTwoLevelRefreshLine() {
-        return mCurrentPos >= getOffsetToTwoLevelRefresh();
+        return mCurrentPos >= mOffsetToTwoLevelRefresh;
     }
 
     @Override
     public boolean crossTwoLevelHintLine() {
-        return mCurrentPos >= getOffsetToHintTwoLevelRefresh();
+        return mCurrentPos >= mOffsetToHintTwoLevelRefresh;
     }
 
 

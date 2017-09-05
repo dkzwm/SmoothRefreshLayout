@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.4.1'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.5'
 }
 ```
 #### 在Xml中配置
@@ -250,6 +250,11 @@ public interface IRefreshView {
 |sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
 ##### TwoLevelSmoothRefreshLayout 自身配置
+###### v1.4.5之后的版本
+|名称|类型|描述|
+|:---:|:---:|:---:|
+|sr_enable_two_level_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
+###### v1.4.5之前的版本
 |名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_enable_two_level_pull_to_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
@@ -258,7 +263,7 @@ public interface IRefreshView {
 |:---:|:---:|:---:|
 |layout_gravity|flag|指定其它被包裹视图的对齐属性(非 targetView、非refreshView)|
 
-#### Java属性设置方法
+#### SmoothRefreshLayout java属性设置方法
 |名称|参数|描述|
 |:---:|:---:|:---:|
 |setHeaderView|IRefreshView|配置头部视图|
@@ -304,7 +309,7 @@ public interface IRefreshView {
 |setEnableScrollToBottomAutoLoadMore|boolean|到底部自动加载（默认:`false`）|
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 
-#### 回调
+#### SmoothRefreshLayout 回调
 |名称|参数|描述|
 |:---:|:---:|:---:|
 |setOnRefreshListener|T extends OnRefreshListener|设置刷新事件监听回调|
@@ -318,7 +323,7 @@ public interface IRefreshView {
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
 
-#### 其它
+#### SmoothRefreshLayout 其它
 |名称|参数|描述|
 |:---:|:---:|:---:|
 |debug（静态方法）|boolean|Debug开关|
@@ -335,6 +340,24 @@ public interface IRefreshView {
 |autoLoadMore|boolean|自动触发Footer刷新,参数:是否立即触发刷新事件,会滚动到触发Footer刷新位置|
 |autoLoadMore|boolean,boolean|自动触发Footer刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到触发Footer刷新位置|
 |setLoadMoreScrollTargetView|View|设置Footer移动时,响应移动事件的内容视图,例如在SmoothRefreshLayout中有一个CoordinatorLayout,CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerView而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可|
+
+#### TwoLevelSmoothRefreshLayout java属性设置方法
+|名称|参数|描述|
+|:---:|:---:|:---:|
+|setRatioOfHeaderHeightToHintTwoLevelRefresh|float|设置触发二级刷新提示时的位置占Header视图的高度比|
+|setRatioOfHeaderHeightToTwoLevelRefresh|float|设置触发二级刷新时的位置占Header视图的高度比|
+|setOffsetRatioToKeepTwoLevelHeaderWhileLoading|float|二级刷新中保持视图位置占Header视图的高度比（默认:`1f`）|
+|setDisableTwoLevelRefresh|boolean|设置是否关闭二级刷新（默认:`false`）|
+|setDurationOfBackToKeepTwoLevelHeaderViewPosition|int|设置回滚到保持二级刷新Header视图位置的时间（默认:`500`）|
+|setDurationToCloseTwoLevelHeader|int|设置二级刷新Header刷新完成回滚到起始位置的时间（默认:`500`）|
+
+#### TwoLevelSmoothRefreshLayout 其它
+|名称|参数|描述|
+|:---:|:---:|:---:|
+|autoTwoLevelRefreshHint|无参|自动触发二级刷新提示并滚动到触发提示位置后回滚回起始位置|
+|autoTwoLevelRefreshHint|int|自动触发二级刷新提示并滚动到触发提示位置后停留指定时长，参数:停留多长时间|
+|autoTwoLevelRefreshHint|boolean|自动触发二级刷新提示是否滚动到触发提示位置后回滚回起始位置，参数:是否滚到到触发位置|
+|autoTwoLevelRefreshHint|boolean,int|自动触发二级刷新提示,参数1:是否滚动到触发位置，参数2:停留多长时间|
 
 ## Thanks
 - [liaohuqiu android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)    

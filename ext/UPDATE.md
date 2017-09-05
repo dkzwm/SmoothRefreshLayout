@@ -1,6 +1,14 @@
 # 更新日志
-## 1.4.1
-> 修改 `onNestedPreScroll`方法实现，合并逻辑，提高效率和可读性。
+## 1.4.5
+> 修改二级刷新，修改 `TwoLevelSmoothRefreshLayout` styleable `sr_enable_two_level_pull_to_refresh` 为 `sr_enable_two_level_refresh`。 
+> 修改二级刷新，删除 `isEnabledTwoLevelPullToRefresh` 方法，添加 `isDisabledTwoLevelRefresh` 方法。
+> 修改二级刷新，删除 `setEnableTwoLevelPullToRefresh` 方法，添加 `isDisabledTwoLevelRefresh` 方法。
+> 修改二级刷新，修复 `setDurationOfBackToKeepTwoLeveHeaderViewPosition`方法名，应为 `setDurationOfBackToKeepTwoLevelHeaderViewPosition`。
+> 修改二级刷新，添加 `autoTwoLevelRefreshHint` 相关方法。
+> 修复 `WaveTextRefreshView` 中动画显示错位问题(7.0系统BUG);
+> 修复部分逻辑错误。
+## 1.4.4.1
+> 修改 `onNestedPreScroll`方法实现，合并逻辑，提高效率和可读性。    
 > 修改 `onNestedPreFling` 方法实现，提高效率。
 ## 1.4.4
 > 优化优化回弹效果    
