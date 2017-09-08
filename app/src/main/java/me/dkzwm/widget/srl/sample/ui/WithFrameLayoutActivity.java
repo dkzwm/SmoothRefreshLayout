@@ -67,7 +67,7 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                         String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
                     }
-                }, 4000);
+                }, 8000);
             }
         });
         mRefreshLayout.autoRefresh(true);

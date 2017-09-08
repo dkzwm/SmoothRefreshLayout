@@ -33,7 +33,7 @@ public class WaveTextRefreshView extends View implements IRefreshView {
     private float mOffsetY = 0;
     private float mProgress = 1f;
     private float mOffsetX;
-    private String mText = "WAVE VIEW";
+    private String mText = "SmoothRefreshLayout";
     private TextPaint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     private Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Path mTextPath = new Path();
@@ -57,9 +57,9 @@ public class WaveTextRefreshView extends View implements IRefreshView {
 
     public WaveTextRefreshView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30,
+        mTextPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 24,
                 context.getResources().getDisplayMetrics()));
-        mTextPaint.setTypeface(Typeface.DEFAULT_BOLD);
+        mTextPaint.setTypeface(Typeface.DEFAULT);
         mTextPaint.setFakeBoldText(true);
         mTextPaint.setStyle(Paint.Style.FILL);
         mTextPaint.setColor(Color.GRAY);

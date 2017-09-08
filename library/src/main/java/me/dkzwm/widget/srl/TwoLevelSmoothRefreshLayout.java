@@ -298,9 +298,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected boolean tryToNotifyReset() {
         mNeedFilterRefreshEvent = false;
-        if (mDelayToBackToTopRunnable != null)
-            mDelayToBackToTopRunnable.mLayoutWeakRf.clear();
-        mDelayToBackToTopRunnable = null;
+        removeCallbacks(mDelayToBackToTopRunnable);
         return super.tryToNotifyReset();
     }
 
@@ -381,8 +379,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mDelayToBackToTopRunnable == null)
             mDelayToBackToTopRunnable = new DelayToBackToTop(this);
         else
-            mDelayToBackToTopRunnable.mLayoutWeakRf = new
-                    WeakReference<SmoothRefreshLayout>(this);
+            mDelayToBackToTopRunnable.mLayoutWeakRf = new WeakReference<>(this);
         mAutomaticActionUseSmoothScroll = false;
         postDelayed(mDelayToBackToTopRunnable, mDurationToStayAtHintPos);
     }
@@ -394,9 +391,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
 
     private static class DelayToBackToTop implements Runnable {
-        private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
+        private WeakReference<TwoLevelSmoothRefreshLayout> mLayoutWeakRf;
 
-        private DelayToBackToTop(SmoothRefreshLayout layout) {
+        private DelayToBackToTop(TwoLevelSmoothRefreshLayout layout) {
             mLayoutWeakRf = new WeakReference<>(layout);
         }
 
