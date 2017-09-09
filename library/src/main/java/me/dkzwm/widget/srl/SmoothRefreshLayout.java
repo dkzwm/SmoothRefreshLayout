@@ -2861,7 +2861,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             && mIndicator.isInKeepFooterWhileLoadingPos()));
                     if (!mDealHorizontalMove && needProcess) {
                         if ((Math.abs(offsetX) >= mTouchSlop
-                                && Math.abs(offsetX * 1.1f) > Math.abs(offsetY))) {
+                                && Math.abs(offsetX) > Math.abs(offsetY))) {
                             mPreventForHorizontal = true;
                             mDealHorizontalMove = true;
                         } else if (Math.abs(offsetX) < mTouchSlop
@@ -2993,14 +2993,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         sendCancelEvent(isNeedDetectGesture);
         sendDownEvent(isNeedDetectGesture);
         mIndicator.onFingerDown(ev.getX(), ev.getY());
-        mHasSendCancelEvent = false;
     }
 
     private void sendCancelEvent(boolean eventNeedDetectGesture) {
+        if (mHasSendCancelEvent || mLastMoveEvent == null) return;
         if (sDebug) {
             SRLog.i(TAG, "sendCancelEvent(): eventNeedDetectGesture: %s", eventNeedDetectGesture);
         }
-        if (mLastMoveEvent == null) return;
         mHasSendCancelEvent = true;
         final MotionEvent last = mLastMoveEvent;
         MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime() +
@@ -3013,16 +3012,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     private void sendDownEvent(boolean eventNeedDetectGesture) {
+        if (mLastMoveEvent == null) return;
         if (sDebug) {
             SRLog.i(TAG, "sendDownEvent(): eventNeedDetectGesture: %s", eventNeedDetectGesture);
         }
-        if (mLastMoveEvent == null) return;
         final MotionEvent last = mLastMoveEvent;
         MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
         if (eventNeedDetectGesture) {
             mGestureDetector.onTouchEvent(ev);
         }
+        mHasSendCancelEvent = false;
         super.dispatchTouchEvent(ev);
     }
 
@@ -3042,8 +3042,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.d(TAG, "onFingerUp(): stayForLoading: %s", stayForLoading);
         }
         notifyFingerUp();
-        if (mOverScrollChecker.mScrolling)
-            return;
         if (!stayForLoading && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE
                 && !isRefreshing() && !isLoadingMore()) {
             if (isMovingHeader() && !isDisabledRefresh() && mIndicator
@@ -3226,8 +3224,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @SuppressWarnings({"unchecked"})
     protected void updateYPos(int change) {
         // once moved, cancel event will be sent to child
-        if (mIndicator.hasTouched() && !mHasSendCancelEvent
-                && mIndicator.hasMovedAfterPressedDown() && !mNestedScrollInProgress) {
+        if (mIndicator.hasTouched() && !mNestedScrollInProgress
+                && mIndicator.hasMovedAfterPressedDown()) {
             sendCancelEvent(false);
         }
         final boolean isMovingHeader = isMovingHeader();
