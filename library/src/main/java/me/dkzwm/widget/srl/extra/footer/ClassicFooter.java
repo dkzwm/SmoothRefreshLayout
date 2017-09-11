@@ -265,6 +265,21 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         }
     }
 
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        if (indicator.hasJustLeftStartPosition()) {
+            mRotateView.clearAnimation();
+            mRotateView.setVisibility(INVISIBLE);
+            mProgressBar.setVisibility(INVISIBLE);
+            mTitleTextView.setVisibility(GONE);
+            mRotateView.setVisibility(GONE);
+            mShouldShowLastUpdate = false;
+            mNoMoreDataChangedView = false;
+            mLastUpdateTimeUpdater.stop();
+            tryUpdateLastUpdateTime();
+        }
+    }
+
     private class LastUpdateTimeUpdater implements Runnable {
 
         private boolean mRunning = false;

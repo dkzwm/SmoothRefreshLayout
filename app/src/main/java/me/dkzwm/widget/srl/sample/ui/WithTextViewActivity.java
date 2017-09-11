@@ -36,6 +36,9 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         mTextView = (TextView) findViewById(R.id.textView_with_textView_activity_desc);
         mRefreshLayout.setHeaderView(new ClassicHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setDisableLoadMore(false);
+        mRefreshLayout.setDisablePerformLoadMore(true);
+        mRefreshLayout.setEnableHideFooterView(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

@@ -106,7 +106,6 @@ dependencies {
 ####  Use Java code to config
 ```
 SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoothRefreshLayout);
-refreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
 refreshLayout.setHeaderView(new ClassicHeader(this));
 refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 	@Override
@@ -211,6 +210,22 @@ public interface IRefreshView {
      * @param indicator The indicator {@link IIndicator}
      */
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
+
+    /**
+     * Before the transaction of the refresh view has not yet been processed completed。
+     * This method will be triggered when the position of the other refresh view changes.<br/>
+     * <p>
+     * Added in version 1.4.6
+     *
+     * @param layout    The layout {@link SmoothRefreshLayout}
+     * @param status    Current status @see{@link SmoothRefreshLayout#SR_STATUS_INIT},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_PREPARE},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_REFRESHING},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_LOADING_MORE},
+     *                  {@link SmoothRefreshLayout#SR_STATUS_COMPLETE}.
+     * @param indicator The indicator {@link IIndicator}
+     */
+    void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
 }
 ```

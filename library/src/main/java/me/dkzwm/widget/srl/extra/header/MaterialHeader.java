@@ -207,6 +207,17 @@ public class MaterialHeader extends View implements IRefreshView {
         }
     }
 
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        if (indicator.hasJustLeftStartPosition()) {
+            mDrawable.setAlpha(255);
+            mDrawable.setStartEndTrim(0f, 0.8f);
+            mDrawable.showArrow(true);
+            mDrawable.setArrowScale(1);
+            invalidate();
+        }
+    }
+
     private void resetDrawable() {
         mDrawable.setAlpha(255);
         mDrawable.stop();

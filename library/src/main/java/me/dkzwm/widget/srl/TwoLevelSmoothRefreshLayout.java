@@ -197,6 +197,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mHeaderView != null)
             mHeaderView.onRefreshPrepare(this);
         mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
+        mFreshViewStatus = SR_FRESH_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         int offsetToRefreshHint = mTwoLevelIndicator.getOffsetToHintTwoLevelRefresh();
         if (offsetToRefreshHint <= 0) {

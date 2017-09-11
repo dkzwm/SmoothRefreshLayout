@@ -160,6 +160,11 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     }
 
     @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, ITwoLevelIndicator indicator) {
+
+    }
+
+    @Override
     public void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, ITwoLevelIndicator twoLevelIndicator) {
         mTextViewTitle.setText(R.string.welcome_to_secondary_menu);
     }

@@ -234,6 +234,23 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         }
     }
 
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        if (indicator.hasJustLeftStartPosition()) {
+            mShouldShowLastUpdate = false;
+            tryUpdateLastUpdateTime();
+            mLastUpdateTimeUpdater.stop();
+            mProgressBar.setVisibility(GONE);
+            mRotateView.setVisibility(GONE);
+            mTitleTextView.setVisibility(GONE);
+            if (layout.isEnabledPullToRefresh()) {
+                mTitleTextView.setText(R.string.sr_pull_down_to_refresh);
+            } else {
+                mTitleTextView.setText(R.string.sr_pull_down);
+            }
+        }
+    }
+
     private void tryUpdateLastUpdateTime() {
         if (TextUtils.isEmpty(mLastUpdateTimeKey) || !mShouldShowLastUpdate) {
             mLastUpdateTextView.setVisibility(GONE);

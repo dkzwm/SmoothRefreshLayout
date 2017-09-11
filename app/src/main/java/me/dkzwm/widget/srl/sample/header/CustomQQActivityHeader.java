@@ -106,4 +106,9 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
             }
         }
     }
+
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+
+    }
 }

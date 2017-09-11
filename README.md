@@ -107,7 +107,6 @@ dependencies {
 ####  Java代码配置
 ```
 SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoothRefreshLayout);
-refreshLayout.setMode(SmoothRefreshLayout.MODE_BOTH);
 refreshLayout.setHeaderView(new ClassicHeader(this));
 refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 	@Override
@@ -183,6 +182,11 @@ public interface IRefreshView {
      */
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
 
+    /**
+     * 当头部或者尾部视图仍然处于处理事务中，这时候移动其他刷新视图则会调用该方法
+	 * 在1.4.6版本新加入
+     */
+    void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 }
 ```
 

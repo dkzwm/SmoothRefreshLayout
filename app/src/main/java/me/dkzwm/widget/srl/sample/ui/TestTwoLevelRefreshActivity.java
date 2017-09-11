@@ -85,7 +85,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                 mRefreshLayout.setEnabledInterceptEventWhileLoading(false);
             }
         });
-        mRefreshLayout.autoTwoLevelRefreshHint(true, 2000);
+        mRefreshLayout.autoTwoLevelRefreshHint(false, 2000);
     }
 
 

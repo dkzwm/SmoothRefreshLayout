@@ -85,4 +85,9 @@ public class CustomQQWebHeader extends FrameLayout implements IRefreshView {
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
 
     }
+
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+
+    }
 }

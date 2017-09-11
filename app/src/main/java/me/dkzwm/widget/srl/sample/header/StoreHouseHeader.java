@@ -335,6 +335,11 @@ public class StoreHouseHeader extends View implements IRefreshView {
         }
     }
 
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+
+    }
+
     private class AniController implements Runnable {
         private int mTick = 0;
         private int mCountPerSeg = 0;

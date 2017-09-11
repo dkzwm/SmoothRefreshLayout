@@ -223,6 +223,16 @@ public class MaterialFooter extends View implements IRefreshView {
         }
     }
 
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        if (indicator.hasJustLeftStartPosition()) {
+            mIsSpinning = false;
+            mMustInvalidate = false;
+            mProgress = 1;
+            invalidate();
+        }
+    }
+
     private void reset() {
         mMustInvalidate = false;
         mLastDrawProgressTime = 0;

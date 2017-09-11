@@ -56,6 +56,9 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
         mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnabledInterceptEventWhileLoading(true);
+        mRefreshLayout.setDisableLoadMore(false);
+        mRefreshLayout.setDisablePerformLoadMore(true);
+        mRefreshLayout.setEnableHideFooterView(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

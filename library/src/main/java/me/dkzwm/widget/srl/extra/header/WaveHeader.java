@@ -239,7 +239,7 @@ public class WaveHeader extends View implements IRefreshView {
         mFingerUpY = indicator.getCurrentPosY();
         if (layout.isEnabledKeepRefreshView() && mStatus != SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
-            if (mFingerUpY > offsetToKeepHeader) {
+            if (mFingerUpY > offsetToKeepHeader && !layout.isDisabledPerformRefresh()) {
                 layout.updateScrollerInterpolator(mInterpolator);
             } else {
                 layout.resetScrollerInterpolator();
@@ -334,6 +334,17 @@ public class WaveHeader extends View implements IRefreshView {
             mLastPoint[0] = width / 2;
             mLastPoint[1] = mCurrentPosY;
         }
+        invalidate();
+    }
+
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+        final int width = getWidth();
+        if (indicator.hasTouched()) {
+            mLastPoint = new float[]{indicator.getLastMovePoint()[0], mCurrentPosY};
+        } else
+            mLastPoint[0] = width / 2;
+        mLastPoint[1] = mCurrentPosY;
         invalidate();
     }
 

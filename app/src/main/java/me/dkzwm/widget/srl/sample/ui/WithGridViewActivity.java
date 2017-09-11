@@ -63,7 +63,7 @@ public class WithGridViewActivity extends AppCompatActivity {
                         mRefreshLayout.refreshComplete(30);
                         mRefreshLayout.setDurationToCloseFooter(500);
                     }
-                }, 2000);
+                }, 5000);
             }
         });
         mRefreshLayout.autoRefresh(false);

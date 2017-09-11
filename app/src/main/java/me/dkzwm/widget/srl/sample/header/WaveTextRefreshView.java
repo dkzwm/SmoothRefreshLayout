@@ -158,23 +158,14 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         for (int i = 0; i < mText.length(); i++) {
             String str = mText.substring(i, i + 1);
             mTextPaint.getTextPath(str, 0, 1, 0, 0, tempPath);
-            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N) {
-                mTextPath.addPath(tempPath, offsetX, 0);
-            } else {
-                tempPath.offset(offsetX, -mTextRect.top);
-                mTextPath.addPath(tempPath);
-            }
+            mTextPath.addPath(tempPath, offsetX, 0);
             offsetX += mTextSpacing;
-            offsetX += mTextPaint.measureText(str,0,1);
+            offsetX += mTextPaint.measureText(str, 0, 1);
         }
         tempPath.reset();
         mTextPath.computeBounds(mTextRectF, true);
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N) {
-            mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop()
-                    -mTextRectF.top);
-        } else {
-            mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop());
-        }
+        mTextPath.offset(w / 2 - mTextRectF.width() / 2, getPaddingTop()
+                - mTextRectF.top);
         mOffsetX = 0;
     }
 
@@ -268,5 +259,10 @@ public class WaveTextRefreshView extends View implements IRefreshView {
             mOffsetY = (mTextRectF.height() + mAmplitude * 2) * (1 - mProgress) + getPaddingTop();
             invalidate();
         }
+    }
+
+    @Override
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+
     }
 }
