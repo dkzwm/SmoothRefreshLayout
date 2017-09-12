@@ -124,7 +124,7 @@ refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 #### 自定义刷新视图
 ##### 接口定义
 ```
-public interface IRefreshView {    
+public interface IRefreshView <T extends IIndicator> {    
 
     byte TYPE_HEADER = 0;
     byte TYPE_FOOTER = 1;
@@ -155,7 +155,7 @@ public interface IRefreshView {
     /**
      * 手指离开屏幕
      */
-    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
+    void onFingerUp(SmoothRefreshLayout layout, T indicator);
 
     /**
      * 重置视图
@@ -170,7 +170,7 @@ public interface IRefreshView {
     /**
      * 开始刷新
      */
-    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
+    void onRefreshBegin(SmoothRefreshLayout layout, T indicator);
 
     /**
      * 刷新完成
@@ -180,11 +180,11 @@ public interface IRefreshView {
     /**
      * 当头部或者尾部视图发生位置变化
      */
-    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
+    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
     /**
      * 当头部或者尾部视图仍然处于处理事务中，这时候移动其他刷新视图则会调用该方法
-	 * 在1.4.6版本新加入
+     * 在1.4.6版本新加入
      */
     void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 }

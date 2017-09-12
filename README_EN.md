@@ -123,7 +123,7 @@ refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 #### Custom refresh view
 ##### Interface define
 ```
-public interface IRefreshView {    
+public interface IRefreshView <T extends IIndicator> {    
 
     byte TYPE_HEADER = 0;
     byte TYPE_FOOTER = 1;
@@ -165,7 +165,7 @@ public interface IRefreshView {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
+    void onFingerUp(SmoothRefreshLayout layout, T indicator);
 
     /**
      * This method will be triggered when the refresh state is reset to
@@ -188,7 +188,7 @@ public interface IRefreshView {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
+    void onRefreshBegin(SmoothRefreshLayout layout, T indicator);
 
     /**
      * This method will be triggered when the frame is refresh completed.
@@ -209,7 +209,7 @@ public interface IRefreshView {
      *                  {@link SmoothRefreshLayout#SR_STATUS_COMPLETE}.
      * @param indicator The indicator {@link IIndicator}
      */
-    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator);
+    void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
     /**
      * Before the transaction of the refresh view has not yet been processed completed。
