@@ -4,9 +4,9 @@
 > 在 `IRefreshView` 接口中添加 `onPureScrollPositionChanged`方法，用于当刷新视图事务未完成，移动其它视图会回调该方法，可以根据具体需求实现该状态下的视图展现。    
 > 优化优化回弹效果。   
 > 修复某些特殊情况下触摸事件没有很好的处理问题。     
-> 合并部分重复逻辑代码。
-> 添加 `setSpringInterpolator` 方法，用以设置默认的滚动插值器。
-> 添加 `setOverScrollInterpolator` 方法，用以设置越界回弹时的滚动插值器。
+> 合并部分重复逻辑代码。    
+> 添加 `setSpringInterpolator` 方法，用以设置默认的滚动插值器。    
+> 添加 `setOverScrollInterpolator` 方法，用以设置越界回弹时的滚动插值器。    
 ## 1.4.5
 > 修改二级刷新，修改 `TwoLevelSmoothRefreshLayout` styleable `sr_enable_two_level_pull_to_refresh` 为 `sr_enable_two_level_refresh`。     
 > 修改二级刷新，删除 `isEnabledTwoLevelPullToRefresh` 方法，添加 `isDisabledTwoLevelRefresh` 方法。    
