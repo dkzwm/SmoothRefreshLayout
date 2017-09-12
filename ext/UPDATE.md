@@ -1,4 +1,12 @@
 # 更新日志
+## 1.4.6
+> 实现即使Header或者Footer中的事务还没完成（例如Header处于刷新中），仍然可以滑动其他刷新视图。原逻辑为如果Header处于刷新中就无法再拉起Footer。    
+> 在 `IRefreshView` 接口中添加 `onPureScrollPositionChanged`方法，用于当刷新视图事务未完成，移动其它视图会回调该方法，可以根据具体需求实现该状态下的视图展现。    
+> 优化优化回弹效果。   
+> 修复某些特殊情况下触摸事件没有很好的处理问题。     
+> 合并部分重复逻辑代码。
+> 添加 `setSpringInterpolator` 方法，用以设置默认的滚动插值器。
+> 添加 `setOverScrollInterpolator` 方法，用以设置越界回弹时的滚动插值器。
 ## 1.4.5
 > 修改二级刷新，修改 `TwoLevelSmoothRefreshLayout` styleable `sr_enable_two_level_pull_to_refresh` 为 `sr_enable_two_level_refresh`。     
 > 修改二级刷新，删除 `isEnabledTwoLevelPullToRefresh` 方法，添加 `isDisabledTwoLevelRefresh` 方法。    
@@ -11,7 +19,7 @@
 > 修改 `onNestedPreScroll`方法实现，合并逻辑，提高效率和可读性。    
 > 修改 `onNestedPreFling` 方法实现，提高效率。
 ## 1.4.4
-> 优化优化回弹效果    
+> 优化优化回弹效果。    
 > 修复某些情况下 `ViewTreeObserver` 的 `OnScrollChangedListener` 没有完全移除问题。    
 > 修改 `MaterialSmoothRefreshLayout` 限制Header最大移动距离为1.5倍。    
 > 删除 `setOverScrollDistanceRatio` 方法和 `mOverScrollDistanceRatio` 属性。    

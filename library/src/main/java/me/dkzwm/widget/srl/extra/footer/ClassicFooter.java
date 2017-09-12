@@ -246,21 +246,19 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
                 } else {
                     mTitleTextView.setText(R.string.sr_pull_up);
                 }
-                if (mRotateView != null) {
-                    mRotateView.clearAnimation();
-                    mRotateView.startAnimation(mReverseFlipAnimation);
-                }
+                mRotateView.setVisibility(VISIBLE);
+                mRotateView.clearAnimation();
+                mRotateView.startAnimation(mReverseFlipAnimation);
             }
         } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
+                mTitleTextView.setVisibility(VISIBLE);
                 if (!frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
-                    mTitleTextView.setVisibility(VISIBLE);
                     mTitleTextView.setText(R.string.sr_release_to_load);
                 }
-                if (mRotateView != null) {
-                    mRotateView.clearAnimation();
-                    mRotateView.startAnimation(mFlipAnimation);
-                }
+                mRotateView.setVisibility(VISIBLE);
+                mRotateView.clearAnimation();
+                mRotateView.startAnimation(mFlipAnimation);
             }
         }
     }

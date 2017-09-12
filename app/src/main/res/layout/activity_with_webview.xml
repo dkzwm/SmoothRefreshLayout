@@ -9,6 +9,7 @@
     <WebView
         android:id="@+id/webView_with_webView_activity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:overScrollMode="never"/>
 
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

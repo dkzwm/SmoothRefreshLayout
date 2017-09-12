@@ -6,5 +6,5 @@ package me.dkzwm.widget.srl.gesture;
  * @author dkzwm
  */
 public interface OnGestureListener {
-    void onFling(float vx, float vy);
+    boolean onFling(float vx, float vy);
 }

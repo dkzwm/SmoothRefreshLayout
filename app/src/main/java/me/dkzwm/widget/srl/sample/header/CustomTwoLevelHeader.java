@@ -3,7 +3,6 @@ package me.dkzwm.widget.srl.sample.header;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,8 +14,6 @@ import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.sample.R;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by dkzwm on 2017/6/12.
@@ -77,6 +74,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onReset(SmoothRefreshLayout frame) {
+        mTextViewTitle.setVisibility(VISIBLE);
         if (frame.isEnabledPullToRefresh()) {
             mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down_to_refresh);
         } else {
@@ -86,6 +84,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
+        mTextViewTitle.setVisibility(VISIBLE);
         if (frame.isEnabledPullToRefresh()) {
             mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down_to_refresh);
         } else {
@@ -100,7 +99,6 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
-        mTextViewTitle.setVisibility(VISIBLE);
         mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_refreshing);
     }
 
@@ -117,8 +115,6 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
         final int currentPos = indicator.getCurrentPosY();
         if (layout instanceof TwoLevelSmoothRefreshLayout) {
             TwoLevelSmoothRefreshLayout refreshLayout = (TwoLevelSmoothRefreshLayout) layout;
-            Log.d(getClass().getSimpleName(),"-------------:"+refreshLayout
-                    .isDisabledPerformRefresh());
             if (!refreshLayout.isDisabledTwoLevelRefresh()) {
                 final int offSetToHintTwoLevelRefresh = indicator.getOffsetToHintTwoLevelRefresh();
                 final int offSetToTwoLevelRefresh = indicator.getOffsetToTwoLevelRefresh();
@@ -161,7 +157,8 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, ITwoLevelIndicator indicator) {
-
+        if (indicator.hasJustLeftStartPosition())
+            mTextViewTitle.setVisibility(GONE);
     }
 
     @Override

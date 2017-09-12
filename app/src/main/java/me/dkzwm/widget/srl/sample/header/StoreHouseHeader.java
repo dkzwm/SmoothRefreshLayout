@@ -337,7 +337,10 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-
+        mCurrentPosY = indicator.getCurrentPosY();
+        float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
+        setProgress(currentPercent);
+        invalidate();
     }
 
     private class AniController implements Runnable {

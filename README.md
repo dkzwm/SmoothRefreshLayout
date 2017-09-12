@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.5'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.6'
 }
 ```
 #### 在Xml中配置
@@ -312,6 +312,8 @@ public interface IRefreshView {
 |setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |setEnableScrollToBottomAutoLoadMore|boolean|到底部自动加载（默认:`false`）|
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
+|setSpringInterpolator|Interpolator|设置默认的滚动插值器|
+|setOverScrollInterpolator|Interpolator|设置越界回弹时的滚动插值器|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|

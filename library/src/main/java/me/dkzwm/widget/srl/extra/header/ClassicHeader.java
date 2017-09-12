@@ -215,21 +215,19 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
                 } else {
                     mTitleTextView.setText(R.string.sr_pull_down);
                 }
-                if (mRotateView != null) {
-                    mRotateView.clearAnimation();
-                    mRotateView.startAnimation(mReverseFlipAnimation);
-                }
+                mRotateView.setVisibility(VISIBLE);
+                mRotateView.clearAnimation();
+                mRotateView.startAnimation(mReverseFlipAnimation);
             }
         } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
+                mTitleTextView.setVisibility(VISIBLE);
                 if (!frame.isEnabledPullToRefresh()) {
-                    mTitleTextView.setVisibility(VISIBLE);
                     mTitleTextView.setText(R.string.sr_release_to_refresh);
                 }
-                if (mRotateView != null) {
-                    mRotateView.clearAnimation();
-                    mRotateView.startAnimation(mFlipAnimation);
-                }
+                mRotateView.setVisibility(VISIBLE);
+                mRotateView.clearAnimation();
+                mRotateView.startAnimation(mFlipAnimation);
             }
         }
     }

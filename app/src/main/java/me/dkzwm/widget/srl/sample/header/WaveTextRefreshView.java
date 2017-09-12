@@ -263,6 +263,9 @@ public class WaveTextRefreshView extends View implements IRefreshView {
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-
+        mProgress = Math.min(1, indicator.getCurrentPercentOfRefreshOffset());
+        mProgress = mProgress * mProgress * mProgress;
+        mOffsetY = (mTextRectF.height() + mAmplitude * 2) * (1 - mProgress) + getPaddingTop();
+        invalidate();
     }
 }

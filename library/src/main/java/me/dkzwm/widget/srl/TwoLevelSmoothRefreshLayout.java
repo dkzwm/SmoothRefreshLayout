@@ -3,6 +3,8 @@ package me.dkzwm.widget.srl;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.SystemClock;
+import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -65,7 +67,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param ratio Height ratio
      */
-    public void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio) {
+    public void setRatioOfHeaderHeightToHintTwoLevelRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
         mTwoLevelIndicator.setRatioOfHeaderHeightToHintTwoLevelRefresh(ratio);
     }
 
@@ -76,7 +78,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param ratio Height ratio
      */
-    public void setRatioOfHeaderHeightToTwoLevelRefresh(float ratio) {
+    public void setRatioOfHeaderHeightToTwoLevelRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
         mTwoLevelIndicator.setRatioOfHeaderHeightToTwoLevelRefresh(ratio);
     }
 
@@ -89,7 +91,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param ratio Height ratio
      */
-    public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio) {
+    public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
         mTwoLevelIndicator.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(ratio);
     }
 
@@ -122,7 +124,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param duration Millis
      */
-    public void setDurationOfBackToKeepTwoLevelHeaderViewPosition(int duration) {
+    public void setDurationOfBackToKeepTwoLevelHeaderViewPosition(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
         mDurationOfBackToTwoLevelHeaderHeight = duration;
     }
 
@@ -133,7 +135,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param duration Millis
      */
-    public void setDurationToCloseTwoLevelHeader(int duration) {
+    public void setDurationToCloseTwoLevelHeader(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
         mDurationToCloseTwoLevelHeader = duration;
     }
 
@@ -171,7 +173,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * <p>
      * 自动触发二级刷新提示并滚动到触发提示位置, `stayDuration`停留多长时间
      */
-    public void autoTwoLevelRefreshHint(int stayDuration) {
+    public void autoTwoLevelRefreshHint(@IntRange(from = 0, to = Integer.MAX_VALUE) int stayDuration) {
         autoTwoLevelRefreshHint(true, stayDuration);
     }
 
@@ -197,7 +199,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mHeaderView != null)
             mHeaderView.onRefreshPrepare(this);
         mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
-        mFreshViewStatus = SR_FRESH_VIEW_STATUS_HEADER_IN_PROCESSING;
+        mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         int offsetToRefreshHint = mTwoLevelIndicator.getOffsetToHintTwoLevelRefresh();
         if (offsetToRefreshHint <= 0) {
