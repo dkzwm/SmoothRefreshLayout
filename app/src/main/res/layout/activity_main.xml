@@ -149,6 +149,12 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/test_base_recyclerView_adapter"/>
+            <Button
+                android:id="@+id/button_main_test_nested_horizontal_views"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/test_nested_horizontal_views"/>
         </LinearLayout>
     </ScrollView>
 

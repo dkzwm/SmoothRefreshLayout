@@ -1,0 +1,147 @@
+<me.dkzwm.widget.srl.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_nested_horizontal_views_activity"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:overScrollMode="never"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="168dp"
+                android:background="@android:color/holo_orange_light"
+                android:gravity="center"
+                android:text="Top"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager_test_nested_horizontal_views_activity_pager"
+                android:layout_width="match_parent"
+                android:layout_height="168dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="168dp"
+                android:background="@android:color/holo_green_light"
+                android:gravity="center"
+                android:text="CENTER"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="168dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="One"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_purple"
+                        android:gravity="center"
+                        android:text="Two"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_red_light"
+                        android:gravity="center"
+                        android:text="Third"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_orange_light"
+                        android:gravity="center"
+                        android:text="Four"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="168dp"
+                android:background="@android:color/holo_red_light"
+                android:gravity="center"
+                android:text="BOTTOM"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="168dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_blue_light"
+                        android:gravity="center"
+                        android:text="One"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_purple"
+                        android:gravity="center"
+
+                        android:text="Two"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_red_light"
+                        android:gravity="center"
+                        android:text="Third"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+
+                    <TextView
+                        android:layout_width="350dp"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/holo_orange_light"
+                        android:gravity="center"
+                        android:text="Four"
+                        android:textColor="@android:color/white"
+                        android:textSize="32sp"/>
+                </LinearLayout>
+            </HorizontalScrollView>
+        </LinearLayout>
+    </ScrollView>
+</me.dkzwm.widget.srl.SmoothRefreshLayout>

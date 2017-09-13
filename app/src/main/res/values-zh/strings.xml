@@ -52,4 +52,7 @@
     <string name="brush">刷一刷</string>
     <string name="continuous_brush_is_easier_to_get_red_envelopes">连刷更容易得红包</string>
     <string name="has_been_triggered_to_refresh">触发了刷新</string>
+    <string name="test_nested_horizontal_views">测试多水平滚动视图</string>
+    <string name="enable_check_finger_inside_horizontal_view">开启检测按下点是否位于水平滚动视图</string>
+    <string name="disable_check_finger_inside_horizontal_view">关闭检测按下点是否位于水平滚动视图</string>
 </resources>

@@ -72,7 +72,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.6'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.6.1'
 }
 ```
 #### 在Xml中配置
@@ -314,6 +314,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 |setSpringInterpolator|Interpolator|设置默认的滚动插值器|
 |setOverScrollInterpolator|Interpolator|设置越界回弹时的滚动插值器|
+|setEnableCheckFingerInsideHorView|boolean|设置是否开启检查手指按下点是否位于水平滚动视图内，该属性起作用必须满足开启`setDisableWhenHorizontalMove`|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|
@@ -324,10 +325,11 @@ public interface IRefreshView <T extends IIndicator> {
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|
 |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
-|setOnChildScrollUpCallback|OnChildScrollUpCallback|设置检查内容视图是否在顶部的回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
-|setOnChildScrollDownCallback|OnChildScrollDownCallback|设置检查内容视图是否在底部的回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
+|setOnChildScrollUpCallback|OnChildScrollUpCallback|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
+|setOnChildScrollDownCallback|OnChildScrollDownCallback|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
+|setOnFingerInsideHorViewCallback|OnFingerInsideHorViewCallback|设置检查手指按下点是否位于水平滚动视图内的重载回调，可自定义判断逻辑，提高判断效率|
 
 #### SmoothRefreshLayout 其它
 |名称|参数|描述|

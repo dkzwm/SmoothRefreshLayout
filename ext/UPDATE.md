@@ -1,4 +1,11 @@
 # 更新日志
+## 1.4.6.1
+> 修复嵌套布局下，Fling处理逻辑问题导致惯性消失问题。    
+> 添加 `setOnFingerInsideHorViewCallback` 方法。    
+> 添加 `setEnableCheckFingerInsideHorView` 方法。    
+> 添加 `isEnableCheckFingerInsideHorView` 方法。    
+> 添加 `OnFingerInsideHorViewCallback` 回调接口。    
+> 以上添加的方法和接口用于检测手指按下时，触摸点是否位于水平滚动视图内。开启 `setDisableWhenHorizontalMove`和 `setEnableCheckFingerInsideHorView`后，将根据手指按下的触摸点是否位于水平滚动视图内进行触摸事件拦截处理，如果在内部，就拦截横向滑动，如果不在就拦截处理所有滑动事件。
 ## 1.4.6
 > 实现即使Header或者Footer中的事务还没完成（例如Header处于刷新中），仍然可以滑动其他刷新视图。原逻辑为如果Header处于刷新中就无法再拉起Footer。    
 > 在 `IRefreshView` 接口中添加 `onPureScrollPositionChanged`方法，用于当刷新视图事务未完成，移动其它视图会回调该方法，可以根据具体需求实现该状态下的视图展现。    

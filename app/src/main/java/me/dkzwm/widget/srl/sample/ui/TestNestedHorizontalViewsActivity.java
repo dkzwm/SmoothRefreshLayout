@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -15,19 +16,20 @@ import com.ToxicBakery.viewpager.transforms.DrawerTransformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.extra.header.MaterialHeader;
+import me.dkzwm.widget.srl.extra.header.ClassicHeader;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ViewPagerAdapter;
 import me.dkzwm.widget.srl.sample.ui.fragment.PageFragment;
-import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**
- * Created by dkzwm on 2017/6/1.
+ * Created by dkzwm on 2017/9/13.
  *
  * @author dkzwm
  */
-public class WithViewPagerActivity extends AppCompatActivity {
+
+public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
     private int[] mColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
             Color.BLUE, Color.RED, Color.BLACK};
     private SmoothRefreshLayout mRefreshLayout;
@@ -38,18 +40,17 @@ public class WithViewPagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_with_viewpager);
+        setContentView(R.layout.activity_test_nested_horizontal_views);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.with_viewPager);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_viewPager_activity);
-        MaterialHeader header = new MaterialHeader(this);
-        header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
+        getSupportActionBar().setTitle(R.string.test_nested_horizontal_views);
+        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
+                .smoothRefreshLayout_test_nested_horizontal_views_activity);
+        ClassicHeader header = new ClassicHeader(this);
         mRefreshLayout.setHeaderView(header);
-        mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenHorizontalMove(true);
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
                 mHandler.postDelayed(new Runnable() {
@@ -57,18 +58,13 @@ public class WithViewPagerActivity extends AppCompatActivity {
                     public void run() {
                         mViewPager.setCurrentItem(0, true);
                         mRefreshLayout.refreshComplete();
-                        Toast.makeText(WithViewPagerActivity.this, R.string.sr_refresh_complete,
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(TestNestedHorizontalViewsActivity.this,
+                                R.string.sr_refresh_complete, Toast.LENGTH_SHORT).show();
                     }
                 }, 4000);
             }
-
-            @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-
-            }
         });
-        mViewPager = (ViewPager) findViewById(R.id.viewPager_with_viewPager_activity);
+        mViewPager = (ViewPager) findViewById(R.id.viewPager_test_nested_horizontal_views_activity_pager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < mColors.length; i++) {
             fragments.add(PageFragment.newInstance(i, mColors[i]));
@@ -87,14 +83,30 @@ public class WithViewPagerActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case Menu.FIRST:
+                if (mRefreshLayout.isEnableCheckFingerInsideHorView()) {
+                    mRefreshLayout.setEnableCheckFingerInsideHorView(false);
+                    item.setTitle(R.string.enable_check_finger_inside_horizontal_view);
+                } else {
+                    mRefreshLayout.setEnableCheckFingerInsideHorView(true);
+                    item.setTitle(R.string.disable_check_finger_inside_horizontal_view);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.disable_check_finger_inside_horizontal_view);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
     public void onBackPressed() {
-        startActivity(new Intent(WithViewPagerActivity.this, MainActivity.class));
+        startActivity(new Intent(TestNestedHorizontalViewsActivity.this, MainActivity.class));
         finish();
     }
 

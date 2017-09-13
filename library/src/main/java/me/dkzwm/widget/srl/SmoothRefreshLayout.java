@@ -53,6 +53,7 @@ import me.dkzwm.widget.srl.gesture.IGestureDetector;
 import me.dkzwm.widget.srl.gesture.OnGestureListener;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
+import me.dkzwm.widget.srl.utils.BoundaryUtil;
 import me.dkzwm.widget.srl.utils.SRLog;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
@@ -114,6 +115,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_DISABLE_WHEN_HORIZONTAL_MOVE = 0x01 << 18;
     private static final int FLAG_ENABLE_HIDE_HEADER_VIEW = 0x01 << 19;
     private static final int FLAG_ENABLE_HIDE_FOOTER_VIEW = 0x01 << 20;
+    private static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 21;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
@@ -172,6 +174,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private OnChildScrollDownCallback mScrollDownCallback;
     private OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
+    private OnFingerInsideHorViewCallback mFingerInsideHorizontalViewCallback;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private ScrollChecker mScrollChecker;
     private OverScrollChecker mOverScrollChecker;
@@ -182,7 +185,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private ViewTreeObserver mTargetViewTreeObserver;
     private ValueAnimator mChangeStateAnimator;
     private boolean mHasSendCancelEvent = false;
-    private boolean mDealHorizontalMove = false;
     private boolean mPreventForHorizontal = false;
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mNestedScrollInProgress = false;
@@ -192,6 +194,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mNeedInterceptTouchEventInOnceTouch = false;
     private boolean mIsLastOverScrollCanNotAbort = false;
     private boolean mNeedFilterScrollEvent = false;
+    private boolean mIsFingerInsideHorizontalView = false;
     private float mOverScrollDurationRatio = 0.5f;
     private int mMaxOverScrollDuration = 500;
     private int mMinOverScrollDuration = 150;
@@ -314,7 +317,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollChecker = new ScrollChecker();
         mOverScrollChecker = new OverScrollChecker();
         mSpringInterpolator = mQuinticInterpolator;
-        mOverScrollInterpolator = new DecelerateInterpolator(1.88f);
+        mOverScrollInterpolator = new DecelerateInterpolator(1.28f);
         //Nested scrolling
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
@@ -839,6 +842,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFooterRefreshCompleteHook = new RefreshCompleteHook();
         mFooterRefreshCompleteHook.mLayout = this;
         mFooterRefreshCompleteHook.setHookCallBack(callback);
+    }
+
+    /**
+     * Set a callback to override
+     * {@link SmoothRefreshLayout#isFingerInsideHorizontalView(float, float)}} method.
+     * Non-null callback will return the value provided by the callback and ignore all internal
+     * logic.<br/>
+     * <p>
+     * 设置{@link SmoothRefreshLayout#isFingerInsideHorizontalView(float, float)}的重载回调，
+     * 用来检查手指按下的点是否位于水平视图内部
+     *
+     * @param callback Callback that should be called when isFingerInsideHorizontalView(float,
+     *                 float) is called。
+     */
+    public void setOnFingerInsideHorViewCallback(OnFingerInsideHorViewCallback callback) {
+        mFingerInsideHorizontalViewCallback = callback;
     }
 
     public boolean equalsOnHookHeaderRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
@@ -1576,6 +1595,34 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     public boolean isEnabledHeaderDrawerStyle() {
         return (mFlag & FLAG_ENABLE_HEADER_DRAWER_STYLE) > 0;
+    }
+
+    /**
+     * The flag has been set to check whether the finger pressed point is inside horizontal
+     * view<br/>
+     * <p>
+     * 是否已经开启检查按下点是否位于水平滚动视图内
+     *
+     * @return Enabled
+     */
+    public boolean isEnableCheckFingerInsideHorView() {
+        return (mFlag & FLAG_ENABLE_CHECK_FINGER_INSIDE) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true. Touch event handling will be check whether the finger
+     * pressed point is inside horizontal view<br/>
+     * <p>
+     * 设置开启检查按下点是否位于水平滚动视图内
+     *
+     * @param enable Pull to refresh
+     */
+    public void setEnableCheckFingerInsideHorView(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_CHECK_FINGER_INSIDE;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_CHECK_FINGER_INSIDE;
+        }
     }
 
     /**
@@ -2495,8 +2542,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onNestedPreFling(View target, float velocityX,
                                     float velocityY) {
-        return !(isEnabledOverScroll() && onFling(velocityX, -velocityY))
-                || dispatchNestedPreFling(velocityX, velocityY);
+        if (isEnabledOverScroll())
+            return !onFling(velocityX, -velocityY) || dispatchNestedPreFling(velocityX, velocityY);
+        else return dispatchNestedPreFling(velocityX, velocityY);
     }
 
     @Override
@@ -2744,10 +2792,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mTargetView = mCustomView;
                     break;
             }
-        }
-        if (mTargetView == null) {
-            throw new RuntimeException("The content view is empty." +
-                    " Do you forget to added it in the XML layout file or add it in code ?");
+            if (mTargetView == null) {
+                throw new RuntimeException("The content view is empty." +
+                        " Do you forget to added it in the XML layout file or add it in code ?");
+            } else {
+                mTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
+            }
         }
         ViewTreeObserver observer;
         if (mLoadMoreScrollTargetView == null)
@@ -2769,6 +2819,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
         if (sDebug) {
@@ -2778,7 +2829,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 mPreventForHorizontal = false;
-                mDealHorizontalMove = false;
+                mIsFingerInsideHorizontalView = false;
                 mAutoRefreshBeenSendTouchEvent = false;
                 mIndicator.onFingerUp();
                 if (mNeedInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort) {
@@ -2824,6 +2875,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             case MotionEvent.ACTION_DOWN:
                 mTouchPointerId = ev.getPointerId(0);
                 mIndicator.onFingerDown(ev.getX(), ev.getY());
+                mIsFingerInsideHorizontalView = isDisabledWhenHorizontalMove()
+                        && (!isEnableCheckFingerInsideHorView()
+                        || isFingerInsideHorizontalView(ev.getRawX(), ev.getRawY()));
                 mNeedInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
                 mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
                 if (!mNeedInterceptTouchEventInOnceTouch && !mIsLastOverScrollCanNotAbort) {
@@ -2832,7 +2886,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 mHasSendCancelEvent = false;
                 mPreventForHorizontal = false;
-                mDealHorizontalMove = false;
                 super.dispatchTouchEvent(ev);
                 return true;
             case MotionEvent.ACTION_MOVE:
@@ -2864,28 +2917,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 tryToResetMovingStatus();
                 mIndicator.onFingerMove(ev.getX(index), ev.getY(index));
                 float offsetX, offsetY;
-                float[] pressDownPoint = mIndicator.getFingerDownPoint();
+                final float[] pressDownPoint = mIndicator.getFingerDownPoint();
                 offsetX = ev.getX(index) - pressDownPoint[0];
                 offsetY = ev.getY(index) - pressDownPoint[1];
-                if (isDisabledWhenHorizontalMove()) {
+                if (isDisabledWhenHorizontalMove() && mIsFingerInsideHorizontalView) {
                     boolean needProcess = (mIndicator.isInStartPosition()
                             || (isRefreshing() && !isEnabledPullToRefresh()
                             && mIndicator.isInKeepHeaderWhileLoadingPos())
                             || (isLoadingMore() && !isEnabledPullToRefresh()
                             && mIndicator.isInKeepFooterWhileLoadingPos()));
-                    if (!mDealHorizontalMove && needProcess) {
-                        if ((Math.abs(offsetX) >= mTouchSlop
-                                && Math.abs(offsetX) > Math.abs(offsetY))) {
-                            mPreventForHorizontal = true;
-                            mDealHorizontalMove = true;
-                        } else if (Math.abs(offsetX) < mTouchSlop
-                                && Math.abs(offsetY) < mTouchSlop) {
-                            mDealHorizontalMove = false;
-                            mPreventForHorizontal = true;
-                        } else {
-                            mDealHorizontalMove = true;
-                            mPreventForHorizontal = false;
-                        }
+                    if (needProcess) {
+                        mPreventForHorizontal = (Math.abs(offsetX) >= mTouchSlop
+                                && Math.abs(offsetX) > Math.abs(offsetY))
+                                || Math.abs(offsetX) < mTouchSlop && Math.abs(offsetY) < mTouchSlop;
                     }
                 } else {
                     if (Math.abs(offsetX) < mTouchSlop
@@ -2900,8 +2944,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 int currentY = mIndicator.getCurrentPosY();
                 boolean movingDown = offsetY > 0;
                 final boolean canNotChildScrollDown = !canChildScrollDown();
-                if (isMovingFooter() && isFooterInProcessing() && mIndicator.hasLeftStartPosition()
-                        && !canNotChildScrollDown) {
+                final boolean canNotChildScrollUp = !canChildScrollUp();
+                if (isMovingFooter() && isFooterInProcessing()
+                        && mIndicator.hasLeftStartPosition() && !canNotChildScrollDown) {
                     mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS, 0);
                     return super.dispatchTouchEvent(ev);
                 }
@@ -2929,7 +2974,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 boolean canMoveUp = isMovingHeader() && mIndicator.hasLeftStartPosition();
                 boolean canMoveDown = isMovingFooter() && mIndicator.hasLeftStartPosition();
-                boolean canHeaderMoveDown = !canChildScrollUp() && !isDisabledRefresh();
+                boolean canHeaderMoveDown = canNotChildScrollUp && !isDisabledRefresh();
                 boolean canFooterMoveUp = canNotChildScrollDown && !isDisabledLoadMore();
                 if (!canMoveUp && !canMoveDown) {
                     if ((movingDown && !canHeaderMoveDown) || (!movingDown && !canFooterMoveUp)) {
@@ -2996,6 +3041,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mScrollDownCallback != null)
             return mScrollDownCallback.canChildScrollDown(this, mTargetView, mFooterView);
         return ScrollCompat.canChildScrollDown(mTargetView);
+    }
+
+    protected boolean isFingerInsideHorizontalView(final float x, final float y) {
+        if (mFingerInsideHorizontalViewCallback != null)
+            return mFingerInsideHorizontalViewCallback.isFingerInside(x, y, mTargetView);
+        return BoundaryUtil.isFingerInsideHorizontalView(x, y, mTargetView);
     }
 
     private void makeNewTouchDownEvent(MotionEvent ev) {
@@ -3652,6 +3703,24 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          */
         boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child,
                                    @Nullable IRefreshView footer);
+    }
+
+    /**
+     * Classes that wish to override {@link SmoothRefreshLayout#isFingerInsideHorizontalView(float, float)}}
+     * method behavior should implement this interface.
+     */
+    public interface OnFingerInsideHorViewCallback {
+        /**
+         * Callback that will be called when
+         * {@link SmoothRefreshLayout#isFingerInsideHorizontalView(float, float)}} method
+         * is called to allow the implementer to override its behavior.
+         *
+         * @param x    The finger pressed x of the screen.
+         * @param y    The finger pressed y of the screen.
+         * @param view The target view.
+         * @return Whether the finger pressed point is inside horizontal view
+         */
+        boolean isFingerInside(float x, float y, View view);
     }
 
     /**

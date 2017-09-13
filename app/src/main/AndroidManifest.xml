@@ -73,6 +73,9 @@
             android:name="me.dkzwm.widget.srl.sample.ui.TestQQActivityStyleActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name="me.dkzwm.widget.srl.sample.ui.TestNestedHorizontalViewsActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name="me.dkzwm.widget.srl.sample.ui.TestNestedViewPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
