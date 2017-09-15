@@ -76,7 +76,6 @@ public class WithViewPagerActivity extends AppCompatActivity {
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setPageTransformer(true, new DrawerTransformer());
-        mRefreshLayout.setEnableCheckFingerInsideHorView(true);
         mRefreshLayout.autoRefresh(false);
     }
 

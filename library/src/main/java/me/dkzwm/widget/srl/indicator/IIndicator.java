@@ -30,6 +30,8 @@ public interface IIndicator {
 
     boolean hasTouched();
 
+    boolean hasMoved();
+
     float getResistanceOfPullDown();
 
     void setResistanceOfHeader(float resistance);

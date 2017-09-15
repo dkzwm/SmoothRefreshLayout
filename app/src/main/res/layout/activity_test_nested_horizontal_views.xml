@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:overScrollMode="never"
         android:layout_height="match_parent">
@@ -143,5 +143,5 @@
                 </LinearLayout>
             </HorizontalScrollView>
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

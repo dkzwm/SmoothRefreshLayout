@@ -16,6 +16,7 @@ public class DefaultIndicator implements IIndicator {
     protected int mRefreshCompleteY = 0;
     protected float mOffsetY;
     protected boolean mTouched = false;
+    protected boolean mMoved = false;
     @MovingStatus
     protected int mStatus = MOVING_CONTENT;
     private int mOffsetToRefresh = 1;
@@ -32,6 +33,11 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public boolean hasTouched() {
         return mTouched;
+    }
+
+    @Override
+    public boolean hasMoved() {
+        return mMoved;
     }
 
     @Override
@@ -63,6 +69,7 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public void onFingerUp() {
         mTouched = false;
+        mMoved = false;
     }
 
     @Override
@@ -127,6 +134,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public final void onFingerMove(float x, float y) {
+        mMoved = true;
         float offsetY = (y - mLastMovePoint[1]);
         processOnMove(offsetY);
         mLastMovePoint[0] = x;
