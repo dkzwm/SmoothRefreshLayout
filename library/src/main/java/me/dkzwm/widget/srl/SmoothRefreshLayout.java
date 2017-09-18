@@ -57,6 +57,10 @@ import me.dkzwm.widget.srl.utils.BoundaryUtil;
 import me.dkzwm.widget.srl.utils.SRLog;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
+import static android.R.attr.paddingBottom;
+import static android.R.attr.paddingLeft;
+import static android.R.attr.paddingRight;
+import static android.R.attr.paddingTop;
 import static android.view.View.MeasureSpec.makeMeasureSpec;
 
 /**
@@ -635,7 +639,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 childLeft = parentRight - width - lp.rightMargin;
                 break;
             default:
-                childLeft = parentRight + lp.leftMargin;
+                childLeft = getPaddingLeft() + lp.leftMargin;
         }
         switch (verticalGravity) {
             case Gravity.CENTER_VERTICAL:
@@ -2310,12 +2314,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if ((isDisabledLoadMore() && isDisabledRefresh())
                 || (!isAutoRefresh() && (isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())))
             return false;
-        if ((!canChildScrollUp() && vy > 0) || (!canChildScrollDown() && vy < 0)) {
+        if ((!canChildScrollUp() && vy > 0) || (!canChildScrollDown() && vy < 0))
             return false;
-        }
         if (isEnabledPinContentView() && ((isDisabledLoadMore() && vy < 0) || isDisabledRefresh() && vy > 0))
             return false;
         if (!isEnabledPinRefreshViewWhileLoading() && !mIndicator.isInStartPosition()) {
+            if (Math.abs(vx) > Math.abs(vy) && Math.abs(vy) < 1000 && mIsFingerInsideHorizontalView
+                    && isEnabledKeepRefreshView() && (isRefreshing() || isLoadingMore())) {
+                return true;
+            }
             final int maxVelocity = ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity();
             if (Math.abs(vy) > 1000)
                 mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS,
@@ -2802,14 +2809,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 throw new RuntimeException("The content view is empty." +
                         " Do you forget to added it in the XML layout file or add it in code ?");
             } else {
-                mTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
+                if (isEnabledOverScroll())
+                    mTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
             }
         }
         ViewTreeObserver observer;
-        if (mLoadMoreScrollTargetView == null)
+        if (mLoadMoreScrollTargetView == null) {
             observer = mTargetView.getViewTreeObserver();
-        else
+        } else {
             observer = mLoadMoreScrollTargetView.getViewTreeObserver();
+            if (isEnabledOverScroll())
+                mLoadMoreScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
+        }
         if (observer != mTargetViewTreeObserver && observer.isAlive()) {
             safelyRemoveListeners();
             mTargetViewTreeObserver = observer;

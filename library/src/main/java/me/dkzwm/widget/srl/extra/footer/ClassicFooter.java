@@ -165,9 +165,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mProgressBar.setVisibility(INVISIBLE);
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        if (frame.isEnabledLoadMoreNoMoreData()) {
-            mTitleTextView.setText(R.string.sr_no_more_data);
-        } else if (frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
+        if (frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
             mTitleTextView.setText(R.string.sr_pull_up_to_load);
         } else {
             mTitleTextView.setText(R.string.sr_pull_up);
@@ -226,15 +224,17 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         final int currentPos = indicator.getCurrentPosY();
         final int lastPos = indicator.getLastPosY();
 
-        if (frame.isEnabledLoadMoreNoMoreData() && !mNoMoreDataChangedView) {
-            mTitleTextView.setVisibility(VISIBLE);
-            mLastUpdateTextView.setVisibility(GONE);
-            mProgressBar.setVisibility(INVISIBLE);
-            mLastUpdateTimeUpdater.stop();
-            mRotateView.clearAnimation();
-            mRotateView.setVisibility(GONE);
-            mTitleTextView.setText(R.string.sr_no_more_data);
-            mNoMoreDataChangedView = true;
+        if (frame.isEnabledLoadMoreNoMoreData()) {
+            if (currentPos > lastPos && !mNoMoreDataChangedView) {
+                mTitleTextView.setVisibility(VISIBLE);
+                mLastUpdateTextView.setVisibility(GONE);
+                mProgressBar.setVisibility(INVISIBLE);
+                mLastUpdateTimeUpdater.stop();
+                mRotateView.clearAnimation();
+                mRotateView.setVisibility(GONE);
+                mTitleTextView.setText(R.string.sr_no_more_data);
+                mNoMoreDataChangedView = true;
+            }
             return;
         }
         mNoMoreDataChangedView = false;

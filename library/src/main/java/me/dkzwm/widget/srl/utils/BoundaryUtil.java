@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.HorizontalScrollView;
 
 /**
@@ -57,7 +58,8 @@ public class BoundaryUtil {
     }
 
     private static boolean isHorizontalView(View view) {
-        if (view instanceof ViewPager || view instanceof HorizontalScrollView) {
+        if (view instanceof ViewPager || view instanceof HorizontalScrollView
+                || view instanceof WebView) {
             return true;
         }
         try {

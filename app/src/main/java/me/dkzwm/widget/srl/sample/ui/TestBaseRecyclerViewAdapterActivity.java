@@ -93,6 +93,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
         });
         mRefreshLayout.autoRefresh(true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_base_recyclerView_adapter);
+        mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
