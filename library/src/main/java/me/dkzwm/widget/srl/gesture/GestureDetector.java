@@ -28,47 +28,58 @@ public class GestureDetector implements IGestureDetector {
     @Override
     public void onTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
-        if (mVelocityTracker == null) {
-            mVelocityTracker = VelocityTracker.obtain();
-        }
-        mVelocityTracker.addMovement(ev);
         // Determine focal point
         final int count = ev.getPointerCount();
         switch (action & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                if (mVelocityTracker != null)
+                    mVelocityTracker.recycle();
+                mVelocityTracker = VelocityTracker.obtain();
+                mVelocityTracker.addMovement(ev);
+                break;
             case MotionEvent.ACTION_POINTER_UP:
-                // Check the dot product of current velocities.
-                // If the pointer that left was opposing another velocity vector, clear.
-                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
-                final int upIndex = ev.getActionIndex();
-                final int id1 = ev.getPointerId(upIndex);
-                final float x1 = mVelocityTracker.getXVelocity(id1);
-                final float y1 = mVelocityTracker.getYVelocity(id1);
-                for (int i = 0; i < count; i++) {
-                    if (i == upIndex) continue;
+                if (mVelocityTracker != null) {
+                    mVelocityTracker.addMovement(ev);
+                    // Check the dot product of current velocities.
+                    // If the pointer that left was opposing another velocity vector, clear.
+                    mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+                    final int upIndex = ev.getActionIndex();
+                    final int id1 = ev.getPointerId(upIndex);
+                    final float x1 = mVelocityTracker.getXVelocity(id1);
+                    final float y1 = mVelocityTracker.getYVelocity(id1);
+                    for (int i = 0; i < count; i++) {
+                        if (i == upIndex) continue;
 
-                    final int id2 = ev.getPointerId(i);
-                    final float x = x1 * mVelocityTracker.getXVelocity(id2);
-                    final float y = y1 * mVelocityTracker.getYVelocity(id2);
+                        final int id2 = ev.getPointerId(i);
+                        final float x = x1 * mVelocityTracker.getXVelocity(id2);
+                        final float y = y1 * mVelocityTracker.getYVelocity(id2);
 
-                    final float dot = x + y;
-                    if (dot < 0) {
-                        mVelocityTracker.clear();
-                        break;
+                        final float dot = x + y;
+                        if (dot < 0) {
+                            mVelocityTracker.clear();
+                            break;
+                        }
                     }
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
-                final int pointerId = ev.getPointerId(0);
-                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
-                float vy = mVelocityTracker.getYVelocity(pointerId);
-                float vx = mVelocityTracker.getXVelocity(pointerId);
-                if ((Math.abs(vy) > mMinimumFlingVelocity)) {
-                    mGestureListener.onFling(vx, vy);
+                if (mVelocityTracker != null) {
+                    mVelocityTracker.addMovement(ev);
+                    final int pointerId = ev.getPointerId(0);
+                    mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+                    float vy = mVelocityTracker.getYVelocity(pointerId);
+                    float vx = mVelocityTracker.getXVelocity(pointerId);
+                    if ((Math.abs(vy) > mMinimumFlingVelocity)) {
+                        mGestureListener.onFling(vx, vy);
+                    }
+                    onDetached();
                 }
-                onDetached();
                 break;
-
+            default:
+                if (mVelocityTracker != null)
+                    mVelocityTracker.addMovement(ev);
+                break;
         }
     }
 

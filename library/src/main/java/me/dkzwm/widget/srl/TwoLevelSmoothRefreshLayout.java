@@ -49,7 +49,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         DefaultTwoLevelIndicator indicator = new DefaultTwoLevelIndicator();
-        indicator.convert(indicator);
+        indicator.convert(mIndicator);
         mIndicator = indicator;
         mTwoLevelIndicator = indicator;
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.TwoLevelSmoothRefreshLayout, 0, 0);

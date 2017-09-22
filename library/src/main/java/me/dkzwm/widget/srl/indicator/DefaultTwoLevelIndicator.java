@@ -17,9 +17,10 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     @Override
     public void setHeaderHeight(int height) {
         super.setHeaderHeight(height);
-        mOffsetToHintTwoLevelRefresh = Math.round(mHeaderHeight *
-                mRatioOfHeaderHeightToHintTwoLevelRefresh);
-        mOffsetToTwoLevelRefresh = Math.round(mHeaderHeight * mRatioOfHeaderHeightToTwoLevelRefresh);
+        mOffsetToHintTwoLevelRefresh = (int) Math.ceil((mHeaderHeight *
+                mRatioOfHeaderHeightToHintTwoLevelRefresh));
+        mOffsetToTwoLevelRefresh = (int) Math.ceil((mHeaderHeight *
+                mRatioOfHeaderHeightToTwoLevelRefresh));
     }
 
     @Override
@@ -35,7 +36,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     @Override
     public void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio) {
         mRatioOfHeaderHeightToHintTwoLevelRefresh = ratio;
-        mOffsetToHintTwoLevelRefresh = (int) (mHeaderHeight * ratio);
+        mOffsetToHintTwoLevelRefresh = (int) Math.ceil((mHeaderHeight * ratio));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
                     "trigger!");
         }
         mRatioOfHeaderHeightToTwoLevelRefresh = ratio;
-        mOffsetToTwoLevelRefresh = (int) (mHeaderHeight * ratio);
+        mOffsetToTwoLevelRefresh = (int) Math.ceil((mHeaderHeight * ratio));
     }
 
     @Override

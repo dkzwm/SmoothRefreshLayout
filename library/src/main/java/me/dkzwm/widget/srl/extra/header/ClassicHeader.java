@@ -83,10 +83,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mLastUpdateTimeUpdater != null) {
-            mLastUpdateTimeUpdater.stop();
-        }
-        removeCallbacks(mLastUpdateTimeUpdater);
+        mLastUpdateTimeUpdater.stop();
         mFlipAnimation.cancel();
         mReverseFlipAnimation.cancel();
         if (getHandler() != null)
@@ -149,6 +146,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         mRotateView.clearAnimation();
         mRotateView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
+        mLastUpdateTimeUpdater.stop();
         mShouldShowLastUpdate = true;
         tryUpdateLastUpdateTime();
     }

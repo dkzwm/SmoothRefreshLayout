@@ -14,7 +14,6 @@
  - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout），PS:淘宝二楼、京东活动.
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
- - 支持内容视图的Margin,PS:滚动中没有了Margin效果？SmoothRefreshLayout不存在这种问题.
  - 支持多状态视图,STATE_CONTENT(默认状态)、STATE_ERROR(异常状态),STATE_EMPTY(空状态),STATE_CUSTOM(自定义状态).
  - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
 
@@ -72,7 +71,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.6.1'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.7'
 }
 ```
 #### 在Xml中配置

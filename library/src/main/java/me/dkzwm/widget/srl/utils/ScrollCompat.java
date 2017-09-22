@@ -2,10 +2,12 @@ package me.dkzwm.widget.srl.utils;
 
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.ScrollView;
@@ -122,7 +124,7 @@ public class ScrollCompat {
             if (view instanceof AbsListView) {
                 final AbsListView listView = (AbsListView) view;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    listView.scrollListBy(Math.round(deltaY));
+                    listView.scrollListBy((int) deltaY);
                     return true;
                 } else {
                     try {
@@ -130,7 +132,7 @@ public class ScrollCompat {
                                 int.class, int.class);
                         if (method != null) {
                             method.setAccessible(true);
-                            method.invoke(listView, -Math.round(deltaY), -Math.round(deltaY));
+                            method.invoke(listView, -(int) deltaY, -(int) deltaY);
                         }
                     } catch (NoSuchMethodException e) {
                         e.printStackTrace();
@@ -144,9 +146,19 @@ public class ScrollCompat {
                     }
                 }
                 return true;
+            } else if ((view instanceof WebView)
+                    || (view instanceof ScrollView)
+                    || (view instanceof NestedScrollView)) {
+                view.scrollBy(0, (int) deltaY);
             } else {
-                view.scrollBy(0, Math.round(deltaY));
-                return true;
+                try {
+                    if (view instanceof RecyclerView) {
+                        view.scrollBy(0, (int) deltaY);
+                        return true;
+                    }
+                } catch (NoClassDefFoundError e) {
+                    //ignore exception
+                }
             }
         }
         return false;

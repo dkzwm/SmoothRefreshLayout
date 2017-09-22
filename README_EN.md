@@ -15,7 +15,6 @@ Thank him for providing such a great open source library ！
  - Support Refresh view has two styles:STYLE_DEFAULT(Do not change the height by default)、STYLE_SCALE(Dynamically change the height)
  - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）,PS:TaoBao-Senond-Floor、JD-Activity.
  - Support ListView,GridView,RecyclerView on LoadMore to smooth scrolling.
- - Support Margin,PS:No margin effect in scrolling？SmoothRefreshLayout no such problem.
  - Support Multi-State:STATE_CONTENT(Default state)、STATE_ERROR(Error state),STATE_EMPTY(Empty state),STATE_CUSTOM(Custom state).
  - Many callback interface and debugging information.
 
@@ -71,7 +70,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.6.1'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.7'
 }
 ```
 #### Use Xml to config

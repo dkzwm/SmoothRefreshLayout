@@ -1,6 +1,7 @@
 package me.dkzwm.widget.srl.sample.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -34,7 +35,6 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setTitle(R.string.with_textView);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_textView_activity);
         mTextView = (TextView) findViewById(R.id.textView_with_textView_activity_desc);
-        mRefreshLayout.setHeaderView(new ClassicHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);

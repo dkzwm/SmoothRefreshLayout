@@ -1,6 +1,7 @@
 package me.dkzwm.widget.srl.sample;
 
 import android.app.Application;
+import android.graphics.Color;
 
 import com.squareup.leakcanary.LeakCanary;
 

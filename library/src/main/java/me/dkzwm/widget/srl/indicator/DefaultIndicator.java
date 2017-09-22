@@ -82,7 +82,7 @@ public class DefaultIndicator implements IIndicator {
         mRatioOfHeaderHeightToRefresh = ratio;
         mRatioOfFooterHeightToLoadMore = ratio;
         mOffsetToRefresh = (int) Math.ceil((mHeaderHeight * ratio));
-        mOffsetToLoadMore = (int) Math.ceil(mFooterHeight * ratio);
+        mOffsetToLoadMore = (int) Math.ceil((mFooterHeight * ratio));
     }
 
     @Override
@@ -180,7 +180,7 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public void setHeaderHeight(int height) {
         mHeaderHeight = height;
-        updateHeight();
+        mOffsetToRefresh = (int) Math.ceil((mRatioOfHeaderHeightToRefresh * mHeaderHeight));
     }
 
     @Override
@@ -191,7 +191,7 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public void setFooterHeight(int height) {
         mFooterHeight = height;
-        updateHeight();
+        mOffsetToLoadMore = (int) Math.ceil((mRatioOfFooterHeightToLoadMore * mFooterHeight));
     }
 
     @Override
@@ -380,17 +380,10 @@ public class DefaultIndicator implements IIndicator {
     }
 
 
-    private void updateHeight() {
-        mOffsetToRefresh = (int) (mRatioOfHeaderHeightToRefresh * mHeaderHeight);
-        mOffsetToLoadMore = (int) (mRatioOfFooterHeightToLoadMore * mFooterHeight);
-    }
-
     private void processOnMove(float offsetY) {
         if (mStatus == MOVING_CONTENT || mStatus == MOVING_HEADER)
             mOffsetY = offsetY / mResistanceHeader;
         else
             mOffsetY = offsetY / mResistanceFooter;
     }
-
-
 }

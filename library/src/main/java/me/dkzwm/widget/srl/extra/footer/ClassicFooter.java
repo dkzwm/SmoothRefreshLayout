@@ -93,12 +93,9 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mLastUpdateTimeUpdater != null) {
-            mLastUpdateTimeUpdater.stop();
-        }
+        mLastUpdateTimeUpdater.stop();
         mFlipAnimation.cancel();
         mReverseFlipAnimation.cancel();
-        removeCallbacks(mLastUpdateTimeUpdater);
         if (getHandler() != null)
             getHandler().removeCallbacksAndMessages(null);
     }
