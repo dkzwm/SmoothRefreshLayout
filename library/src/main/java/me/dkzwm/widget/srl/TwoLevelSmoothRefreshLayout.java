@@ -5,7 +5,6 @@ import android.content.res.TypedArray;
 import android.os.SystemClock;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,6 +32,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     private boolean mOnTwoLevelRefreshing = false;
     private boolean mHasDealTwoLevelRefreshHint = false;
     private boolean mNeedFilterRefreshEvent = false;
+    private boolean mAutoHintCanBeInterrupted = true;
     private int mDurationOfBackToTwoLevelHeaderHeight = 500;
     private int mDurationToCloseTwoLevelHeader = 500;
     private int mDurationToStayAtHintPos = 0;
@@ -156,7 +156,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * 自动触发二级刷新提示并滚动到触发提示位置后回滚回起始位置
      */
     public void autoTwoLevelRefreshHint() {
-        autoTwoLevelRefreshHint(true, 0);
+        autoTwoLevelRefreshHint(true, 0, true);
     }
 
     /**
@@ -165,7 +165,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * 自动触发二级刷新提示并是否滚动到触发提示位置, `smoothScroll`是否滚动到触发位置
      */
     public void autoTwoLevelRefreshHint(boolean smoothScroll) {
-        autoTwoLevelRefreshHint(smoothScroll, 0);
+        autoTwoLevelRefreshHint(smoothScroll, 0, true);
     }
 
     /**
@@ -174,7 +174,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * 自动触发二级刷新提示并滚动到触发提示位置, `stayDuration`停留多长时间
      */
     public void autoTwoLevelRefreshHint(@IntRange(from = 0, to = Integer.MAX_VALUE) int stayDuration) {
-        autoTwoLevelRefreshHint(true, stayDuration);
+        autoTwoLevelRefreshHint(true, stayDuration, true);
     }
 
     /**
@@ -187,6 +187,22 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param stayDuration The header moved to the position of the hint, and then how long to stay.
      */
     public void autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration) {
+        autoTwoLevelRefreshHint(smoothScroll, stayDuration, true);
+    }
+
+    /**
+     * If @param smoothScroll has been set to true. Auto perform Two-Level refresh hint use
+     * smooth scrolling.<br/>
+     * <p>
+     * 自动触发二级刷新提示，`smoothScroll`是否滚动到触发位置，`stayDuration`停留多长时间,
+     * `canBeInterrupted`是否能被触摸打断
+     *
+     * @param smoothScroll     Auto Two-Level refresh hint use smooth scrolling
+     * @param stayDuration     The header moved to the position of the hint, and then how long to stay.
+     * @param canBeInterrupted The Two-Level refresh hint can be interrupted by touch handling.
+     */
+    public void autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration,
+                                        boolean canBeInterrupted) {
         if (mStatus != SR_STATUS_INIT) {
             return;
         }
@@ -201,6 +217,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
+        mAutoHintCanBeInterrupted = canBeInterrupted;
         int offsetToRefreshHint = mTwoLevelIndicator.getOffsetToHintTwoLevelRefresh();
         if (offsetToRefreshHint <= 0) {
             mHasDealTwoLevelRefreshHint = false;
@@ -235,10 +252,12 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
-        mNeedFilterRefreshEvent = false;
-        final int action = MotionEventCompat.getActionMasked(ev);
-        if (action == MotionEvent.ACTION_DOWN && mDelayToBackToTopRunnable != null) {
-            removeCallbacks(mDelayToBackToTopRunnable);
+        if (mAutoHintCanBeInterrupted) {
+            mNeedFilterRefreshEvent = false;
+            final int action = ev.getAction() & MotionEvent.ACTION_MASK;
+            if (action == MotionEvent.ACTION_DOWN && mDelayToBackToTopRunnable != null) {
+                removeCallbacks(mDelayToBackToTopRunnable);
+            }
         }
         return super.processDispatchTouchEvent(ev);
     }
@@ -287,6 +306,10 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         super.updateYPos(change);
     }
 
+    @Override
+    protected boolean isNeedInterceptTouchEvent() {
+        return !mAutoHintCanBeInterrupted || super.isNeedInterceptTouchEvent();
+    }
 
     @Override
     protected void onFingerUp(boolean stayForLoading) {
@@ -300,9 +323,13 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected boolean tryToNotifyReset() {
-        mNeedFilterRefreshEvent = false;
-        removeCallbacks(mDelayToBackToTopRunnable);
-        return super.tryToNotifyReset();
+        boolean reset = super.tryToNotifyReset();
+        if (reset) {
+            mNeedFilterRefreshEvent = false;
+            mAutoHintCanBeInterrupted = true;
+            removeCallbacks(mDelayToBackToTopRunnable);
+        }
+        return reset;
     }
 
     @Override

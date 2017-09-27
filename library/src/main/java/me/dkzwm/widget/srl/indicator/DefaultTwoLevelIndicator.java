@@ -17,10 +17,10 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     @Override
     public void setHeaderHeight(int height) {
         super.setHeaderHeight(height);
-        mOffsetToHintTwoLevelRefresh = (int) Math.ceil((mHeaderHeight *
-                mRatioOfHeaderHeightToHintTwoLevelRefresh));
-        mOffsetToTwoLevelRefresh = (int) Math.ceil((mHeaderHeight *
-                mRatioOfHeaderHeightToTwoLevelRefresh));
+        mOffsetToHintTwoLevelRefresh = (int) (mHeaderHeight *
+                mRatioOfHeaderHeightToHintTwoLevelRefresh);
+        mOffsetToTwoLevelRefresh = (int) (mHeaderHeight *
+                mRatioOfHeaderHeightToTwoLevelRefresh);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     @Override
     public void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio) {
         mRatioOfHeaderHeightToHintTwoLevelRefresh = ratio;
-        mOffsetToHintTwoLevelRefresh = (int) Math.ceil((mHeaderHeight * ratio));
+        mOffsetToHintTwoLevelRefresh = (int) (mHeaderHeight * ratio);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
                     "trigger!");
         }
         mRatioOfHeaderHeightToTwoLevelRefresh = ratio;
-        mOffsetToTwoLevelRefresh = (int) Math.ceil((mHeaderHeight * ratio));
+        mOffsetToTwoLevelRefresh = (int) (mHeaderHeight * ratio);
     }
 
     @Override
@@ -79,6 +79,5 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     public boolean crossTwoLevelHintLine() {
         return mCurrentPos >= mOffsetToHintTwoLevelRefresh;
     }
-
 
 }

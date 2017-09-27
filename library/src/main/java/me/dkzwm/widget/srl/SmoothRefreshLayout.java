@@ -2800,7 +2800,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
-        final int action = MotionEventCompat.getActionMasked(ev);
+        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
         if (sDebug) {
             SRLog.d(TAG, "processDispatchTouchEvent(): action: %s", action);
         }
