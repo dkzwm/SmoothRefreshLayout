@@ -2279,20 +2279,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return false;
         if ((!canChildScrollUp() && vy > 0) || (!canChildScrollDown() && vy < 0))
             return false;
-        if (isEnabledPinContentView() && ((isDisabledLoadMore() && vy < 0) || isDisabledRefresh() && vy > 0))
-            return false;
         if (!isEnabledPinRefreshViewWhileLoading() && !mIndicator.isInStartPosition()) {
-            if (Math.abs(vx) > Math.abs(vy) && Math.abs(vy) < 1000 && mIsFingerInsideHorizontalView
-                    && isEnabledKeepRefreshView() && (isRefreshing() || isLoadingMore())) {
-                return true;
+            if (Math.abs(vx) <= Math.abs(vy) || Math.abs(vy) >= 1000 || !mIsFingerInsideHorizontalView
+                    || !isEnabledKeepRefreshView() || (!isRefreshing() && !isLoadingMore())) {
+                final int maxVelocity = ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity();
+                if (Math.abs(vy) > 1000)
+                    mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS,
+                            (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy) / maxVelocity)));
+                else
+                    mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS,
+                            (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy * .92f) / maxVelocity)));
             }
-            final int maxVelocity = ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity();
-            if (Math.abs(vy) > 1000)
-                mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS,
-                        (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy) / maxVelocity)));
-            else
-                mScrollChecker.tryToScrollTo(IIndicator.DEFAULT_START_POS,
-                        (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy * .92f) / maxVelocity)));
             return true;
         }
         //开启到底部自动加载更多和到顶自动刷新
