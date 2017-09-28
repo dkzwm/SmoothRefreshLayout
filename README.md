@@ -365,6 +365,7 @@ public interface IRefreshView <T extends IIndicator> {
 |autoTwoLevelRefreshHint|int|自动触发二级刷新提示并滚动到触发提示位置后停留指定时长，参数:停留多长时间|
 |autoTwoLevelRefreshHint|boolean|自动触发二级刷新提示是否滚动到触发提示位置后回滚回起始位置，参数:是否滚到到触发位置|
 |autoTwoLevelRefreshHint|boolean,int|自动触发二级刷新提示,参数1:是否滚动到触发位置，参数2:停留多长时间|
+|autoTwoLevelRefreshHint|boolean,int,boolean|自动触发二级刷新提示,参数1:是否滚动到触发位置，参数2:停留多长时间，参数3:是否可以被触摸打断，即触发提示动作过程中拦截触摸事件，直到回滚到起始位置并重置为默认状态|
 
 ## Thanks
 - [liaohuqiu android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh)    
