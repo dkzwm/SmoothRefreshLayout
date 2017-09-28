@@ -1,4 +1,7 @@
 # 更新日志
+## 1.4.7.1
+> 修改二级刷新，添加 `autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration, boolean canBeInterrupted)`方法，可以设置提示是否能被打断。    
+> 修复某些嵌套布局下触摸事件处理没有非常好的工作问题。    
 ## 1.4.7
 > 修改二级刷新，修复 `IIndicator` 转换错误。    
 > 删除支援Margin特性，提高效率。    
