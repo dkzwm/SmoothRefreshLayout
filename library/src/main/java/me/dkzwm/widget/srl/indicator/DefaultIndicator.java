@@ -210,17 +210,17 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public boolean hasLeftStartPosition() {
-        return mCurrentPos > DEFAULT_START_POS;
+        return mCurrentPos > START_POS;
     }
 
     @Override
     public boolean hasJustLeftStartPosition() {
-        return mLastPos == DEFAULT_START_POS && hasLeftStartPosition();
+        return mLastPos == START_POS && hasLeftStartPosition();
     }
 
     @Override
     public boolean hasJustBackToStartPosition() {
-        return mLastPos != DEFAULT_START_POS && isInStartPosition();
+        return mLastPos != START_POS && isInStartPosition();
     }
 
     @Override
@@ -240,7 +240,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public boolean isInStartPosition() {
-        return mCurrentPos == DEFAULT_START_POS;
+        return mCurrentPos == START_POS;
     }
 
     @Override
@@ -320,7 +320,7 @@ public class DefaultIndicator implements IIndicator {
 
     @Override
     public boolean willOverTop(int to) {
-        return to < DEFAULT_START_POS;
+        return to < START_POS;
     }
 
     @Override
@@ -381,9 +381,18 @@ public class DefaultIndicator implements IIndicator {
 
 
     private void processOnMove(float offsetY) {
-        if (mStatus == MOVING_CONTENT || mStatus == MOVING_HEADER)
+        if (mStatus == MOVING_HEADER) {
             mOffsetY = offsetY / mResistanceHeader;
-        else
+        } else if (mStatus == MOVING_FOOTER) {
             mOffsetY = offsetY / mResistanceFooter;
+        } else if (mStatus == MOVING_CONTENT) {
+            if (offsetY > 0) {
+                mOffsetY = offsetY / mResistanceHeader;
+            } else if (mOffsetY < 0) {
+                mOffsetY = offsetY / mResistanceFooter;
+            } else {
+                mOffsetY = offsetY;
+            }
+        }
     }
 }

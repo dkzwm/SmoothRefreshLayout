@@ -16,7 +16,7 @@ public interface IIndicator {
     float DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT = 0f;
     float DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING = 1;
     float DEFAULT_RESISTANCE = 1.65f;
-    int DEFAULT_START_POS = 0;
+    int START_POS = 0;
     int MOVING_CONTENT = 0;
     int MOVING_FOOTER = 1;
     int MOVING_HEADER = 2;
