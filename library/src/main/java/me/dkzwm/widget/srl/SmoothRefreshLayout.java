@@ -2274,7 +2274,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean onFling(float vx, float vy) {
-        if ((isDisabledLoadMore() && isDisabledRefresh())
+        if (!isEnabledOverScroll() || (isDisabledLoadMore() && isDisabledRefresh())
                 || (!isAutoRefresh() && (isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())))
             return false;
         if ((!canChildScrollUp() && vy > 0) || (!canChildScrollDown() && vy < 0))
