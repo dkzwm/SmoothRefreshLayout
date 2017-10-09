@@ -5,13 +5,13 @@ group = 'com.github.dkzwm'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 26
-        versionCode 23
-        versionName "1.4.7.1"
+        versionCode 24
+        versionName "1.4.7.2"
     }
     buildTypes {
         release {
