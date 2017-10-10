@@ -170,6 +170,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private Interpolator mSpringInterpolator;
     private Interpolator mOverScrollInterpolator;
     private IGestureDetector mGestureDetector;
+    private IChangeStateAnimatorCreator mAnimatorCreator;
     private OnChildScrollUpCallback mScrollUpCallback;
     private OnChildScrollDownCallback mScrollDownCallback;
     private OnLoadMoreScrollCallback mLoadMoreScrollCallback;
@@ -839,6 +840,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @SuppressWarnings({"unused"})
     public boolean equalsOnHookFooterRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
         return mFooterRefreshCompleteHook != null && mFooterRefreshCompleteHook.mCallBack == callBack;
+    }
+
+    public void setChangeStateAnimatorCreator(IChangeStateAnimatorCreator creator) {
+        mAnimatorCreator = creator;
     }
 
     /**
@@ -2230,35 +2235,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             final View previousView = getView(mState);
             final View currentView = getView(state);
             if (animate) {
-                mChangeStateAnimator = ObjectAnimator.ofFloat(1.0f, 0.0f).setDuration(250L);
-                mChangeStateAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationStart(Animator animation) {
-                        currentView.setVisibility(View.VISIBLE);
-                        currentView.setAlpha(0);
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        previousView.setVisibility(View.GONE);
-                        previousView.setAlpha(1);
-                        currentView.setAlpha(1);
-                    }
-
-                    @Override
-                    public void onAnimationCancel(Animator animation) {
-                        previousView.setVisibility(View.GONE);
-                        previousView.setAlpha(1);
-                    }
-                });
-                mChangeStateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        float value = (float) animation.getAnimatedValue();
-                        previousView.setAlpha(value);
-                        currentView.setAlpha(1f - value);
-                    }
-                });
+                if (mAnimatorCreator != null)
+                    mChangeStateAnimator = mAnimatorCreator.create(previousView, currentView);
+                else
+                    createDefaultChangeStateAnimator(previousView, currentView);
                 mChangeStateAnimator.start();
             } else {
                 previousView.setVisibility(GONE);
@@ -2270,6 +2250,38 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mStateChangedListener != null)
                 mStateChangedListener.onStateChanged(state);
         }
+    }
+
+    private void createDefaultChangeStateAnimator(final View previous, final View current) {
+        mChangeStateAnimator = ObjectAnimator.ofFloat(1.0f, 0.0f).setDuration(250L);
+        mChangeStateAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                current.setVisibility(View.VISIBLE);
+                current.setAlpha(0);
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                previous.setVisibility(View.GONE);
+                previous.setAlpha(1);
+                current.setAlpha(1);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                previous.setVisibility(View.GONE);
+                previous.setAlpha(1);
+            }
+        });
+        mChangeStateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                previous.setAlpha(value);
+                current.setAlpha(1f - value);
+            }
+        });
     }
 
     @Override
