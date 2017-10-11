@@ -388,7 +388,7 @@ public class DefaultIndicator implements IIndicator {
         } else if (mStatus == MOVING_CONTENT) {
             if (offsetY > 0) {
                 mOffsetY = offsetY / mResistanceHeader;
-            } else if (mOffsetY < 0) {
+            } else if (offsetY < 0) {
                 mOffsetY = offsetY / mResistanceFooter;
             } else {
                 mOffsetY = offsetY;
