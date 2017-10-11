@@ -14,7 +14,6 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.NestedScrollingChild;
 import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
@@ -2277,6 +2276,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 float value = (float) animation.getAnimatedValue();
                 previous.setAlpha(value);
                 current.setAlpha(1f - value);
+                invalidate();
             }
         });
     }
@@ -2551,8 +2551,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mNeedFilterScrollEvent = false;
             return;
         }
+        checkHorizontalViewUnInterceptedEvent();
         tryToPerformScrollToBottomToLoadMore();
         mOverScrollChecker.computeScrollOffset();
+    }
+
+    private void checkHorizontalViewUnInterceptedEvent() {
+        if (mIndicator.hasTouched() && mIndicator.hasMoved() && mPreventForHorizontal
+                && isDisabledWhenHorizontalMove() && mIsFingerInsideHorizontalView) {
+            if (isMovingHeader() && canChildScrollUp()) {
+                mPreventForHorizontal = false;
+            } else if (isMovingFooter() && canChildScrollDown()) {
+                mPreventForHorizontal = false;
+            }
+        }
     }
 
     /**
@@ -2850,14 +2862,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     }
                 }
             case MotionEvent.ACTION_POINTER_UP:
-                final int actionIndex = MotionEventCompat.getActionIndex(ev);
+                final int actionIndex = ev.getActionIndex();
                 if (ev.getPointerId(actionIndex) == mTouchPointerId) {
                     // Pick a new pointer to pick up the slack.
                     final int newIndex = actionIndex == 0 ? 1 : 0;
                     mTouchPointerId = ev.getPointerId(newIndex);
                     mIndicator.onFingerMove(ev.getX(newIndex), ev.getY(newIndex));
                 }
-                break;
             case MotionEvent.ACTION_DOWN:
                 mIndicator.onFingerUp();
                 mHasSendDownEvent = false;
@@ -2903,7 +2914,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     return true;
                 }
                 tryToResetMovingStatus();
-                final float[] lastMovePoint = mIndicator.getLastMovePoint().clone();
                 mIndicator.onFingerMove(ev.getX(index), ev.getY(index));
                 float offsetX, offsetY;
                 final float[] pressDownPoint = mIndicator.getFingerDownPoint();
@@ -2924,14 +2934,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         } else {
                             mDealHorizontalMove = true;
                             mPreventForHorizontal = false;
-                        }
-                    } else if (mPreventForHorizontal) {
-                        if ((isMovingHeader() && !canNotChildScrollUp)
-                                || (isMovingFooter() && !canNotChildScrollDown)) {
-                            mHasSendDownEvent = false;
-                            offsetX = ev.getX(index) - lastMovePoint[0];
-                            offsetY = ev.getY(index) - lastMovePoint[1];
-                            mPreventForHorizontal = Math.abs(offsetX) >= Math.abs(offsetY);
                         }
                     }
                 } else {
@@ -3289,7 +3291,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             return;
         }
-        int to = mIndicator.getCurrentPosY() + (int) deltaY;
+        int to = mIndicator.getCurrentPosY() + Math.round(deltaY);
         // over top
         if (mIndicator.willOverTop(to)) {
             to = IIndicator.START_POS;
@@ -3377,10 +3379,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         boolean needRequestLayout = false;
-        if ((isMovingHeader && (mHeaderView != null && mHeaderView.getStyle()
-                == IRefreshView.STYLE_SCALE))
-                || (isMovingFooter && (mFooterView != null && mFooterView.getStyle()
-                == IRefreshView.STYLE_SCALE))) {
+        if ((isMovingHeader && (mHeaderView != null && mHeaderView.getStyle() == IRefreshView.STYLE_SCALE))
+                || (isMovingFooter && (mFooterView != null && mFooterView.getStyle() == IRefreshView.STYLE_SCALE))) {
             needRequestLayout = true;
         }
         //check need perform refresh
