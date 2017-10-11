@@ -28,7 +28,7 @@ public class ScrollCompat {
     public static boolean canChildScrollDown(View view) {
         if (view instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) view;
-            if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (Build.VERSION.SDK_INT < 14) {
                 return absListView.getChildCount() == 0
                         || absListView.getAdapter() == null
                         || (absListView.getChildCount() > 0
@@ -36,28 +36,46 @@ public class ScrollCompat {
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
                         > absListView.getHeight() - absListView.getPaddingBottom());
             } else {
-                return absListView.getChildCount() == 0 || ViewCompat.canScrollVertically(view, 1);
+                if (Build.VERSION.SDK_INT < 26)
+                    return absListView.getChildCount() == 0 ||
+                            ViewCompat.canScrollVertically(view, 1);
+                else
+                    return absListView.getChildCount() == 0 ||
+                            view.canScrollVertically(1);
             }
         } else if (view instanceof ScrollView) {
             final ScrollView scrollView = (ScrollView) view;
-            if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (Build.VERSION.SDK_INT < 14) {
                 return scrollView.getChildCount() == 0
                         || (scrollView.getChildCount() != 0
                         && scrollView.getScrollY() < scrollView.getChildAt(0).getHeight()
                         - scrollView.getHeight());
             } else {
-                return scrollView.getChildCount() == 0 || ViewCompat.canScrollVertically(view, 1);
+                if (Build.VERSION.SDK_INT < 26)
+                    return scrollView.getChildCount() == 0 ||
+                            ViewCompat.canScrollVertically(view, 1);
+                else
+                    return scrollView.getChildCount() == 0 ||
+                            view.canScrollVertically(1);
             }
         } else {
             try {
                 if (view instanceof RecyclerView) {
                     final RecyclerView recyclerView = (RecyclerView) view;
-                    return recyclerView.getChildCount() == 0 || ViewCompat.canScrollVertically(view, 1);
+                    if (Build.VERSION.SDK_INT < 26)
+                        return recyclerView.getChildCount() == 0 ||
+                                ViewCompat.canScrollVertically(view, 1);
+                    else
+                        return recyclerView.getChildCount() == 0 ||
+                                view.canScrollVertically(1);
                 }
             } catch (NoClassDefFoundError e) {
                 e.printStackTrace();
             }
-            return ViewCompat.canScrollVertically(view, 1);
+            if (Build.VERSION.SDK_INT < 26)
+                return ViewCompat.canScrollVertically(view, 1);
+            else
+                return view.canScrollVertically(1);
         }
     }
 
@@ -103,7 +121,7 @@ public class ScrollCompat {
     }
 
     public static boolean canChildScrollUp(View view) {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < 14) {
             if (view instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
@@ -114,7 +132,10 @@ public class ScrollCompat {
                         || view.getScrollY() > 0;
             }
         } else {
-            return ViewCompat.canScrollVertically(view, -1);
+            if (Build.VERSION.SDK_INT < 26)
+                return ViewCompat.canScrollVertically(view, -1);
+            else
+                return view.canScrollVertically(-1);
         }
     }
 
@@ -123,7 +144,7 @@ public class ScrollCompat {
         if (view != null) {
             if (view instanceof AbsListView) {
                 final AbsListView listView = (AbsListView) view;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Build.VERSION.SDK_INT >= 19) {
                     listView.scrollListBy((int) deltaY);
                     return true;
                 } else {

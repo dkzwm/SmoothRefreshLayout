@@ -21,12 +21,13 @@ import me.dkzwm.widget.srl.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.ClassicConfig;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.extra.LastUpdateTimeUpdater;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
 /**
  * @author dkzwm
  */
-public class ClassicFooter extends FrameLayout implements IRefreshView {
+public class ClassicFooter extends FrameLayout implements IRefreshView, LastUpdateTimeUpdater.ITimeUpdater {
     protected RotateAnimation mFlipAnimation;
     protected RotateAnimation mReverseFlipAnimation;
     protected TextView mLastUpdateTextView;
@@ -84,7 +85,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mTitleTextView = (TextView) header.findViewById(R.id.textView_classic_title);
         mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_classic_last_update);
         mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_classic_progress);
-        mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
+        mLastUpdateTimeUpdater = new LastUpdateTimeUpdater(this, this);
         mRotateView.clearAnimation();
         mRotateView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
@@ -158,7 +159,8 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mShouldShowLastUpdate = true;
         mNoMoreDataChangedView = false;
         tryUpdateLastUpdateTime();
-        mLastUpdateTimeUpdater.start();
+        if (TextUtils.isEmpty(mLastUpdateTimeKey))
+            mLastUpdateTimeUpdater.start();
         mProgressBar.setVisibility(INVISIBLE);
         mRotateView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
@@ -201,7 +203,8 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         }
     }
 
-    private void tryUpdateLastUpdateTime() {
+    @Override
+    public void tryUpdateLastUpdateTime() {
         if (TextUtils.isEmpty(mLastUpdateTimeKey) || !mShouldShowLastUpdate) {
             mLastUpdateTextView.setVisibility(GONE);
         } else {
@@ -275,29 +278,4 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         }
     }
 
-    private class LastUpdateTimeUpdater implements Runnable {
-
-        private boolean mRunning = false;
-
-        private void start() {
-            if (TextUtils.isEmpty(mLastUpdateTimeKey)) {
-                return;
-            }
-            mRunning = true;
-            ClassicFooter.this.post(this);
-        }
-
-        private void stop() {
-            mRunning = false;
-            ClassicFooter.this.removeCallbacks(this);
-        }
-
-        @Override
-        public void run() {
-            ClassicFooter.this.tryUpdateLastUpdateTime();
-            if (mRunning) {
-                ClassicFooter.this.postDelayed(this, 1000);
-            }
-        }
-    }
 }

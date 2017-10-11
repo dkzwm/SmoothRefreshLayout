@@ -18,8 +18,8 @@ import me.dkzwm.widget.srl.R;
  */
 public class ClassicConfig {
     private static final String SP_NAME = "sr_classic_last_update_time";
-    private static SimpleDateFormat sDataFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
-            Locale.getDefault());
+    private static final SimpleDateFormat sDataFormat = new SimpleDateFormat
+            ("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     public static String getLastUpdateTime(@NonNull Context context,
                                            long mLastUpdateTime,

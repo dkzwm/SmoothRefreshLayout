@@ -662,7 +662,6 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
             mAlpha = alpha;
         }
 
-        @SuppressWarnings("unused")
         float getStrokeWidth() {
             return mStrokeWidth;
         }
@@ -676,12 +675,10 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
             invalidateSelf();
         }
 
-        @SuppressWarnings("unused")
         float getStartTrim() {
             return mStartTrim;
         }
 
-        @SuppressWarnings("unused")
         void setStartTrim(float startTrim) {
             mStartTrim = startTrim;
             invalidateSelf();
@@ -699,23 +696,15 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
             return mColors[mColorIndex];
         }
 
-        @SuppressWarnings("unused")
         float getEndTrim() {
             return mEndTrim;
         }
 
-        @SuppressWarnings("unused")
         void setEndTrim(float endTrim) {
             mEndTrim = endTrim;
             invalidateSelf();
         }
 
-        @SuppressWarnings("unused")
-        float getRotation() {
-            return mRotation;
-        }
-
-        @SuppressWarnings("unused")
         void setRotation(float rotation) {
             mRotation = rotation;
             invalidateSelf();
@@ -730,11 +719,6 @@ public class MaterialProgressDrawable extends Drawable implements Animatable {
                 insets = (float) (minEdge / 2.0f - mRingCenterRadius);
             }
             mStrokeInset = insets;
-        }
-
-        @SuppressWarnings("unused")
-        float getInsets() {
-            return mStrokeInset;
         }
 
         double getCenterRadius() {
