@@ -402,16 +402,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
-    }
-
-    @Override
-    public void requestLayout() {
-        super.requestLayout();
-    }
-
-    @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int count = getChildCount();
         if (count == 0)
@@ -842,6 +832,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mFooterRefreshCompleteHook != null && mFooterRefreshCompleteHook.mCallBack == callBack;
     }
 
+    /**
+     * Set the change state animator creator<br/>
+     * <p>
+     * 设置切换状态时使用的动画的构造器
+     *
+     * @param creator The change state animator creator
+     */
     public void setChangeStateAnimatorCreator(IChangeStateAnimatorCreator creator) {
         mAnimatorCreator = creator;
     }

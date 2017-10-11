@@ -49,7 +49,7 @@ public class MaterialFooter extends View implements IRefreshView {
     public MaterialFooter(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         mDefaultHeight = context.getResources()
-                .getDimensionPixelOffset(R.dimen.sr_footer_default_height);
+                .getDimensionPixelOffset(R.dimen.sr_classic_refresh_view_height);
         mBarWidth = PixelUtl.dp2px(context, 3);
         mCircleRadius = mBarWidth * 4;
         mBarPaint.setStyle(Paint.Style.STROKE);

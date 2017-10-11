@@ -68,11 +68,11 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
         mReverseFlipAnimation.setInterpolator(new LinearInterpolator());
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
-        View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_header, this);
-        mRotateView = (ImageView) header.findViewById(R.id.view_header_rotate);
-        mTitleTextView = (TextView) header.findViewById(R.id.textView_header_title);
-        mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_header_last_update);
-        mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_header);
+        View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_refresh_view, this);
+        mRotateView = (ImageView) header.findViewById(R.id.imageView_classic_rotate);
+        mTitleTextView = (TextView) header.findViewById(R.id.textView_classic_title);
+        mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_classic_last_update);
+        mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_classic_progress);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         mRotateView.clearAnimation();
         mRotateView.setVisibility(INVISIBLE);
@@ -132,7 +132,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView {
 
     @Override
     public int getCustomHeight() {
-        return getResources().getDimensionPixelOffset(R.dimen.sr_header_default_height);
+        return getResources().getDimensionPixelOffset(R.dimen.sr_classic_refresh_view_height);
     }
 
     @NonNull

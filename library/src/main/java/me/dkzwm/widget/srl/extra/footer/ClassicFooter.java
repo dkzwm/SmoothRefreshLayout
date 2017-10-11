@@ -71,8 +71,8 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
 
-        View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_footer, this);
-        mRotateView = (ImageView) header.findViewById(R.id.view_footer_rotate);
+        View header = LayoutInflater.from(getContext()).inflate(R.layout.sr_classic_refresh_view, this);
+        mRotateView = (ImageView) header.findViewById(R.id.imageView_classic_rotate);
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sr_arrow_icon);
         Matrix matrix = new Matrix();
         matrix.postRotate(180);
@@ -81,9 +81,9 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
         if (!bitmap.isRecycled())
             bitmap.recycle();
         mRotateView.setImageBitmap(dstBitmap);
-        mTitleTextView = (TextView) header.findViewById(R.id.textView_footer_title);
-        mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_footer_last_update);
-        mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_footer);
+        mTitleTextView = (TextView) header.findViewById(R.id.textView_classic_title);
+        mLastUpdateTextView = (TextView) header.findViewById(R.id.textView_classic_last_update);
+        mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_classic_progress);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater();
         mRotateView.clearAnimation();
         mRotateView.setVisibility(INVISIBLE);
@@ -133,7 +133,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView {
 
     @Override
     public int getCustomHeight() {
-        return getResources().getDimensionPixelOffset(R.dimen.sr_header_default_height);
+        return getResources().getDimensionPixelOffset(R.dimen.sr_classic_refresh_view_height);
     }
 
     @NonNull

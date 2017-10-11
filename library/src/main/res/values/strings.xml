@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">SmoothRefreshLayout</string>
     <string name="sr_pull_up">Pull Up</string>
     <string name="sr_pull_up_to_load">Pull Up to Load</string>
     <string name="sr_release_to_load">Release To Load</string>

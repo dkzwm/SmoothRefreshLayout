@@ -1,9 +1,10 @@
-package me.dkzwm.widget.srl;
+package me.dkzwm.widget.srl.sample.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
 
-import me.dkzwm.widget.srl.extra.header.WaveHeader;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.sample.header.WaveHeader;
 
 /**
  * Wave smooth refresh layout

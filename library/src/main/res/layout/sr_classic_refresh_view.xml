@@ -2,11 +2,11 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/sr_header_default_height"
+    android:layout_height="@dimen/sr_classic_refresh_view_height"
     android:layout_gravity="center">
 
     <LinearLayout
-        android:id="@+id/linearLayout_header_text_container"
+        android:id="@+id/linearLayout_classic_text_container"
         android:layout_width="164dp"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -14,14 +14,14 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView_header_title"
+            android:id="@+id/textView_classic_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#333333"
             android:textSize="12sp"/>
 
         <TextView
-            android:id="@+id/textView_header_last_update"
+            android:id="@+id/textView_classic_last_update"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -34,17 +34,16 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_margin="6dp"
-        android:layout_toLeftOf="@id/linearLayout_header_text_container">
+        android:layout_toLeftOf="@id/linearLayout_classic_text_container">
 
         <ImageView
-            android:id="@+id/view_header_rotate"
+            android:id="@+id/imageView_classic_rotate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/sr_arrow_icon"/>
+            android:layout_gravity="center"/>
 
         <ProgressBar
-            android:id="@+id/progressBar_header"
+            android:id="@+id/progressBar_classic_progress"
             style="@android:style/Widget.ProgressBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -1,4 +1,4 @@
-package me.dkzwm.widget.srl.extra.header;
+package me.dkzwm.widget.srl.sample.header;
 
 import android.content.Context;
 import android.content.res.TypedArray;

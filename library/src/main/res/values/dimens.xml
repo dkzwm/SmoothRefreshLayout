@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="sr_header_default_height">64dp</dimen>
-    <dimen name="sr_footer_default_height">64dp</dimen>
+    <dimen name="sr_classic_refresh_view_height">64dp</dimen>
 </resources>
