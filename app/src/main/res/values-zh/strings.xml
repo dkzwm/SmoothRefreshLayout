@@ -55,4 +55,10 @@
     <string name="test_nested_horizontal_views">测试多水平滚动视图</string>
     <string name="enable_check_finger_inside_horizontal_view">开启检测按下点是否位于水平滚动视图</string>
     <string name="disable_check_finger_inside_horizontal_view">关闭检测按下点是否位于水平滚动视图</string>
+    <string name="change_style_to_style_default">切换为DEFAULT样式</string>
+    <string name="change_style_to_style_scale">切换为SCALE样式</string>
+    <string name="change_style_to_style_pin">切换为PIN样式</string>
+    <string name="change_style_to_style_follow_scale">切换为FOLLOW_SCALE样式</string>
+    <string name="change_style_to_style_follow_pin">切换为FOLLOW_PIN样式</string>
+    <string name="change_style_to_style_follow_center">切换为FOLLOW_CENTER样式</string>
 </resources>

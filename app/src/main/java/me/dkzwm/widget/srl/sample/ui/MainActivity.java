@@ -13,10 +13,11 @@ import android.widget.Toast;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.sample.widget.WaveSmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.BuildConfig;
 import me.dkzwm.widget.srl.sample.R;
+import me.dkzwm.widget.srl.sample.widget.WaveSmoothRefreshLayout;
 import me.dkzwm.widget.srl.utils.SRLog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -41,12 +42,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }, 4000);
             }
         });
+        mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout
+                .OnUIPositionChangedListener() {
+            @Override
+            public void onChanged(byte status, IIndicator indicator) {
+                if (!mRefreshLayout.isOverScrolling()
+                        && indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
+                    mRefreshLayout.resetScrollerInterpolator();
+                }
+            }
+        });
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
         mRefreshLayout.setEnableHideFooterView(true);
         mRefreshLayout.getDefaultHeader().setWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
         mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
-        mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_DEFAULT);
+        mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
         //自动刷新
         mRefreshLayout.autoRefresh(true, false);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
@@ -173,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == Menu.FIRST) {
             if (mRefreshLayout.getDefaultHeader().getStyle() == IRefreshView.STYLE_SCALE)
-                mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_DEFAULT);
+                mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
             else
                 mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_SCALE);
             return true;

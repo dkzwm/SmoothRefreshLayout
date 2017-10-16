@@ -9,6 +9,4 @@ import android.view.MotionEvent;
  */
 public interface IGestureDetector {
     void onTouchEvent(MotionEvent ev);
-
-    void onDetached();
 }

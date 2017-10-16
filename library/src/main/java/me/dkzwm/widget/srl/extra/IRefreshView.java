@@ -22,6 +22,10 @@ public interface IRefreshView<T extends IIndicator> {
 
     byte STYLE_DEFAULT = 0;
     byte STYLE_SCALE = 1;
+    byte STYLE_PIN = 2;
+    byte STYLE_FOLLOW_SCALE = 3;
+    byte STYLE_FOLLOW_PIN = 4;
+    byte STYLE_FOLLOW_CENTER = 5;
 
     /**
      * Get the view's type.
@@ -123,12 +127,13 @@ public interface IRefreshView<T extends IIndicator> {
      */
     void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
-    @IntDef({IRefreshView.TYPE_HEADER, IRefreshView.TYPE_FOOTER})
+    @IntDef({TYPE_HEADER, TYPE_FOOTER})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RefreshViewType {
     }
 
-    @IntDef({IRefreshView.STYLE_DEFAULT, IRefreshView.STYLE_SCALE})
+    @IntDef({STYLE_DEFAULT, STYLE_SCALE, STYLE_PIN, STYLE_FOLLOW_SCALE,
+            STYLE_FOLLOW_PIN, STYLE_FOLLOW_CENTER})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RefreshViewStyle {
     }

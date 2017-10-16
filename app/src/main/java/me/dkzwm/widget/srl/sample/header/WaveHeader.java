@@ -44,7 +44,7 @@ public class WaveHeader extends View implements IRefreshView {
     protected float[] mLastPoint = new float[]{0, 0};
     protected int mDefaultHeight;
     @RefreshViewStyle
-    protected int mStyle = STYLE_DEFAULT;
+    protected int mStyle = STYLE_PIN;
     protected float mFingerUpY = 0;
     protected float mProgress = 0f;
     protected int mCurrentPosY = 0;
@@ -125,7 +125,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (getStyle() == STYLE_DEFAULT) {
+        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
             int height = mDefaultHeight + getPaddingTop() + getPaddingBottom();
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
@@ -226,7 +226,6 @@ public class WaveHeader extends View implements IRefreshView {
         canvas.drawText(mText, getWidth() / 2, textCenterY, mTextPaint);
         canvas.save();
     }
-
 
     @NonNull
     @Override

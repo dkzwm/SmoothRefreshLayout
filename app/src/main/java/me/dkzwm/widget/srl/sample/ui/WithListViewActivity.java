@@ -99,7 +99,6 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
         mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
         mRefreshLayout.autoRefresh(false);
-
         findViewById(R.id.button_with_listView_activity_change_empty_state)
                 .setOnClickListener(this);
         findViewById(R.id.button_with_listView_activity_change_content_state)
@@ -156,14 +155,28 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mClassicHeader.getStyle() == IRefreshView.STYLE_SCALE)
-                    mClassicHeader.setStyle(IRefreshView.STYLE_DEFAULT);
-                else
-                    mClassicHeader.setStyle(IRefreshView.STYLE_SCALE);
-                if (mClassicFooter.getStyle() == IRefreshView.STYLE_SCALE)
-                    mClassicFooter.setStyle(IRefreshView.STYLE_DEFAULT);
-                else
-                    mClassicFooter.setStyle(IRefreshView.STYLE_SCALE);
+                mClassicHeader.setStyle(IRefreshView.STYLE_DEFAULT);
+                mClassicFooter.setStyle(IRefreshView.STYLE_DEFAULT);
+                return true;
+            case Menu.FIRST + 1:
+                mClassicHeader.setStyle(IRefreshView.STYLE_SCALE);
+                mClassicFooter.setStyle(IRefreshView.STYLE_SCALE);
+                return true;
+            case Menu.FIRST + 2:
+                mClassicHeader.setStyle(IRefreshView.STYLE_PIN);
+                mClassicFooter.setStyle(IRefreshView.STYLE_PIN);
+                return true;
+            case Menu.FIRST + 3:
+                mClassicHeader.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
+                mClassicFooter.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
+                return true;
+            case Menu.FIRST + 4:
+                mClassicHeader.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
+                mClassicFooter.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
+                return true;
+            case Menu.FIRST + 5:
+                mClassicHeader.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
+                mClassicFooter.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -172,7 +185,12 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style_to_style_default);
+        menu.add(Menu.NONE, Menu.FIRST + 1, Menu.NONE, R.string.change_style_to_style_scale);
+        menu.add(Menu.NONE, Menu.FIRST + 2, Menu.NONE, R.string.change_style_to_style_pin);
+        menu.add(Menu.NONE, Menu.FIRST + 3, Menu.NONE, R.string.change_style_to_style_follow_scale);
+        menu.add(Menu.NONE, Menu.FIRST + 4, Menu.NONE, R.string.change_style_to_style_follow_pin);
+        menu.add(Menu.NONE, Menu.FIRST + 5, Menu.NONE, R.string.change_style_to_style_follow_center);
         return super.onCreateOptionsMenu(menu);
     }
 

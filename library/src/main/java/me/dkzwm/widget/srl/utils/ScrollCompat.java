@@ -120,6 +120,45 @@ public class ScrollCompat {
         }
     }
 
+    public static boolean canAutoRefresh(View view) {
+        if (view instanceof AbsListView) {
+            AbsListView listView = (AbsListView) view;
+            final int lastVisiblePosition = listView.getLastVisiblePosition();
+            final Adapter adapter = listView.getAdapter();
+            return adapter != null && lastVisiblePosition == 0;
+        } else {
+            try {
+                if (view instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) view;
+                    RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                    if (manager == null)
+                        return false;
+                    int firstVisiblePosition = -1;
+                    if (manager instanceof LinearLayoutManager) {
+                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                        firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
+                    } else if (manager instanceof StaggeredGridLayoutManager) {
+                        StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                        int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
+                        gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
+                        firstVisiblePosition = firstPositions[0];
+                        for (int value : firstPositions) {
+                            if (value == 0) {
+                                firstVisiblePosition = 0;
+                                break;
+                            }
+                        }
+                    }
+                    RecyclerView.Adapter adapter = recyclerView.getAdapter();
+                    return adapter != null && firstVisiblePosition == 0;
+                }
+            } catch (NoClassDefFoundError e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+    }
+
     public static boolean canChildScrollUp(View view) {
         if (Build.VERSION.SDK_INT < 14) {
             if (view instanceof AbsListView) {

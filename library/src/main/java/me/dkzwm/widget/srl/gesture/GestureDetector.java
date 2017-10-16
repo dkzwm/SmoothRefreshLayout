@@ -62,7 +62,6 @@ public class GestureDetector implements IGestureDetector {
                     }
                 }
                 break;
-            case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_UP:
                 if (mVelocityTracker != null) {
                     mVelocityTracker.addMovement(ev);
@@ -73,7 +72,14 @@ public class GestureDetector implements IGestureDetector {
                     if ((Math.abs(vy) > mMinimumFlingVelocity)) {
                         mGestureListener.onFling(vx, vy);
                     }
-                    onDetached();
+                    mVelocityTracker.recycle();
+                    mVelocityTracker = null;
+                }
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                if (mVelocityTracker != null) {
+                    mVelocityTracker.recycle();
+                    mVelocityTracker = null;
                 }
                 break;
             default:
@@ -82,13 +88,4 @@ public class GestureDetector implements IGestureDetector {
                 break;
         }
     }
-
-    @Override
-    public void onDetached() {
-        if (mVelocityTracker != null) {
-            mVelocityTracker.recycle();
-            mVelocityTracker = null;
-        }
-    }
-
 }

@@ -47,7 +47,7 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
 
     @Override
     public int getStyle() {
-        return STYLE_DEFAULT;
+        return STYLE_PIN;
     }
 
     @Override

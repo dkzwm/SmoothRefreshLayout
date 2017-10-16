@@ -60,4 +60,10 @@
         horizontal view</string>
     <string name="disable_check_finger_inside_horizontal_view">Disable check finger inside
         horizontal view</string>
+    <string name="change_style_to_style_default">Change style to STYLE_DEFAULT</string>
+    <string name="change_style_to_style_scale">Change style to STYLE_SCALE</string>
+    <string name="change_style_to_style_pin">Change style to STYLE_PIN</string>
+    <string name="change_style_to_style_follow_scale">Change style to STYLE_FOLLOW_SCALE</string>
+    <string name="change_style_to_style_follow_pin">Change style to STYLE_FOLLOW_PIN</string>
+    <string name="change_style_to_style_follow_center">Change style to STYLE_FOLLOW_CENTER</string>
 </resources>

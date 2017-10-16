@@ -121,13 +121,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    private static final Interpolator mQuinticInterpolator = new Interpolator() {
+    private static final Interpolator sQuinticInterpolator = new Interpolator() {
         @Override
         public float getInterpolation(float t) {
             t -= 1.0f;
             return t * t * t * t * t + 1.0f;
         }
     };
+    private static final Interpolator sLinearInterpolator = new LinearInterpolator();
     protected static boolean sDebug = false;
     private static IRefreshViewCreator sCreator;
     private final List<View> mCachedViews = new ArrayList<>(1);
@@ -159,7 +160,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected View mEmptyView;
     protected View mErrorView;
     protected View mCustomView;
-    protected View mLoadMoreScrollTargetView;
+    protected View mScrollTargetView;
     protected LayoutInflater mInflater;
     protected int mContentResId = View.NO_ID;
     protected int mErrorLayoutResId = View.NO_ID;
@@ -317,7 +318,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mGestureDetector = new GestureDetector(context, this);
         mScrollChecker = new ScrollChecker();
         mOverScrollChecker = new OverScrollChecker();
-        mSpringInterpolator = mQuinticInterpolator;
+        mSpringInterpolator = sQuinticInterpolator;
         mOverScrollInterpolator = new DecelerateInterpolator(1.22f);
         //Nested scrolling
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
@@ -409,79 +410,106 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         int maxHeight = 0;
         int maxWidth = 0;
         int childState = 0;
-        final int paddingLeft = getPaddingLeft();
-        final int paddingRight = getPaddingRight();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE)
                 continue;
-            final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (mHeaderView != null && child == mHeaderView.getView()) {
-                if (isDisabledRefresh() || isEnabledHideHeaderView())
-                    continue;
-                if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT) {
-                    measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                } else {
-                    final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                            paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
-                    final int heightSpec;
-                    if (isMovingHeader()) {
-                        heightSpec = makeMeasureSpec(mIndicator.getCurrentPosY()
-                                + lp.topMargin, MeasureSpec.EXACTLY);
-                    } else {
-                        heightSpec = makeMeasureSpec(0, MeasureSpec.EXACTLY);
-                    }
-                    child.measure(childWidthMeasureSpec, heightSpec);
-                }
-                if (mHeaderView.getCustomHeight() > 0) {
-                    mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
-                } else {
-                    if (mHeaderView.getStyle() == IRefreshView.STYLE_SCALE)
-                        throw new IllegalArgumentException("If header view's type is " +
-                                "STYLE_SCALE, you must set a accurate height");
-                    mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-                }
+                measureHeader(child, lp, widthMeasureSpec, heightMeasureSpec);
             } else if (mFooterView != null && child == mFooterView.getView()) {
-                if (isDisabledLoadMore() || isEnabledHideFooterView())
-                    continue;
-                if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT) {
-                    measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                } else {
-                    final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                            paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin, lp.width);
-                    final int heightSpec;
-                    if (isMovingFooter()) {
-                        heightSpec = makeMeasureSpec(mIndicator.getCurrentPosY()
-                                + lp.topMargin + lp.bottomMargin, MeasureSpec.EXACTLY);
-                    } else {
-                        heightSpec = makeMeasureSpec(0, MeasureSpec.EXACTLY);
-                    }
-                    child.measure(childWidthMeasureSpec, heightSpec);
-                }
-                if (mFooterView.getCustomHeight() > 0) {
-                    mIndicator.setFooterHeight(mFooterView.getCustomHeight());
-                } else {
-                    if (mFooterView.getStyle() == IRefreshView.STYLE_SCALE)
-                        throw new IllegalArgumentException("If footer view's type is " +
-                                "STYLE_SCALE, you must set a accurate height");
-                    mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-                }
+                measureFooter(child, lp, widthMeasureSpec, heightMeasureSpec);
             } else {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             }
-            maxWidth = Math.max(maxWidth,
-                    child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
-            maxHeight = Math.max(maxHeight,
-                    child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+            maxWidth = Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+            maxHeight = Math.max(maxHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
             childState = combineMeasuredStates(childState, child.getMeasuredState());
         }
-        maxWidth += paddingLeft + paddingRight;
+        maxWidth += getPaddingLeft() + getPaddingRight();
         maxHeight += getPaddingTop() + getPaddingBottom();
         maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
         maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
         setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
-                resolveSizeAndState(maxHeight, heightMeasureSpec,
-                        childState << MEASURED_HEIGHT_STATE_SHIFT));
+                resolveSizeAndState(maxHeight, heightMeasureSpec, childState << MEASURED_HEIGHT_STATE_SHIFT));
+    }
+
+    private void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
+        if (isDisabledRefresh() || isEnabledHideHeaderView())
+            return;
+        if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
+                || mHeaderView.getStyle() == IRefreshView.STYLE_PIN
+                || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
+                || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+            if (mHeaderView.getCustomHeight() <= 0) {
+                mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+            } else {
+                mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
+            }
+        } else {
+            if (mHeaderView.getCustomHeight() <= 0) {
+                throw new IllegalArgumentException("If header view type is " +
+                        "STYLE_SCALE or STYLE_FOLLOW_SCALE, you must set a accurate height");
+            } else {
+                mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
+            }
+            if (mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
+                if (mIndicator.getCurrentPosY() <= mIndicator.getHeaderHeight()) {
+                    measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                    return;
+                }
+            }
+            final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
+                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
+            final int heightSpec;
+            if (isMovingHeader()) {
+                heightSpec = makeMeasureSpec(mIndicator.getCurrentPosY()
+                        + lp.topMargin, MeasureSpec.EXACTLY);
+            } else {
+                heightSpec = makeMeasureSpec(0, MeasureSpec.EXACTLY);
+            }
+            child.measure(childWidthMeasureSpec, heightSpec);
+        }
+    }
+
+    private void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
+        if (isDisabledLoadMore() || isEnabledHideFooterView())
+            return;
+        if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
+                || mFooterView.getStyle() == IRefreshView.STYLE_PIN
+                || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
+                || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+            if (mFooterView.getCustomHeight() <= 0) {
+                mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
+            } else {
+                mIndicator.setFooterHeight(mFooterView.getCustomHeight());
+            }
+        } else {
+            if (mFooterView.getCustomHeight() <= 0) {
+                throw new IllegalArgumentException("If footer view type is " +
+                        "STYLE_SCALE or STYLE_FOLLOW_SCALE, you must set a accurate height");
+            } else {
+                mIndicator.setFooterHeight(mFooterView.getCustomHeight());
+            }
+            if (mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
+                if (mIndicator.getCurrentPosY() <= mIndicator.getFooterHeight()) {
+                    measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                    return;
+                }
+            }
+            final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
+                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
+            final int heightSpec;
+            if (isMovingFooter()) {
+                heightSpec = makeMeasureSpec(mIndicator.getCurrentPosY()
+                        + lp.topMargin + lp.bottomMargin, MeasureSpec.EXACTLY);
+            } else {
+                heightSpec = makeMeasureSpec(0, MeasureSpec.EXACTLY);
+            }
+            child.measure(childWidthMeasureSpec, heightSpec);
+        }
     }
 
     @Override
@@ -502,35 +530,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             offsetFooterY = mIndicator.getCurrentPosY();
         }
         int contentBottom = 0;
-        boolean pin = (mLoadMoreScrollTargetView != null && !isMovingHeader())
-                || isEnabledPinContentView();
+        boolean pin = (mScrollTargetView != null && !isMovingHeader()) || isEnabledPinContentView();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE)
                 continue;
-            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (mHeaderView != null && child == mHeaderView.getView()) {
-                if (isDisabledRefresh() || isEnabledHideHeaderView()) {
-                    child.layout(0, 0, 0, 0);
-                    if (sDebug) {
-                        SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
-                    }
-                    continue;
-                }
-                final int left = paddingLeft + lp.leftMargin;
-                final int offset = (isEnabledHeaderDrawerStyle()
-                        || mHeaderView.getStyle() == IRefreshView.STYLE_SCALE
-                        ? 0 : offsetHeaderY - mIndicator.getHeaderHeight());
-                final int top = paddingTop + lp.topMargin + offset;
-                final int right = left + child.getMeasuredWidth();
-                final int bottom = top + child.getMeasuredHeight();
-                child.layout(left, top, right, bottom);
-                if (sDebug) {
-                    SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
-                }
+                layoutHeaderView(child, offsetHeaderY);
             } else if (mTargetView != null && child == mTargetView
                     || (mPreviousState != -1 && mChangeStateAnimator != null
                     && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 final int left = paddingLeft + lp.leftMargin;
                 final int right = left + child.getMeasuredWidth();
                 int top, bottom;
@@ -555,38 +565,120 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 else
                     contentBottom = bottom + lp.bottomMargin;
             } else if (mFooterView == null || mFooterView.getView() != child) {
-                layoutOtherViewUseGravity(lp, child, parentRight, parentBottom);
+                layoutOtherViewUseGravity(child, parentRight, parentBottom);
             }
         }
         if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
-            View child = mFooterView.getView();
-            if (isDisabledLoadMore() || isEnabledHideFooterView()) {
-                child.layout(0, 0, 0, 0);
-                if (sDebug) {
-                    SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
-                }
-            } else {
-                MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
-                final int left = paddingLeft + lp.leftMargin;
-                final int offset = (isEnabledFooterDrawerStyle()
-                        ? -mIndicator.getFooterHeight()
-                        : -(pin ? offsetFooterY : 0));
-                final int top = lp.topMargin + contentBottom + offset;
-                final int right = left + child.getMeasuredWidth();
-                final int bottom = top + child.getMeasuredHeight();
-                child.layout(left, top, right, bottom);
-                if (sDebug) {
-                    SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
-                }
-            }
+            layoutFooterView(mFooterView.getView(), offsetFooterY, pin, contentBottom);
         }
         tryToPerformAutoRefresh();
     }
 
-    private void layoutOtherViewUseGravity(LayoutParams lp, View child, int parentRight, int parentBottom) {
+    private void layoutHeaderView(View child, int offsetHeaderY) {
+        if (isDisabledRefresh() || isEnabledHideHeaderView()) {
+            child.layout(0, 0, 0, 0);
+            if (sDebug) {
+                SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
+            }
+            return;
+        }
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        @IRefreshView.RefreshViewStyle
+        final int type = mHeaderView.getStyle();
+        int left, right, top = 0, bottom;
+        switch (type) {
+            case IRefreshView.STYLE_DEFAULT:
+                int offset = offsetHeaderY - mIndicator.getHeaderHeight();
+                top = getPaddingTop() + lp.topMargin + offset;
+                break;
+            case IRefreshView.STYLE_PIN:
+            case IRefreshView.STYLE_SCALE:
+                top = getPaddingTop() + lp.topMargin;
+                break;
+            case IRefreshView.STYLE_FOLLOW_PIN:
+            case IRefreshView.STYLE_FOLLOW_SCALE:
+                if (offsetHeaderY <= mIndicator.getHeaderHeight()) {
+                    top = getPaddingTop() + lp.topMargin + offsetHeaderY - mIndicator.getHeaderHeight();
+                } else {
+                    top = getPaddingTop() + lp.topMargin;
+                }
+                break;
+            case IRefreshView.STYLE_FOLLOW_CENTER:
+                if (offsetHeaderY <= mIndicator.getHeaderHeight()) {
+                    top = getPaddingTop() + lp.topMargin + offsetHeaderY - mIndicator.getHeaderHeight();
+                } else {
+                    top = getPaddingTop() + lp.topMargin + (offsetHeaderY - mIndicator
+                            .getHeaderHeight()) / 2;
+                }
+                break;
+        }
+        left = getPaddingLeft() + lp.leftMargin;
+        right = left + child.getMeasuredWidth();
+        bottom = top + child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
+        if (sDebug) {
+            SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
+        }
+    }
+
+    private void layoutFooterView(View child, int offsetFooterY, boolean pin, int contentBottom) {
+        if (isDisabledLoadMore() || isEnabledHideFooterView()) {
+            child.layout(0, 0, 0, 0);
+            if (sDebug) {
+                SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
+            }
+            return;
+        }
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        @IRefreshView.RefreshViewStyle
+        final int type = mHeaderView.getStyle();
+        int left, right, top = 0, bottom;
+        switch (type) {
+            case IRefreshView.STYLE_DEFAULT:
+            case IRefreshView.STYLE_SCALE:
+                top = lp.topMargin + contentBottom - (pin ? offsetFooterY : 0);
+                break;
+            case IRefreshView.STYLE_PIN:
+                top = getMeasuredHeight() - child.getMeasuredHeight()
+                        - lp.bottomMargin - lp.topMargin - getPaddingBottom();
+                break;
+            case IRefreshView.STYLE_FOLLOW_PIN:
+            case IRefreshView.STYLE_FOLLOW_SCALE:
+                if (offsetFooterY <= mIndicator.getFooterHeight()) {
+                    top = lp.topMargin + contentBottom - (pin ? offsetFooterY : 0);
+                } else {
+                    top = getMeasuredHeight() - child.getMeasuredHeight()
+                            - lp.bottomMargin - lp.topMargin - getPaddingBottom();
+                }
+                break;
+            case IRefreshView.STYLE_FOLLOW_CENTER:
+                if (offsetFooterY <= mIndicator.getFooterHeight()) {
+                    top = lp.topMargin + contentBottom - (pin ? offsetFooterY : 0);
+                } else {
+                    if (pin) {
+                        top = lp.topMargin + contentBottom + (offsetFooterY - mIndicator
+                                .getFooterHeight()) / 2 - offsetFooterY;
+                    } else {
+                        top = lp.topMargin + contentBottom + (offsetFooterY - mIndicator
+                                .getFooterHeight()) / 2;
+                    }
+                }
+                break;
+        }
+        left = getPaddingLeft() + lp.leftMargin;
+        right = left + child.getMeasuredWidth();
+        bottom = top + child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
+        if (sDebug) {
+            SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
+        }
+    }
+
+    private void layoutOtherViewUseGravity(View child, int parentRight, int parentBottom) {
         final int width = child.getMeasuredWidth();
         final int height = child.getMeasuredHeight();
         int childLeft, childTop;
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         int gravity = lp.mGravity;
         final int layoutDirection = ViewCompat.getLayoutDirection(this);
         final int absoluteGravity = GravityCompat.getAbsoluteGravity(gravity, layoutDirection);
@@ -668,7 +760,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     @SuppressWarnings({"unused"})
     public void setLoadMoreScrollTargetView(View view) {
-        mLoadMoreScrollTargetView = view;
+        mScrollTargetView = view;
     }
 
     /**
@@ -1561,7 +1653,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has been set to enabled header drawerStyle<br/>
      * <p>
-     * 是否已经开启Header的抽屉效果，即Header在Content下面且Header固定在顶部
+     * 是否已经开启Header的抽屉效果，即Header在Content下面
      *
      * @return Enabled
      */
@@ -1600,7 +1692,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param enable has been set to true.Enable header drawerStyle<br/>
      * <p>
-     * 设置开启Header的抽屉效果，即Header在Content下面且Header固定在顶部.
+     * 设置开启Header的抽屉效果，即Header在Content下面
      * 由于该效果需要改变层级关系，所以需要重新布局
      *
      * @param enable enable header drawerStyle
@@ -1618,7 +1710,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * The flag has been set to enabled footer drawerStyle<br/>
      * <p>
-     * 是否已经开启Footer的抽屉效果，即Footer在Content下面且Footer固定在底部
+     * 是否已经开启Footer的抽屉效果，即Footer在Content下面
      *
      * @return Enabled
      */
@@ -1629,7 +1721,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param enable has been set to true.Enable footer drawerStyle<br/>
      * <p>
-     * 设置开启Footer的抽屉效果，即Footer在Content下面且Footer固定在底部.
+     * 设置开启Footer的抽屉效果，即Footer在Content下面
      * 由于该效果需要改变层级关系，所以需要重新布局
      *
      * @param enable enable footer drawerStyle
@@ -2244,7 +2336,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mState = state;
             mTargetView = currentView;
             if (mStateChangedListener != null)
-                mStateChangedListener.onStateChanged(state);
+                mStateChangedListener.onStateChanged(mPreviousState, mState);
         }
     }
 
@@ -2418,7 +2510,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mNestedScrollInProgress) {
             mIndicator.onFingerUp();
         }
-        mGestureDetector.onDetached();
         mNestedScrollInProgress = false;
         mNeedInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
@@ -2553,6 +2644,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         checkHorizontalViewUnInterceptedEvent();
         tryToPerformScrollToBottomToLoadMore();
+        tryToPerformScrollToTopToRefresh();
         mOverScrollChecker.computeScrollOffset();
     }
 
@@ -2633,7 +2725,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mOverScrollChecker.destroy();
         }
         mPreviousState = -1;
-        mGestureDetector.onDetached();
         removeCallbacks(mScrollChecker);
         removeCallbacks(mOverScrollChecker);
         if (mDelayToRefreshComplete != null)
@@ -2795,12 +2886,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         ViewTreeObserver observer;
-        if (mLoadMoreScrollTargetView == null) {
+        if (mScrollTargetView == null) {
             observer = mTargetView.getViewTreeObserver();
         } else {
-            observer = mLoadMoreScrollTargetView.getViewTreeObserver();
+            observer = mScrollTargetView.getViewTreeObserver();
             if (isEnabledOverScroll())
-                mLoadMoreScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
+                mScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
         }
         if (observer != mTargetViewTreeObserver && observer.isAlive()) {
             safelyRemoveListeners();
@@ -3265,8 +3356,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             mNeedFilterScrollEvent = true;
             if (mLoadMoreScrollCallback == null) {
-                if (mLoadMoreScrollTargetView != null)
-                    ScrollCompat.scrollCompat(mLoadMoreScrollTargetView, deltaY);
+                if (mScrollTargetView != null)
+                    ScrollCompat.scrollCompat(mScrollTargetView, deltaY);
                 else
                     ScrollCompat.scrollCompat(mTargetView, deltaY);
             } else {
@@ -3354,37 +3445,65 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     change, mIndicator.getCurrentPosY(), mIndicator.getLastPosY());
         }
         notifyUIPositionChanged();
+        boolean needRequestLayout = false;
         if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader
                 && !isEnabledHideHeaderView()) {
-            if (!isEnabledHeaderDrawerStyle())
-                mHeaderView.getView().offsetTopAndBottom(change);
+            final int type = mHeaderView.getStyle();
+            switch (type) {
+                case IRefreshView.STYLE_DEFAULT:
+                    mHeaderView.getView().offsetTopAndBottom(change);
+                    break;
+                case IRefreshView.STYLE_SCALE:
+                    needRequestLayout = true;
+                    break;
+                case IRefreshView.STYLE_PIN:
+                    break;
+                case IRefreshView.STYLE_FOLLOW_PIN:
+                case IRefreshView.STYLE_FOLLOW_SCALE:
+                case IRefreshView.STYLE_FOLLOW_CENTER:
+                    if (mIndicator.getCurrentPosY() >= mIndicator.getHeaderHeight())
+                        needRequestLayout = true;
+                    else
+                        mHeaderView.getView().offsetTopAndBottom(change);
+                    break;
+            }
             if (isHeaderInProcessing())
                 mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
             else
                 mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
         } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter
                 && !isEnabledHideFooterView()) {
-            if (!isEnabledFooterDrawerStyle())
-                mFooterView.getView().offsetTopAndBottom(change);
+            final int type = mFooterView.getStyle();
+            switch (type) {
+                case IRefreshView.STYLE_DEFAULT:
+                    mFooterView.getView().offsetTopAndBottom(change);
+                    break;
+                case IRefreshView.STYLE_SCALE:
+                    needRequestLayout = true;
+                    break;
+                case IRefreshView.STYLE_PIN:
+                    break;
+                case IRefreshView.STYLE_FOLLOW_PIN:
+                case IRefreshView.STYLE_FOLLOW_SCALE:
+                case IRefreshView.STYLE_FOLLOW_CENTER:
+                    if (mIndicator.getCurrentPosY() >= mIndicator.getFooterHeight())
+                        needRequestLayout = true;
+                    else
+                        mFooterView.getView().offsetTopAndBottom(change);
+                    break;
+            }
             if (isFooterInProcessing())
                 mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
             else
                 mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
         }
         if (!isEnabledPinContentView()) {
-            if (mLoadMoreScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
-                mLoadMoreScrollTargetView.offsetTopAndBottom(change);
+            if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
+                mScrollTargetView.offsetTopAndBottom(change);
             } else {
                 mTargetView.offsetTopAndBottom(change);
             }
         }
-        boolean needRequestLayout = false;
-        if ((isMovingHeader && (mHeaderView != null && mHeaderView.getStyle() == IRefreshView.STYLE_SCALE))
-                || (isMovingFooter && (mFooterView != null && mFooterView.getStyle() == IRefreshView.STYLE_SCALE))) {
-            needRequestLayout = true;
-        }
-        //check need perform refresh
-        tryToPerformScrollToTopToRefresh();
         if (needRequestLayout || (!mOverScrollChecker.mScrolling && mIndicator.isInStartPosition())) {
             requestLayout();
         } else {
@@ -3553,8 +3672,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mTargetView)) {
                 triggeredLoadMore();
             } else if (mAutoLoadMoreCallBack == null) {
-                if (isMovingFooter() && mLoadMoreScrollTargetView != null
-                        && ScrollCompat.canAutoLoadMore(mLoadMoreScrollTargetView)) {
+                if (isMovingFooter() && mScrollTargetView != null
+                        && ScrollCompat.canAutoLoadMore(mScrollTargetView)) {
                     triggeredLoadMore();
                 } else if (ScrollCompat.canAutoLoadMore(mTargetView)) {
                     triggeredLoadMore();
@@ -3566,8 +3685,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void tryToPerformScrollToTopToRefresh() {
         if (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh()
                 && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)
-                && mIndicator.hasJustLeftStartPosition()
-                && !canChildScrollUp()) {
+                && ScrollCompat.canAutoRefresh(mTargetView)) {
             triggeredRefresh();
         }
     }
@@ -3757,7 +3875,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         void onRefreshComplete(boolean isSuccessful);
     }
 
-
     /**
      * Classes that wish to be notified when the state changes should implement this interface.
      */
@@ -3765,9 +3882,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         /**
          * Called when the state changes
          *
-         * @param state The {@link State} that was changed
+         * @param previous The previous state @see {@link State}
+         * @param current  The current state @see {@link State}
          */
-        void onStateChanged(@State int state);
+        void onStateChanged(@State int previous, @State int current);
     }
 
     /**
@@ -3928,7 +4046,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     .getDisplayMetrics();
             mMaxDistance = dm.heightPixels / 8;
             mScroller = new Scroller(SmoothRefreshLayout.this.getContext(),
-                    new LinearInterpolator(), false);
+                    SmoothRefreshLayout.sLinearInterpolator, false);
         }
 
         private void fling(float vy) {

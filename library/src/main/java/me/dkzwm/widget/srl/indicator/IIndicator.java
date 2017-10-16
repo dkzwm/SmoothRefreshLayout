@@ -42,7 +42,6 @@ public interface IIndicator {
 
     void setResistance(float resistance);
 
-
     void onRefreshComplete();
 
     void setRatioOfRefreshViewHeightToRefresh(float ratio);
