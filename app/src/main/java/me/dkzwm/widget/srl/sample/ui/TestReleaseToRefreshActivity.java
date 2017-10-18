@@ -65,6 +65,7 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
     }
 
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -72,10 +73,28 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mStoreHouseHeader.getStyle() == IRefreshView.STYLE_SCALE)
-                    mStoreHouseHeader.setStyle(IRefreshView.STYLE_DEFAULT);
-                else
-                    mStoreHouseHeader.setStyle(IRefreshView.STYLE_SCALE);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_DEFAULT);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_DEFAULT);
+                return true;
+            case Menu.FIRST + 1:
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_SCALE);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_SCALE);
+                return true;
+            case Menu.FIRST + 2:
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_PIN);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_PIN);
+                return true;
+            case Menu.FIRST + 3:
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
+                return true;
+            case Menu.FIRST + 4:
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
+                return true;
+            case Menu.FIRST + 5:
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
+                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -84,7 +103,12 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style_to_style_default);
+        menu.add(Menu.NONE, Menu.FIRST + 1, Menu.NONE, R.string.change_style_to_style_scale);
+        menu.add(Menu.NONE, Menu.FIRST + 2, Menu.NONE, R.string.change_style_to_style_pin);
+        menu.add(Menu.NONE, Menu.FIRST + 3, Menu.NONE, R.string.change_style_to_style_follow_scale);
+        menu.add(Menu.NONE, Menu.FIRST + 4, Menu.NONE, R.string.change_style_to_style_follow_pin);
+        menu.add(Menu.NONE, Menu.FIRST + 5, Menu.NONE, R.string.change_style_to_style_follow_center);
         return super.onCreateOptionsMenu(menu);
     }
 

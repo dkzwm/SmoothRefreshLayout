@@ -116,12 +116,15 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mStyle != STYLE_SCALE && !(mStyle == STYLE_FOLLOW_SCALE && mHasLeftHeaderHeight)) {
+        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
             int height = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset)
                     + mDrawZoneHeight + getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), height);
+        } else if (mStyle == STYLE_FOLLOW_SCALE && !mHasLeftHeaderHeight) {
+            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), getCustomHeight());
+        } else {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
@@ -130,10 +133,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
         if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE)
             mOffsetY = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
         else {
-            if (mStyle == STYLE_FOLLOW_SCALE && !mHasLeftHeaderHeight)
-                mOffsetY = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
-            else
-                mOffsetY = (mCurrentPosY - mDrawZoneHeight) / 2;
+            mOffsetY = (mCurrentPosY - mDrawZoneHeight) / 2;
         }
         mDropHeight = getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
     }
@@ -333,7 +333,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         mCurrentPosY = indicator.getCurrentPosY();
-        mHasLeftHeaderHeight = mCurrentPosY >= indicator.getHeaderHeight();
+        mHasLeftHeaderHeight = mCurrentPosY > indicator.getHeaderHeight();
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
@@ -345,7 +345,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         mCurrentPosY = indicator.getCurrentPosY();
-        mHasLeftHeaderHeight = mCurrentPosY >= indicator.getHeaderHeight();
+        mHasLeftHeaderHeight = mCurrentPosY > indicator.getHeaderHeight();
         float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
         setProgress(currentPercent);
         invalidate();
