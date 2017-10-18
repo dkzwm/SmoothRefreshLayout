@@ -63,7 +63,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        mAdapter = new LoadMoreRecyclerViewAdapter();
+        mAdapter = new LoadMoreRecyclerViewAdapter(this);
         mAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
             @Override
             public void onLoadMoreRequested() {

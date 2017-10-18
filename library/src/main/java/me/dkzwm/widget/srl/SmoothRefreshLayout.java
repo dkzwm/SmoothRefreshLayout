@@ -359,9 +359,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         ViewGroup.LayoutParams params = child.getLayoutParams();
         if (params == null) {
             params = generateDefaultLayoutParams();
-            if (params == null) {
-                throw new IllegalArgumentException("generateDefaultLayoutParams() cannot return null");
-            }
         }
         addView(child, index, params);
     }
@@ -379,10 +376,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     final public void addView(View child, int width, int height) {
-        final ViewGroup.LayoutParams params = generateDefaultLayoutParams();
-        if (params == null) {
-            throw new IllegalArgumentException("generateDefaultLayoutParams() cannot return null");
-        }
+        ViewGroup.LayoutParams params = generateDefaultLayoutParams();
         params.width = width;
         params.height = height;
         addView(child, -1, params);

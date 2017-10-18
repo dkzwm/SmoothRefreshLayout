@@ -10,8 +10,7 @@
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
  - 支持越界回弹.
- - 支持抽屉效果（即刷新视图固定在内容视图下方）.
- - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)
+ - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)、STYLE_PIN(固定在顶部或者底部)、STYLE_FOLLOW_SCALE(先纵向跟随移动，大于视图高度后动态改变视图大小)、STYLE_FOLLOW_PIN(先纵向跟随移动，大于视图高度后固定)、STYLE_FOLLOW_CENTER(先纵向跟随移动，大于视图高度后让视图保持在移动的距离中心点)
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout），PS:淘宝二楼、京东活动.
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
  - 支持多状态视图,STATE_CONTENT(默认状态)、STATE_ERROR(异常状态),STATE_EMPTY(空状态),STATE_CUSTOM(自定义状态).
@@ -71,7 +70,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.7.3'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.8'
 }
 ```
 #### 在Xml中配置
@@ -132,7 +131,7 @@ public interface IRefreshView <T extends IIndicator> {
     byte STYLE_SCALE = 1;
 
     /**
-     * 返回是头部视图还是尾部视图
+     * 返回是头部视图还是尾部视图;
      */
     int getType();
 
@@ -142,48 +141,48 @@ public interface IRefreshView <T extends IIndicator> {
     View getView();
 
     /**
-     * 获取视图样式，现支持2种样式，默认样式和缩放样式。
+     * 获取视图样式，自1.4.8版本后支持6种样式，STYLE_DEFAULT、STYLE_SCALE、STYLE_PIN、STYLE_FOLLOW_SCALE、STYLE_FOLLOW_PIN、STYLE_FOLLOW_CENTER;
      */
     int getStyle();
 
     /**
-     * 获取视图的自定义高度，当视图样式为STYLE_SCALE时，必须返回一个确切且大于0的值
+     * 获取视图的自定义高度，当视图样式为STYLE_SCALE和STYLE_FOLLOW_SCALE时，必须返回一个确切且大于0的值;
      */
     int getCustomHeight();
 
     /**
-     * 手指离开屏幕
+     * 手指离开屏幕;
      */
     void onFingerUp(SmoothRefreshLayout layout, T indicator);
 
     /**
-     * 重置视图
+     * 重置视图;
      */
     void onReset(SmoothRefreshLayout layout);
 
     /**
-     * 重新配置视图，准备刷新
+     * 重新配置视图，准备刷新;
      */
     void onRefreshPrepare(SmoothRefreshLayout layout);
 
     /**
-     * 开始刷新
+     * 开始刷新;
      */
     void onRefreshBegin(SmoothRefreshLayout layout, T indicator);
 
     /**
-     * 刷新完成
+     * 刷新完成;
      */
     void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful);
 
     /**
-     * 当头部或者尾部视图发生位置变化
+     * 当头部或者尾部视图发生位置变化;
      */
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
     /**
-     * 当头部或者尾部视图仍然处于处理事务中，这时候移动其他刷新视图则会调用该方法
-     * 在1.4.6版本新加入
+     * 当头部或者尾部视图仍然处于处理事务中，这时候移动其他刷新视图则会调用该方法;
+     * 在1.4.6版本新加入;
      */
     void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 }
@@ -320,6 +319,7 @@ public interface IRefreshView <T extends IIndicator> {
 |:---:|:---:|:---:|
 |setOnRefreshListener|T extends OnRefreshListener|设置刷新事件监听回调|
 |setOnStateChangedListener|OnStateChangedListener|设置状态改变回调|
+|setChangeStateAnimatorCreator|IChangeStateAnimatorCreator|设置改变状态时使用的动画创建者|
 |addOnUIPositionChangedListener|OnUIPositionChangedListener|添加视图位置变化的监听回调|
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|

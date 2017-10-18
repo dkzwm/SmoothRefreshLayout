@@ -46,7 +46,7 @@ public class NestedPageFragment extends Fragment {
                 .recyclerView_nested_page_fragment);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(inflater);
+        mAdapter = new RecyclerViewAdapter(getActivity(),inflater);
         recyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) view.findViewById(R.id
                 .smoothRefreshLayout_nested_page_fragment);

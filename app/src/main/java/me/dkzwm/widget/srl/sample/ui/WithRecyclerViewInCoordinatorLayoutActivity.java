@@ -46,7 +46,7 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
                 .recyclerView_with_recyclerView_in_coordinatorLayout_activity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(getLayoutInflater());
+        mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_with_recyclerView_in_coordinatorLayout_activity);

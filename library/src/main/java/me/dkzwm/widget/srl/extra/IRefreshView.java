@@ -22,13 +22,16 @@ public interface IRefreshView<T extends IIndicator> {
 
     byte STYLE_DEFAULT = 0;
     byte STYLE_SCALE = 1;
+    //desc start
+    //added in version 1.4.8
     byte STYLE_PIN = 2;
     byte STYLE_FOLLOW_SCALE = 3;
     byte STYLE_FOLLOW_PIN = 4;
     byte STYLE_FOLLOW_CENTER = 5;
+    //desc end
 
     /**
-     * Get the view's type.
+     * Get the view type.
      *
      * @return type {@link #TYPE_HEADER}, {@link #TYPE_FOOTER}.
      */
@@ -36,16 +39,20 @@ public interface IRefreshView<T extends IIndicator> {
     int getType();
 
     /**
-     * Get the view's style. If return {@link #STYLE_SCALE} SmoothRefreshLayout will dynamically
+     * Get the view style. If return {@link #STYLE_SCALE} SmoothRefreshLayout will dynamically
+     * change the height, so the performance will be reduced. If return {@link #STYLE_FOLLOW_SCALE}
+     * , when the moved position large than the view height, SmoothRefreshLayout will dynamically
      * change the height, so the performance will be reduced.
      *
-     * @return style {@link #STYLE_DEFAULT}, {@link #STYLE_SCALE}.
+     * @return style {@link #STYLE_DEFAULT}, {@link #STYLE_SCALE}, {@link #STYLE_PIN},
+     * {@link #STYLE_FOLLOW_SCALE}, {@link #STYLE_FOLLOW_PIN}, {@link #STYLE_FOLLOW_CENTER}.
      */
     @RefreshViewStyle
     int getStyle();
 
     /**
-     * Get the custom height, If style is {@link #STYLE_SCALE} should return a custom height.
+     * Get the custom height,  When the return style is {@link #STYLE_SCALE} or
+     * {@link #STYLE_FOLLOW_SCALE} , you must return a accurate height
      *
      * @return Custom height
      */
@@ -132,8 +139,8 @@ public interface IRefreshView<T extends IIndicator> {
     public @interface RefreshViewType {
     }
 
-    @IntDef({STYLE_DEFAULT, STYLE_SCALE, STYLE_PIN, STYLE_FOLLOW_SCALE,
-            STYLE_FOLLOW_PIN, STYLE_FOLLOW_CENTER})
+    @IntDef({STYLE_DEFAULT, STYLE_SCALE, STYLE_PIN, STYLE_FOLLOW_SCALE, STYLE_FOLLOW_PIN,
+            STYLE_FOLLOW_CENTER})
     @Retention(RetentionPolicy.SOURCE)
     public @interface RefreshViewStyle {
     }

@@ -14,12 +14,6 @@
     app:sr_error_layout="@layout/layout_error_view"
     app:sr_state="empty">
 
-    <me.dkzwm.widget.srl.extra.header.ClassicHeader
-        android:id="@+id/classicHeader_with_listView_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        app:sr_style="style_scale"/>
 
     <ListView
         android:id="@+id/listView_with_listView_activity"
@@ -32,6 +26,13 @@
         android:background="@android:color/white"
         android:overScrollMode="never"/>
 
+    <me.dkzwm.widget.srl.extra.header.ClassicHeader
+        android:id="@+id/classicHeader_with_listView_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        app:sr_style="style_scale"/>
+
     <me.dkzwm.widget.srl.extra.footer.ClassicFooter
         android:id="@+id/classicFooter_with_listView_activity"
         android:layout_width="match_parent"
@@ -42,9 +43,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="64dp"
-        android:layout_gravity="bottom">
+        android:gravity="center">
 
         <Button
             android:id="@+id/button_with_listView_activity_change_empty_state"

@@ -1,4 +1,16 @@
 # 更新日志
+## 1.4.8
+> 修改 `IRefreshView` 接口,新增 `STYLE_PIN`、`STYLE_FOLLOW_SCALE`、`STYLE_FOLLOW_PIN`、`STYLE_FOLLOW_CENTER` 四种新的样式。    
+  `STYLE_PIN`:如果是Header则会固定在顶部,如果是Footer则会固定在底部。    
+  `STYLE_FOLLOW_SCALE`:先纵向跟随TargetView移动,当移动的位置大于视图高度就动态改变视图高度。    
+  `STYLE_FOLLOW_PIN`:先纵向跟随TargetView移动,当移动的位置大于视图高度就固定住。    
+  `STYLE_FOLLOW_CENTER`:先纵向跟随TargetView移动,当移动的位置大于视图高度就让刷新视图处于中间位置但不改变视图大小。     
+> 修改 `setEnableHeaderDrawerStyle` 和 `setEnableFooterDrawerStyle` 的实现。新版本需要之前的版本效果需要改变刷新视图的样式为 `STYLE_PIN`。    
+> 添加 `IChangeStateAnimatorCreator` 接口和 `setChangeStateAnimatorCreator` 方法。现在可以自定义切换状态动画。    
+> 修复 `DefaultIndicator` 中的参数错误。    
+> 强化对同时有横向和纵向滚动视图时的滑动处理。    
+> 将 `WaveHeader` 和 `WaveSmoothRefreshLayout` 从Lib中移除，移动到App中。    
+> 精简了部分代码。    
 ## 1.4.7.3
 > 修复setEnableOverScroll功能部分失效问题, #25。    
 ## 1.4.7.2

@@ -54,7 +54,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_nested_activity);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(getLayoutInflater());
+        mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_test_nested_activity);

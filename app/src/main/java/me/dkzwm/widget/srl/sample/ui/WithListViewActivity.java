@@ -45,7 +45,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_listView);
         mListView = (ListView) findViewById(R.id.listView_with_listView_activity);
-        mAdapter = new ListViewAdapter(getLayoutInflater());
+        mAdapter = new ListViewAdapter(this,getLayoutInflater());
         mListView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView_activity);
         mClassicHeader = (ClassicHeader) findViewById(R.id.classicHeader_with_listView_activity);

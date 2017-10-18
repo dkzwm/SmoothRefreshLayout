@@ -12,9 +12,9 @@ Thank him for providing such a great open source library ！
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）.
  - Support Cross boundary rebound(OverScroll).
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
- - Support Refresh view has two styles:STYLE_DEFAULT(Do not change the height by default)、STYLE_SCALE(Dynamically change the height)
+ - Support Refresh view has six styles:STYLE_DEFAULT(Do not change the height by default)、STYLE_SCALE(Dynamically change the height)、STYLE_PIN(Pinned the refresh view)、STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
  - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）,PS:TaoBao-Senond-Floor、JD-Activity.
- - Support ListView,GridView,RecyclerView on LoadMore to smooth scrolling.
+ - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
  - Support Multi-State:STATE_CONTENT(Default state)、STATE_ERROR(Error state),STATE_EMPTY(Empty state),STATE_CUSTOM(Custom state).
  - Many callback interface and debugging information.
 
@@ -70,7 +70,7 @@ repositories {
 }
 
 dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.7.3'
+    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.8'
 }
 ```
 #### Use Xml to config
@@ -122,41 +122,56 @@ refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 #### Custom refresh view
 ##### Interface define
 ```
-public interface IRefreshView <T extends IIndicator> {    
+public interface IRefreshView<T extends IIndicator> {
 
     byte TYPE_HEADER = 0;
     byte TYPE_FOOTER = 1;
 
     byte STYLE_DEFAULT = 0;
     byte STYLE_SCALE = 1;
+    //desc start
+    //added in version 1.4.8
+    byte STYLE_PIN = 2;
+    byte STYLE_FOLLOW_SCALE = 3;
+    byte STYLE_FOLLOW_PIN = 4;
+    byte STYLE_FOLLOW_CENTER = 5;
+    //desc end
 
     /**
-     * Get the view's type.
-	 * @return type {@link #TYPE_HEADER}, {@link #TYPE_FOOTER}.
+     * Get the view type.
+     *
+     * @return type {@link #TYPE_HEADER}, {@link #TYPE_FOOTER}.
      */
+    @RefreshViewType
     int getType();
+
+    /**
+     * Get the view style. If return {@link #STYLE_SCALE} SmoothRefreshLayout will dynamically
+     * change the height, so the performance will be reduced. If return {@link #STYLE_FOLLOW_SCALE}
+     * , when the moved position large than the view height, SmoothRefreshLayout will dynamically
+     * change the height, so the performance will be reduced.
+     *
+     * @return style {@link #STYLE_DEFAULT}, {@link #STYLE_SCALE}, {@link #STYLE_PIN},
+     * {@link #STYLE_FOLLOW_SCALE}, {@link #STYLE_FOLLOW_PIN}, {@link #STYLE_FOLLOW_CENTER}.
+     */
+    @RefreshViewStyle
+    int getStyle();
+
+    /**
+     * Get the custom height,  When the return style is {@link #STYLE_SCALE} or
+     * {@link #STYLE_FOLLOW_SCALE} , you must return a accurate height
+     *
+     * @return Custom height
+     */
+    int getCustomHeight();
 
     /**
      * Get the target view.
      *
      * @return The returned view must be the view that will be added to the Layout
      */
+    @NonNull
     View getView();
-
-    /**
-     * Get the view's style. If return {@link #STYLE_SCALE} SmoothRefreshLayout will dynamically
-     * change the height, so the performance will be reduced.
-     *
-     * @return style {@link #STYLE_DEFAULT}, {@link #STYLE_SCALE}.
-     */
-    int getStyle();
-
-    /**
-     * Get the custom height, If style is {@link #STYLE_SCALE} should return a custom height.
-     *
-     * @return Custom height
-     */
-    int getCustomHeight();
 
     /**
      * This method will be triggered when the touched finger is lifted.
@@ -164,7 +179,7 @@ public interface IRefreshView <T extends IIndicator> {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onFingerUp(SmoothRefreshLayout layout, T indicator);
+    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
 
     /**
      * This method will be triggered when the refresh state is reset to
@@ -187,7 +202,7 @@ public interface IRefreshView <T extends IIndicator> {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onRefreshBegin(SmoothRefreshLayout layout, T indicator);
+    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
 
     /**
      * This method will be triggered when the frame is refresh completed.
@@ -195,7 +210,7 @@ public interface IRefreshView <T extends IIndicator> {
      * @param layout       The layout {@link SmoothRefreshLayout}
      * @param isSuccessful The layout refresh state
      */
-    void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful);
+    void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful);
 
     /**
      * This method will be triggered when the position of the refresh view changes.

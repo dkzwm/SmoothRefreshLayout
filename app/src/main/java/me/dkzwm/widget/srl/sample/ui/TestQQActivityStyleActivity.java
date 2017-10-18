@@ -59,7 +59,7 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRadioGroup.setOnCheckedChangeListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(getLayoutInflater());
+        mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_QQ_activity_style_activity);
         mClassicHeader = new ClassicHeader(this);

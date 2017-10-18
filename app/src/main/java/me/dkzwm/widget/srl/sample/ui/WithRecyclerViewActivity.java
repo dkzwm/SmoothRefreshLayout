@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -39,9 +40,9 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_recyclerView);
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_with_recyclerView_activity);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this,3));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(getLayoutInflater());
+        mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_recyclerView_activity);
         mRefreshLayout.setDisableLoadMore(false);
@@ -65,7 +66,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 6000);
+                }, 2000);
             }
         });
         mRefreshLayout.autoRefresh(false);

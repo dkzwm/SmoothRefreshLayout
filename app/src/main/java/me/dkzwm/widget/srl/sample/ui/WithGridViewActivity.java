@@ -37,7 +37,7 @@ public class WithGridViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_gridView);
         mGridView = (GridView) findViewById(R.id.gridView_with_gridView_activity);
-        mAdapter = new ListViewAdapter(getLayoutInflater());
+        mAdapter = new ListViewAdapter(this,getLayoutInflater());
         mGridView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView_activity);
         mRefreshLayout.setDisableLoadMore(false);
@@ -50,18 +50,18 @@ public class WithGridViewActivity extends AppCompatActivity {
                     public void run() {
                         if (isRefresh) {
                             mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 100);
-                            mCount += 100;
+                            List<String> list = DataUtil.createList(mCount, 15);
+                            mCount += 15;
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 100);
-                            mCount += 100;
+                            List<String> list = DataUtil.createList(mCount, 15);
+                            mCount += 15;
                             mAdapter.appendData(list);
                         }
                         //由于GridView添加数据后计算量较大，所以延迟30毫秒，滚动上才不会有跳动
                         mRefreshLayout.refreshComplete(30);
                     }
-                }, 5000);
+                }, 2000);
             }
         });
         mRefreshLayout.autoRefresh(false);

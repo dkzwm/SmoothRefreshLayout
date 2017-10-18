@@ -86,7 +86,7 @@ public class ScrollCompat {
             final int lastVisiblePosition = listView.getLastVisiblePosition();
             final Adapter adapter = listView.getAdapter();
             return adapter != null && lastVisiblePosition > 0
-                    && lastVisiblePosition == adapter.getCount() - 1;
+                    && lastVisiblePosition >= adapter.getCount() - 1;
         } else {
             try {
                 if (view instanceof RecyclerView) {
