@@ -10,7 +10,7 @@
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
  - 支持越界回弹.
- - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小)、STYLE_PIN(固定在顶部或者底部)、STYLE_FOLLOW_SCALE(先纵向跟随移动，大于视图高度后动态改变视图大小)、STYLE_FOLLOW_PIN(先纵向跟随移动，大于视图高度后固定)、STYLE_FOLLOW_CENTER(先纵向跟随移动，大于视图高度后让视图保持在移动的距离中心点)
+ - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小，一直会重测量并布局，所以性能会有损失)、STYLE_PIN(不会改变视图大小，固定在顶部或者底部)、STYLE_FOLLOW_SCALE(先纵向跟随移动并且不改变视图大小，大于视图高度后动态改变视图大小且性能会有损失)、STYLE_FOLLOW_PIN(不会改变视图大小，先纵向跟随移动，大于视图高度后固定)、STYLE_FOLLOW_CENTER(不会改变视图大小，先纵向跟随移动，大于视图高度后让视图保持在移动的距离中心点).
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout），PS:淘宝二楼、京东活动.
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
  - 支持多状态视图,STATE_CONTENT(默认状态)、STATE_ERROR(异常状态),STATE_EMPTY(空状态),STATE_CUSTOM(自定义状态).
