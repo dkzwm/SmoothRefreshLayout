@@ -1,4 +1,9 @@
 # 更新日志
+## 1.5.0(开发进行时，PS:develop分支)
+> 对现有项目进行分割，将二极刷新功能模块放入专门的包(ext-two-level)，新添加支持横向刷新模块(ext-horizontal)，原有核心模块作为基础模块引入(core)。从而削减了库的大小。使用者可以根据具体业务需求依赖扩展模块。    
+> 重命名多个方法，便于不新增方法的情况下支持多数配置。    
+## 1.4.8.1
+> 修正参数错误。分包前的最后一个版本。    
 ## 1.4.8
 > 修改 `IRefreshView` 接口,新增 `STYLE_PIN`、`STYLE_FOLLOW_SCALE`、`STYLE_FOLLOW_PIN`、`STYLE_FOLLOW_CENTER` 四种新的样式。    
   `STYLE_PIN`:如果是Header则会固定在顶部,如果是Footer则会固定在底部。    
