@@ -79,15 +79,15 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 }, 2000);
             }
         }, mRecyclerView);
-        mRefreshLayout.setOnChildScrollUpCallback(new SmoothRefreshLayout.OnChildScrollUpCallback() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveHeaderCallBack() {
             @Override
-            public boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
+            public boolean isChildAlreadyInEdgeCanMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
                 return ScrollCompat.canChildScrollUp(mRecyclerView);
             }
         });
-        mRefreshLayout.setOnChildScrollDownCallback(new SmoothRefreshLayout.OnChildScrollDownCallback() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveFooterCallBack() {
             @Override
-            public boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
+            public boolean isChildAlreadyInEdgeCanMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
                 return ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });

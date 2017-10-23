@@ -41,8 +41,8 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_textView);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_textView_activity);
-        mTextView = (TextView) findViewById(R.id.textView_with_textView_activity_desc);
+        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_textView);
+        mTextView = (TextView) findViewById(R.id.textView_with_textView_desc);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
@@ -70,11 +70,11 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                 return randomAnimator(previous, current);
             }
         });
-        findViewById(R.id.button_with_textView_activity_change_empty_state)
+        findViewById(R.id.button_with_textView_change_empty_state)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_textView_activity_change_content_state)
+        findViewById(R.id.button_with_textView_change_content_state)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_textView_activity_change_error_state)
+        findViewById(R.id.button_with_textView_change_error_state)
                 .setOnClickListener(this);
     }
 
@@ -106,13 +106,13 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_with_textView_activity_change_empty_state:
+            case R.id.button_with_textView_change_empty_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
                 break;
-            case R.id.button_with_textView_activity_change_content_state:
+            case R.id.button_with_textView_change_content_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
                 break;
-            case R.id.button_with_textView_activity_change_error_state:
+            case R.id.button_with_textView_change_error_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_ERROR, true);
                 break;
         }

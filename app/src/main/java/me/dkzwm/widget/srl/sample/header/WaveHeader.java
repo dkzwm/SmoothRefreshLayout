@@ -235,7 +235,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-        mFingerUpY = indicator.getCurrentPosY();
+        mFingerUpY = indicator.getCurrentPos();
         if (layout.isEnabledKeepRefreshView() && mStatus != SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
             if (mFingerUpY > offsetToKeepHeader && !layout.isDisabledPerformRefresh()) {
@@ -283,7 +283,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mCurrentPosY = indicator.getCurrentPosY();
+        mCurrentPosY = indicator.getCurrentPos();
         final int width = getWidth();
         final float[] lastMovePoint = indicator.getLastMovePoint();
         final int offsetToKeepHeader;

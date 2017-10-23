@@ -66,4 +66,5 @@
     <string name="change_style_to_style_follow_scale">Change style to STYLE_FOLLOW_SCALE</string>
     <string name="change_style_to_style_follow_pin">Change style to STYLE_FOLLOW_PIN</string>
     <string name="change_style_to_style_follow_center">Change style to STYLE_FOLLOW_CENTER</string>
+    <string name="test_horizontal_refresh">Test Horizontal Refresh</string>
 </resources>

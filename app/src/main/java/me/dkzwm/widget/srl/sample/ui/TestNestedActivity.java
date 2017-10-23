@@ -51,13 +51,13 @@ public class TestNestedActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_nested_activity);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_nested);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_nested_activity);
+                .smoothRefreshLayout_test_nested);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
@@ -86,7 +86,7 @@ public class TestNestedActivity extends AppCompatActivity {
         });
         mRefreshLayout.getDefaultHeader().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout_test_nested_activity);
+        mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout_test_nested);
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
@@ -94,15 +94,15 @@ public class TestNestedActivity extends AppCompatActivity {
                 mMinOffset = Math.min(mMinOffset, mOffset);
             }
         });
-        mRefreshLayout.setOnChildScrollUpCallback(new SmoothRefreshLayout.OnChildScrollUpCallback() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveHeaderCallBack() {
             @Override
-            public boolean canChildScrollUp(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
+            public boolean isChildAlreadyInEdgeCanMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
                 return parent.isInStartPosition() && (mOffset != 0 || ScrollCompat.canChildScrollUp(mRecyclerView));
             }
         });
-        mRefreshLayout.setOnChildScrollDownCallback(new SmoothRefreshLayout.OnChildScrollDownCallback() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveFooterCallBack() {
             @Override
-            public boolean canChildScrollDown(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
+            public boolean isChildAlreadyInEdgeCanMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
                 return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });
@@ -110,7 +110,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRefreshLayout.setOnLoadMoreScrollCallback(new SmoothRefreshLayout.OnLoadMoreScrollCallback() {
             @Override
             public void onScroll(View content, float deltaY) {
-                ScrollCompat.scrollCompat(mRecyclerView, deltaY);
+                ScrollCompat.scrollYCompat(mRecyclerView, deltaY);
             }
         });
         mRefreshLayout.autoRefresh(false);

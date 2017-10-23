@@ -129,7 +129,12 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:text="@string/test_two_level_refresh"/>
-
+            <Button
+                android:id="@+id/button_main_test_horizontal_refresh"
+                style="@style/MainButtonStyle"
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:text="@string/test_horizontal_refresh"/>
             <Button
                 android:id="@+id/button_main_test_QQ_activity_style"
                 style="@style/MainButtonStyle"

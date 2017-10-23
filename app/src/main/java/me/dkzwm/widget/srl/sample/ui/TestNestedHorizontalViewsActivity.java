@@ -45,11 +45,11 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_nested_horizontal_views);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_nested_horizontal_views_activity);
+                .smoothRefreshLayout_test_nested_horizontal_views);
         ClassicHeader header = new ClassicHeader(this);
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableKeepRefreshView(true);
-        mRefreshLayout.setDisableWhenHorizontalMove(true);
+        mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
@@ -64,7 +64,7 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
                 }, 4000);
             }
         });
-        mViewPager = (ViewPager) findViewById(R.id.viewPager_test_nested_horizontal_views_activity_pager);
+        mViewPager = (ViewPager) findViewById(R.id.viewPager_test_nested_horizontal_views_pager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < mColors.length; i++) {
             fragments.add(PageFragment.newInstance(i, mColors[i]));
@@ -72,7 +72,7 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setPageTransformer(true, new DrawerTransformer());
-        mRefreshLayout.setEnableCheckFingerInsideHorView(true);
+        mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(true);
         mRefreshLayout.autoRefresh(false);
     }
 
@@ -84,11 +84,11 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mRefreshLayout.isEnableCheckFingerInsideHorView()) {
-                    mRefreshLayout.setEnableCheckFingerInsideHorView(false);
+                if (mRefreshLayout.isEnableCheckFingerInsideAnotherDirectionView()) {
+                    mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(false);
                     item.setTitle(R.string.enable_check_finger_inside_horizontal_view);
                 } else {
-                    mRefreshLayout.setEnableCheckFingerInsideHorView(true);
+                    mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(true);
                     item.setTitle(R.string.disable_check_finger_inside_horizontal_view);
                 }
                 return true;

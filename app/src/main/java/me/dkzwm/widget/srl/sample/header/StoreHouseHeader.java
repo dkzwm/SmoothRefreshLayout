@@ -332,7 +332,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mCurrentPosY = indicator.getCurrentPosY();
+        mCurrentPosY = indicator.getCurrentPos();
         mHasLeftHeaderHeight = mCurrentPosY > indicator.getHeaderHeight();
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
@@ -344,7 +344,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mCurrentPosY = indicator.getCurrentPosY();
+        mCurrentPosY = indicator.getCurrentPos();
         mHasLeftHeaderHeight = mCurrentPosY > indicator.getHeaderHeight();
         float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
         setProgress(currentPercent);

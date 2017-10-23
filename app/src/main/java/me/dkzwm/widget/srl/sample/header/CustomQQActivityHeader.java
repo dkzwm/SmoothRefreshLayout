@@ -36,7 +36,7 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
     public CustomQQActivityHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View header = LayoutInflater.from(context).inflate(R.layout.layout_custom_qq_activity_header, this);
-        mTextViewTitle = (TextView) header.findViewById(R.id.textView_QQ_activity_header_title);
+        mTextViewTitle = (TextView) header.findViewById(R.id.textView_qq_activity_header_title);
     }
 
 
@@ -64,7 +64,7 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
         final int mOffsetToRefresh = indicator.getOffsetToRefresh();
-        final int currentPos = indicator.getCurrentPosY();
+        final int currentPos = indicator.getCurrentPos();
 
         if (currentPos > mOffsetToRefresh) {
             mCount++;
@@ -97,7 +97,7 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         final int mOffsetToRefresh = indicator.getOffsetToRefresh();
-        final int currentPos = indicator.getCurrentPosY();
+        final int currentPos = indicator.getCurrentPos();
 
         if (currentPos > mOffsetToRefresh && !mStartedCounter) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {

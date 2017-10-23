@@ -43,13 +43,13 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
             }
         });
         mRecyclerView = (RecyclerView) findViewById(R.id
-                .recyclerView_with_recyclerView_in_coordinatorLayout_activity);
+                .recyclerView_with_recyclerView_in_coordinatorLayout);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_with_recyclerView_in_coordinatorLayout_activity);
+                .smoothRefreshLayout_with_recyclerView_in_coordinatorLayout);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {

@@ -34,8 +34,8 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_two_level_refresh);
-        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_two_level_refresh_activity);
-        mTextView = findViewById(R.id.textView_test_two_level_refresh_activity_desc);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_two_level_refresh);
+        mTextView = findViewById(R.id.textView_test_two_level_refresh_desc);
         mRefreshLayout.setHeaderView(new CustomTwoLevelHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
         //设置保持头部的Offset（占头部的高度比）

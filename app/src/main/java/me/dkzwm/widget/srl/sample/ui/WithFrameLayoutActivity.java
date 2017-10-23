@@ -33,8 +33,8 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_frameLayout);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_frameLayout_activity);
-        mTextView = (TextView) findViewById(R.id.textView_with_frameLayout_activity_desc);
+        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_frameLayout);
+        mTextView = (TextView) findViewById(R.id.textView_with_frameLayout_desc);
         mTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

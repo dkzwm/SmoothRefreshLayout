@@ -1,5 +1,5 @@
 <me.dkzwm.widget.srl.SmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_test_nested_horizontal_views_activity"
+    android:id="@+id/smoothRefreshLayout_test_nested_horizontal_views"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,7 +25,7 @@
                 android:textSize="32sp"/>
 
             <android.support.v4.view.ViewPager
-                android:id="@+id/viewPager_test_nested_horizontal_views_activity_pager"
+                android:id="@+id/viewPager_test_nested_horizontal_views_pager"
                 android:layout_width="match_parent"
                 android:layout_height="168dp"/>
 

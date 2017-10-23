@@ -36,8 +36,8 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.release_to_refresh);
-        mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
+        mTextView = (TextView) findViewById(R.id.textView_test_refresh_desc);
+        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh);
         mStoreHouseHeader = new StoreHouseHeader(this);
         mStoreHouseHeader.initPathWithString("RELEASE TO REFRESH",PixelUtl.dp2px(this,18),
                 PixelUtl.dp2px(this,24));

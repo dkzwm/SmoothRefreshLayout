@@ -112,7 +112,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, ITwoLevelIndicator indicator) {
-        final int currentPos = indicator.getCurrentPosY();
+        final int currentPos = indicator.getCurrentPos();
         if (layout instanceof TwoLevelSmoothRefreshLayout) {
             TwoLevelSmoothRefreshLayout refreshLayout = (TwoLevelSmoothRefreshLayout) layout;
             if (!refreshLayout.isDisabledTwoLevelRefresh()) {

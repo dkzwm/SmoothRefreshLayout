@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.MaterialSmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_test_nested_activity"
+    android:id="@+id/smoothRefreshLayout_test_nested"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -13,14 +13,14 @@
         android:addStatesFromChildren="true">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView_test_nested_activity"
+            android:id="@+id/recyclerView_test_nested"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/appBarLayout_test_nested_activity"
+            android:id="@+id/appBarLayout_test_nested"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clipChildren="false">
@@ -50,13 +50,8 @@
                     app:layout_scrollFlags="scroll|enterAlways"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar"
                     app:theme="@style/ThemeOverlay.AppCompat.ActionBar">
-
                 </android.support.v7.widget.Toolbar>
-
             </android.support.design.widget.CollapsingToolbarLayout>
-
         </android.support.design.widget.AppBarLayout>
-
-
     </android.support.design.widget.CoordinatorLayout>
 </me.dkzwm.widget.srl.MaterialSmoothRefreshLayout>
