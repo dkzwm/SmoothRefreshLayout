@@ -554,10 +554,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (sDebug) {
                     SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
                 }
-                if (isEnabledFooterDrawerStyle())
-                    contentBottom = paddingTop + lp.topMargin + child.getMeasuredHeight();
-                else
-                    contentBottom = bottom + lp.bottomMargin;
+                contentBottom = bottom + lp.bottomMargin;
             } else if (mFooterView == null || mFooterView.getView() != child) {
                 layoutOtherViewUseGravity(child, parentRight, parentBottom);
             }
