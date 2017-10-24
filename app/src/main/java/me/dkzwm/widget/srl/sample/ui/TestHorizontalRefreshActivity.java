@@ -33,7 +33,7 @@ public class TestHorizontalRefreshActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_horizontal_refresh);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.test_nested_horizontal_views);
+        getSupportActionBar().setTitle(R.string.test_horizontal_refresh);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_test_horizontal_refresh);
         HorizontalMaterialHeader header = new HorizontalMaterialHeader(this);

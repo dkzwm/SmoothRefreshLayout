@@ -89,6 +89,9 @@
         <activity
             android:name="me.dkzwm.widget.srl.sample.ui.TestHorizontalRefreshActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="me.dkzwm.widget.srl.sample.ui.TestHorizontalRecyclerViewActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

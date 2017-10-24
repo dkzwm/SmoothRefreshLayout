@@ -20,6 +20,7 @@ import java.util.Random;
 import me.dkzwm.widget.srl.IChangeStateAnimatorCreator;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.R;
 
 /**
@@ -68,6 +69,14 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
             @Override
             public ValueAnimator create(final View previous, final View current) {
                 return randomAnimator(previous, current);
+            }
+        });
+        mRefreshLayout.setIndicatorOffsetCalculator(new IIndicator.IOffsetCalculator() {
+            @Override
+            public float calculate(@IIndicator.MovingStatus int status, int currentPos, float
+                    offset) {
+                return (float) Math.pow(Math.pow(currentPos / 3f, 1.5D) + offset, 1 / 1.5D) *
+                        3f - currentPos;
             }
         });
         findViewById(R.id.button_with_textView_change_empty_state)

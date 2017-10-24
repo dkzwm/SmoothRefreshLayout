@@ -148,8 +148,19 @@ public interface IIndicator {
 
     float getCurrentPercentOfLoadMoreOffset();
 
+    void setOffsetCalculator(IOffsetCalculator calculator);
+
+    /**
+     * Created by dkzwm on 2017/10/24.
+     *
+     * @author dkzwm
+     */
+    public interface IOffsetCalculator {
+        float calculate(@MovingStatus int status, int currentPos, float offset);
+    }
+
     @IntDef({MOVING_CONTENT, MOVING_FOOTER, MOVING_HEADER})
     @Retention(RetentionPolicy.SOURCE)
-    @interface MovingStatus {
+    public @interface MovingStatus {
     }
 }

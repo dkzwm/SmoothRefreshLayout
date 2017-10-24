@@ -8,19 +8,20 @@ import android.support.annotation.NonNull;
 public class DefaultIndicator implements IIndicator {
     protected final float[] mLastMovePoint = new float[]{0f, 0f};
     protected final float[] mFingerDownPoint = new float[]{0f, 0f};
+    protected IOffsetCalculator mOffsetCalculator;
     protected int mCurrentPos = 0;
     protected int mLastPos = 0;
     protected int mHeaderHeight = -1;
     protected int mFooterHeight = -1;
-    protected  int mPressedPos = 0;
-    protected  int mRefreshCompleteY = 0;
+    protected int mPressedPos = 0;
+    protected int mRefreshCompleteY = 0;
     protected float mOffset;
-    protected  boolean mTouched = false;
-    protected  boolean mMoved = false;
+    protected boolean mTouched = false;
+    protected boolean mMoved = false;
     @MovingStatus
-    protected  int mStatus = MOVING_CONTENT;
-    protected  float mResistanceHeader = DEFAULT_RESISTANCE;
-    protected  float mResistanceFooter = DEFAULT_RESISTANCE;
+    protected int mStatus = MOVING_CONTENT;
+    protected float mResistanceHeader = DEFAULT_RESISTANCE;
+    protected float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 1;
     private int mOffsetToLoadMore = 1;
     private float mOffsetRatioToKeepHeaderWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
@@ -319,6 +320,11 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
+    public void setOffsetCalculator(IOffsetCalculator calculator) {
+        mOffsetCalculator = calculator;
+    }
+
+    @Override
     public boolean willOverTop(int to) {
         return to < START_POS;
     }
@@ -381,17 +387,21 @@ public class DefaultIndicator implements IIndicator {
 
 
     protected void processOnMove(float offset) {
-        if (mStatus == MOVING_HEADER) {
-            mOffset = offset / mResistanceHeader;
-        } else if (mStatus == MOVING_FOOTER) {
-            mOffset = offset / mResistanceFooter;
-        } else if (mStatus == MOVING_CONTENT) {
-            if (offset > 0) {
+        if (mOffsetCalculator != null) {
+            mOffset = mOffsetCalculator.calculate(mStatus, mCurrentPos, offset);
+        } else {
+            if (mStatus == MOVING_HEADER) {
                 mOffset = offset / mResistanceHeader;
-            } else if (offset < 0) {
+            } else if (mStatus == MOVING_FOOTER) {
                 mOffset = offset / mResistanceFooter;
             } else {
-                mOffset = offset;
+                if (offset > 0) {
+                    mOffset = offset / mResistanceHeader;
+                } else if (offset < 0) {
+                    mOffset = offset / mResistanceFooter;
+                } else {
+                    mOffset = offset;
+                }
             }
         }
     }

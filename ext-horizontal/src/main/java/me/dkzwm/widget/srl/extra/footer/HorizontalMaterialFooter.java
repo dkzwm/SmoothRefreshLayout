@@ -1,12 +1,12 @@
 package me.dkzwm.widget.srl.extra.footer;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.util.AttributeSet;
 
 /**
  * Created by dkzwm on 2017/10/23.
+ *
+ * @author dkzwm
  */
 
 public class HorizontalMaterialFooter extends MaterialFooter {
@@ -33,11 +33,5 @@ public class HorizontalMaterialFooter extends MaterialFooter {
             setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
                     MeasureSpec.getSize(heightMeasureSpec));
         }
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.drawColor(Color.BLACK);
-        super.onDraw(canvas);
     }
 }
