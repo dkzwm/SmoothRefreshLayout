@@ -30,8 +30,8 @@ public class TestMaterialStyleActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_material_style);
-        mTextView = (TextView) findViewById(R.id.textView_test_refresh_activity_desc);
-        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh_activity);
+        mTextView = (TextView) findViewById(R.id.textView_test_refresh_desc);
+        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

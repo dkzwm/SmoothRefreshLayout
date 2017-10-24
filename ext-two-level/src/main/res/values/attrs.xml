@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TwoLevelSmoothRefreshLayout">
+        //This attribute only can be used in TwoLevelSmoothRefreshLayout
+        <attr name="sr_enable_two_level_refresh" format="boolean"/>
+    </declare-styleable>
+
+</resources>

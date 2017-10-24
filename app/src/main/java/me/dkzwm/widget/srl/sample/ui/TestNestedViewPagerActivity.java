@@ -42,7 +42,7 @@ public class TestNestedViewPagerActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager_with_nested_viewPager_activity);
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager_with_nested_pager);
         List<NestedPageFragment> fragments = new ArrayList<>();
         for (int mColor : mColors) {
             fragments.add(NestedPageFragment.newInstance(mColor));

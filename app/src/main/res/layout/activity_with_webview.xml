@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.SmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_with_webView_activity"
+    android:id="@+id/smoothRefreshLayout_with_webView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <WebView
-        android:id="@+id/webView_with_webView_activity"
+        android:id="@+id/webView_with_webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"/>

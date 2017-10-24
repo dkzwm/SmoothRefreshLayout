@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_nested_view_pager).setOnClickListener(this);
         findViewById(R.id.button_main_test_base_recyclerView_adapter).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested_horizontal_views).setOnClickListener(this);
+        findViewById(R.id.button_main_test_horizontal_refresh).setOnClickListener(this);
+        findViewById(R.id.button_main_test_horizontal_recyclerView).setOnClickListener(this);
         mButtonDebug = (Button) findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
@@ -157,9 +159,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_test_nested_horizontal_views:
                 startActivity(new Intent(MainActivity.this, TestNestedHorizontalViewsActivity.class));
                 break;
+            case R.id.button_main_test_horizontal_recyclerView:
+                startActivity(new Intent(MainActivity.this, TestHorizontalRecyclerViewActivity.class));
+                break;
             case R.id.imageView_main_bottom_icon:
                 Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,
                         Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.button_main_test_horizontal_refresh:
+                startActivity(new Intent(MainActivity.this, TestHorizontalRefreshActivity.class));
                 break;
             case R.id.button_main_debug:
                 SmoothRefreshLayout.debug(!SmoothRefreshLayout.isDebug());

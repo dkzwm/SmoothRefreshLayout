@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.MaterialSmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_with_gridView_activity"
+    android:id="@+id/smoothRefreshLayout_with_gridView"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <GridView
-        android:id="@+id/gridView_with_gridView_activity"
+        android:id="@+id/gridView_with_grid"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fadingEdge="none"

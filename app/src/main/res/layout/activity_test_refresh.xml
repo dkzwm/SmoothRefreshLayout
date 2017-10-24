@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.MaterialSmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_test_refresh_activity"
+    android:id="@+id/smoothRefreshLayout_test_refresh"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +12,7 @@
         android:background="#E8E8E8">
 
         <TextView
-            android:id="@+id/textView_test_refresh_activity_desc"
+            android:id="@+id/textView_test_refresh_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

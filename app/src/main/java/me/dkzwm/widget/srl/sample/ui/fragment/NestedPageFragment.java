@@ -43,17 +43,17 @@ public class NestedPageFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nested_page, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id
-                .recyclerView_nested_page_fragment);
+                .recyclerView_nested_page);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(getActivity(),inflater);
         recyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) view.findViewById(R.id
-                .smoothRefreshLayout_nested_page_fragment);
+                .smoothRefreshLayout_nested_page);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableNextPtrAtOnce(false);
-        mRefreshLayout.setDisableWhenHorizontalMove(true);
+        mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {

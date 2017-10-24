@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -36,10 +35,10 @@ public class WithGridViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_gridView);
-        mGridView = (GridView) findViewById(R.id.gridView_with_gridView_activity);
+        mGridView = (GridView) findViewById(R.id.gridView_with_grid);
         mAdapter = new ListViewAdapter(this,getLayoutInflater());
         mGridView.setAdapter(mAdapter);
-        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView_activity);
+        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {

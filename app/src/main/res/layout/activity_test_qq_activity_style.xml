@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.SmoothRefreshLayout
-    android:id="@+id/smoothRefreshLayout_test_QQ_activity_style_activity"
+    android:id="@+id/smoothRefreshLayout_test_qq_activity_style"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    app:sr_content="@+id/recyclerView_test_QQ_activity_style_activity">
+    app:sr_content="@+id/recyclerView_test_qq_activity_style">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView_test_QQ_activity_style_activity"
+        android:id="@+id/recyclerView_test_qq_activity_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:overScrollMode="never"
         android:background="@android:color/white"/>
 
     <RadioGroup
-        android:id="@+id/radioGroup_test_QQ_activity_style_container"
+        android:id="@+id/radioGroup_test_qq_activity_style_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="42dp"
         android:layout_marginRight="12dp"
-        android:checkedButton="@+id/radioButton_test_QQ_activity_style_normal"
+        android:checkedButton="@+id/radioButton_test_qq_activity_style_normal"
         android:layout_gravity="bottom|right">
 
         <RadioButton
-            android:id="@+id/radioButton_test_QQ_activity_style_normal"
+            android:id="@+id/radioButton_test_qq_activity_style_normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/normal_style"/>
 
         <RadioButton
-            android:id="@+id/radioButton_test_QQ_activity_style_activity"
+            android:id="@+id/radioButton_test_qq_activity_style_activity"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/activity_style"/>

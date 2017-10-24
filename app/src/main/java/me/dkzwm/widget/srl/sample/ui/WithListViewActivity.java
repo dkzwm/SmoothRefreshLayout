@@ -44,13 +44,13 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_listView);
-        mListView = (ListView) findViewById(R.id.listView_with_listView_activity);
+        mListView = (ListView) findViewById(R.id.listView_with_list);
         mAdapter = new ListViewAdapter(this,getLayoutInflater());
         mListView.setAdapter(mAdapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView_activity);
-        mClassicHeader = (ClassicHeader) findViewById(R.id.classicHeader_with_listView_activity);
+        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView);
+        mClassicHeader = (ClassicHeader) findViewById(R.id.classicHeader_with_listView);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
-        mClassicFooter = (ClassicFooter) findViewById(R.id.classicFooter_with_listView_activity);
+        mClassicFooter = (ClassicFooter) findViewById(R.id.classicFooter_with_listView);
         mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
         mClassicHeader.setTitleTextColor(Color.WHITE);
         mClassicHeader.setLastUpdateTextColor(Color.GRAY);
@@ -98,22 +98,23 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
 
         mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
         mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
+        mRefreshLayout.setEnableLoadMoreNoMoreDataNoNeedSpringBack(true);
         mRefreshLayout.autoRefresh(false);
-        findViewById(R.id.button_with_listView_activity_change_empty_state)
+        findViewById(R.id.button_with_listView_change_empty_state)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_change_content_state)
+        findViewById(R.id.button_with_listView_change_content_state)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_change_error_state)
+        findViewById(R.id.button_with_listView_change_error_state)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_change_custom_state)
+        findViewById(R.id.button_with_listView_change_custom_state)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_disable_refresh)
+        findViewById(R.id.button_with_listView_disable_refresh)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_enable_refresh)
+        findViewById(R.id.button_with_listView_enable_refresh)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_disable_loadMore)
+        findViewById(R.id.button_with_listView_disable_loadMore)
                 .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_activity_enable_loadMore)
+        findViewById(R.id.button_with_listView_enable_loadMore)
                 .setOnClickListener(this);
     }
 
@@ -121,28 +122,28 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_with_listView_activity_change_empty_state:
+            case R.id.button_with_listView_change_empty_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
                 break;
-            case R.id.button_with_listView_activity_change_content_state:
+            case R.id.button_with_listView_change_content_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
                 break;
-            case R.id.button_with_listView_activity_change_error_state:
+            case R.id.button_with_listView_change_error_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_ERROR, true);
                 break;
-            case R.id.button_with_listView_activity_change_custom_state:
+            case R.id.button_with_listView_change_custom_state:
                 mRefreshLayout.setState(SmoothRefreshLayout.STATE_CUSTOM, true);
                 break;
-            case R.id.button_with_listView_activity_disable_refresh:
+            case R.id.button_with_listView_disable_refresh:
                 mRefreshLayout.setDisableRefresh(true);
                 break;
-            case R.id.button_with_listView_activity_enable_refresh:
+            case R.id.button_with_listView_enable_refresh:
                 mRefreshLayout.setDisableRefresh(false);
                 break;
-            case R.id.button_with_listView_activity_disable_loadMore:
+            case R.id.button_with_listView_disable_loadMore:
                 mRefreshLayout.setDisableLoadMore(true);
                 break;
-            case R.id.button_with_listView_activity_enable_loadMore:
+            case R.id.button_with_listView_enable_loadMore:
                 mRefreshLayout.setDisableLoadMore(false);
                 break;
         }
