@@ -20,7 +20,6 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -116,6 +115,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_HIDE_HEADER_VIEW = 0x01 << 19;
     private static final int FLAG_ENABLE_HIDE_FOOTER_VIEW = 0x01 << 20;
     private static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 21;
+    private static final int FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK = 0x01 << 22;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
@@ -774,6 +774,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set
+     *
      * @param calculator
      */
     @SuppressWarnings({"unused"})
@@ -1953,6 +1954,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * The flag has been set to enabled when load more has no more data to no longer need spring
+     * back<br/>
+     * <p>
+     * 是否已经开启加载更多完成已无更多数据且不需要回滚动作
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledLoadMoreNoMoreDataNoNeedSpringBack() {
+        return (mFlag & FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK) > 0;
+    }
+
+
+    /**
      * If @param enable has been set to true. The footer will show no more data and will never
      * trigger load more<br/>
      * <p>
@@ -1965,6 +1979,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mFlag = mFlag | FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA;
         } else {
             mFlag = mFlag & ~FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA;
+        }
+    }
+
+    /**
+     * If @param enable has been set to true. When there is no more data will no longer spring
+     * back<br/>
+     * <p>
+     * 设置开启加载更多完成已无更多数据且不需要回滚动作，当该属性设置为`true`时，将不再触发加载更多。
+     *
+     * @param enable Enable no more data
+     */
+    public void setEnableLoadMoreNoMoreDataNoNeedSpringBack(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK;
         }
     }
 
@@ -3271,6 +3301,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.d(TAG, "onRelease(): duration: %s", duration);
         }
         mAutomaticActionInScrolling = false;
+        if (isEnabledLoadMoreNoMoreData() && isMovingFooter()
+                && isEnabledLoadMoreNoMoreDataNoNeedSpringBack())
+            return;
         tryToPerformRefresh();
         if (mStatus == SR_STATUS_REFRESHING || mStatus == SR_STATUS_LOADING_MORE) {
             if (isEnabledKeepRefreshView()) {

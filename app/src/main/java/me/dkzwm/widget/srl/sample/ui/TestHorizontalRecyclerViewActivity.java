@@ -85,7 +85,7 @@ public class TestHorizontalRecyclerViewActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 8000);
+                }, 3000);
             }
 
             @Override
@@ -94,8 +94,8 @@ public class TestHorizontalRecyclerViewActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+        mRefreshLayout.setDurationToClose(800);
         mRefreshLayout.autoRefresh(false);
-
     }
 
 
