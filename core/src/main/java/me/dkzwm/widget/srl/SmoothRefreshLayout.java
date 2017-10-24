@@ -20,6 +20,7 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -2984,6 +2985,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mTouchPointerId = ev.getPointerId(newIndex);
                     mIndicator.onFingerMove(ev.getX(newIndex), ev.getY(newIndex));
                 }
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                mTouchPointerId = ev.getPointerId(ev.getActionIndex());
+                mIndicator.onFingerMove(ev.getX(ev.getActionIndex()), ev.getY(ev.getActionIndex()));
+                break;
             case MotionEvent.ACTION_DOWN:
                 mIndicator.onFingerUp();
                 mHasSendDownEvent = false;

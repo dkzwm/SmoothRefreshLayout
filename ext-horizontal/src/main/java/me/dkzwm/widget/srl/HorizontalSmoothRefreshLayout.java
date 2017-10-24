@@ -300,6 +300,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
             case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_POINTER_DOWN:
             case MotionEvent.ACTION_DOWN:
                 return super.processDispatchTouchEvent(ev);
             case MotionEvent.ACTION_MOVE:
@@ -366,7 +367,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 offsetX = mIndicator.getOffset();
                 int current = mIndicator.getCurrentPos();
                 boolean movingRight = offsetX > 0;
-                if (isMovingFooter() && isFooterInProcessing() && mStatus==SR_STATUS_COMPLETE
+                if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
                         && mIndicator.hasLeftStartPosition() && !canNotChildScrollRight) {
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
                     return dispatchTouchEventSuper(ev);
@@ -614,7 +615,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
                     mIndicator.getLastMovePoint()[1] - dy);
             updateAnotherDirectionPos();
-        } else if (isMovingFooter() && isFooterInProcessing()&& mStatus==SR_STATUS_COMPLETE
+        } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
                 && mIndicator.hasLeftStartPosition() && isChildAlreadyInEdgeCanMoveFooter()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
             consumed[0] = dx;

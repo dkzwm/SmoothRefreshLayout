@@ -75,8 +75,8 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
             @Override
             public float calculate(@IIndicator.MovingStatus int status, int currentPos, float
                     offset) {
-                return (float) Math.pow(Math.pow(currentPos / 3f, 1.5D) + offset, 1 / 1.5D) *
-                        3f - currentPos;
+                return (float) Math.pow(Math.pow(currentPos / 4.8f, 1.8D) + offset, 1 / 1.8D) *
+                        4.8f - currentPos;
             }
         });
         findViewById(R.id.button_with_textView_change_empty_state)
