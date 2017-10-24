@@ -1,7 +1,32 @@
 # 更新日志
-## 1.5.0(开发进行时，PS:develop分支)
+## 1.5.0
 > 对现有项目进行分割，将二极刷新功能模块放入专门的包(ext-two-level)，新添加支持横向刷新模块(ext-horizontal)，原有核心模块作为基础模块引入(core)。从而削减了库的大小。使用者可以根据具体业务需求依赖扩展模块。    
-> 重命名多个方法，便于不新增方法的情况下支持多数配置。    
+> 修改方法 `canChildScrollUp` 为 `isChildAlreadyInEdgeCanMoveHeader`。    
+> 修改方法 `canChildScrollDown` 为 `isChildAlreadyInEdgeCanMoveFooter`。    
+> 修改方法 `setOnChildScrollUpCallback` 为 `setOnChildAlreadyInEdgeCanMoveHeaderCallBack`。    
+> 修改方法 `setOnChildScrollDownCallback` 为 `setOnChildAlreadyInEdgeCanMoveFooterCallBack`。    
+> 修改接口 `OnChildScrollUpCallback` 为 `OnChildAlreadyInEdgeCanMoveHeaderCallBack`。    
+> 修改接口 `OnChildScrollDownCallback` 为 `OnChildAlreadyInEdgeCanMoveFooterCallBack`。    
+> 修改接口 `OnFingerInsideHorViewCallback` 为 `OnFingerInsideAnotherDirectionViewCallback`。    
+> 修改方法 `setOnFingerInsideHorViewCallback` 为 `setOnFingerInsideAnotherDirectionViewCallback`。    
+> 修改方法 `isEnableCheckFingerInsideHorView` 为 `isEnableCheckFingerInsideAnotherDirectionView`。    
+> 修改方法 `setEnableCheckFingerInsideHorView` 为 `setEnableCheckFingerInsideAnotherDirectionView`。    
+> 修改方法 `isDisabledWhenHorizontalMove` 为 `isDisabledWhenAnotherDirectionMove`。    
+> 修改方法 `setDisableWhenHorizontalMove` 为 `setDisableWhenAnotherDirectionMove`。    
+> 修改方法 `checkHorizontalViewUnInterceptedEvent` 为 `checkAnotherDirectionViewUnInterceptedEvent`。    
+> 修改方法 `updateYPos` 为 `updatePos`。    
+> 修改方法 `updateXPos` 为 `updateAnotherDirectionPos`。    
+> 添加方法 `createIndicator`。
+> 添加方法 `setIndicatorOffsetCalculator`，用以设置自定义便宜计算器实现更强的阻尼效果。   
+> 添加方法 `isEnabledLoadMoreNoMoreDataNoNeedSpringBack`。     
+> 添加方法 `setEnableLoadMoreNoMoreDataNoNeedSpringBack`，用以开启当无再多数据时是否不再回弹停留在最后移动位置。      
+> 修改 `IIndicator` 接口中的方法 `getOffsetY` 为 `getOffset`。    
+> 修改 `IIndicator` 接口中的方法 `getLastPosY` 为 `getLastPos`。    
+> 修改 `IIndicator` 接口中的方法 `getCurrentPosY` 为 `getCurrentPos`。    
+> 修改 `IIndicator` 接口中的方法 `setCurrentPosY` 为 `setCurrentPos`。    
+> 修改 `IIndicator` 接口中的添加 `setOffsetCalculator（IOffsetCalculator calculator）` 方法。    
+> 修改 `IIndicator` 接口中的添加 `IOffsetCalculator` 接口，用以设置自定义便宜计算器实现更强的阻尼效果。    
+> 其他内部参数名的修改。
 ## 1.4.8.1
 > 修正参数错误。分包前的最后一个版本。    
 ## 1.4.8

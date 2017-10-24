@@ -11,6 +11,7 @@ Thank him for providing such a great open source library ！
  - Extends the ViewGroup,has excellent performance,support similar FameLayout featrue（Gravity、Margin).
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）.
  - Support Cross boundary rebound(OverScroll).
+ - Support Horizontal refresh.
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
  - Support Refresh view has six styles:STYLE_DEFAULT(Do not change the height by default)、STYLE_SCALE(Dynamically change the height)、STYLE_PIN(Pinned the refresh view)、STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
  - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）,PS:TaoBao-Senond-Floor、JD-Activity.
@@ -22,6 +23,12 @@ Thank him for providing such a great open source library ！
 下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
 ## Snapshots
+- Test Horizontal Refresh（Added since version 1.5.0）    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
+
+- Test Horizontal RecyclerView Refresh（Added since version 1.5.0）    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
+
 - Test QQ-WebBrowser style    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
 
@@ -69,38 +76,28 @@ repositories {
     maven { url 'https://jitpack.io' }  
 }
 
-dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.8.1'
+dependencies {
+    //The most basic core library
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0'
+    //Support Two-Level-Refresh feature
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0'
+    //Support horizontal refresh feature
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0'
 }
 ```
 #### Use Xml to config
-#####  Since v1.4.1
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.SmoothRefreshLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/smoothRefreshLayout"
+	android:id="@+id/refreshLayout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 </me.dkzwm.widget.srl.SmoothRefreshLayout>
-```
-##### Before v1.4.1
-```
-<?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/smoothRefreshLayout"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<TextView
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
-</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
 ```
 ####  Use Java code to config
 ```

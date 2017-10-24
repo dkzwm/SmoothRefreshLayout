@@ -773,9 +773,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set
+     * Set the custom offset calculator
+     * <p>
+     * 设置自定义偏移计算器
      *
-     * @param calculator
+     * @param calculator Offset calculator
      */
     @SuppressWarnings({"unused"})
     public void setIndicatorOffsetCalculator(IIndicator.IOffsetCalculator calculator) {

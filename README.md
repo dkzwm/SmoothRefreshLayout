@@ -12,6 +12,7 @@
  - 支持越界回弹.
  - 支持刷新视图自定样式,STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小，一直会重测量并布局，所以性能会有损失)、STYLE_PIN(不会改变视图大小，固定在顶部或者底部)、STYLE_FOLLOW_SCALE(先纵向跟随移动并且不改变视图大小，大于视图高度后动态改变视图大小且性能会有损失)、STYLE_FOLLOW_PIN(不会改变视图大小，先纵向跟随移动，大于视图高度后固定)、STYLE_FOLLOW_CENTER(不会改变视图大小，先纵向跟随移动，大于视图高度后让视图保持在移动的距离中心点).
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout），PS:淘宝二楼、京东活动.
+ - 支持横向刷新(HorizontalSmoothRefreshLayout).
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
  - 支持多状态视图,STATE_CONTENT(默认状态)、STATE_ERROR(异常状态),STATE_EMPTY(空状态),STATE_CUSTOM(自定义状态).
  - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
@@ -22,6 +23,12 @@
 #### 老版本升级务必查看
  [更新日志](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/ext/UPDATE.md) 
 ## 快照
+- 测试横向刷新（1.5.0版本添加）    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
+
+- 测试横向RecyclerView刷新（1.5.0版本添加）    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
+
 - 测试QQ浏览器样式    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
 
@@ -69,38 +76,28 @@ repositories {
     maven { url 'https://jitpack.io' }  
 }
 
-dependencies {  
-    compile 'com.github.dkzwm:SmoothRefreshLayout:1.4.8.1'
+dependencies {
+    //核心基础库，包含绝大多数功能，扩展库必须依赖本库
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0'
+    //扩展支持二级刷新库
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0'
+    //扩展支持横向刷新库
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0'
 }
 ```
 #### 在Xml中配置
-#####  自v1.4.1版本后
 ```
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.SmoothRefreshLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/smoothRefreshLayout"
+	android:id="@+id/refreshLayout"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 	<TextView
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"/>
 </me.dkzwm.widget.srl.SmoothRefreshLayout>
-```
-##### v1.4.1之前的版本
-```
-<?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:id="@+id/smoothRefreshLayout"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-	<TextView
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"/>
-</me.dkzwm.smoothrefreshlayout.SmoothRefreshLayout>
 ```
 ####  Java代码配置
 ```
@@ -118,7 +115,6 @@ refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 	}
 });
 ```
-
 #### 自定义刷新视图
 ##### 接口定义
 ```
@@ -146,7 +142,7 @@ public interface IRefreshView <T extends IIndicator> {
     int getStyle();
 
     /**
-     * 获取视图的自定义高度，当视图样式为STYLE_SCALE和STYLE_FOLLOW_SCALE时，必须返回一个确切且大于0的值;
+     * 获取视图的自定义高度，当视图样式为STYLE_SCALE和STYLE_FOLLOW_SCALE时，必须返回一个确切且大于0的值，使用横向刷新库时，该属性实际应该返回的是视图的宽度;
      */
     int getCustomHeight();
 
@@ -210,14 +206,22 @@ public interface IRefreshView <T extends IIndicator> {
 
 - 动态代码添加   
 ```    
-
-    setHeaderView(@NonNull IRefreshView header);
-    setFooterView(@NonNull IRefreshView footer);
-
+mRefreshLayout.setHeaderView(header);
+mRefreshLayout.setFooterView(footer);
 ```    
 
 - 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断
  
+#### 实现类QQ下拉阻尼效果
+ ```
+ mRefreshLayout.setIndicatorOffsetCalculator(new IIndicator.IOffsetCalculator() {
+     @Override
+     public float calculate(@IIndicator.MovingStatus int status, int currentPos, float offset) {
+         return (float) Math.pow(Math.pow(currentPos / 4.8f, 1.8D) + offset, 1 / 1.8D) *
+                         4.8f - currentPos;
+     }
+ });
+ ```
 #### Xml属性 
 ##### SmoothRefreshLayout 自身配置
 |名称|类型|描述|
@@ -252,14 +256,9 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
 ##### TwoLevelSmoothRefreshLayout 自身配置
-###### v1.4.5之后的版本
 |名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_enable_two_level_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
-###### v1.4.5之前的版本
-|名称|类型|描述|
-|:---:|:---:|:---:|
-|sr_enable_two_level_pull_to_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
 ##### SmoothRefreshLayout包裹内部其他View支持配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
@@ -273,7 +272,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setContentView|int,View|配置内容视图,参数1:设置内容视图对应的状态,参数2:状态对应的内容视图|
 |setState|int|配置当前状态|
 |setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
-|setDisableWhenHorizontalMove|boolean|内部视图含有横向滑动视图(例如ViewPager)时需设置该属性为ture（默认:`false`）|
+|setDisableWhenAnotherDirectionMove|boolean|内部视图含有其他方向滑动视图时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setOverScrollDurationRatio|float|越界回弹时间比,当触发越界时得到的移动时长乘以该比例得到真实移动时长,该时长最大不超过`mMaxOverScrollDuration`的值（默认:`0.5f`）.|
 |setMaxOverScrollDuration|int|设置越界回弹动画最长时间（默认:`500`）|
@@ -305,6 +304,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setDisablePerformRefresh|boolean|关闭触发Header刷新（默认:`false`）|
 |setDisablePerformLoadMore|boolean|关闭触发Footer刷新（默认:`false`）|
 |setEnableLoadMoreNoMoreData|boolean|设置Footer没有更多数据，该选项设置`true`时在Frame层等同`setDisablePerformLoadMore`设置为`true`，只是自定义视图可以根据该标志位改变视图样式,`ClassicFooter`默认实现了对该属性的支持（默认:`false`）|
+|isEnabledLoadMoreNoMoreDataNoNeedSpringBack|boolean|设置Footer没有更多数据情况下不再回弹|
 |setDisableRefresh|boolean|禁用Header刷新（默认:`false`）|
 |setDisableLoadMore|boolean|禁用Footer刷新（默认:`false`）|
 |setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
@@ -312,7 +312,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 |setSpringInterpolator|Interpolator|设置默认的滚动插值器|
 |setOverScrollInterpolator|Interpolator|设置越界回弹时的滚动插值器|
-|setEnableCheckFingerInsideHorView|boolean|设置是否开启检查手指按下点是否位于水平滚动视图内，该属性起作用必须满足开启`setDisableWhenHorizontalMove`|
+|setEnableCheckFingerInsideAnotherDirectionView|boolean|设置是否开启检查手指按下点是否位于其他方向滚动视图内，该属性起作用必须满足开启`setDisableWhenAnotherDirectionMove`|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|
@@ -324,11 +324,11 @@ public interface IRefreshView <T extends IIndicator> {
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|
 |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
-|setOnChildScrollUpCallback|OnChildScrollUpCallback|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`canChildScrollUp()`方法）|
-|setOnChildScrollDownCallback|OnChildScrollDownCallback|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`canChildScrollDown()`方法）|
+|setOnChildAlreadyInEdgeCanMoveHeaderCallBack|OnChildAlreadyInEdgeCanMoveHeaderCallBack|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`isChildAlreadyInEdgeCanMoveHeader()`方法）|
+|setOnChildAlreadyInEdgeCanMoveFooterCallBack|OnChildAlreadyInEdgeCanMoveFooterCallBack|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`isChildAlreadyInEdgeCanMoveFooter()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
-|setOnFingerInsideHorViewCallback|OnFingerInsideHorViewCallback|设置检查手指按下点是否位于水平滚动视图内的重载回调，可自定义判断逻辑，提高判断效率|
+|setOnFingerInsideAnotherDirectionViewCallback|OnFingerInsideAnotherDirectionViewCallback|设置检查手指按下点是否位于其他滚动视图内的重载回调，可自定义判断逻辑，提高判断效率|
 
 #### SmoothRefreshLayout 其它
 |名称|参数|描述|
