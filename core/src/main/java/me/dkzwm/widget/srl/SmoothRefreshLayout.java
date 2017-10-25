@@ -630,7 +630,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         @IRefreshView.RefreshViewStyle
-        final int type = mHeaderView.getStyle();
+        final int type = mFooterView.getStyle();
         int left, right, top = 0, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
