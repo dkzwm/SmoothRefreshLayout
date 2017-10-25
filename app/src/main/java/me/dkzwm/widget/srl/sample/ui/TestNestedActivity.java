@@ -110,7 +110,7 @@ public class TestNestedActivity extends AppCompatActivity {
         mRefreshLayout.setOnLoadMoreScrollCallback(new SmoothRefreshLayout.OnLoadMoreScrollCallback() {
             @Override
             public void onScroll(View content, float deltaY) {
-                ScrollCompat.scrollYCompat(mRecyclerView, deltaY);
+                ScrollCompat.scrollCompat(mRecyclerView, deltaY);
             }
         });
         mRefreshLayout.autoRefresh(false);

@@ -15,8 +15,8 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.HorizontalBoundaryUtil;
+import me.dkzwm.widget.srl.utils.HorizontalScrollCompat;
 import me.dkzwm.widget.srl.utils.SRLog;
-import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/10/20.
@@ -409,7 +409,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         } else if (isAutoRefresh() && !mAutoRefreshBeenSendTouchEvent) {
                             // When the Auto-Refresh is in progress, the content view can not
                             // continue to move up when the content view returns to the top
-                            // 当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动
+                            // 当自动刷新正在进行时，移动内容视图返回到最左侧后无法继续向左移动
                             makeNewTouchDownEvent(ev);
                             mAutoRefreshBeenSendTouchEvent = true;
                         }
@@ -500,9 +500,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 case IRefreshView.STYLE_PIN:
                     break;
                 case IRefreshView.STYLE_FOLLOW_PIN:
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
+                        mHeaderView.getView().offsetLeftAndRight(change);
+                    break;
                 case IRefreshView.STYLE_FOLLOW_SCALE:
                 case IRefreshView.STYLE_FOLLOW_CENTER:
-                    if (mIndicator.getCurrentPos() >= mIndicator.getHeaderHeight())
+                    if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
                         needRequestLayout = true;
                     else
                         mHeaderView.getView().offsetLeftAndRight(change);
@@ -525,9 +528,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 case IRefreshView.STYLE_PIN:
                     break;
                 case IRefreshView.STYLE_FOLLOW_PIN:
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
+                        mFooterView.getView().offsetLeftAndRight(change);
+                    break;
                 case IRefreshView.STYLE_FOLLOW_SCALE:
                 case IRefreshView.STYLE_FOLLOW_CENTER:
-                    if (mIndicator.getCurrentPos() >= mIndicator.getFooterHeight())
+                    if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
                         needRequestLayout = true;
                     else
                         mFooterView.getView().offsetLeftAndRight(change);
@@ -553,7 +559,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isChildAlreadyInEdgeCanMoveHeader(this,
                     mTargetView, mHeaderView);
-        return ScrollCompat.canChildScrollLeft(mTargetView);
+        return HorizontalScrollCompat.canChildScrollLeft(mTargetView);
     }
 
     @Override
@@ -561,7 +567,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isChildAlreadyInEdgeCanMoveFooter(this,
                     mTargetView, mFooterView);
-        return ScrollCompat.canChildScrollRight(mTargetView);
+        return HorizontalScrollCompat.canChildScrollRight(mTargetView);
     }
 
 
@@ -716,9 +722,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void compatLoadMoreScroll(float delta) {
         if (mLoadMoreScrollCallback == null) {
             if (mScrollTargetView != null)
-                ScrollCompat.scrollXCompat(mScrollTargetView, delta);
+                HorizontalScrollCompat.scrollCompat(mScrollTargetView, delta);
             else
-                ScrollCompat.scrollXCompat(mTargetView, delta);
+                HorizontalScrollCompat.scrollCompat(mTargetView, delta);
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }
