@@ -10,7 +10,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
-import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
 import java.lang.reflect.InvocationTargetException;

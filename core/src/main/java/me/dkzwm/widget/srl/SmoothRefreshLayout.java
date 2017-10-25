@@ -673,7 +673,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    @SuppressLint("RtlHardcoded")
+    @SuppressLint("RtlHardcpded")
     protected void layoutOtherViewUseGravity(View child, int parentRight, int parentBottom) {
         final int width = child.getMeasuredWidth();
         final int height = child.getMeasuredHeight();
@@ -768,7 +768,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param view Target view
      */
     @SuppressWarnings({"unused"})
-    public void setLoadMoreScrollTargetView(View view) {
+    public void setLoadMoreScrollTargetView(@NonNull View view) {
         mScrollTargetView = view;
     }
 
@@ -3582,7 +3582,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (!isEnabledPinContentView()) {
             if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
-                mScrollTargetView.offsetTopAndBottom(change);
+                mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
             } else {
                 mTargetView.offsetTopAndBottom(change);
             }

@@ -29,7 +29,7 @@ import me.dkzwm.widget.srl.utils.ScrollCompat;
  * @author dkzwm
  */
 public class TestNestedActivity extends AppCompatActivity {
-    int mMinOffset;
+    private int mMinOffset;
     private MaterialSmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private AppBarLayout mAppBarLayout;
@@ -37,6 +37,7 @@ public class TestNestedActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     private int mCount = 0;
     private int mOffset = -1;
+    private boolean mFullyExpanded;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,10 +55,11 @@ public class TestNestedActivity extends AppCompatActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_nested);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
+        mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_test_nested);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
@@ -77,7 +79,7 @@ public class TestNestedActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, 2000);
+                }, isRefresh?2000:10000);
             }
 
             @Override
@@ -91,13 +93,14 @@ public class TestNestedActivity extends AppCompatActivity {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 mOffset = verticalOffset;
-                mMinOffset = Math.min(mMinOffset, mOffset);
+                mFullyExpanded = (appBarLayout.getHeight() - appBarLayout.getBottom()) == 0;
+                mMinOffset = Math.min(mOffset, mMinOffset);
             }
         });
         mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveHeaderCallBack() {
             @Override
             public boolean isChildAlreadyInEdgeCanMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
-                return parent.isInStartPosition() && (mOffset != 0 || ScrollCompat.canChildScrollUp(mRecyclerView));
+                return !mFullyExpanded || ScrollCompat.canChildScrollUp(mRecyclerView);
             }
         });
         mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveFooterCallBack() {
