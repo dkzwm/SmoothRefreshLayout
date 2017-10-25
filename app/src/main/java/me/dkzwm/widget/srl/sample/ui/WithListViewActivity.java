@@ -98,7 +98,6 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
 
         mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
         mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
-        mRefreshLayout.setEnableLoadMoreNoMoreDataNoNeedSpringBack(true);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_change_empty_state)
                 .setOnClickListener(this);
