@@ -10,7 +10,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
-import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -179,22 +178,7 @@ public class ScrollCompat {
         }
     }
 
-    public static boolean canChildScrollLeft(View view) {
-        if (Build.VERSION.SDK_INT < 26)
-            return ViewCompat.canScrollHorizontally(view, -1);
-        else
-            return view.canScrollHorizontally(-1);
-    }
-
-    public static boolean canChildScrollRight(View view) {
-        if (Build.VERSION.SDK_INT < 26)
-            return ViewCompat.canScrollHorizontally(view, 1);
-        else
-            return view.canScrollHorizontally(1);
-    }
-
-
-    public static boolean scrollYCompat(View view, float deltaY) {
+    public static boolean scrollCompat(View view, float deltaY) {
         if (view != null) {
             if (view instanceof AbsListView) {
                 final AbsListView listView = (AbsListView) view;
@@ -238,25 +222,4 @@ public class ScrollCompat {
         }
         return false;
     }
-
-
-    public static boolean scrollXCompat(View view, float deltaY) {
-        if (view != null) {
-            if ((view instanceof WebView)
-                    || (view instanceof HorizontalScrollView)) {
-                view.scrollBy((int) deltaY, 0);
-            } else {
-                try {
-                    if (view instanceof RecyclerView) {
-                        view.scrollBy((int) deltaY, 0);
-                        return true;
-                    }
-                } catch (NoClassDefFoundError e) {
-                    //ignore exception
-                }
-            }
-        }
-        return false;
-    }
-
 }

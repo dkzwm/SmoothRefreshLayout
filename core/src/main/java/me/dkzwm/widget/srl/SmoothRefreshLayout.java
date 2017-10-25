@@ -673,7 +673,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    @SuppressLint("RtlHardcoded")
+    @SuppressLint("RtlHardcpded")
     protected void layoutOtherViewUseGravity(View child, int parentRight, int parentBottom) {
         final int width = child.getMeasuredWidth();
         final int height = child.getMeasuredHeight();
@@ -768,7 +768,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param view Target view
      */
     @SuppressWarnings({"unused"})
-    public void setLoadMoreScrollTargetView(View view) {
+    public void setLoadMoreScrollTargetView(@NonNull View view) {
         mScrollTargetView = view;
     }
 
@@ -3429,9 +3429,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void compatLoadMoreScroll(float delta) {
         if (mLoadMoreScrollCallback == null) {
             if (mScrollTargetView != null)
-                ScrollCompat.scrollYCompat(mScrollTargetView, delta);
+                ScrollCompat.scrollCompat(mScrollTargetView, delta);
             else
-                ScrollCompat.scrollYCompat(mTargetView, delta);
+                ScrollCompat.scrollCompat(mTargetView, delta);
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }
@@ -3536,9 +3536,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 case IRefreshView.STYLE_PIN:
                     break;
                 case IRefreshView.STYLE_FOLLOW_PIN:
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
+                        mHeaderView.getView().offsetTopAndBottom(change);
+                    break;
                 case IRefreshView.STYLE_FOLLOW_SCALE:
                 case IRefreshView.STYLE_FOLLOW_CENTER:
-                    if (mIndicator.getCurrentPos() >= mIndicator.getHeaderHeight())
+                    if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
                         needRequestLayout = true;
                     else
                         mHeaderView.getView().offsetTopAndBottom(change);
@@ -3561,9 +3564,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 case IRefreshView.STYLE_PIN:
                     break;
                 case IRefreshView.STYLE_FOLLOW_PIN:
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
+                        mFooterView.getView().offsetTopAndBottom(change);
+                    break;
                 case IRefreshView.STYLE_FOLLOW_SCALE:
                 case IRefreshView.STYLE_FOLLOW_CENTER:
-                    if (mIndicator.getCurrentPos() >= mIndicator.getFooterHeight())
+                    if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
                         needRequestLayout = true;
                     else
                         mFooterView.getView().offsetTopAndBottom(change);
@@ -3576,7 +3582,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (!isEnabledPinContentView()) {
             if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
-                mScrollTargetView.offsetTopAndBottom(change);
+                mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
             } else {
                 mTargetView.offsetTopAndBottom(change);
             }

@@ -78,11 +78,11 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.1'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.1'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.1'
 }
 ```
 #### Use Xml to config
