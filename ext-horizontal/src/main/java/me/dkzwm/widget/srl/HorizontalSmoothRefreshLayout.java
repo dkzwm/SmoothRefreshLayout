@@ -250,7 +250,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         @IRefreshView.RefreshViewStyle
-        final int type = mHeaderView.getStyle();
+        final int type = mFooterView.getStyle();
         int left = 0, right, top, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
