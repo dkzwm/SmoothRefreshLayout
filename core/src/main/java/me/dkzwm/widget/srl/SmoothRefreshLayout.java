@@ -200,6 +200,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
+    private boolean mCompatLoadMoreScroll = true;
     private float mOverScrollDurationRatio = 0.5f;
     private int mMaxOverScrollDuration = 500;
     private int mMinOverScrollDuration = 150;
@@ -770,6 +771,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @SuppressWarnings({"unused"})
     public void setLoadMoreScrollTargetView(@NonNull View view) {
         mScrollTargetView = view;
+    }
+
+    public void setEnableCompatLoadMoreScroll(boolean enable) {
+        mCompatLoadMoreScroll = enable;
     }
 
     /**
@@ -3411,11 +3416,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         mIndicator.setMovingStatus(IIndicator.MOVING_FOOTER);
         //check if it is needed to compatible scroll
-        if (!isEnabledPinContentView() && mIsLastRefreshSuccessful
-                && (mStatus == SR_STATUS_COMPLETE
+        if (mCompatLoadMoreScroll && !isEnabledPinContentView() && mIsLastRefreshSuccessful
+                && !mNestedScrollInProgress && (mStatus == SR_STATUS_COMPLETE
                 || (isEnabledNextPtrAtOnce() && mStatus == SR_STATUS_PREPARE
-                && !mOverScrollChecker.mScrolling
-                && !mIndicator.hasTouched()))) {
+                && !mOverScrollChecker.mScrolling && !mIndicator.hasTouched()))) {
             if (sDebug) {
                 SRLog.d(TAG, "moveFooterPos(): compatible scroll delta: %s", delta);
             }
@@ -3428,10 +3432,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected void compatLoadMoreScroll(float delta) {
         if (mLoadMoreScrollCallback == null) {
-            if (mScrollTargetView != null)
-                ScrollCompat.scrollCompat(mScrollTargetView, delta);
-            else
-                ScrollCompat.scrollCompat(mTargetView, delta);
+            if (mScrollTargetView != null) {
+                if (ScrollCompat.canChildScrollDown(mScrollTargetView))
+                    ScrollCompat.scrollCompat(mScrollTargetView, delta);
+            } else {
+                if (ScrollCompat.canChildScrollDown(mTargetView))
+                    ScrollCompat.scrollCompat(mTargetView, delta);
+            }
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }

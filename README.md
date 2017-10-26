@@ -214,13 +214,34 @@ mRefreshLayout.setFooterView(footer);
  
 #### 实现类QQ下拉阻尼效果
  ```
- mRefreshLayout.setIndicatorOffsetCalculator(new IIndicator.IOffsetCalculator() {
-     @Override
-     public float calculate(@IIndicator.MovingStatus int status, int currentPos, float offset) {
-         return (float) Math.pow(Math.pow(currentPos / 4.8f, 1.8D) + offset, 1 / 1.8D) *
-                         4.8f - currentPos;
-     }
- });
+        mRefreshLayout.setIndicatorOffsetCalculator(new IIndicator.IOffsetCalculator() {
+            @Override
+            public float calculate(@IIndicator.MovingStatus int status, int currentPos, float offset) {
+                if (status == IIndicator.MOVING_HEADER) {
+                    if (offset < 0) {
+                        //如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于下拉则可以在此返回offset
+                        //如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
+                        return offset;
+                    }
+                    return (float) Math.pow(Math.pow(currentPos / 2, 1.28d) + offset, 1 / 1.28d) * 2 - currentPos;
+                } else if (status == IIndicator.MOVING_FOOTER) {
+                    if (offset > 0) {
+                        //如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于上拉则可以在此返回offset
+                        //如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
+                        return offset;
+                    }
+                    return -((float) Math.pow(Math.pow(currentPos / 2, 1.28d) - offset, 1 / 1.28d) * 2 - currentPos);
+                } else {
+                    if (offset > 0) {
+                        return (float) Math.pow(offset, 1 / 1.28d) * 2;
+                    } else if (offset < 0) {
+                        return -(float) Math.pow(-offset, 1 / 1.28d) * 2;
+                    } else {
+                        return offset;
+                    }
+                }
+            }
+        });
  ```
 #### Xml属性 
 ##### SmoothRefreshLayout 自身配置
