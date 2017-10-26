@@ -721,10 +721,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected void compatLoadMoreScroll(float delta) {
         if (mLoadMoreScrollCallback == null) {
-            if (mScrollTargetView != null)
-                HorizontalScrollCompat.scrollCompat(mScrollTargetView, delta);
-            else
-                HorizontalScrollCompat.scrollCompat(mTargetView, delta);
+            if (mScrollTargetView != null) {
+                if (HorizontalScrollCompat.canChildScrollRight(mScrollTargetView))
+                    HorizontalScrollCompat.scrollCompat(mScrollTargetView, delta);
+            } else {
+                if (HorizontalScrollCompat.canChildScrollRight(mTargetView))
+                    HorizontalScrollCompat.scrollCompat(mTargetView, delta);
+            }
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }
