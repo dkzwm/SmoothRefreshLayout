@@ -97,15 +97,15 @@ public class TestNestedActivity extends AppCompatActivity {
                 mMinOffset = Math.min(mOffset, mMinOffset);
             }
         });
-        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveHeaderCallBack() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
             @Override
-            public boolean isChildAlreadyInEdgeCanMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
+            public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
                 return !mFullyExpanded || ScrollCompat.canChildScrollUp(mRecyclerView);
             }
         });
-        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveFooterCallBack() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack() {
             @Override
-            public boolean isChildAlreadyInEdgeCanMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
+            public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
                 return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });

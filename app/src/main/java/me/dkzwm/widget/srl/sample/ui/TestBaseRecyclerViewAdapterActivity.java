@@ -79,15 +79,16 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 }, 2000);
             }
         }, mRecyclerView);
-        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveHeaderCallBack() {
+        mRefreshLayout.setDisableLoadMore(false);
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
             @Override
-            public boolean isChildAlreadyInEdgeCanMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
+            public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
                 return ScrollCompat.canChildScrollUp(mRecyclerView);
             }
         });
-        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildAlreadyInEdgeCanMoveFooterCallBack() {
+        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack() {
             @Override
-            public boolean isChildAlreadyInEdgeCanMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
+            public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
                 return ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });

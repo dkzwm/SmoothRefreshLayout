@@ -11,6 +11,8 @@
     app:sr_content="@+id/listView_with_list"
     app:sr_custom_layout="@layout/layout_custom_view"
     app:sr_empty_layout="@layout/layout_empty_view"
+    app:sr_header_background_color="@color/colorPrimary"
+    app:sr_footer_background_color="@color/colorAccent"
     app:sr_error_layout="@layout/layout_error_view"
     app:sr_state="empty">
 
@@ -30,14 +32,12 @@
         android:id="@+id/classicHeader_with_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
         app:sr_style="style_scale"/>
 
     <me.dkzwm.widget.srl.extra.footer.ClassicFooter
         android:id="@+id/classicFooter_with_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
         app:sr_style="style_scale"/>
 
     <RelativeLayout
