@@ -97,13 +97,13 @@ public class TestNestedActivity extends AppCompatActivity {
                 mMinOffset = Math.min(mOffset, mMinOffset);
             }
         });
-        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
+        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
             @Override
             public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
                 return !mFullyExpanded || ScrollCompat.canChildScrollUp(mRecyclerView);
             }
         });
-        mRefreshLayout.setOnChildAlreadyInEdgeCanMoveFooterCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack() {
+        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack() {
             @Override
             public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
                 return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(mRecyclerView);

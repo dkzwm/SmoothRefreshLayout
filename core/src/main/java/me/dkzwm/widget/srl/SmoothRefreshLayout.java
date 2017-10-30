@@ -23,6 +23,7 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -756,9 +757,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return super.dispatchTouchEvent(ev);
     }
 
-
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        drawRefreshViewBackground(canvas);
+        super.dispatchDraw(canvas);
+    }
+
+    protected void drawRefreshViewBackground(Canvas canvas) {
         if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
             if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mHeaderBackgroundColor);
@@ -771,7 +776,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         getPaddingBottom(), mBackgroundPaint);
             }
         }
-        super.dispatchDraw(canvas);
     }
 
     @Override
@@ -809,29 +813,44 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mCompatLoadMoreScroll = enable;
     }
 
+    /**
+     * Get the background color of the height of the header view
+     *
+     * @return Color
+     */
+    @SuppressWarnings({"unused"})
     public int getHeaderBackgroundColor() {
         return mHeaderBackgroundColor;
     }
 
+    /**
+     * Set the background color of the height of the header view
+     *
+     * @param headerBackgroundColor Color
+     */
     public void setHeaderBackgroundColor(@ColorInt int headerBackgroundColor) {
         mHeaderBackgroundColor = headerBackgroundColor;
         preparePaint();
     }
 
+    /**
+     * Get the background color of the height of the footer view
+     *
+     * @return Color
+     */
+    @SuppressWarnings({"unused"})
     public int getFooterBackgroundColor() {
         return mFooterBackgroundColor;
     }
 
+    /**
+     * Set the background color of the height of the footer view
+     *
+     * @param footerBackgroundColor Color
+     */
     public void setFooterBackgroundColor(int footerBackgroundColor) {
         mFooterBackgroundColor = footerBackgroundColor;
         preparePaint();
-    }
-
-    private void preparePaint() {
-        if (mBackgroundPaint == null) {
-            mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            mBackgroundPaint.setStyle(Paint.Style.FILL);
-        }
     }
 
     /**
@@ -921,7 +940,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
      */
-    public void setOnChildAlreadyInEdgeCanMoveHeaderCallBack(OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
+    public void setOnChildNotYetInEdgeCannotMoveHeaderCallBack(OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
         mInEdgeCanMoveHeaderCallBack = callback;
     }
 
@@ -933,7 +952,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
      */
-    public void setOnChildAlreadyInEdgeCanMoveFooterCallBack(OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
+    public void setOnChildNotYetInEdgeCannotMoveFooterCallBack(OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
         mInEdgeCanMoveFooterCallBack = callback;
     }
 
@@ -3243,6 +3262,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 return true;
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    protected void preparePaint() {
+        if (mBackgroundPaint == null) {
+            mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mBackgroundPaint.setStyle(Paint.Style.FILL);
+        }
     }
 
     protected boolean isNeedInterceptTouchEvent() {

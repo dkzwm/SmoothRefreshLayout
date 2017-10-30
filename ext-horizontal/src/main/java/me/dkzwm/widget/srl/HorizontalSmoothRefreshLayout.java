@@ -1,6 +1,7 @@
 package me.dkzwm.widget.srl;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -294,6 +295,22 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
+    protected void drawRefreshViewBackground(Canvas canvas) {
+        if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
+            if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
+                mBackgroundPaint.setColor(mHeaderBackgroundColor);
+                canvas.drawRect(getPaddingLeft(), getPaddingTop(), getPaddingLeft() + mIndicator
+                        .getCurrentPos() ,getHeight()-getPaddingBottom() , mBackgroundPaint);
+            } else if (!isDisabledLoadMore() && isMovingFooter() && mFooterBackgroundColor != -1) {
+                mBackgroundPaint.setColor(mFooterBackgroundColor);
+                canvas.drawRect(getWidth()-getPaddingRight()-mIndicator.getCurrentPos(),
+                        getPaddingTop(), getWidth() - getPaddingRight(), getHeight() -
+                        getPaddingBottom(), mBackgroundPaint);
+            }
+        }
+    }
+
+    @Override
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
         final int action = ev.getAction() & MotionEvent.ACTION_MASK;
         switch (action) {
@@ -458,8 +475,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
      */
     @Override
-    public void setOnChildAlreadyInEdgeCanMoveFooterCallBack(OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
-        super.setOnChildAlreadyInEdgeCanMoveFooterCallBack(callback);
+    public void setOnChildNotYetInEdgeCannotMoveFooterCallBack(OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
+        super.setOnChildNotYetInEdgeCannotMoveFooterCallBack(callback);
     }
 
     /**
@@ -471,8 +488,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
      */
     @Override
-    public void setOnChildAlreadyInEdgeCanMoveHeaderCallBack(OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
-        super.setOnChildAlreadyInEdgeCanMoveHeaderCallBack(callback);
+    public void setOnChildNotYetInEdgeCannotMoveHeaderCallBack(OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
+        super.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(callback);
     }
 
     @Override
