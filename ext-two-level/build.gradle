@@ -22,8 +22,8 @@ android {
 }
 
 dependencies {
-    compileOnly project(':core')
-    compileOnly 'com.android.support:recyclerview-v7:26.1.0'
+    provided project(':core')
+    provided 'com.android.support:recyclerview-v7:26.1.0'
 }
 
 
