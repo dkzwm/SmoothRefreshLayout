@@ -8,6 +8,8 @@
     android:orientation="vertical"
     app:sr_content="@+id/textView_with_textView_desc"
     app:sr_empty_layout="@layout/layout_empty_view"
+    app:sr_footer_background_color="@android:color/holo_orange_light"
+    app:sr_header_background_color="@android:color/holo_green_light"
     app:sr_error_layout="@layout/layout_error_view"
     app:sr_state="empty">
 

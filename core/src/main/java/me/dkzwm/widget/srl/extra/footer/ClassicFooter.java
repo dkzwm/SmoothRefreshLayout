@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -116,6 +117,15 @@ public class ClassicFooter extends FrameLayout implements IRefreshView, LastUpda
         }
         mLastUpdateTimeKey = key;
     }
+
+    public void setTitleTextColor(@ColorInt int color) {
+        mTitleTextView.setTextColor(color);
+    }
+
+    public void setLastUpdateTextColor(@ColorInt int color) {
+        mLastUpdateTextView.setTextColor(color);
+    }
+
 
     @Override
     public int getType() {

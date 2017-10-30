@@ -73,6 +73,8 @@
             <enum name="empty" value="2"/>
             <enum name="custom" value="3"/>
         </attr>
+        <attr name="sr_header_background_color" format="color"/>
+        <attr name="sr_footer_background_color" format="color"/>
     </declare-styleable>
     <declare-styleable name="IRefreshView">
         <attr name="sr_style" format="enum">

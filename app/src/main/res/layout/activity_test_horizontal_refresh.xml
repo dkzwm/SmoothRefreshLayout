@@ -2,8 +2,11 @@
 <me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/smoothRefreshLayout_test_horizontal_refresh"
     android:layout_height="match_parent"
+    app:sr_header_background_color="@android:color/holo_orange_light"
+    app:sr_footer_background_color="@android:color/holo_green_light"
     android:orientation="vertical">
 
     <HorizontalScrollView

@@ -78,11 +78,11 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.2'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.2'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.2'
 }
 ```
 #### 在Xml中配置
@@ -125,6 +125,10 @@ public interface IRefreshView <T extends IIndicator> {
 
     byte STYLE_DEFAULT = 0;
     byte STYLE_SCALE = 1;
+    byte STYLE_PIN = 2;
+    byte STYLE_FOLLOW_SCALE = 3;
+    byte STYLE_FOLLOW_PIN = 4;
+    byte STYLE_FOLLOW_CENTER = 5;
 
     /**
      * 返回是头部视图还是尾部视图;
@@ -276,10 +280,14 @@ mRefreshLayout.setFooterView(footer);
 |sr_state|enum|状态设置 （默认:`STATE_CONTENT`）|
 |sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
+|sr_header_background_color|color|设置Header刷新高度区域的背景色|
+|sr_footer_background_color|color|设置Footer刷新高度区域的背景色|
+
 ##### TwoLevelSmoothRefreshLayout 自身配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
 |sr_enable_two_level_refresh|boolean|设置是否启用二级刷新（默认:`true`）|
+
 ##### SmoothRefreshLayout包裹内部其他View支持配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
@@ -334,6 +342,9 @@ mRefreshLayout.setFooterView(footer);
 |setSpringInterpolator|Interpolator|设置默认的滚动插值器|
 |setOverScrollInterpolator|Interpolator|设置越界回弹时的滚动插值器|
 |setEnableCheckFingerInsideAnotherDirectionView|boolean|设置是否开启检查手指按下点是否位于其他方向滚动视图内，该属性起作用必须满足开启`setDisableWhenAnotherDirectionMove`|
+|setEnableCompatLoadMoreScroll|boolean|设置是否开启加载更多时的同步滚动（默认:`true`）|
+|setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
+|setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|
@@ -345,8 +356,8 @@ mRefreshLayout.setFooterView(footer);
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|
 |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
-|setOnChildAlreadyInEdgeCanMoveHeaderCallBack|OnChildAlreadyInEdgeCanMoveHeaderCallBack|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`isChildAlreadyInEdgeCanMoveHeader()`方法）|
-|setOnChildAlreadyInEdgeCanMoveFooterCallBack|OnChildAlreadyInEdgeCanMoveFooterCallBack|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`isChildAlreadyInEdgeCanMoveFooter()`方法）|
+|setOnChildNotYetInEdgeCannotMoveHeaderCallBack|OnChildNotYetInEdgeCannotMoveHeaderCallBack|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`isChildNotYetInEdgeCannotMoveHeader()`方法）|
+|setOnChildNotYetInEdgeCannotMoveFooterCallBack|OnChildNotYetInEdgeCannotMoveFooterCallBack|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`isChildNotYetInEdgeCannotMoveFooter()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnFingerInsideAnotherDirectionViewCallback|OnFingerInsideAnotherDirectionViewCallback|设置检查手指按下点是否位于其他滚动视图内的重载回调，可自定义判断逻辑，提高判断效率|

@@ -1,4 +1,19 @@
 # 更新日志
+## 1.5.0.2
+> 修复嵌套滚动下可能存在的加载更多同步滚动被错误触发问题。    
+> 添加 `setEnableCompatLoadMoreScroll` 方法，用以设置是否开启加载更多同步滚动，默认开启。    
+> 添加 `getHeaderBackgroundColor` 方法，用以获取Header刷新高度区域内的背景色。    
+> 添加 `setHeaderBackgroundColor` 方法，用以设置Header刷新高度区域内的背景色。    
+> 添加 `sr_header_background_color`属性，用以设置Header刷新高度区域内的背景色。    
+> 添加 `getFooterBackgroundColor` 方法，用以获取Footer刷新高度区域内的背景色。    
+> 添加 `setFooterBackgroundColor` 方法，用以设置Footer刷新高度区域内的背景色。    
+> 添加 `sr_footer_background_color`属性，用以设置Footer刷新高度区域内的背景色。    
+> 修改方法 `setOnChildAlreadyInEdgeCanMoveHeaderCallBack` 为 `setOnChildNotYetInEdgeCannotMoveHeaderCallBack` ，保持含义和作用都对应原 `setOnChildScrollUpCallback` 方法。    
+> 修改方法 `setOnChildAlreadyInEdgeCanMoveFooterCallBack` 为 `setOnChildNotYetInEdgeCannotMoveFooterCallBack` ，保持含义和作用都对应原 `setOnChildScrollDownCallback` 方法。    
+> 修改接口 `OnChildAlreadyInEdgeCanMoveHeaderCallBack` 为 `OnChildNotYetInEdgeCannotMoveHeaderCallBack`，保持含义和作用都对应原 `OnChildScrollUpCallback` 接口。    
+> 修改接口 `OnChildAlreadyInEdgeCanMoveFooterCallBack` 为 `OnChildNotYetInEdgeCannotMoveFooterCallBack`，保持含义和作用都对应原 `OnChildScrollDownCallback` 接口。     
+> 修改方法 `isChildAlreadyInEdgeCanMoveHeader` 为 `isChildNotYetInEdgeCannotMoveHeader`，保持含义和作用都对应原 `canChildScrollUp` 方法。     
+> 修改方法 `isChildAlreadyInEdgeCanMoveFooter` 为 `isChildNotYetInEdgeCannotMoveFooter`，保持含义和作用都对应原 `canChildScrollDown` 方法。    
 ## 1.5.0.1
 > 修复布局Footer时错误的检查了Header的样式。    
 > 优化移动刷新视图在 `STYLE_FOLLOW_PIN` 样式下的效率。
