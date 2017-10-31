@@ -367,7 +367,7 @@ public interface IRefreshView<T extends IIndicator> {
  |setEnableHeaderDrawerStyle|boolean|Enable Header below the content view（Default: `false`）|
  |setEnableFooterDrawerStyle|boolean|Enable Footer below the content view（Default: `false`）|
  |setDisablePerformRefresh|boolean|Disable Header perform refresh（Default: `false`）|
- |Default|boolean|Disable Footer perform refresh（Default: `false`）|
+ |setDisablePerformLoadMore|boolean|Disable Footer perform refresh（Default: `false`）|
  |setEnableLoadMoreNoMoreData|boolean|Set the Footer without more data（Default: `false`）|
  |isEnabledLoadMoreNoMoreDataNoNeedSpringBack|boolean|Set when Footer has no more data to no longer need spring back|
  |setDisableRefresh|boolean|Disable Header refresh（Default: `false`）|
