@@ -65,7 +65,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * the height ratio of the trigger Two-Level refresh hint<br/>
+     * Set the height ratio of Header to trigger Two-Level refresh hint<br/>
      * <p>
      * 设置触发二级刷新提示时的位置占Header视图的高度比
      *
@@ -76,7 +76,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * the height ratio of the trigger Two-Level refresh<br/>
+     * Set the height ratio of Header to trigger Two-Level refresh<br/>
      * <p>
      * 设置触发二级刷新时的位置占Header视图的高度比
      *
@@ -87,8 +87,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * Set in the Two-Level refresh to keep the refresh view's position of the ratio of the view's
-     * height<br/>
+     * The offset of keep Header in Two-Level refreshing occupies the height ratio of the Header<br/>
      * <p>
      * 二级刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
      * 当开启了{@link SmoothRefreshLayout#isEnabledKeepRefreshView}后，该属性会生效
@@ -122,7 +121,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * The duration of header return back to the keep Two-Level header position<br/>
+     * The duration of return to the keep Two-Level refresh view position when Header moves<br/>
      * <p>
      * 设置回滚到保持二级刷新Header视图位置的时间
      *
@@ -133,7 +132,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * The duration of Two-Level header return back to the start position<br/>
+     * The duration of return to the start position when Header moves<br/>
      * <p>
      * 设置二级刷新Header刷新完成回滚到起始位置的时间
      *
@@ -155,7 +154,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * Auto perform Two-Level refresh hint use smooth scrolling.<br/>
+     * Auto trigger Two-Level refresh hint use smooth scrolling.<br/>
      * <p>
      * 自动触发二级刷新提示并滚动到触发提示位置后回滚回起始位置
      */
@@ -164,7 +163,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * Auto perform Two-Level refresh hint use smooth scrolling.<br/>
+     * Auto trigger Two-Level refresh hint use smooth scrolling.<br/>
      * <p>
      * 自动触发二级刷新提示并是否滚动到触发提示位置, `smoothScroll`是否滚动到触发位置
      */
@@ -173,7 +172,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * Auto perform Two-Level refresh hint use smooth scrolling.<br/>
+     * Auto trigger Two-Level refresh hint use smooth scrolling.<br/>
      * <p>
      * 自动触发二级刷新提示并滚动到触发提示位置, `stayDuration`停留多长时间
      */

@@ -61,7 +61,6 @@
             <!-- Push object to the end of its container, not changing its size. -->
             <flag name="end" value="0x00800005"/>
         </attr>
-        //Added in 1.4.0 version
         <attr name="sr_enable_refresh" format="boolean"/>
         <attr name="sr_enable_load_more" format="boolean"/>
         <attr name="sr_empty_layout" format="reference"/>
