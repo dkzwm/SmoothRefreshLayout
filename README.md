@@ -1,4 +1,10 @@
 # SmoothRefreshLayout
+
+[![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
+[![Methods](https://img.shields.io/badge/Methods%20%7C%20size-1056%20%7C%20108%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.5.0.2)
+[![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
+[![License](https://img.shields.io/github/license/dkzwm/SmoothRefreshLayout.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
+
 ## [English](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README_EN.md) | 中文
 一个高效的Android刷新库，理论上支持所有的视图，比官方的SwipeRefreshLayout更强大且使用方便.    
 本开源库的部分代码来自[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
