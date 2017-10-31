@@ -1356,7 +1356,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * the height ratio of the trigger refresh<br/>
+     * The height ratio of the trigger refresh<br/>
      * <p>
      * 设置触发刷新时的位置占刷新视图的高度比
      *
@@ -1373,7 +1373,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * the height ratio of the trigger refresh<br/>
+     * The height ratio of the trigger refresh<br/>
      * <p>
      * 设置触发下拉刷新时的位置占Header视图的高度比
      *
@@ -1402,7 +1402,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set in the refresh to keep the refresh view's position of the ratio of the view's height<br/>
+     * Set the offset of keep view in refreshing occupies the height ratio of the refresh view<br/>
      * <p>
      * 刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
      * 当开启了{@link SmoothRefreshLayout#isEnabledKeepRefreshView}后，该属性会生效
@@ -1415,7 +1415,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set in the refresh to keep the header view position of the ratio of the view's height<br/>
+     * Set the offset of keep Header in refreshing occupies the height ratio of the Header<br/>
      * <p>
      * 刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果
      *
@@ -1426,7 +1426,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set in the refresh to keep the footer view position of the ratio of the view's height<br/>
+     * Set the offset of keep Footer in refreshing occupies the height ratio of the Footer<br/>
      * <p>
      * 刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果
      *
@@ -1487,7 +1487,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the  duration of header return back to the start position
+     * Get the duration of header return to the start position
      *
      * @return mDuration
      */
@@ -1497,7 +1497,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of header return back to the start position<br/>
+     * The duration of header return to the start position<br/>
      * <p>
      * 设置Header刷新完成回滚到起始位置的时间
      *
@@ -1509,7 +1509,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the  duration of footer return back to the start position<br/>
+     * Get the duration of footer return to the start position<br/>
      * <p>
      * 设置Footer刷新完成回滚到起始位置的时间
      *
@@ -1521,7 +1521,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of footer return back to the start position
+     * The duration of footer return to the start position
      *
      * @param duration Millis
      */
@@ -1531,7 +1531,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of refresh view to return back to the keep refresh view position<br/>
+     * The duration of return to the keep refresh view position<br/>
      * <p>
      * 设置回滚到保持刷新视图位置的时间
      *
@@ -1544,7 +1544,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the duration of header return back to the keep header position<br/>
+     * Get the duration of return to the keep refresh view position when Header moves<br/>
      * <p>
      * 得到回滚到保持Header视图位置的时间
      *
@@ -1556,7 +1556,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of header return back to the keep header position<br/>
+     * The duration of return to the keep refresh view position when Header moves<br/>
      * <p>
      * 设置回滚到保持Header视图位置的时间
      *
@@ -1568,7 +1568,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the duration of footer return back to the keep footer position<br/>
+     * Get the duration of return to the keep refresh view position when Footer moves<br/>
      * <p>
      * 得到回滚到保持Footer视图位置的时间
      *
@@ -1580,7 +1580,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of footer return back to the keep footer position<br/>
+     * The duration of return to the keep refresh view position when Footer moves<br/>
      * <p>
      * 设置回顾到保持Footer视图位置的时间
      *
@@ -1592,7 +1592,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max ratio of height for the refresh view when the finger moves<br/>
+     * The max can move offset occupies the height ratio of the refresh view<br/>
      * <p>
      * 设置最大移动距离占刷新视图的高度比
      *
@@ -1609,7 +1609,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max ratio of height for the header view when the finger moves<br/>
+     * The max can move offset occupies the height ratio of the Header<br/>
      * <p>
      * 最大移动距离占Header视图的高度比
      *
@@ -1626,7 +1626,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max ratio of height for the footer view when the finger moves<br/>
+     * The max can move offset occupies the height ratio of the Footer<br/>
      * <p>
      * 最大移动距离占Footer视图的高度比
      *
@@ -2011,7 +2011,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set whether to filter the horizontal move<br/>
+     * Set whether to filter the horizontal moves<br/>
      * <p>
      * 设置不响应横向滑动，当内部视图含有需要响应横向滑动的子视图时，需要设置该属性，否则自视图无法响应横向滑动
      *
@@ -2037,7 +2037,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled when load more has no more data to no longer need spring
+     * The flag has been set to enabled when Footer has no more data to no longer need spring
      * back<br/>
      * <p>
      * 是否已经开启加载更多完成已无更多数据且不需要回滚动作
@@ -2177,7 +2177,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.The refresh view will pinned at the refresh offset
+     * If @param enable has been set to true.The refresh view will pinned at the keep refresh
      * position<br/>
      * <p>
      * 设置开启刷新过程中固定刷新视图且不响应触摸移动，该属性只有在{@link SmoothRefreshLayout#setEnablePinContentView(boolean)}

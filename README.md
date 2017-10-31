@@ -279,7 +279,7 @@ mRefreshLayout.setFooterView(footer);
 |sr_enable_pin_content|boolean|固定内容视图（默认:`false`）|
 |sr_enable_keep_refresh_view|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |sr_enable_pull_to_refresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
-|sr_enable_over_scroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
+|sr_enable_over_scroll|boolean|越界回弹（默认:`true`）|
 |sr_empty_layout|reference|指定空状态下对应的布局资源ID|
 |sr_error_layout|reference|指定异常状态下对应的布局资源ID|
 |sr_custom_layout|reference|指定自定义状态下对应的布局资源ID|
@@ -332,7 +332,7 @@ mRefreshLayout.setFooterView(footer);
 |setDurationOfBackToKeepFooterPosition|integer|设置回滚到保持Footer视图位置的时间（默认:`200`）|
 |setEnablePinContentView|boolean|固定内容视图（默认:`false`）|
 |setEnabledPullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
-|setEnableOverScroll|boolean|越界回弹（默认:`true`）,使用者需要自己设置内容视图的 `overScrollMode` 为 `never` 才能达到最优效果|
+|setEnableOverScroll|boolean|越界回弹（默认:`true`）|
 |setEnabledInterceptEventWhileLoading|boolean|刷新中拦截不响应触摸操作（默认:`false`）|
 |setEnableHeaderDrawerStyle|boolean|Header抽屉样式,即Header视图在内容视图下面（默认:`false`）|
 |setEnableFooterDrawerStyle|boolean|Footer抽屉样式,即Footer视图在内容视图下面（默认:`false`）|
