@@ -23,7 +23,6 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -2857,15 +2856,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (!mIndicator.isInStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
         }
-        if (!tryToNotifyReset()) {
-            mScrollChecker.destroy();
-            mOverScrollChecker.destroy();
-        }
+        tryToNotifyReset();
         mPreviousState = -1;
-        removeCallbacks(mScrollChecker);
-        removeCallbacks(mOverScrollChecker);
-        if (mDelayToRefreshComplete != null)
-            removeCallbacks(mDelayToRefreshComplete);
         if (mHeaderRefreshCompleteHook != null)
             mHeaderRefreshCompleteHook.mLayout = null;
         mHeaderRefreshCompleteHook = null;
@@ -3549,6 +3541,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "movePos(): over top");
             }
         }
+        if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched())
+            getParent().requestDisallowInterceptTouchEvent(true);
         mAutoRefreshBeenSendTouchEvent = false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
@@ -3775,10 +3769,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mViewStatus = SR_VIEW_STATUS_INIT;
             mNeedNotifyRefreshComplete = true;
             mDelayedRefreshComplete = false;
-            mOverScrollChecker.destroy();
+            mScrollChecker.destroy();
             mFlag = mFlag & ~MASK_AUTO_REFRESH;
             mAutomaticActionTriggered = false;
             tryToResetMovingStatus();
+            if (getParent() != null)
+                getParent().requestDisallowInterceptTouchEvent(false);
             return true;
         }
         return false;
