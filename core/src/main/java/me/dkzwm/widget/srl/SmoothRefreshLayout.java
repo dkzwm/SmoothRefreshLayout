@@ -71,7 +71,7 @@ import me.dkzwm.widget.srl.utils.ScrollCompat;
  * Support OverScroll feature;<br/>
  * Support Refresh and LoadMore feature;<br/>
  * Support AutoRefresh feature;<br/>
- * Support scroll to bottom to auto load more feature;<br/>
+ * Support AutoLoadMore feature;<br/>
  * Support MultiState feature;<br/>
  *
  * @author dkzwm
@@ -3541,11 +3541,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "movePos(): over top");
             }
         }
-        if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched())
-            getParent().requestDisallowInterceptTouchEvent(true);
         mAutoRefreshBeenSendTouchEvent = false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
+        if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched()
+                && mIndicator.hasJustLeftStartPosition())
+            getParent().requestDisallowInterceptTouchEvent(true);
         if (isMovingHeader())
             updatePos(change);
         else if (isMovingFooter())
