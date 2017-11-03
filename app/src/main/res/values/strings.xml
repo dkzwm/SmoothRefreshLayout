@@ -68,4 +68,7 @@
     <string name="change_style_to_style_follow_center">Change style to STYLE_FOLLOW_CENTER</string>
     <string name="test_horizontal_refresh">Test Horizontal Refresh</string>
     <string name="test_horizontal_recyclerView">Test With Horizontal RecyclerView</string>
+    <string name="swipe_to_load_detail">Swipe\nTo\nLoad\nDetail</string>
+    <string name="release_to_load_detail">Release\nTo\nLoad\nDetail</string>
+    <string name="test_multi_direction_views">Test multi direction views</string>
 </resources>

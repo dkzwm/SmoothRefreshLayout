@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_multi_direction_views"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:id="@+id/scrollView_test_multi_direction_views"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout
+                android:id="@+id/smoothRefreshLayout_test_multi_direction_views_inner"
+                android:layout_width="match_parent"
+                android:layout_height="372dp">
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewPager_test_multi_direction_views_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v4.view.ViewPager>
+            </me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@android:color/holo_green_light"
+                android:text="Options"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="26sp"/>
+
+            <TextView
+                android:id="@+id/textView_load_detail_footer_details"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:background="@android:color/holo_red_light"
+                android:text="Details"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:textSize="26sp"/>
+        </LinearLayout>
+    </ScrollView>
+</me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>

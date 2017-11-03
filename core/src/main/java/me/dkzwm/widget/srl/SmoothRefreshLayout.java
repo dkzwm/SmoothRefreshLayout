@@ -777,15 +777,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    @Override
-    public void requestDisallowInterceptTouchEvent(boolean b) {
-        if (!((android.os.Build.VERSION.SDK_INT < 21 && mTargetView instanceof AbsListView)
-                || (mTargetView != null && !ViewCompat.isNestedScrollingEnabled(mTargetView)))) {
-            super.requestDisallowInterceptTouchEvent(b);
-        }
-    }
-
-
     public int getSupportScrollAxis() {
         return ViewCompat.SCROLL_AXIS_VERTICAL;
     }

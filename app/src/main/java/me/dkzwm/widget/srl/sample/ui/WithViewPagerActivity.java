@@ -28,7 +28,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  * @author dkzwm
  */
 public class WithViewPagerActivity extends AppCompatActivity {
-    private int[] mColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
+    private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
             Color.BLUE, Color.RED, Color.BLACK};
     private SmoothRefreshLayout mRefreshLayout;
     private ViewPager mViewPager;
@@ -70,8 +70,8 @@ public class WithViewPagerActivity extends AppCompatActivity {
         });
         mViewPager = (ViewPager) findViewById(R.id.viewPager_with_viewPager);
         List<PageFragment> fragments = new ArrayList<>();
-        for (int i = 0; i < mColors.length; i++) {
-            fragments.add(PageFragment.newInstance(i, mColors[i]));
+        for (int i = 0; i < sColors.length; i++) {
+            fragments.add(PageFragment.newInstance(i, sColors[i]));
         }
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);

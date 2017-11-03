@@ -156,7 +156,7 @@ public class ClassicFooter extends FrameLayout implements IRefreshView, LastUpda
     @Override
     public void onReset(SmoothRefreshLayout frame) {
         mRotateView.clearAnimation();
-        mRotateView.setVisibility(INVISIBLE);
+        mRotateView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mShouldShowLastUpdate = true;
         mNoMoreDataChangedView = false;

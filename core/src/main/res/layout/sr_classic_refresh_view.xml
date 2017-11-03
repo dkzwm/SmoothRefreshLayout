@@ -40,6 +40,7 @@
             android:id="@+id/imageView_classic_rotate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:src="@drawable/sr_arrow_icon"
             android:layout_gravity="center"/>
 
         <ProgressBar
@@ -47,6 +48,7 @@
             style="@android:style/Widget.ProgressBar.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             android:layout_gravity="center"/>
     </FrameLayout>
 </RelativeLayout>

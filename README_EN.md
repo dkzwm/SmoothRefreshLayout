@@ -35,6 +35,9 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 - Test Horizontal RecyclerView Refresh（Added since version 1.5.0）    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
 
+- Test multi direction views    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
+
 - Test QQ-WebBrowser style    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
 
@@ -43,13 +46,7 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 
 - Test Two-Level refresh    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
-
-- Width FrameLayout    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_frameLayout.gif)
-
-- With TextView     
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_textView.gif)
-
+ 
 - With ListView    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
 
@@ -61,9 +58,6 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 
 - With ViewPager    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
-
-- With WebView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_webView.gif)
 
 - With CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
@@ -84,11 +78,11 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.3'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.3'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.3'
 }
 ```
 #### Use Xml to config

@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_nested_horizontal_views).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_recyclerView).setOnClickListener(this);
+        findViewById(R.id.button_main_test_multi_direction_views).setOnClickListener(this);
         mButtonDebug = (Button) findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
@@ -161,6 +162,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_horizontal_recyclerView:
                 startActivity(new Intent(MainActivity.this, TestHorizontalRecyclerViewActivity.class));
+                break;
+            case R.id.button_main_test_multi_direction_views:
+                startActivity(new Intent(MainActivity.this, TestMultiDirectionViewsActivity.class));
                 break;
             case R.id.imageView_main_bottom_icon:
                 Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,
