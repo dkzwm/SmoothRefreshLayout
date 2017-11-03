@@ -3,7 +3,7 @@
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
 [![Methods](https://img.shields.io/badge/Methods%20%7C%20size-1056%20%7C%20108%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.5.0.2)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
-[![License](https://img.shields.io/github/license/dkzwm/SmoothRefreshLayout.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
 ## [English](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README_EN.md) | 中文
 一个高效的Android刷新库，理论上支持所有的视图，比官方的SwipeRefreshLayout更强大且使用方便.    
@@ -35,6 +35,9 @@
 - 测试横向RecyclerView刷新（1.5.0版本添加）    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
 
+- 测试多方向布局下的刷新    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
+
 - 测试QQ浏览器样式    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
 
@@ -43,13 +46,7 @@
 
 - 测试2级刷新    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
-
-- 包含FrameLayout    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_frameLayout.gif)
-
-- 包含TextView     
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_textView.gif)
-
+ 
 - 包含ListView    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
 
@@ -61,9 +58,6 @@
 
 - 包含ViewPager    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
-
-- 包含WebView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_webView.gif)
 
 - CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
@@ -84,11 +78,11 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.3'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.3'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.3'
 }
 ```
 #### 在Xml中配置

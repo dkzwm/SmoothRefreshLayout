@@ -23,7 +23,6 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -72,7 +71,7 @@ import me.dkzwm.widget.srl.utils.ScrollCompat;
  * Support OverScroll feature;<br/>
  * Support Refresh and LoadMore feature;<br/>
  * Support AutoRefresh feature;<br/>
- * Support scroll to bottom to auto load more feature;<br/>
+ * Support AutoLoadMore feature;<br/>
  * Support MultiState feature;<br/>
  *
  * @author dkzwm
@@ -777,15 +776,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
     }
-
-    @Override
-    public void requestDisallowInterceptTouchEvent(boolean b) {
-        if (!((android.os.Build.VERSION.SDK_INT < 21 && mTargetView instanceof AbsListView)
-                || (mTargetView != null && !ViewCompat.isNestedScrollingEnabled(mTargetView)))) {
-            super.requestDisallowInterceptTouchEvent(b);
-        }
-    }
-
 
     public int getSupportScrollAxis() {
         return ViewCompat.SCROLL_AXIS_VERTICAL;
@@ -2857,15 +2847,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (!mIndicator.isInStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
         }
-        if (!tryToNotifyReset()) {
-            mScrollChecker.destroy();
-            mOverScrollChecker.destroy();
-        }
+        tryToNotifyReset();
         mPreviousState = -1;
-        removeCallbacks(mScrollChecker);
-        removeCallbacks(mOverScrollChecker);
-        if (mDelayToRefreshComplete != null)
-            removeCallbacks(mDelayToRefreshComplete);
         if (mHeaderRefreshCompleteHook != null)
             mHeaderRefreshCompleteHook.mLayout = null;
         mHeaderRefreshCompleteHook = null;
@@ -3552,6 +3535,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mAutoRefreshBeenSendTouchEvent = false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
+        if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched()
+                && mIndicator.hasJustLeftStartPosition())
+            getParent().requestDisallowInterceptTouchEvent(true);
         if (isMovingHeader())
             updatePos(change);
         else if (isMovingFooter())
@@ -3775,10 +3761,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mViewStatus = SR_VIEW_STATUS_INIT;
             mNeedNotifyRefreshComplete = true;
             mDelayedRefreshComplete = false;
-            mOverScrollChecker.destroy();
+            mScrollChecker.destroy();
             mFlag = mFlag & ~MASK_AUTO_REFRESH;
             mAutomaticActionTriggered = false;
             tryToResetMovingStatus();
+            if (getParent() != null)
+                getParent().requestDisallowInterceptTouchEvent(false);
             return true;
         }
         return false;

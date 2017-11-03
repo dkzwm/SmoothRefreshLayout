@@ -2,8 +2,8 @@
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
 [![Methods](https://img.shields.io/badge/Methods%20%7C%20size-1056%20%7C%20108%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.5.0.2)
-[![](https://img.shields.io/badge/-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
-[![License](https://img.shields.io/github/license/dkzwm/SmoothRefreshLayout.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
+[![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
 ## English | [中文](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/README.md)
 
@@ -35,6 +35,9 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 - Test Horizontal RecyclerView Refresh（Added since version 1.5.0）    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
 
+- Test multi direction views    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
+
 - Test QQ-WebBrowser style    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
 
@@ -43,13 +46,7 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 
 - Test Two-Level refresh    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
-
-- Width FrameLayout    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_frameLayout.gif)
-
-- With TextView     
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_textView.gif)
-
+ 
 - With ListView    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
 
@@ -61,9 +58,6 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 
 - With ViewPager    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
-
-- With WebView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_webView.gif)
 
 - With CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
@@ -84,11 +78,11 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.3'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.3'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.3'
 }
 ```
 #### Use Xml to config

@@ -76,7 +76,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView, LastUpda
         mProgressBar = (ProgressBar) header.findViewById(R.id.progressBar_classic_progress);
         mLastUpdateTimeUpdater = new LastUpdateTimeUpdater(this, this);
         mRotateView.clearAnimation();
-        mRotateView.setVisibility(INVISIBLE);
+        mRotateView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
     }
 
@@ -145,7 +145,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView, LastUpda
     @Override
     public void onReset(SmoothRefreshLayout frame) {
         mRotateView.clearAnimation();
-        mRotateView.setVisibility(INVISIBLE);
+        mRotateView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mLastUpdateTimeUpdater.stop();
         mShouldShowLastUpdate = true;
@@ -189,7 +189,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView, LastUpda
     @Override
     public void onRefreshComplete(SmoothRefreshLayout frame, boolean isSuccessful) {
         mRotateView.clearAnimation();
-        mRotateView.setVisibility(INVISIBLE);
+        mRotateView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isRefreshSuccessful()) {

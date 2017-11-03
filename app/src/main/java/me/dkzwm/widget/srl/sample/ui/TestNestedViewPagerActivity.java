@@ -25,7 +25,7 @@ import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageFragment;
  */
 
 public class TestNestedViewPagerActivity extends AppCompatActivity {
-    private int[] mColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
+    private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
             Color.BLUE, Color.RED, Color.BLACK};
     private Handler mHandler = new Handler();
 
@@ -44,8 +44,8 @@ public class TestNestedViewPagerActivity extends AppCompatActivity {
         });
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager_with_nested_pager);
         List<NestedPageFragment> fragments = new ArrayList<>();
-        for (int mColor : mColors) {
-            fragments.add(NestedPageFragment.newInstance(mColor));
+        for (int color : sColors) {
+            fragments.add(NestedPageFragment.newInstance(color));
         }
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(adapter);
