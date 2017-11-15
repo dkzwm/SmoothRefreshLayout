@@ -189,7 +189,7 @@ public class ClassicHeader extends FrameLayout implements IRefreshView, LastUpda
     @Override
     public void onRefreshComplete(SmoothRefreshLayout frame, boolean isSuccessful) {
         mRotateView.clearAnimation();
-        mRotateView.setVisibility(VISIBLE);
+        mRotateView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         if (frame.isRefreshSuccessful()) {
