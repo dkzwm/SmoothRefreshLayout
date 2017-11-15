@@ -36,7 +36,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.AbsListView;
 import android.widget.Scroller;
 
 import java.lang.annotation.Retention;
@@ -2500,10 +2499,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean onFling(float vx, float vy) {
-        if (!isEnabledOverScroll() || (isDisabledLoadMore() && isDisabledRefresh())
-                || (!isAutoRefresh() && (isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())))
+        if ((isDisabledLoadMore() && isDisabledRefresh())
+                || (!isAutoRefresh() && (isNeedInterceptTouchEvent() ||
+                isCanNotAbortOverScrolling())))
             return false;
-        if ((!isChildNotYetInEdgeCannotMoveHeader() && vy > 0) || (!isChildNotYetInEdgeCannotMoveFooter() && vy < 0))
+        if ((!isChildNotYetInEdgeCannotMoveHeader() && vy > 0)
+                || (!isChildNotYetInEdgeCannotMoveFooter() && vy < 0))
             return false;
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
@@ -2518,8 +2519,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy * .92f) / maxVelocity)));
                 }
             }
-            return true;
-        }
+            return isEnabledOverScroll();
+        } else if (!isEnabledOverScroll())
+            return false;
         //开启到底部自动加载更多和到顶自动刷新
         if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vy < 0)
                 || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vy > 0))

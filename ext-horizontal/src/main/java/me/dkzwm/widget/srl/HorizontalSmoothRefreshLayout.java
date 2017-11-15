@@ -200,8 +200,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return;
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        @IRefreshView.RefreshViewStyle
-        final int type = mHeaderView.getStyle();
+        @IRefreshView.RefreshViewStyle final int type = mHeaderView.getStyle();
         int left = 0, right, top, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
@@ -250,8 +249,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return;
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        @IRefreshView.RefreshViewStyle
-        final int type = mFooterView.getStyle();
+        @IRefreshView.RefreshViewStyle final int type = mFooterView.getStyle();
         int left = 0, right, top, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
@@ -300,12 +298,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mHeaderBackgroundColor);
                 canvas.drawRect(getPaddingLeft(), getPaddingTop(), getPaddingLeft() + mIndicator
-                        .getCurrentPos() ,getHeight()-getPaddingBottom() , mBackgroundPaint);
+                        .getCurrentPos(), getHeight() - getPaddingBottom(), mBackgroundPaint);
             } else if (!isDisabledLoadMore() && isMovingFooter() && mFooterBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mFooterBackgroundColor);
-                canvas.drawRect(getWidth()-getPaddingRight()-mIndicator.getCurrentPos(),
+                canvas.drawRect(getWidth() - getPaddingRight() - mIndicator.getCurrentPos(),
                         getPaddingTop(), getWidth() - getPaddingRight(), getHeight() -
-                        getPaddingBottom(), mBackgroundPaint);
+                                getPaddingBottom(), mBackgroundPaint);
             }
         }
     }
@@ -697,14 +695,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     public boolean onFling(float vx, float vy) {
-        if (!isEnabledOverScroll() || (isDisabledLoadMore() && isDisabledRefresh())
-                || (!isAutoRefresh() && (isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling()))) {
+        if ((isDisabledLoadMore() && isDisabledRefresh())
+                || (!isAutoRefresh() && (isNeedInterceptTouchEvent() ||
+                isCanNotAbortOverScrolling())))
             return false;
-        }
         if ((!isChildNotYetInEdgeCannotMoveHeader() && vx > 0) ||
-                (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0)) {
+                (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
             return false;
-        }
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
                 if (Math.abs(vy) <= Math.abs(vx) || Math.abs(vx) >= 1000 ||
@@ -719,8 +716,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx * .92f) / maxVelocity)));
                 }
             }
-            return true;
-        }
+            return isEnabledOverScroll();
+        }else if (!isEnabledOverScroll())
+            return false;
         //开启到底部自动加载更多和到顶自动刷新
         if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vx < 0)
                 || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0))
