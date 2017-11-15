@@ -2502,10 +2502,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if ((isDisabledLoadMore() && isDisabledRefresh())
                 || (!isAutoRefresh() && (isNeedInterceptTouchEvent() ||
                 isCanNotAbortOverScrolling())))
-            return false;
+            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if ((!isChildNotYetInEdgeCannotMoveHeader() && vy > 0)
                 || (!isChildNotYetInEdgeCannotMoveFooter() && vy < 0))
-            return false;
+            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
                 if (Math.abs(vx) <= Math.abs(vy) || Math.abs(vy) >= 1000 || !mIsFingerInsideAnotherDirectionView
@@ -2519,9 +2519,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy * .92f) / maxVelocity)));
                 }
             }
-            return isEnabledOverScroll();
+            return true;
         } else if (!isEnabledOverScroll())
-            return false;
+            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         //开启到底部自动加载更多和到顶自动刷新
         if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vy < 0)
                 || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vy > 0))
@@ -2744,9 +2744,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onNestedPreFling(View target, float velocityX,
                                     float velocityY) {
-        if (isEnabledOverScroll()) {
-            return !onFling(-velocityX, -velocityY) || dispatchNestedPreFling(velocityX, velocityY);
-        } else return dispatchNestedPreFling(velocityX, velocityY);
+        return onFling(-velocityX, -velocityY);
     }
 
     @Override

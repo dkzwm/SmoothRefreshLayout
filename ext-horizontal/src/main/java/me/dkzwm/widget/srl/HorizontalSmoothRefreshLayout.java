@@ -698,10 +698,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if ((isDisabledLoadMore() && isDisabledRefresh())
                 || (!isAutoRefresh() && (isNeedInterceptTouchEvent() ||
                 isCanNotAbortOverScrolling())))
-            return false;
+            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if ((!isChildNotYetInEdgeCannotMoveHeader() && vx > 0) ||
                 (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
-            return false;
+            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
                 if (Math.abs(vy) <= Math.abs(vx) || Math.abs(vx) >= 1000 ||
@@ -716,9 +716,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx * .92f) / maxVelocity)));
                 }
             }
-            return isEnabledOverScroll();
+            return true;
         }else if (!isEnabledOverScroll())
-            return false;
+            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         //开启到底部自动加载更多和到顶自动刷新
         if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vx < 0)
                 || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0))
