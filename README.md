@@ -78,11 +78,11 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.4'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.4'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.4'
 }
 ```
 #### 在Xml中配置

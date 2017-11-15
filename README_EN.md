@@ -14,7 +14,7 @@ Thank him for providing such a great open source library ！
 ## Features:
  - Can support all Views, according to the specific needs to adaptation.
  - Support Nested-Scroll feature, implemented the NestedScrollingChild, NestedScrollingParent interface.
- - Extends the ViewGroup,has excellent performance,support similar FameLayout featrue（Gravity、Margin).
+ - Extends the ViewGroup,has excellent performance,support similar FameLayout feature（Gravity、Margin).
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）.
  - Support Cross boundary rebound(OverScroll).
  - Support Horizontal refresh.
@@ -78,11 +78,11 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.0.4'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.0.4'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.0.4'
 }
 ```
 #### Use Xml to config
