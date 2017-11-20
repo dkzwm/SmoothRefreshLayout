@@ -2516,9 +2516,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     final int maxVelocity = mViewConfiguration.getScaledMaximumFlingVelocity();
                     final int duration;
                     if (Math.abs(vy) > 1000) {
-                        duration = (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy) / maxVelocity));
                         mDelayedNestedFling = true;
                         mOverScrollChecker.nestedFling(vy);
+                        duration=mOverScrollChecker.calculateNestedDuration();
                         delayToFling(duration);
                     } else {
                         duration = (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy * .92f) /
@@ -2846,7 +2846,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected void delayToFling(int duration) {
         mDelayToFling = new DelayToFling(this);
-        postDelayed(mDelayToFling, duration - Math.round(duration * .98f));
+        postDelayed(mDelayToFling, duration);
     }
 
     protected void destroy() {
@@ -4275,8 +4275,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
 
         float calculateNestedVelocity() {
-            return mVelocity * ((float) mScroller.getDuration() - mScroller.timePassed()) /
-                    mScroller.getDuration();
+            return mVelocity * (mScroller.getDuration() - mScroller.timePassed()) / mScroller.getDuration();
+        }
+
+        int calculateNestedDuration(){
+            final float finalY = mScroller.getFinalY();
+            final int duration = mScroller.getDuration();
+            final int currentPos=SmoothRefreshLayout.this.mIndicator.getCurrentPos();
+            if (Math.abs(finalY)>currentPos){
+                return Math.round(currentPos/Math.abs(finalY)*duration*.92f);
+            }else {
+                return duration;
+            }
         }
 
         private void reset() {

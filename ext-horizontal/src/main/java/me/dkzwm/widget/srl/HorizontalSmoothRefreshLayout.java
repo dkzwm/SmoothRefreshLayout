@@ -710,9 +710,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     final int maxVelocity = mViewConfiguration.getScaledMaximumFlingVelocity();
                     final int duration;
                     if (Math.abs(vx) > 1000) {
-                        duration = (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx) / maxVelocity));
                         mDelayedNestedFling = true;
                         mOverScrollChecker.nestedFling(vx);
+                        duration=mOverScrollChecker.calculateNestedDuration();
                         delayToFling(duration);
                     } else {
                         duration = (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx * .92f) /
