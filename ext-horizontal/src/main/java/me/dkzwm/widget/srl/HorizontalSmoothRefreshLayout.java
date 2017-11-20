@@ -7,7 +7,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
 import java.util.Arrays;
@@ -18,6 +17,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.utils.HorizontalScrollCompat;
 import me.dkzwm.widget.srl.utils.SRLog;
+import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/10/20.
@@ -703,28 +703,35 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
-            if (!isEnabledPinRefreshViewWhileLoading()) {
+            if (!isEnabledPinRefreshViewWhileLoading()&&!mIndicator.isOverOffsetToRefresh()) {
                 if (Math.abs(vy) <= Math.abs(vx) || Math.abs(vx) >= 1000 ||
                         !mIsFingerInsideAnotherDirectionView
                         || !isEnabledKeepRefreshView() || (!isRefreshing() && !isLoadingMore())) {
-                    final int maxVelocity = ViewConfiguration.get(getContext()).getScaledMaximumFlingVelocity();
-                    if (Math.abs(vx) > 1000)
-                        mScrollChecker.tryToScrollTo(IIndicator.START_POS,
-                                (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx) / maxVelocity)));
-                    else
-                        mScrollChecker.tryToScrollTo(IIndicator.START_POS,
-                                (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx * .92f) / maxVelocity)));
+                    final int maxVelocity = mViewConfiguration.getScaledMaximumFlingVelocity();
+                    final int duration;
+                    if (Math.abs(vx) > 1000) {
+                        duration = (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx) / maxVelocity));
+                        mDelayedNestedFling = true;
+                        mOverScrollChecker.nestedFling(vx);
+                        delayToFling(duration);
+                    } else {
+                        duration = (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx * .92f) /
+                                maxVelocity));
+                    }
+                    mScrollChecker.tryToScrollTo(IIndicator.START_POS, duration);
                 }
             }
             return true;
-        }else if (!isEnabledOverScroll())
+        } else if (!isEnabledOverScroll())
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         //开启到底部自动加载更多和到顶自动刷新
         if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vx < 0)
-                || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0))
-            vx = vx * 2;
-        mOverScrollChecker.fling(vx);
-        return true;
+                || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0)) {
+            mOverScrollChecker.fling(vx * 2);
+        } else {
+            mOverScrollChecker.fling(vx);
+        }
+        return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
     }
 
     protected boolean isFingerInsideAnotherDirectionView(final float x, final float y) {
@@ -746,5 +753,16 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }
+    }
+
+    @Override
+    protected void dispatchDelayedNestedFling() {
+        if (!mDelayedNestedFling)
+            return;
+        int v = (int) mOverScrollChecker.calculateNestedVelocity();
+        if (mScrollTargetView != null)
+            HorizontalScrollCompat.flingCompat(mScrollTargetView, -v);
+        else
+            HorizontalScrollCompat.flingCompat(mTargetView, -v);
     }
 }

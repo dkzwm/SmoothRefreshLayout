@@ -1,5 +1,6 @@
 package me.dkzwm.widget.srl.utils;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -187,6 +188,7 @@ public class ScrollCompat {
                     return true;
                 } else {
                     try {
+                        @SuppressLint("PrivateApi")
                         Method method = AbsListView.class.getDeclaredMethod("trackMotionScroll",
                                 int.class, int.class);
                         if (method != null) {
@@ -221,5 +223,21 @@ public class ScrollCompat {
             }
         }
         return false;
+    }
+
+    public static void flingCompat(View view, int velocityY) {
+        if (view instanceof ScrollView) {
+            ((ScrollView) view).fling(velocityY);
+        } else if (view instanceof WebView) {
+            ((WebView) view).flingScroll(0, velocityY);
+        } else if (view instanceof RecyclerView) {
+            ((RecyclerView) view).fling(0, velocityY);
+        } else if (view instanceof NestedScrollView) {
+            ((NestedScrollView) view).fling(velocityY);
+        } else if (view instanceof AbsListView) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ((AbsListView) view).fling(velocityY);
+            }
+        }
     }
 }
