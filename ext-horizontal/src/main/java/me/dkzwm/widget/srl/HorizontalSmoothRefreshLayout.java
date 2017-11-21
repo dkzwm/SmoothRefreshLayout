@@ -17,7 +17,6 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.utils.HorizontalScrollCompat;
 import me.dkzwm.widget.srl.utils.SRLog;
-import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/10/20.
@@ -703,22 +702,16 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
-            if (!isEnabledPinRefreshViewWhileLoading()&&!mIndicator.isOverOffsetToRefresh()) {
+            if (!isEnabledPinRefreshViewWhileLoading() && !mIndicator.isOverOffsetToRefresh()) {
                 if (Math.abs(vy) <= Math.abs(vx) || Math.abs(vx) >= 1000 ||
                         !mIsFingerInsideAnotherDirectionView
                         || !isEnabledKeepRefreshView() || (!isRefreshing() && !isLoadingMore())) {
-                    final int maxVelocity = mViewConfiguration.getScaledMaximumFlingVelocity();
-                    final int duration;
-                    if (Math.abs(vx) > 1000) {
-                        mDelayedNestedFling = true;
-                        mOverScrollChecker.nestedFling(vx);
-                        duration=mOverScrollChecker.calculateNestedDuration();
-                        delayToFling(duration);
-                    } else {
-                        duration = (int) Math.pow(Math.abs(vx), 1 - (Math.abs(vx * .92f) /
-                                maxVelocity));
-                    }
+                    mDelayedNestedFling = true;
+                    mOverScrollChecker.nestedFling(vx);
+                    final int duration = mOverScrollChecker.calculateNestedDuration();
+                    mScrollChecker.updateInterpolator(sAccelerateInterpolator);
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, duration);
+                    delayToFling(duration);
                 }
             }
             return true;
@@ -764,5 +757,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             HorizontalScrollCompat.flingCompat(mScrollTargetView, -v);
         else
             HorizontalScrollCompat.flingCompat(mTargetView, -v);
+        resetScrollerInterpolator();
     }
 }

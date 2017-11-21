@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -42,7 +43,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,6 +95,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public static final byte SR_VIEW_STATUS_FOOTER_IN_PROCESSING = 3;
 
     protected static final String TAG = "SmoothRefreshLayout";
+    protected static final Interpolator sQuinticInterpolator = new Interpolator() {
+        @Override
+        public float getInterpolation(float t) {
+            t -= 1.0f;
+            return t * t * t * t * t + 1.0f;
+        }
+    };
+    protected static final Interpolator sLinearInterpolator = new LinearInterpolator();
+    protected static final Interpolator sAccelerateInterpolator = new AccelerateInterpolator();
     //local
     private static final byte FLAG_AUTO_REFRESH_AT_ONCE = 0x01;
     private static final byte FLAG_AUTO_REFRESH_BUT_LATER = 0x01 << 1;
@@ -125,19 +134,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    private static final Interpolator sQuinticInterpolator = new Interpolator() {
-        @Override
-        public float getInterpolation(float t) {
-            t -= 1.0f;
-            return t * t * t * t * t + 1.0f;
-        }
-    };
-    private static final Interpolator sLinearInterpolator = new LinearInterpolator();
     protected static boolean sDebug = false;
     private static IRefreshViewCreator sCreator;
     protected final int[] mParentScrollConsumed = new int[2];
     protected final int[] mParentOffsetInWindow = new int[2];
-    protected final ViewConfiguration mViewConfiguration;
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
     private final NestedScrollingChildHelper mNestedScrollingChildHelper;
     private final List<View> mCachedViews = new ArrayList<>(1);
@@ -336,8 +336,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             setEnablePullToRefresh(true);
             setEnableKeepRefreshView(true);
         }
-        mViewConfiguration = ViewConfiguration.get(getContext());
-        mTouchSlop = mViewConfiguration.getScaledTouchSlop();
+        ViewConfiguration viewConfiguration = ViewConfiguration.get(getContext());
+        mTouchSlop = viewConfiguration.getScaledTouchSlop();
         mGestureDetector = new GestureDetector(context, this);
         mScrollChecker = new ScrollChecker();
         mOverScrollChecker = new OverScrollChecker();
@@ -2513,18 +2513,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (!isEnabledPinRefreshViewWhileLoading() && !mIndicator.isOverOffsetToRefresh()) {
                 if (Math.abs(vx) <= Math.abs(vy) || Math.abs(vy) >= 1000 || !mIsFingerInsideAnotherDirectionView
                         || !isEnabledKeepRefreshView() || (!isRefreshing() && !isLoadingMore())) {
-                    final int maxVelocity = mViewConfiguration.getScaledMaximumFlingVelocity();
-                    final int duration;
-                    if (Math.abs(vy) > 1000) {
-                        mDelayedNestedFling = true;
-                        mOverScrollChecker.nestedFling(vy);
-                        duration=mOverScrollChecker.calculateNestedDuration();
-                        delayToFling(duration);
-                    } else {
-                        duration = (int) Math.pow(Math.abs(vy), 1 - (Math.abs(vy * .92f) /
-                                maxVelocity));
-                    }
+                    mDelayedNestedFling = true;
+                    mOverScrollChecker.nestedFling(vy);
+                    final int duration = mOverScrollChecker.calculateNestedDuration();
+                    mScrollChecker.updateInterpolator(sAccelerateInterpolator);
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, duration);
+                    delayToFling(duration);
                 }
             }
             return true;
@@ -3924,6 +3918,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             ScrollCompat.flingCompat(mScrollTargetView, -v);
         else
             ScrollCompat.flingCompat(mTargetView, -v);
+        resetScrollerInterpolator();
     }
 
     private void notifyUIPositionChanged() {
@@ -3966,13 +3961,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             }
                         }
                     }
-                } catch (IllegalAccessException e) {
-                    //ignore exception
-                } catch (NoSuchFieldException e) {
-                    //ignore exception
-                } catch (NoSuchMethodException e) {
-                    //ignore exception
-                } catch (InvocationTargetException e) {
+                } catch (Exception e) {
                     //ignore exception
                 }
             }
@@ -4278,13 +4267,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return mVelocity * (mScroller.getDuration() - mScroller.timePassed()) / mScroller.getDuration();
         }
 
-        int calculateNestedDuration(){
+        int calculateNestedDuration() {
             final float finalY = mScroller.getFinalY();
             final int duration = mScroller.getDuration();
-            final int currentPos=SmoothRefreshLayout.this.mIndicator.getCurrentPos();
-            if (Math.abs(finalY)>currentPos){
-                return Math.round(currentPos/Math.abs(finalY)*duration*.92f);
-            }else {
+            final int currentPos = SmoothRefreshLayout.this.mIndicator.getCurrentPos();
+            if (Math.abs(finalY) > currentPos) {
+                return Math.round(currentPos / Math.abs(finalY) * duration * .92f);
+            } else {
                 return duration;
             }
         }
@@ -4513,7 +4502,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
 
-        private void updateInterpolator(Interpolator interpolator) {
+        void updateInterpolator(Interpolator interpolator) {
             if (SmoothRefreshLayout.sDebug) {
                 SRLog.d(SmoothRefreshLayout.TAG, "ScrollChecker: updateInterpolator()");
             }
