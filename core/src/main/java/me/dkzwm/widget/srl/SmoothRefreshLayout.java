@@ -2856,7 +2856,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (!mIndicator.isInStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
         }
-        tryToNotifyReset();
         mPreviousState = -1;
         if (mHeaderRefreshCompleteHook != null)
             mHeaderRefreshCompleteHook.mLayout = null;
@@ -2866,8 +2865,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mFooterRefreshCompleteHook = null;
         if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning())
             mChangeStateAnimator.cancel();
-        if (getHandler() != null)
-            getHandler().removeCallbacksAndMessages(null);
+        if (!tryToNotifyReset()) mScrollChecker.destroy();
+        if (mDelayToFling != null)
+            removeCallbacks(mDelayToFling);
+        if (mDelayToRefreshComplete != null)
+            removeCallbacks(mDelayToRefreshComplete);
         if (sDebug) {
             SRLog.i(TAG, "reset()");
         }

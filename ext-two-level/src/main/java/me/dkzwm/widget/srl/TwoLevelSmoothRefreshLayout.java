@@ -330,9 +330,17 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (reset) {
             mNeedFilterRefreshEvent = false;
             mAutoHintCanBeInterrupted = true;
-            removeCallbacks(mDelayToBackToTopRunnable);
+            if (mDelayToBackToTopRunnable != null)
+                removeCallbacks(mDelayToBackToTopRunnable);
         }
         return reset;
+    }
+
+    @Override
+    protected void reset() {
+        if (mDelayToBackToTopRunnable != null)
+            removeCallbacks(mDelayToBackToTopRunnable);
+        super.reset();
     }
 
     @Override
