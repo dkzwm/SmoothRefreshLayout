@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
-[![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-1075%20%7C%20110%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.5.1)
+[![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-1071%20%7C%20110%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.5.1.1)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -78,11 +78,11 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.5.1.1'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.5.1.1'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.5.1.1'
 }
 ```
 #### 在Xml中配置
