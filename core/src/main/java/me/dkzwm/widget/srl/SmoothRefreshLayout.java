@@ -2865,11 +2865,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mFooterRefreshCompleteHook = null;
         if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning())
             mChangeStateAnimator.cancel();
+        mChangeStateAnimator = null;
         if (!tryToNotifyReset()) mScrollChecker.destroy();
         if (mDelayToFling != null)
             removeCallbacks(mDelayToFling);
+        mDelayToFling = null;
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
+        mDelayToRefreshComplete = null;
         if (sDebug) {
             SRLog.i(TAG, "reset()");
         }
