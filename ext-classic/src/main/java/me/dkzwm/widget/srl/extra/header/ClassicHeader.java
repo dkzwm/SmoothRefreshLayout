@@ -4,8 +4,6 @@ import android.content.Context;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.ext.classic.R;
@@ -88,7 +86,6 @@ public class ClassicHeader extends AbsClassicRefreshView {
         }
     }
 
-
     @Override
     public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
         mShouldShowLastUpdate = false;
@@ -100,7 +97,6 @@ public class ClassicHeader extends AbsClassicRefreshView {
         tryUpdateLastUpdateTime();
         mLastUpdateTimeUpdater.stop();
     }
-
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout frame, boolean isSuccessful) {
@@ -115,7 +111,6 @@ public class ClassicHeader extends AbsClassicRefreshView {
         } else
             mTitleTextView.setText(mRefreshFailRes);
     }
-
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, IIndicator indicator) {
@@ -147,6 +142,4 @@ public class ClassicHeader extends AbsClassicRefreshView {
             }
         }
     }
-
-
 }

@@ -385,7 +385,6 @@ public class DefaultIndicator implements IIndicator {
         return mLastMovePoint;
     }
 
-
     protected void processOnMove(float offset) {
         if (mOffsetCalculator != null) {
             mOffset = mOffsetCalculator.calculate(mStatus, mCurrentPos, offset);

@@ -72,11 +72,9 @@ public class MaterialFooter extends View implements IRefreshView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
-
     public void setDefaultHeightInDP(@IntRange(from = 0) int defaultHeightInDP) {
         mDefaultHeightInDP = defaultHeightInDP;
     }
-
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -204,7 +202,6 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-
     }
 
     @Override

@@ -12,7 +12,7 @@ public class LastUpdateTimeUpdater implements Runnable {
     private ITimeUpdater mUpdater;
     private View mRefreshView;
 
-    public LastUpdateTimeUpdater(ITimeUpdater updater, View refreshView) {
+    LastUpdateTimeUpdater(ITimeUpdater updater, View refreshView) {
         mUpdater = updater;
         mRefreshView = refreshView;
     }

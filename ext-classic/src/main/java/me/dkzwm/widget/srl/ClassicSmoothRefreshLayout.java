@@ -54,5 +54,4 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
         return mClassicFooter;
     }
 
-
 }

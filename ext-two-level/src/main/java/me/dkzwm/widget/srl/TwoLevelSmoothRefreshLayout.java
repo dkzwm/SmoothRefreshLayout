@@ -386,7 +386,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         super.tryToPerformRefresh();
     }
 
-
     @Override
     protected void performRefresh() {
         if (canPerformTwoLevelPullToRefresh() && isTwoLevelRefreshing()
@@ -402,7 +401,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         }
         super.performRefresh();
     }
-
 
     @Override
     protected void notifyUIRefreshComplete(boolean useScroll) {
@@ -432,11 +430,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         postDelayed(mDelayToBackToTopRunnable, mDurationToStayAtHintPos);
     }
 
-
     public interface OnRefreshListener extends SmoothRefreshLayout.OnRefreshListener {
         void onTwoLevelRefreshBegin();
     }
-
 
     private static class DelayToBackToTop implements Runnable {
         private WeakReference<TwoLevelSmoothRefreshLayout> mLayoutWeakRf;

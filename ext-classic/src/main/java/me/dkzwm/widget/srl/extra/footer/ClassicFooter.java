@@ -181,5 +181,4 @@ public class ClassicFooter extends AbsClassicRefreshView {
             }
         }
     }
-
 }

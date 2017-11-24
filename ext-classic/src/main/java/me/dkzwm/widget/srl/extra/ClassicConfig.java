@@ -34,9 +34,14 @@ public class ClassicConfig {
     private ClassicConfig() {
     }
 
-    public static String getLastUpdateTime(@NonNull Context context,
-                                           long mLastUpdateTime,
-                                           @NonNull String key) {
+    public static void updateTime(@NonNull Context context, String key, long time) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_NAME, 0);
+        if (!TextUtils.isEmpty(key)) {
+            sharedPreferences.edit().putLong(key, time).apply();
+        }
+    }
+
+    static String getLastUpdateTime(@NonNull Context context, long mLastUpdateTime, @NonNull String key) {
         if (mLastUpdateTime == -1 && !TextUtils.isEmpty(key)) {
             mLastUpdateTime = context.getSharedPreferences(SP_NAME, 0).getLong(key, -1);
         }
@@ -77,14 +82,7 @@ public class ClassicConfig {
         return sb.toString();
     }
 
-    public static void updateTime(@NonNull Context context, String key, long time) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(SP_NAME, 0);
-        if (!TextUtils.isEmpty(key)) {
-            sharedPreferences.edit().putLong(key, time).apply();
-        }
-    }
-
-    public static void createClassicViews(RelativeLayout layout) {
+    static void createClassicViews(RelativeLayout layout) {
         TextView textViewTitle = new TextView(layout.getContext());
         textViewTitle.setId(me.dkzwm.widget.srl.ext.classic.R.id.sr_classic_title);
         textViewTitle.setTextSize(12);

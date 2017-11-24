@@ -53,7 +53,6 @@ public abstract class AbsClassicRefreshView extends RelativeLayout implements IR
         this(context, attrs, 0);
     }
 
-
     public AbsClassicRefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
@@ -86,7 +85,6 @@ public abstract class AbsClassicRefreshView extends RelativeLayout implements IR
         mProgressBar.setVisibility(INVISIBLE);
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int height;
@@ -103,7 +101,6 @@ public abstract class AbsClassicRefreshView extends RelativeLayout implements IR
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-
 
     @Override
     public void tryUpdateLastUpdateTime() {
@@ -162,7 +159,6 @@ public abstract class AbsClassicRefreshView extends RelativeLayout implements IR
         mLastUpdateTimeUpdater.stop();
         tryUpdateLastUpdateTime();
     }
-
 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
