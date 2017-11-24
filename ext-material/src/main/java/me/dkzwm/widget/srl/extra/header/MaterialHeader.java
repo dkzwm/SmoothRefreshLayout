@@ -26,6 +26,7 @@ public class MaterialHeader extends View implements IRefreshView {
     private int mCachedDuration = -1;
     private ValueAnimator mAnimator;
     private SmoothRefreshLayout mRefreshLayout;
+    private boolean mHasHook = false;
     private SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack mHookUIRefreshCompleteCallBack
             = new SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack() {
         @Override
@@ -73,16 +74,29 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        if (mHasHook) {
+            if (mRefreshLayout != null)
+                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
+            else if (getParent() instanceof SmoothRefreshLayout) {
+                mRefreshLayout = (SmoothRefreshLayout) getParent();
+                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
+            }
+        }
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         resetDrawable();
         cancelAnimator();
-    }
-
-    public void release() {
         if (mRefreshLayout != null) {
-            if (mRefreshLayout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack))
+            if (mRefreshLayout.equalsOnHookHeaderRefreshCompleteCallback
+                    (mHookUIRefreshCompleteCallBack)) {
+                mHasHook = true;
                 mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(null);
+            }
         }
     }
 

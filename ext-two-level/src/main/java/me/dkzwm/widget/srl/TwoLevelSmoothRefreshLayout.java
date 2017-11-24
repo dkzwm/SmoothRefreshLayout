@@ -318,7 +318,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void onFingerUp(boolean stayForLoading) {
         if (canPerformTwoLevelPullToRefresh() && mTwoLevelIndicator
                 .crossTwoLevelRefreshLine() && mStatus == SR_STATUS_PREPARE) {
-            onRelease(0);
+            onRelease();
             return;
         }
         super.onFingerUp(stayForLoading);
@@ -344,7 +344,12 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void onRelease(int duration) {
+    protected void onRelease() {
+        if (mDelayedNestedFling) {
+            dispatchDelayedNestedFling();
+            tryToNotifyReset();
+            return;
+        }
         if (mAutomaticActionUseSmoothScroll && mDurationToStayAtHintPos > 0) {
             delayForStay();
             return;
@@ -364,7 +369,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                         mDurationToCloseTwoLevelHeader);
             return;
         }
-        super.onRelease(duration);
+        super.onRelease();
     }
 
     @Override
@@ -446,7 +451,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (SmoothRefreshLayout.sDebug) {
                     SRLog.i(SmoothRefreshLayout.TAG, "DelayToBackToTop: run()");
                 }
-                mLayoutWeakRf.get().onRelease(0);
+                mLayoutWeakRf.get().onRelease();
             }
         }
     }

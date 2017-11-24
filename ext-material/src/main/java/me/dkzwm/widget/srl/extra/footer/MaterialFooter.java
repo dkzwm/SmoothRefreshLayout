@@ -6,12 +6,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.SystemClock;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
-import me.dkzwm.widget.srl.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -21,9 +21,8 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  * @author dkzwm
  */
 public class MaterialFooter extends View implements IRefreshView {
-    protected int mDefaultSize;
-    protected boolean mHasLeftHeaderHeight = false;
     protected int mStyle = STYLE_DEFAULT;
+    protected int mDefaultHeightInDP = 64;
     private int[] mColors = new int[]{Color.RED, Color.BLUE, Color.GREEN, Color.BLACK};
     private Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF mProgressBounds = new RectF();
@@ -49,8 +48,6 @@ public class MaterialFooter extends View implements IRefreshView {
 
     public MaterialFooter(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mDefaultSize = context.getResources()
-                .getDimensionPixelOffset(R.dimen.sr_classic_refresh_view_height);
         mBarWidth = PixelUtl.dp2px(context, 3);
         mCircleRadius = mBarWidth * 4;
         mBarPaint.setStyle(Paint.Style.STROKE);
@@ -60,16 +57,26 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mStyle == STYLE_DEFAULT || mStyle == STYLE_FOLLOW_PIN || mStyle == STYLE_PIN
-                || mStyle == STYLE_FOLLOW_CENTER) {
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(mDefaultSize, MeasureSpec.EXACTLY);
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        } else if (mStyle == STYLE_FOLLOW_SCALE && !mHasLeftHeaderHeight) {
-            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), getCustomHeight());
+        int height;
+        int specMode = MeasureSpec.getMode(heightMeasureSpec);
+        int specSize = MeasureSpec.getSize(heightMeasureSpec);
+        if (specMode == MeasureSpec.EXACTLY) {
+            height = specSize;
         } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            height = getCustomHeight() + getPaddingTop() + getPaddingBottom();
+            if (specMode == MeasureSpec.AT_MOST) {
+                height = Math.min(height, specSize);
+            }
         }
+        heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
+
+
+    public void setDefaultHeightInDP(@IntRange(from = 0) int defaultHeightInDP) {
+        mDefaultHeightInDP = defaultHeightInDP;
+    }
+
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
@@ -176,7 +183,7 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     public int getCustomHeight() {
-        return mDefaultSize;
+        return PixelUtl.dp2px(getContext(), mDefaultHeightInDP);
     }
 
     @NonNull
@@ -220,7 +227,6 @@ public class MaterialFooter extends View implements IRefreshView {
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         float percent = Math.min(1f, indicator.getCurrentPercentOfLoadMoreOffset());
-        mHasLeftHeaderHeight = indicator.getCurrentPos() > indicator.getHeaderHeight();
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mIsSpinning = false;
             mMustInvalidate = false;
@@ -231,7 +237,6 @@ public class MaterialFooter extends View implements IRefreshView {
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mHasLeftHeaderHeight = indicator.getCurrentPos() > indicator.getHeaderHeight();
         if (indicator.hasJustLeftStartPosition()) {
             mIsSpinning = false;
             mMustInvalidate = false;

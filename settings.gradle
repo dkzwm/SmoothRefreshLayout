@@ -1,1 +1,1 @@
-include ':app', ':core', ':ext-two-level', ':ext-horizontal'
+include ':app', ':core', ':ext-two-level', ':ext-horizontal', ':ext-classic', ':ext-material'

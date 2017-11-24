@@ -12,9 +12,9 @@ import android.widget.Toast;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.extra.footer.HorizontalMaterialFooter;
-import me.dkzwm.widget.srl.extra.header.HorizontalMaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
+import me.dkzwm.widget.srl.sample.footer.HorizontalMaterialFooter;
+import me.dkzwm.widget.srl.sample.header.HorizontalMaterialHeader;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**

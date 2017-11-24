@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="sr_classic_text_container" type="id"/>
+    <item name="sr_classic_title" type="id"/>
+    <item name="sr_classic_last_update" type="id"/>
+    <item name="sr_classic_arrow" type="id"/>
+    <item name="sr_classic_progress" type="id"/>
+</resources>

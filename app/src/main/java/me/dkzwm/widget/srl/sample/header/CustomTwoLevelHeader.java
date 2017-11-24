@@ -76,9 +76,9 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     public void onReset(SmoothRefreshLayout frame) {
         mTextViewTitle.setVisibility(VISIBLE);
         if (frame.isEnabledPullToRefresh()) {
-            mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down_to_refresh);
+            mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_pull_down_to_refresh);
         } else {
-            mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down);
+            mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_pull_down);
         }
     }
 
@@ -86,9 +86,9 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
         mTextViewTitle.setVisibility(VISIBLE);
         if (frame.isEnabledPullToRefresh()) {
-            mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down_to_refresh);
+            mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_pull_down_to_refresh);
         } else {
-            mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down);
+            mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_pull_down);
         }
     }
 
@@ -99,14 +99,14 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
-        mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_refreshing);
+        mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_refreshing);
     }
 
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout frame, boolean isSuccessful) {
         mTextViewTitle.setVisibility(VISIBLE);
-        mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_refresh_complete);
+        mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_complete);
     }
 
 
@@ -142,15 +142,15 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
                 && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mStatus = STATUS_PULL_DOWN;
             if (layout.isEnabledPullToRefresh()) {
-                mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down_to_refresh);
+                mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_pull_down_to_refresh);
             } else {
-                mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_pull_down);
+                mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_pull_down);
             }
         } else if (currentPos > mOffsetToRefresh && mStatus != STATUS_RELEASE_TO_REFRESH
                 && indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mStatus = STATUS_RELEASE_TO_REFRESH;
             if (!layout.isEnabledPullToRefresh()) {
-                mTextViewTitle.setText(me.dkzwm.widget.srl.R.string.sr_release_to_refresh);
+                mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_release_to_refresh);
             }
         }
     }

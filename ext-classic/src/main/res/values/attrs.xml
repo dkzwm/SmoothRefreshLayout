@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="AbsClassicRefreshView">
+        <attr name="sr_style" format="enum">
+            <enum name="style_default" value="0"/>
+            <enum name="style_scale" value="1"/>
+            <enum name="style_pin" value="2"/>
+            <enum name="style_follow_scale" value="3"/>
+            <enum name="style_follow_pin" value="4"/>
+            <enum name="style_follow_center" value="5"/>
+        </attr>
+    </declare-styleable>
+
+</resources>

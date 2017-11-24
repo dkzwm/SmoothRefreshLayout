@@ -1,7 +1,9 @@
-package me.dkzwm.widget.srl.extra.footer;
+package me.dkzwm.widget.srl.sample.footer;
 
 import android.content.Context;
 import android.util.AttributeSet;
+
+import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
 
 /**
  * Created by dkzwm on 2017/10/23.
@@ -24,14 +26,18 @@ public class HorizontalMaterialFooter extends MaterialFooter {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mStyle == STYLE_DEFAULT || mStyle == STYLE_FOLLOW_PIN || mStyle == STYLE_PIN
-                || mStyle == STYLE_FOLLOW_CENTER) {
-            setMeasuredDimension(mDefaultSize, MeasureSpec.getSize(heightMeasureSpec));
-        } else if (mStyle == STYLE_FOLLOW_SCALE && !mHasLeftHeaderHeight) {
-            setMeasuredDimension(getCustomHeight(), MeasureSpec.getSize(heightMeasureSpec));
+        int width;
+        int specMode = MeasureSpec.getMode(widthMeasureSpec);
+        int specSize = MeasureSpec.getSize(widthMeasureSpec);
+        if (specMode == MeasureSpec.EXACTLY) {
+            width = specSize;
         } else {
-            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec),
-                    MeasureSpec.getSize(heightMeasureSpec));
+            width = getCustomHeight() + getPaddingLeft() + getPaddingRight();
+            if (specMode == MeasureSpec.AT_MOST) {
+                width = Math.min(width, specSize);
+            }
         }
+        widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 }

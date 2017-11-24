@@ -273,9 +273,9 @@ public class WaveHeader extends View implements IRefreshView {
     public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
         mStatus = SmoothRefreshLayout.SR_STATUS_COMPLETE;
         if (layout.isRefreshSuccessful()) {
-            mText = getContext().getString(me.dkzwm.widget.srl.R.string.sr_refresh_complete);
+            mText = getContext().getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_complete);
         } else {
-            mText = getContext().getString(me.dkzwm.widget.srl.R.string.sr_refresh_failed);
+            mText = getContext().getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_failed);
         }
         layout.resetScrollerInterpolator();
         invalidate();

@@ -711,7 +711,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     final int duration = mOverScrollChecker.calculateNestedDuration();
                     mScrollChecker.updateInterpolator(sAccelerateInterpolator);
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, duration);
-                    delayToFling(duration);
                 }
             }
             return true;

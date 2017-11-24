@@ -1,9 +1,11 @@
-package me.dkzwm.widget.srl.extra.header;
+package me.dkzwm.widget.srl.sample.header;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+
+import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 
 /**
  * Created by dkzwm on 2017/10/23.
