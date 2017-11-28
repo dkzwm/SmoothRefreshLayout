@@ -346,7 +346,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected void onRelease() {
         if (mDelayedNestedFling) {
-            dispatchDelayedNestedFling();
+            dispatchNestedFling();
             tryToNotifyReset();
             return;
         }

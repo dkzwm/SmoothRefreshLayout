@@ -702,26 +702,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
-            if (!isEnabledPinRefreshViewWhileLoading() && !mIndicator.isOverOffsetToRefresh()) {
-                if (Math.abs(vy) <= Math.abs(vx) || Math.abs(vx) >= 1000 ||
-                        !mIsFingerInsideAnotherDirectionView
-                        || !isEnabledKeepRefreshView() || (!isRefreshing() && !isLoadingMore())) {
-                    mDelayedNestedFling = true;
-                    mOverScrollChecker.nestedFling(vx);
-                    final int duration = mOverScrollChecker.calculateNestedDuration();
-                    mScrollChecker.updateInterpolator(sAccelerateInterpolator);
-                    mScrollChecker.tryToScrollTo(IIndicator.START_POS, duration);
-                }
+            if (!isEnabledPinRefreshViewWhileLoading() && ((isMovingHeader() && isDisabledPerformRefresh())
+                    || (isMovingFooter() && isDisabledPerformLoadMore()) || !mIndicator.isOverOffsetToRefresh())) {
+                mDelayedNestedFling = true;
+                mOverScrollChecker.preFling(vx);
+                return true;
             }
-            return true;
-        } else if (!isEnabledOverScroll())
-            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
-        //开启到底部自动加载更多和到顶自动刷新
-        if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vx < 0)
-                || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0)) {
-            mOverScrollChecker.fling(vx * 2);
-        } else {
-            mOverScrollChecker.fling(vx);
+        } else if (isEnabledOverScroll()) {
+            //开启到底部自动加载更多和到顶自动刷新
+            if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vx < 0)
+                    || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0))
+                mOverScrollChecker.fling(vx * 2);
+            else
+                mOverScrollChecker.fling(vx);
+            if (!mNestedScrollInProgress) {
+                mDelayedNestedFling = true;
+                if (mDelayedScrollChecker == null)
+                    mDelayedScrollChecker = new DelayedScrollChecker();
+                mDelayedScrollChecker.updateVelocity((int) (vx / 2));
+            }
         }
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
     }
@@ -748,7 +747,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void dispatchDelayedNestedFling() {
+    protected void dispatchNestedFling() {
         if (!mDelayedNestedFling)
             return;
         int v = (int) mOverScrollChecker.calculateNestedVelocity();
@@ -756,6 +755,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             HorizontalScrollCompat.flingCompat(mScrollTargetView, -v);
         else
             HorizontalScrollCompat.flingCompat(mTargetView, -v);
-        resetScrollerInterpolator();
+    }
+
+    @Override
+    protected void dispatchNestedFlingWhenNotYet(int v) {
+        if (mScrollTargetView != null)
+            HorizontalScrollCompat.flingCompat(mScrollTargetView, -v);
+        else
+            HorizontalScrollCompat.flingCompat(mTargetView, -v);
     }
 }
