@@ -2767,8 +2767,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mNeedFilterScrollEvent = false;
             return;
         }
-        if (mDelayedNestedFling && mDelayedScrollChecker != null)
+        mDelayedNestedFling = false;
+        if (mDelayedScrollChecker != null) {
             mDelayedScrollChecker.abortIfWorking();
+        }
         checkAnotherDirectionViewUnInterceptedEvent();
         tryToPerformScrollToBottomToLoadMore();
         tryToPerformScrollToTopToRefresh();
@@ -3532,6 +3534,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "moveFooterPos(): compatible scroll delta: %s", delta);
             }
             mNeedFilterScrollEvent = true;
+//            mDelayedNestedFling = false;
             compatLoadMoreScroll(delta);
         }
         // to keep the consistence with refresh, need to converse the delta
@@ -3791,7 +3794,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void tryToDispatchNestedFling() {
         if (mDelayedNestedFling && mIndicator.isInStartPosition()) {
-            dispatchNestedFling();
+            mDelayedNestedFling = false;
+            mScrollChecker.abortIfWorking();
+            if (mDelayedScrollChecker != null)
+                mDelayedScrollChecker.abortIfWorking();
+            int v = (int) mOverScrollChecker.calculateNestedVelocity();
+            dispatchNestedFling(v);
         }
     }
 
@@ -3945,25 +3953,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mRefreshListener.onRefreshBegin(isRefreshing());
     }
 
-    protected void dispatchNestedFling() {
-        if (!mDelayedNestedFling)
-            return;
-        mDelayedNestedFling = false;
-        mScrollChecker.abortIfWorking();
-        if (mDelayedScrollChecker != null)
-            mDelayedScrollChecker.abortIfWorking();
-        int v = (int) mOverScrollChecker.calculateNestedVelocity();
+    protected void dispatchNestedFling(int velocity) {
         if (mScrollTargetView != null)
-            ScrollCompat.flingCompat(mScrollTargetView, -v);
+            ScrollCompat.flingCompat(mScrollTargetView, -velocity);
         else
-            ScrollCompat.flingCompat(mTargetView, -v);
-    }
-
-    protected void dispatchNestedFlingWhenNotYet(int v) {
-        if (mScrollTargetView != null)
-            ScrollCompat.flingCompat(mScrollTargetView, -v);
-        else
-            ScrollCompat.flingCompat(mTargetView, -v);
+            ScrollCompat.flingCompat(mTargetView, -velocity);
     }
 
     private void notifyUIPositionChanged() {
@@ -4265,7 +4259,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
         @Override
         public void run() {
-            SmoothRefreshLayout.this.dispatchNestedFlingWhenNotYet(mVelocity);
+            SmoothRefreshLayout.this.dispatchNestedFling(mVelocity);
         }
     }
 
@@ -4580,8 +4574,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             } else {
                 if (!SmoothRefreshLayout.this.canSpringBack()) {
                     checkInStartPosition();
-                    SmoothRefreshLayout.this.onRelease();
                     reset(true);
+                    SmoothRefreshLayout.this.onRelease();
                 }
             }
         }

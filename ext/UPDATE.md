@@ -1,4 +1,9 @@
 # 更新日志
+## 1.6.0
+> 对现有项目进行分割，考虑到绝大多数都是自定义Header和Footer故拆分Core自带的2种风格Header和Footer到2个包（ext-classic和ext-material），至此Core包不再包含Header和Footer。如果需要可自行依赖。
+> 修改手势传递实现，使效果更自然。
+> 删除 `ext-horizontal` 包中的 `HorizontalMaterialHeader` 和 `HorizontalMaterialFooter`，将其移动到了demo中。
+> 添加了 `flingCompat` 方法，用以向下传递Fling动作。
 ## 1.5.1.1
 > 修改从Window移除时不再移除Handler内的所有消息。    
 ## 1.5.1

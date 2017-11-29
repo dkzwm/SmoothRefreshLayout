@@ -243,6 +243,7 @@ public class ScrollCompat {
     }
 
     @SuppressLint("PrivateApi")
+    @SuppressWarnings("unchecked")
     private static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
         if (sFlingRunnableClass == null) {
             Class<?>[] clazz = AbsListView.class.getDeclaredClasses();

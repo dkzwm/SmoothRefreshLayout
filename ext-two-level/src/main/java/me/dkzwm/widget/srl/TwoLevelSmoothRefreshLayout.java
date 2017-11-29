@@ -345,11 +345,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void onRelease() {
-        if (mDelayedNestedFling) {
-            dispatchNestedFling();
-            tryToNotifyReset();
-            return;
-        }
         if (mAutomaticActionUseSmoothScroll && mDurationToStayAtHintPos > 0) {
             delayForStay();
             return;
