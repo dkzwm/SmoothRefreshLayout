@@ -333,7 +333,6 @@ public interface IRefreshView<T extends IIndicator> {
  |setState|int,boolean|Set current State, parameter1: set current State, parameter2: whether use animate|
  |setDisableWhenAnotherDirectionMove|boolean|Set whether to filter another direction moves（Default: `false`）|
  |setEnableNextPtrAtOnce|boolean|Set whether user can perform next PTR at once|
- |setOverScrollDurationRatio|float|Set the duration ratio for Cross-Boundary-Rebound(OverScroll)（Default: `0.5f`）|
  |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `500`）|
  |setMinOverScrollDuration|int|Set the min duration for Cross-Boundary-Rebound(OverScroll)（Default: `150`）|
  |setResistance|float|The resistance while you are moving（Default: `1.65f`）|
