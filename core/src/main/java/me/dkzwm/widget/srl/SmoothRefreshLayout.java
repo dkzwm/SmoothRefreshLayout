@@ -743,11 +743,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if ((isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
                 || (isLoadingMore() && isMovingFooter())))
-                || (isDisabledLoadMore() && isDisabledRefresh())) {
+                || mNestedScrollInProgress || (isDisabledLoadMore() && isDisabledRefresh())) {
             return super.dispatchTouchEvent(ev);
         }
         mGestureDetector.onTouchEvent(ev);
-        if (mNestedScrollInProgress) return super.dispatchTouchEvent(ev);
         return processDispatchTouchEvent(ev);
     }
 
