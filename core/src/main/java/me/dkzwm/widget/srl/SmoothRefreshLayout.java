@@ -2503,8 +2503,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 return true;
             }
         } else {
-            if (isEnabledOverScroll())
-                mOverScrollChecker.fling(vy);
+            if (isEnabledOverScroll()) {
+                if (!isEnabledPinRefreshViewWhileLoading() || ((vy >= 0 || !isDisabledLoadMore())
+                        && (vy <= 0 || !isDisabledRefresh()))) {
+                    mOverScrollChecker.fling(vy);
+                }
+            }
             mDelayedNestedFling = true;
             if (mDelayedScrollChecker == null)
                 mDelayedScrollChecker = new DelayedScrollChecker();

@@ -712,8 +712,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 return true;
             }
         } else {
-            if (isEnabledOverScroll())
-                mOverScrollChecker.fling(vx);
+            if (isEnabledOverScroll()) {
+                if (!isEnabledPinRefreshViewWhileLoading() || ((vx >= 0 || !isDisabledLoadMore())
+                        && (vx <= 0 || !isDisabledRefresh()))) {
+                    mOverScrollChecker.fling(vx);
+                }
+            }
             mDelayedNestedFling = true;
             if (mDelayedScrollChecker == null)
                 mDelayedScrollChecker = new DelayedScrollChecker();
