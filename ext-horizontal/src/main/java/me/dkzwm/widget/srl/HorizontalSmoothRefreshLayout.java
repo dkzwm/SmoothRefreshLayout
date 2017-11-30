@@ -702,25 +702,22 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
-            if (!isEnabledPinRefreshViewWhileLoading() && ((isMovingHeader() && isDisabledPerformRefresh())
-                    || (isMovingFooter() && isDisabledPerformLoadMore()) || !mIndicator.isOverOffsetToRefresh())) {
-                mDelayedNestedFling = true;
-                mOverScrollChecker.preFling(vx);
+            if (!isEnabledPinRefreshViewWhileLoading()) {
+                if (((isMovingHeader() && isDisabledPerformRefresh())
+                        || (isMovingFooter() && isDisabledPerformLoadMore())
+                        || !mIndicator.isOverOffsetToRefresh())) {
+                    mDelayedNestedFling = true;
+                    mOverScrollChecker.preFling(vx);
+                }
                 return true;
             }
-        } else if (isEnabledOverScroll()) {
-            //开启到底部自动加载更多和到顶自动刷新
-            if ((isEnabledScrollToBottomAutoLoadMore() && !isDisabledPerformLoadMore() && vx < 0)
-                    || (isEnabledScrollToTopAutoRefresh() && !isDisabledPerformRefresh() && vx > 0))
-                mOverScrollChecker.fling(vx * 2);
-            else
+        } else {
+            if (isEnabledOverScroll())
                 mOverScrollChecker.fling(vx);
-            if (!mNestedScrollInProgress) {
-                mDelayedNestedFling = true;
-                if (mDelayedScrollChecker == null)
-                    mDelayedScrollChecker = new DelayedScrollChecker();
-                mDelayedScrollChecker.updateVelocity((int) (vx / 2));
-            }
+            mDelayedNestedFling = true;
+            if (mDelayedScrollChecker == null)
+                mDelayedScrollChecker = new DelayedScrollChecker();
+            mDelayedScrollChecker.updateVelocity((int) vx);
         }
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
     }

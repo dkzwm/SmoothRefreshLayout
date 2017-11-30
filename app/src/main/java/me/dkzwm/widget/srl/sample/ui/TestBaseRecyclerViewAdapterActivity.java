@@ -97,6 +97,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
+        mRefreshLayout.setLoadMoreScrollTargetView(mRecyclerView);
     }
 
     @Override
