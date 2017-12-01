@@ -79,10 +79,10 @@ repositories {
 dependencies {
     //The most basic core library
     compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.0'
-	//Default Classic-Style impl
-	compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.0'
-	//Default Material-Style impl
-	compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.0'
+    //Default Classic-Style impl
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.0'
+    //Default Material-Style impl
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.0'
     //Support Two-Level-Refresh feature
     compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.0'
     //Support horizontal refresh feature
