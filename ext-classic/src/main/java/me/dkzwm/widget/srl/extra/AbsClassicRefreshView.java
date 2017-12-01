@@ -87,18 +87,15 @@ public abstract class AbsClassicRefreshView extends RelativeLayout implements IR
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int height;
         int specMode = MeasureSpec.getMode(heightMeasureSpec);
         int specSize = MeasureSpec.getSize(heightMeasureSpec);
-        if (specMode == MeasureSpec.EXACTLY) {
-            height = specSize;
-        } else {
-            height = getCustomHeight() + getPaddingTop() + getPaddingBottom();
+        if (specMode != MeasureSpec.EXACTLY) {
+            int height = getCustomHeight() + getPaddingTop() + getPaddingBottom();
             if (specMode == MeasureSpec.AT_MOST) {
                 height = Math.min(height, specSize);
             }
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

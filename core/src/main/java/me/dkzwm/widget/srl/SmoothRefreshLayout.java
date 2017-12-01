@@ -131,7 +131,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    protected static boolean sDebug = true;
+    protected static boolean sDebug = false;
     private static IRefreshViewCreator sCreator;
     protected final int[] mParentScrollConsumed = new int[2];
     protected final int[] mParentOffsetInWindow = new int[2];
@@ -185,6 +185,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected int mTouchPointerId;
     protected int mHeaderBackgroundColor = -1;
     protected int mFooterBackgroundColor = -2;
+    protected int mMinimumFlingVelocity;
     protected Paint mBackgroundPaint;
     protected MotionEvent mLastMoveEvent;
     protected OnChildNotYetInEdgeCannotMoveHeaderCallBack mInEdgeCanMoveHeaderCallBack;
@@ -334,6 +335,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         ViewConfiguration viewConfiguration = ViewConfiguration.get(getContext());
         mTouchSlop = viewConfiguration.getScaledTouchSlop();
+        mMinimumFlingVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
         mGestureDetector = new GestureDetector(context, this);
         mScrollChecker = new ScrollChecker();
         mOverScrollChecker = new OverScrollChecker();
@@ -1862,6 +1864,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setDisableRefresh(boolean disable) {
         if (disable) {
             mFlag = mFlag | FLAG_DISABLE_REFRESH;
+            if (isRefreshing()) reset();
         } else {
             mFlag = mFlag & ~FLAG_DISABLE_REFRESH;
         }
@@ -1915,6 +1918,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setDisableLoadMore(boolean disable) {
         if (disable) {
             mFlag = mFlag | FLAG_DISABLE_LOAD_MORE;
+            if (isLoadingMore()) reset();
         } else {
             mFlag = mFlag & ~FLAG_DISABLE_LOAD_MORE;
         }
@@ -2493,7 +2497,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
-                if (((isMovingHeader() && isDisabledPerformRefresh())
+                if (Math.abs(vy) > mMinimumFlingVelocity * 2
+                        && ((isMovingHeader() && isDisabledPerformRefresh())
                         || (isMovingFooter() && isDisabledPerformLoadMore())
                         || !mIndicator.isOverOffsetToRefresh())) {
                     mDelayedNestedFling = true;
@@ -2503,7 +2508,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         } else {
             if (isEnabledOverScroll()) {
-                if (!isEnabledPinRefreshViewWhileLoading() || ((vy >= 0 || !isDisabledLoadMore())
+                if (!isEnabledPinRefreshViewWhileLoading()
+                        || ((vy >= 0 || !isDisabledLoadMore())
                         && (vy <= 0 || !isDisabledRefresh()))) {
                     mOverScrollChecker.fling(vy);
                 }
@@ -2730,14 +2736,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onNestedPreFling(View target, float velocityX,
                                     float velocityY) {
-        Log.d(getClass().getSimpleName(), "-------onNestedPreFling------");
         return onFling(-velocityX, -velocityY);
     }
 
     @Override
     public boolean onNestedFling(View target, float velocityX, float velocityY,
                                  boolean consumed) {
-        Log.d(getClass().getSimpleName(), "-------onNestedFling------");
         return dispatchNestedFling(velocityX, velocityY, consumed);
     }
 
@@ -2828,6 +2832,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected void destroy() {
         reset();
+        mPreviousState = -1;
+        if (mHeaderRefreshCompleteHook != null)
+            mHeaderRefreshCompleteHook.mLayout = null;
+        mHeaderRefreshCompleteHook = null;
+        if (mFooterRefreshCompleteHook != null)
+            mFooterRefreshCompleteHook.mLayout = null;
+        mFooterRefreshCompleteHook = null;
         if (mUIPositionChangedListeners != null)
             mUIPositionChangedListeners.clear();
         if (sDebug) {
@@ -2839,23 +2850,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (!mIndicator.isInStartPosition()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
         }
-        mPreviousState = -1;
-        if (mHeaderRefreshCompleteHook != null)
-            mHeaderRefreshCompleteHook.mLayout = null;
-        mHeaderRefreshCompleteHook = null;
-        if (mFooterRefreshCompleteHook != null)
-            mFooterRefreshCompleteHook.mLayout = null;
-        mFooterRefreshCompleteHook = null;
         if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning())
             mChangeStateAnimator.cancel();
         mChangeStateAnimator = null;
-        if (!tryToNotifyReset()) mScrollChecker.destroy();
+        if (isRefreshing() || isLoadingMore()) {
+            mStatus = SR_STATUS_COMPLETE;
+            notifyUIRefreshComplete(false);
+        }
+        mScrollChecker.destroy();
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
+        mDelayToRefreshComplete = null;
         mDelayedNestedFling = false;
         if (mDelayedScrollChecker != null)
             mDelayedScrollChecker.abortIfWorking();
-        mDelayToRefreshComplete = null;
         if (sDebug) {
             SRLog.i(TAG, "reset()");
         }

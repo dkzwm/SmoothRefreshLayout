@@ -6,6 +6,8 @@
 > 添加了 `flingCompat` 方法，用以向下传递Fling动作。    
 > 删除 `setOverScrollDurationRatio` 方法。    
 > 修改越界回弹实现，优化效果。    
+> 修改关闭Header和关闭Footer刷新功能实现，关闭时会检查是否处于刷新中，如果处于刷新中会重置默认状态。    
+> 修改 `ClassicHeader` 和 `ClassicFooter` 实现，不再使用XML布局构建，直接使用代码生成布局结构，整合共有属性。
 ## 1.5.1.1
 > 修改从Window移除时不再移除Handler内的所有消息。    
 ## 1.5.1
