@@ -372,39 +372,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    final public void addView(View child) {
-        addView(child, -1);
-    }
-
-    @Override
-    final public void addView(View child, int index) {
-        if (child == null) {
-            throw new IllegalArgumentException("Cannot add a null child view to a ViewGroup");
-        }
-        ViewGroup.LayoutParams params = child.getLayoutParams();
-        if (params == null) {
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        if (params == null)
             params = generateDefaultLayoutParams();
-        }
-        addView(child, index, params);
-    }
-
-    @Override
-    final public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        else if (!checkLayoutParams(params))
+            params = generateLayoutParams(params);
         super.addView(child, index, params);
         ensureFreshView(child);
-    }
-
-    @Override
-    final public void addView(View child, ViewGroup.LayoutParams params) {
-        addView(child, -1, params);
-    }
-
-    @Override
-    final public void addView(View child, int width, int height) {
-        ViewGroup.LayoutParams params = generateDefaultLayoutParams();
-        params.width = width;
-        params.height = height;
-        addView(child, -1, params);
     }
 
     @Override
