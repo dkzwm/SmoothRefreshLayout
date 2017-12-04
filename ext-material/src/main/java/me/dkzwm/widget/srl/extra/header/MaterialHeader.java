@@ -6,9 +6,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -116,8 +116,21 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int height = mDrawable.getIntrinsicHeight() + getPaddingTop() + getPaddingBottom();
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        if (mRefreshLayout == null) {
+            if (getParent() instanceof SmoothRefreshLayout)
+                mRefreshLayout = (SmoothRefreshLayout) getParent();
+            if (mRefreshLayout == null) {
+                super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+                return;
+            }
+        }
+        if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
+            int height = mDrawable.getIntrinsicHeight() + getPaddingTop() + getPaddingBottom();
+            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        } else {
+            int width = mDrawable.getIntrinsicWidth() + getPaddingLeft() + getPaddingRight();
+            widthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
@@ -129,11 +142,16 @@ public class MaterialHeader extends View implements IRefreshView {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        if (mRefreshLayout == null)
+            return;
         final int saveCount = canvas.save();
-        Rect rect = mDrawable.getBounds();
-        int l = getPaddingLeft() + (getMeasuredWidth() - mDrawable.getIntrinsicWidth()) / 2;
-        canvas.translate(l, getPaddingTop());
-        canvas.scale(mScale, mScale, rect.exactCenterX(), rect.exactCenterY());
+        if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
+            int l = getPaddingLeft() + (getMeasuredWidth() - mDrawable.getIntrinsicWidth()) / 2;
+            canvas.translate(l, getPaddingTop());
+        } else {
+            int top = getPaddingTop() + (getMeasuredHeight() - mDrawable.getIntrinsicWidth()) / 2;
+            canvas.translate(getPaddingLeft(), top);
+        }
         mDrawable.draw(canvas);
         canvas.restoreToCount(saveCount);
     }

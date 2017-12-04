@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -26,9 +27,8 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
 public class StoreHouseHeader extends View implements IRefreshView {
     @RefreshViewStyle
     protected int mStyle = STYLE_FOLLOW_SCALE;
-    protected int mCurrentPosY;
-    protected ArrayList<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
-    protected ArrayList<Matrix> mMatrices = new ArrayList<>();
+    protected List<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
+    protected List<Matrix> mMatrices = new ArrayList<>();
     protected int mLineWidth = -1;
     protected float mScale = .5f;
     protected int mDropHeight = -1;
@@ -37,11 +37,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     protected int mDrawZoneHeight = 0;
     protected int mOffsetX = 0;
     protected int mOffsetY = 0;
-    private float mInternalAnimationFactor = 0.7f;
     private int mHorizontalRandomness = -1;
-    private float mBarDarkAlpha = 0.5f;
-    private float mFromAlpha = 1.0f;
-    private float mToAlpha = 0.5f;
     private int mLoadingAniDuration = 1000;
     private int mLoadingAniSegDuration = 1000;
     private int mLoadingAniItemDuration = 400;
@@ -49,7 +45,6 @@ public class StoreHouseHeader extends View implements IRefreshView {
     private float mBottomOffset = 25;
     private AniController mAniController = new AniController();
     private int mTextColor = Color.WHITE;
-    private boolean mHasLeftHeaderHeight = false;
 
     public StoreHouseHeader(Context context) {
         this(context, null);
@@ -69,7 +64,6 @@ public class StoreHouseHeader extends View implements IRefreshView {
             arr.recycle();
         }
         mLineWidth = PixelUtl.dp2px(context, 1);
-        mDropHeight = PixelUtl.dp2px(context, 40);
         setBackgroundColor(Color.DKGRAY);
         mHorizontalRandomness = context.getResources().getDisplayMetrics().widthPixels / 2;
     }
@@ -101,53 +95,24 @@ public class StoreHouseHeader extends View implements IRefreshView {
         }
     }
 
-    public void setDropHeight(int height) {
-        mDropHeight = height;
-    }
-
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (getHandler() != null)
-            getHandler().removeCallbacksAndMessages(null);
+        mAniController.stop();
         mAnimations.clear();
         mMatrices.clear();
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
-            int height = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset)
-                    + mDrawZoneHeight + getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
-            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), height);
-        } else if (mStyle == STYLE_FOLLOW_SCALE && !mHasLeftHeaderHeight) {
-            setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), getCustomHeight());
-        } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        }
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
-        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE)
-            mOffsetY = getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
-        else {
-            mOffsetY = (mCurrentPosY - mDrawZoneHeight) / 2;
-        }
-        mDropHeight = getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
-    }
-
-    public float getTopOffset() {
-        return mTopOffset;
+    public int getTopOffset() {
+        return getPaddingTop() + PixelUtl.dp2px(getContext(), mTopOffset);
     }
 
     public void setTopOffset(float offsetInDip) {
         mTopOffset = offsetInDip;
     }
 
-    private float getBottomOffset() {
-        return mBottomOffset;
+    private int getBottomOffset() {
+        return getPaddingBottom() + PixelUtl.dp2px(getContext(), mBottomOffset);
     }
 
     public void setBottomOffset(float offsetInDip) {
@@ -187,7 +152,6 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     public void initPathWithPointList(ArrayList<float[]> pointList) {
-
         float drawWidth = 0;
         float drawHeight = 0;
         boolean shouldLayout = mAnimations.size() > 0;
@@ -242,18 +206,20 @@ public class StoreHouseHeader extends View implements IRefreshView {
                     storeHouseBarItem.resetPos(mHorizontalRandomness);
                     continue;
                 }
-                float startPadding = (1 - mInternalAnimationFactor) * i / len;
-                float endPadding = 1 - mInternalAnimationFactor - startPadding;
+                float internalAnimationFactor = 0.7f;
+                float startPadding = (1 - internalAnimationFactor) * i / len;
+                float endPadding = 1 - internalAnimationFactor - startPadding;
                 // onHookComplete
+                float barDarkAlpha = 0.5f;
                 if (progress == 1 || progress >= 1 - endPadding) {
                     canvas.translate(offsetX, offsetY);
-                    storeHouseBarItem.setAlpha(mBarDarkAlpha);
+                    storeHouseBarItem.setAlpha(barDarkAlpha);
                 } else {
                     float realProgress;
                     if (progress <= startPadding) {
                         realProgress = 0;
                     } else {
-                        realProgress = Math.min(1, (progress - startPadding) / mInternalAnimationFactor);
+                        realProgress = Math.min(1, (progress - startPadding) / internalAnimationFactor);
                     }
                     offsetX += storeHouseBarItem.getTranslationX() * (1 - realProgress);
                     offsetY += -mDropHeight * (1 - realProgress);
@@ -262,7 +228,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
                     matrix.postRotate(360 * realProgress);
                     matrix.postScale(realProgress, realProgress);
                     matrix.postTranslate(offsetX, offsetY);
-                    storeHouseBarItem.setAlpha(mBarDarkAlpha * realProgress);
+                    storeHouseBarItem.setAlpha(barDarkAlpha * realProgress);
                     canvas.concat(matrix);
                 }
             }
@@ -289,11 +255,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public int getCustomHeight() {
-        if (mStyle == STYLE_SCALE || mStyle == STYLE_FOLLOW_SCALE) {
-            return mDrawZoneHeight + PixelUtl.dp2px(getContext(), mTopOffset)
-                    + PixelUtl.dp2px(getContext(), mBottomOffset);
-        } else
-            return 0;
+        return mDrawZoneHeight + getTopOffset() + getBottomOffset();
     }
 
     @NonNull
@@ -332,8 +294,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mCurrentPosY = indicator.getCurrentPos();
-        mHasLeftHeaderHeight = mCurrentPosY > indicator.getHeaderHeight();
+        calculate(indicator);
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
@@ -344,11 +305,28 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-        mCurrentPosY = indicator.getCurrentPos();
-        mHasLeftHeaderHeight = mCurrentPosY > indicator.getHeaderHeight();
+        calculate(indicator);
         float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
         setProgress(currentPercent);
         invalidate();
+    }
+
+    private void calculate(IIndicator indicator) {
+        mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
+        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
+            mOffsetY = getTopOffset();
+            mDropHeight = getBottomOffset();
+        } else {
+            if (mStyle == STYLE_FOLLOW_SCALE && indicator.getCurrentPos() <= getCustomHeight()) {
+                mOffsetY = getTopOffset();
+                mDropHeight = getBottomOffset();
+            } else {
+                float percent = Math.min(1, indicator.getCurrentPos() * 1f / getCustomHeight());
+                mOffsetY = (int) (getTopOffset() * percent) + (indicator.getCurrentPos()
+                        - getCustomHeight()) / 2;
+                mDropHeight = (int) (getBottomOffset() * percent);
+            }
+        }
     }
 
     private class AniController implements Runnable {
@@ -361,38 +339,41 @@ public class StoreHouseHeader extends View implements IRefreshView {
         private void start() {
             mRunning = true;
             mTick = 0;
-            mInterval = mLoadingAniDuration / mAnimations.size();
-            mCountPerSeg = mLoadingAniSegDuration / mInterval;
-            mSegCount = mAnimations.size() / mCountPerSeg + 1;
-            post(this);
+            mInterval = StoreHouseHeader.this.mLoadingAniDuration / StoreHouseHeader.this
+                    .mAnimations.size();
+            mCountPerSeg = StoreHouseHeader.this.mLoadingAniSegDuration / mInterval;
+            mSegCount = StoreHouseHeader.this.mAnimations.size() / mCountPerSeg + 1;
+            StoreHouseHeader.this.post(this);
         }
 
         @Override
         public void run() {
-            invalidate();
+            StoreHouseHeader.this.invalidate();
             int pos = mTick % mCountPerSeg;
             for (int i = 0; i < mSegCount; i++) {
                 int index = i * mCountPerSeg + pos;
                 if (index > mTick) {
                     continue;
                 }
-                index = index % mAnimations.size();
-                StoreHouseBarItemAnimation item = mAnimations.get(index);
+                index = index % StoreHouseHeader.this.mAnimations.size();
+                StoreHouseBarItemAnimation item = StoreHouseHeader.this.mAnimations.get(index);
                 item.setFillAfter(false);
                 item.setFillEnabled(true);
                 item.setFillBefore(false);
-                item.setDuration(mLoadingAniItemDuration);
-                item.start(mFromAlpha, mToAlpha);
+                item.setDuration(StoreHouseHeader.this.mLoadingAniItemDuration);
+                float fromAlpha = 1.0f;
+                float toAlpha = 0.5f;
+                item.start(fromAlpha, toAlpha);
             }
             mTick++;
             if (mRunning) {
-                postDelayed(this, mInterval);
+                StoreHouseHeader.this.postDelayed(this, mInterval);
             }
         }
 
         private void stop() {
             mRunning = false;
-            removeCallbacks(this);
+            StoreHouseHeader.this.removeCallbacks(this);
         }
     }
 }

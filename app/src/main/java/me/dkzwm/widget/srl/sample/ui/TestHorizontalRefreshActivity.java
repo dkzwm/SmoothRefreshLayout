@@ -12,9 +12,9 @@ import android.widget.Toast;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
+import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
-import me.dkzwm.widget.srl.sample.footer.HorizontalMaterialFooter;
-import me.dkzwm.widget.srl.sample.header.HorizontalMaterialHeader;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**
@@ -36,12 +36,12 @@ public class TestHorizontalRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.test_horizontal_refresh);
         mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
                 .smoothRefreshLayout_test_horizontal_refresh);
-        HorizontalMaterialHeader header = new HorizontalMaterialHeader(this);
+        MaterialHeader header = new MaterialHeader(this);
         header.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});
         header.setPadding(PixelUtl.dp2px(this, 25), 0, PixelUtl.dp2px(this, 25), 0);
         mRefreshLayout.setHeaderView(header);
-        HorizontalMaterialFooter footer = new HorizontalMaterialFooter(this);
+        MaterialFooter footer = new MaterialFooter(this);
         footer.setProgressBarColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});
         mRefreshLayout.setFooterView(footer);

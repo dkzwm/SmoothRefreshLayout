@@ -78,15 +78,15 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1'
 }
 ```
 #### 在Xml中配置
@@ -151,6 +151,7 @@ public interface IRefreshView <T extends IIndicator> {
 
     /**
      * 获取视图的自定义高度，当视图样式为STYLE_SCALE和STYLE_FOLLOW_SCALE时，必须返回一个确切且大于0的值，使用横向刷新库时，该属性实际应该返回的是视图的宽度;
+     * 自1.6.1版本开始，如果想要当前视图铺满布局即MATCH_PARENT，那么支持返回ViewGroup.LayoutParams.MATCH_PARENT对应的值即`-1`;
      */
     int getCustomHeight();
 

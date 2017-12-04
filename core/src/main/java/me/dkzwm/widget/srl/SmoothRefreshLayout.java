@@ -430,25 +430,38 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
         if (isDisabledRefresh() || isEnabledHideHeaderView())
             return;
+        int height = mHeaderView.getCustomHeight();
         if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mHeaderView.getStyle() == IRefreshView.STYLE_PIN
                 || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
                 || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
-            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-            if (mHeaderView.getCustomHeight() <= 0) {
+            if (height <= 0) {
+                if (height == LayoutParams.MATCH_PARENT)
+                    lp.height = LayoutParams.MATCH_PARENT;
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
             } else {
-                mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
+                lp.height = height;
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                mIndicator.setHeaderHeight(height);
             }
         } else {
-            if (mHeaderView.getCustomHeight() <= 0) {
+            if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If header view type is " +
                         "STYLE_SCALE or STYLE_FOLLOW_SCALE, you must set a accurate height");
             } else {
-                mIndicator.setHeaderHeight(mHeaderView.getCustomHeight());
+                if (height == LayoutParams.MATCH_PARENT) {
+                    int specSize = MeasureSpec.getSize(heightMeasureSpec);
+                    height = Math.max(0, specSize - (getPaddingTop() + getPaddingBottom()
+                            + lp.topMargin + lp.bottomMargin));
+                    mIndicator.setHeaderHeight(height);
+                } else {
+                    mIndicator.setHeaderHeight(height);
+                }
             }
             if (mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
-                if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                if (mIndicator.getCurrentPos() <= height) {
+                    lp.height = height;
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     return;
                 }
@@ -469,25 +482,38 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
         if (isDisabledLoadMore() || isEnabledHideFooterView())
             return;
+        int height = mFooterView.getCustomHeight();
         if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mFooterView.getStyle() == IRefreshView.STYLE_PIN
                 || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
                 || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
-            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-            if (mFooterView.getCustomHeight() <= 0) {
+            if (height <= 0) {
+                if (height == LayoutParams.MATCH_PARENT)
+                    lp.height = LayoutParams.MATCH_PARENT;
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                 mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
             } else {
-                mIndicator.setFooterHeight(mFooterView.getCustomHeight());
+                lp.height = height;
+                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                mIndicator.setFooterHeight(height);
             }
         } else {
-            if (mFooterView.getCustomHeight() <= 0) {
+            if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If footer view type is " +
                         "STYLE_SCALE or STYLE_FOLLOW_SCALE, you must set a accurate height");
             } else {
-                mIndicator.setFooterHeight(mFooterView.getCustomHeight());
+                if (height == LayoutParams.MATCH_PARENT) {
+                    int specSize = MeasureSpec.getSize(heightMeasureSpec);
+                    height = Math.max(0, specSize - (getPaddingTop() + getPaddingBottom()
+                            + lp.topMargin + lp.bottomMargin));
+                    mIndicator.setFooterHeight(height);
+                } else {
+                    mIndicator.setFooterHeight(height);
+                }
             }
             if (mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
-                if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                if (mIndicator.getCurrentPos() <= height) {
+                    lp.height = height;
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     return;
                 }
@@ -662,7 +688,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    @SuppressLint("RtlHardcpded")
+    @SuppressLint({"RtlHardcpded", "RtlHardcoded"})
     protected void layoutOtherViewUseGravity(View child, int parentRight, int parentBottom) {
         final int width = child.getMeasuredWidth();
         final int height = child.getMeasuredHeight();
@@ -700,6 +726,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     + width, childTop + height);
         }
     }
+
 
     @Override
     protected void onFinishInflate() {
@@ -773,6 +800,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollTargetView = view;
     }
 
+    /**
+     * Whether to enable the synchronous scroll when load more completed
+     * <p>
+     * 当加载更多完成时是否启用同步滚动。<br/>
+     *
+     * @param enable enable
+     */
     public void setEnableCompatLoadMoreScroll(boolean enable) {
         mCompatLoadMoreScroll = enable;
     }
@@ -3247,13 +3281,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected boolean isChildNotYetInEdgeCannotMoveHeader() {
         if (mInEdgeCanMoveHeaderCallBack != null)
-            return mInEdgeCanMoveHeaderCallBack.isChildNotYetInEdgeCannotMoveHeader(this, mTargetView, mHeaderView);
+            return mInEdgeCanMoveHeaderCallBack.isChildNotYetInEdgeCannotMoveHeader(this,
+                    mTargetView, mHeaderView);
         return ScrollCompat.canChildScrollUp(mTargetView);
     }
 
     protected boolean isChildNotYetInEdgeCannotMoveFooter() {
         if (mInEdgeCanMoveFooterCallBack != null)
-            return mInEdgeCanMoveFooterCallBack.isChildNotYetInEdgeCannotMoveFooter(this, mTargetView, mFooterView);
+            return mInEdgeCanMoveFooterCallBack.isChildNotYetInEdgeCannotMoveFooter(this,
+                    mTargetView, mFooterView);
         return ScrollCompat.canChildScrollDown(mTargetView);
     }
 

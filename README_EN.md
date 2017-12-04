@@ -78,15 +78,15 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.0'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1'
 }
 ```
 #### Use Xml to config
@@ -160,7 +160,9 @@ public interface IRefreshView<T extends IIndicator> {
 
     /**
      * Get the custom height,  When the return style is {@link #STYLE_SCALE} or
-     * {@link #STYLE_FOLLOW_SCALE} , you must return a accurate height
+     * {@link #STYLE_FOLLOW_SCALE} , you must return a accurate height<br/>
+     * Since version 1.6.1, If you want the height equal to the srl height, you can return `-1`
+     * {@link android.view.ViewGroup.LayoutParams#MATCH_PARENT}
      *
      * @return Custom height
      */

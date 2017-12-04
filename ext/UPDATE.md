@@ -1,4 +1,9 @@
 # 更新日志
+## 1.6.1
+> 修改 `IRefreshView` 接口定义，当 `getCustomHeight` 方法返回值大于0时，Srl会以该值作为视图的高度进行后续操作。当值等于-1（MATCH_PARENT）时，Srl会将视图铺满布局。当值等于0时候不做处理以布局自适应。    
+> 删除 `addView`相关的final关键字，修改相关实现。    
+> 修改 `StoreHouseHeader` 的绘图问题。    
+> 优化手势传递，使甩动手势更自然。    
 ## 1.6.0
 > 对现有项目进行分割，考虑到绝大多数都是自定义Header和Footer故拆分Core自带的2种风格Header和Footer到2个包（ext-classic和ext-material），至此Core包不再包含Header和Footer。如果需要可自行依赖。    
 > 修改手势传递实现，使效果更自然。    

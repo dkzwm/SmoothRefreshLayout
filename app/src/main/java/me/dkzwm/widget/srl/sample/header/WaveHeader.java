@@ -124,15 +124,6 @@ public class WaveHeader extends View implements IRefreshView {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
-            int height = mDefaultHeight + getPaddingTop() + getPaddingBottom();
-            heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
     public int getType() {
         return TYPE_HEADER;
     }

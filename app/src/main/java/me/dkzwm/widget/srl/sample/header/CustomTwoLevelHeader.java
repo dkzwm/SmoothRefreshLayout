@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -45,13 +46,6 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(heightMeasureSpec),
-                MeasureSpec.EXACTLY);
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    @Override
     public int getType() {
         return TYPE_HEADER;
     }
@@ -63,7 +57,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
 
     @Override
     public int getCustomHeight() {
-        return 0;
+        return ViewGroup.LayoutParams.MATCH_PARENT;
     }
 
     @NonNull
