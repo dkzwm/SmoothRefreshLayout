@@ -703,10 +703,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
-                if (Math.abs(vx) > mMinimumFlingVelocity * 2
-                        && ((isMovingHeader() && isDisabledPerformRefresh())
-                        || (isMovingFooter() && isDisabledPerformLoadMore())
-                        || !mIndicator.isOverOffsetToRefresh())) {
+                if (Math.abs(vx) > mMinimumFlingVelocity * 2) {
                     mDelayedNestedFling = true;
                     mOverScrollChecker.preFling(vx);
                 }
