@@ -1,6 +1,7 @@
 # 更新日志
 ## 1.6.1
 > 修改 `IRefreshView` 接口定义，当 `getCustomHeight` 方法返回值大于0时，Srl会以该值作为视图的高度进行后续操作。当值等于-1（MATCH_PARENT）时，Srl会将视图铺满布局。当值等于0时候不做处理以布局自适应。    
+> 修改 `IRefreshView` 接口，统一 `indicator` 参数均为继承 `IIndicator` 的泛型 `T`。    
 > 删除 `addView`相关的final关键字，修改相关实现。    
 > 修改 `StoreHouseHeader` 的绘图问题。    
 > 优化手势传递，使甩动手势更自然。    

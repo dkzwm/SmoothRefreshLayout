@@ -182,7 +182,7 @@ public interface IRefreshView<T extends IIndicator> {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
+    void onFingerUp(SmoothRefreshLayout layout, T indicator);
 
     /**
      * This method will be triggered when the refresh state is reset to
@@ -205,7 +205,7 @@ public interface IRefreshView<T extends IIndicator> {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
+    void onRefreshBegin(SmoothRefreshLayout layout, T indicator);
 
     /**
      * This method will be triggered when the frame is refresh completed.

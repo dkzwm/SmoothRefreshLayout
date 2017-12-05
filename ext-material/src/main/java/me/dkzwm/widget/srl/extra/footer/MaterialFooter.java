@@ -20,7 +20,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
 /**
  * @author dkzwm
  */
-public class MaterialFooter extends View implements IRefreshView {
+public class MaterialFooter<T extends IIndicator> extends View implements IRefreshView<T> {
     protected int mStyle = STYLE_DEFAULT;
     protected int mDefaultHeightInDP = 64;
     private int[] mColors = new int[]{Color.RED, Color.BLUE, Color.GREEN, Color.BLACK};
@@ -185,11 +185,11 @@ public class MaterialFooter extends View implements IRefreshView {
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
+    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {
     }
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
+    public void onRefreshBegin(SmoothRefreshLayout layout, T indicator) {
         mProgress = 1f;
         mIsSpinning = true;
         mMustInvalidate = true;
@@ -206,7 +206,7 @@ public class MaterialFooter extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
         float percent = Math.min(1f, indicator.getCurrentPercentOfLoadMoreOffset());
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             mIsSpinning = false;
@@ -217,7 +217,7 @@ public class MaterialFooter extends View implements IRefreshView {
     }
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
         if (indicator.hasJustLeftStartPosition()) {
             mIsSpinning = false;
             mMustInvalidate = false;

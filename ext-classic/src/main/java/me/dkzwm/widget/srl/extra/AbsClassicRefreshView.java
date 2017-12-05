@@ -22,13 +22,10 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**
- * Created by dkzwm on 2017/11/24.
- *
  * @author dkzwm
  */
-
-public abstract class AbsClassicRefreshView extends RelativeLayout implements IRefreshView,
-        LastUpdateTimeUpdater.ITimeUpdater {
+public abstract class AbsClassicRefreshView<T extends IIndicator> extends RelativeLayout
+        implements IRefreshView<T>, LastUpdateTimeUpdater.ITimeUpdater {
     private static final Interpolator sLinearInterpolator = new LinearInterpolator();
     @RefreshViewStyle
     protected int mStyle = STYLE_DEFAULT;
@@ -144,12 +141,12 @@ public abstract class AbsClassicRefreshView extends RelativeLayout implements IR
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
+    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {
 
     }
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
         if (indicator.hasJustLeftStartPosition()) {
             mArrowImageView.clearAnimation();
             mArrowImageView.setVisibility(INVISIBLE);

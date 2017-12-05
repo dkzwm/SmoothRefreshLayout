@@ -17,7 +17,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 /**
  * @author dkzwm
  */
-public class ClassicFooter extends AbsClassicRefreshView {
+public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T> {
     private boolean mNoMoreDataChangedView = false;
     @StringRes
     private int mPullUpToLoadRes = R.string.sr_pull_up_to_load;
@@ -111,7 +111,7 @@ public class ClassicFooter extends AbsClassicRefreshView {
     }
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
+    public void onRefreshBegin(SmoothRefreshLayout frame, T indicator) {
         mShouldShowLastUpdate = false;
         mArrowImageView.clearAnimation();
         mArrowImageView.setVisibility(INVISIBLE);
@@ -138,7 +138,7 @@ public class ClassicFooter extends AbsClassicRefreshView {
     }
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, T indicator) {
         final int mOffsetToRefresh = indicator.getOffsetToLoadMore();
         final int currentPos = indicator.getCurrentPos();
         final int lastPos = indicator.getLastPos();

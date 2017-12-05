@@ -11,8 +11,6 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
 /**
- * Created by dkzwm on 2017/5/18.
- *
  * @author dkzwm
  */
 public interface IRefreshView<T extends IIndicator> {
@@ -43,6 +41,9 @@ public interface IRefreshView<T extends IIndicator> {
      * change the height, so the performance will be reduced. If return {@link #STYLE_FOLLOW_SCALE}
      * , when the moved position large than the view height, SmoothRefreshLayout will dynamically
      * change the height, so the performance will be reduced.
+     * <p>
+     * Since 1.4.8 add {@link #STYLE_PIN}, {@link #STYLE_FOLLOW_SCALE}, {@link #STYLE_FOLLOW_PIN},
+     * {@link #STYLE_FOLLOW_CENTER}
      *
      * @return style {@link #STYLE_DEFAULT}, {@link #STYLE_SCALE}, {@link #STYLE_PIN},
      * {@link #STYLE_FOLLOW_SCALE}, {@link #STYLE_FOLLOW_PIN}, {@link #STYLE_FOLLOW_CENTER}.
@@ -53,6 +54,7 @@ public interface IRefreshView<T extends IIndicator> {
     /**
      * Get the custom height,  When the return style is {@link #STYLE_SCALE} or
      * {@link #STYLE_FOLLOW_SCALE} , you must return a accurate height<br/>
+     * <p>
      * Since version 1.6.1, If you want the height equal to the srl height, you can return `-1`
      * {@link android.view.ViewGroup.LayoutParams#MATCH_PARENT}
      *
@@ -74,7 +76,7 @@ public interface IRefreshView<T extends IIndicator> {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator);
+    void onFingerUp(SmoothRefreshLayout layout, T indicator);
 
     /**
      * This method will be triggered when the refresh state is reset to
@@ -97,7 +99,7 @@ public interface IRefreshView<T extends IIndicator> {
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param indicator The indicator {@link IIndicator}
      */
-    void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator);
+    void onRefreshBegin(SmoothRefreshLayout layout, T indicator);
 
     /**
      * This method will be triggered when the frame is refresh completed.
@@ -124,7 +126,7 @@ public interface IRefreshView<T extends IIndicator> {
      * Before the transaction of the refresh view has not yet been processed completed。
      * This method will be triggered when the position of the other refresh view changes.<br/>
      * <p>
-     * Added in version 1.4.6
+     * Since version 1.4.6
      *
      * @param layout    The layout {@link SmoothRefreshLayout}
      * @param status    Current status @see{@link SmoothRefreshLayout#SR_STATUS_INIT},

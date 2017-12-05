@@ -12,7 +12,6 @@ import android.widget.TextView;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.sample.R;
 
@@ -22,14 +21,13 @@ import me.dkzwm.widget.srl.sample.R;
  * @author dkzwm
  */
 
-public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefreshView {
+public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefreshView<ITwoLevelIndicator> {
     private static final byte STATUS_PULL_DOWN = 1;
     private static final byte STATUS_RELEASE_TO_REFRESH = 2;
     private static final byte STATUS_TWO_LEVEL_REFRESH_HINT = 4;
     private static final byte STATUS_TWO_LEVEL_RELEASE_TO_REFRESH = 5;
     protected TextView mTextViewTitle;
     private byte mStatus = STATUS_PULL_DOWN;
-
 
     public CustomTwoLevelHeader(Context context) {
         this(context, null);
@@ -87,12 +85,12 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
+    public void onFingerUp(SmoothRefreshLayout layout, ITwoLevelIndicator indicator) {
 
     }
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
+    public void onRefreshBegin(SmoothRefreshLayout frame, ITwoLevelIndicator indicator) {
         mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_refreshing);
     }
 
@@ -103,24 +101,20 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
         mTextViewTitle.setText(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_complete);
     }
 
-
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, ITwoLevelIndicator indicator) {
         final int currentPos = indicator.getCurrentPos();
         if (layout instanceof TwoLevelSmoothRefreshLayout) {
             TwoLevelSmoothRefreshLayout refreshLayout = (TwoLevelSmoothRefreshLayout) layout;
-            if (!refreshLayout.isDisabledTwoLevelRefresh()) {
-                final int offSetToHintTwoLevelRefresh = indicator.getOffsetToHintTwoLevelRefresh();
+            if (!refreshLayout.isDisabledTwoLevelRefresh() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                 final int offSetToTwoLevelRefresh = indicator.getOffsetToTwoLevelRefresh();
-                if (currentPos < offSetToTwoLevelRefresh && currentPos >= offSetToHintTwoLevelRefresh
-                        && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
+                if (currentPos < offSetToTwoLevelRefresh && indicator.crossTwoLevelHintLine()) {
                     if (mStatus != STATUS_TWO_LEVEL_REFRESH_HINT) {
                         mTextViewTitle.setText(R.string.continue_pull_down_to_have_a_surprise);
                         mStatus = STATUS_TWO_LEVEL_REFRESH_HINT;
                     }
                     return;
-                } else if (currentPos > offSetToTwoLevelRefresh
-                        && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
+                } else if (currentPos > offSetToTwoLevelRefresh) {
                     if (mStatus != STATUS_TWO_LEVEL_RELEASE_TO_REFRESH) {
                         mStatus = STATUS_TWO_LEVEL_RELEASE_TO_REFRESH;
                         if (!layout.isEnabledPullToRefresh()) {
@@ -159,6 +153,4 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
     public void onTwoLevelRefreshBegin(TwoLevelSmoothRefreshLayout layout, ITwoLevelIndicator twoLevelIndicator) {
         mTextViewTitle.setText(R.string.welcome_to_secondary_menu);
     }
-
-
 }

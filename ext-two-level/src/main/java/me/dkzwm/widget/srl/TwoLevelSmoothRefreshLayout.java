@@ -18,10 +18,7 @@ import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.utils.SRLog;
 
 /**
- * Created by dkzwm on 2017/6/12.
- * <p>
  * Support Two-Level refresh feature;<br/>
- * </p>
  *
  * @author dkzwm
  */

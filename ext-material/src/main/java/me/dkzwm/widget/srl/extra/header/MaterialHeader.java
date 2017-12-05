@@ -6,6 +6,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
@@ -20,7 +21,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 /**
  * @author dkzwm
  */
-public class MaterialHeader extends View implements IRefreshView {
+public class MaterialHeader<T extends IIndicator> extends View implements IRefreshView<T> {
     protected MaterialProgressDrawable mDrawable;
     protected float mScale = 1f;
     private int mCachedDuration = -1;
@@ -32,7 +33,7 @@ public class MaterialHeader extends View implements IRefreshView {
         @Override
         public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
             if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
-                mAnimator.setDuration(180);
+                mAnimator.setDuration(200);
                 mAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
@@ -152,6 +153,8 @@ public class MaterialHeader extends View implements IRefreshView {
             int top = getPaddingTop() + (getMeasuredHeight() - mDrawable.getIntrinsicWidth()) / 2;
             canvas.translate(getPaddingLeft(), top);
         }
+        Rect rect = mDrawable.getBounds();
+        canvas.scale(mScale, mScale, rect.exactCenterX(), rect.exactCenterY());
         mDrawable.draw(canvas);
         canvas.restoreToCount(saveCount);
     }
@@ -183,7 +186,7 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
+    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {
     }
 
     @Override
@@ -201,7 +204,7 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
+    public void onRefreshBegin(SmoothRefreshLayout layout, T indicator) {
         int duration = layout.getDurationToCloseHeader();
         if (duration > 0)
             mCachedDuration = duration;
@@ -224,7 +227,7 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
         float percent = Math.min(1, indicator.getCurrentPercentOfRefreshOffset());
         float alphaPercent = Math.min(1, percent * percent * percent);
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
@@ -240,7 +243,7 @@ public class MaterialHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
         if (indicator.hasJustLeftStartPosition()) {
             mDrawable.setAlpha(255);
             mDrawable.setStartEndTrim(0f, 0.8f);

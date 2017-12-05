@@ -14,7 +14,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 /**
  * @author dkzwm
  */
-public class ClassicHeader extends AbsClassicRefreshView {
+public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T> {
     @StringRes
     private int mPullDownToRefreshRes = R.string.sr_pull_down_to_refresh;
     @StringRes
@@ -87,7 +87,7 @@ public class ClassicHeader extends AbsClassicRefreshView {
     }
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout frame, IIndicator indicator) {
+    public void onRefreshBegin(SmoothRefreshLayout frame, T indicator) {
         mShouldShowLastUpdate = false;
         mArrowImageView.clearAnimation();
         mArrowImageView.setVisibility(INVISIBLE);
@@ -113,7 +113,7 @@ public class ClassicHeader extends AbsClassicRefreshView {
     }
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, T indicator) {
         final int mOffsetToRefresh = indicator.getOffsetToRefresh();
         final int currentPos = indicator.getCurrentPos();
         final int lastPos = indicator.getLastPos();

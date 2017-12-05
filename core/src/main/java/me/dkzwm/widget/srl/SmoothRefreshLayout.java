@@ -209,7 +209,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
     private boolean mCompatLoadMoreScroll = true;
-    private int mMaxOverScrollDuration = 450;
+    private int mMaxOverScrollDuration = 500;
     private int mMinOverScrollDuration = 150;
     private int mDurationOfBackToHeaderHeight = 200;
     private int mDurationOfBackToFooterHeight = 200;
@@ -229,9 +229,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             throw new IllegalArgumentException("You must create a IIndicator, current IIndicator " +
                     "is null");
         mInflater = LayoutInflater.from(context);
-        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout, 0, 0);
+        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout,
+                0, 0);
         if (arr != null) {
-            mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content, mContentResId);
+            mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content,
+                    mContentResId);
             float resistance = arr.getFloat(R.styleable
                     .SmoothRefreshLayout_sr_resistance, IIndicator.DEFAULT_RESISTANCE);
             mIndicator.setResistance(resistance);
@@ -424,7 +426,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
         maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
         setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
-                resolveSizeAndState(maxHeight, heightMeasureSpec, childState << MEASURED_HEIGHT_STATE_SHIFT));
+                resolveSizeAndState(maxHeight, heightMeasureSpec, childState <<
+                        MEASURED_HEIGHT_STATE_SHIFT));
     }
 
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
@@ -541,15 +544,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final int paddingTop = getPaddingTop();
         final int parentRight = r - l - getPaddingRight();
         final int parentBottom = b - t - getPaddingBottom();
+        final boolean isMovingHeader = isMovingHeader();
+        final boolean isMovingFooter = isMovingFooter();
         int offsetHeaderY = 0;
         int offsetFooterY = 0;
-        if (isMovingHeader()) {
+        if (isMovingHeader) {
             offsetHeaderY = mIndicator.getCurrentPos();
-        } else if (isMovingFooter()) {
+        } else if (isMovingFooter) {
             offsetFooterY = mIndicator.getCurrentPos();
         }
         int contentBottom = 0;
-        boolean pin = (mScrollTargetView != null && !isMovingHeader()) || isEnabledPinContentView();
+        boolean pin = (mScrollTargetView != null && !isMovingHeader) || isEnabledPinContentView();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE)
@@ -563,11 +568,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 final int left = paddingLeft + lp.leftMargin;
                 final int right = left + child.getMeasuredWidth();
                 int top, bottom;
-                if (isMovingHeader()) {
+                if (isMovingHeader) {
                     top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
                     bottom = top + child.getMeasuredHeight();
                     child.layout(left, top, right, bottom);
-                } else if (isMovingFooter()) {
+                } else if (isMovingFooter) {
                     top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
                     bottom = top + child.getMeasuredHeight();
                     child.layout(left, top, right, bottom);
