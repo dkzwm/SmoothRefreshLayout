@@ -4296,12 +4296,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         void updateVelocity(int velocity) {
             mVelocity = velocity;
             abortIfWorking();
-            SmoothRefreshLayout.this.postDelayed(this, 30);
+            mRunning = true;
+            SmoothRefreshLayout.this.postDelayed(this, 25);
         }
 
         @Override
         public void run() {
-            SmoothRefreshLayout.this.dispatchNestedFling(mVelocity);
+            if (mRunning) {
+                SmoothRefreshLayout.this.dispatchNestedFling(mVelocity);
+                mRunning = false;
+            }
         }
     }
 
