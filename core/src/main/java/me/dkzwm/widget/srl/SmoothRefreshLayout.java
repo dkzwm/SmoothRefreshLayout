@@ -226,7 +226,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         super(context, attrs, defStyleAttr);
         createIndicator();
         if (mIndicator == null)
-            throw new IllegalArgumentException("You must create a IIndicator, current IIndicator " +
+            throw new IllegalArgumentException("You must create a IIndicator, current indicator " +
                     "is null");
         mInflater = LayoutInflater.from(context);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout,
@@ -439,15 +439,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
                 || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
             if (height <= 0) {
-                if (height == LayoutParams.MATCH_PARENT)
-                    lp.height = LayoutParams.MATCH_PARENT;
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-            } else {
-                lp.height = height;
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                mIndicator.setHeaderHeight(height);
-            }
+                if (height == LayoutParams.MATCH_PARENT) lp.height = LayoutParams.MATCH_PARENT;
+            } else lp.height = height;
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+            mIndicator.setHeaderHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
         } else {
             if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If header view type is " +
@@ -459,26 +454,31 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             + lp.topMargin + lp.bottomMargin));
                     mIndicator.setHeaderHeight(height);
                 } else {
-                    mIndicator.setHeaderHeight(height);
+                    mIndicator.setHeaderHeight(height + lp.topMargin + lp.bottomMargin);
                 }
             }
             if (mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
-                if (mIndicator.getCurrentPos() <= height) {
+                if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
                     lp.height = height;
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     return;
                 }
             }
             final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
-            final int heightSpec;
+                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp
+                            .width);
+            final int childHeightMeasureSpec;
             if (isMovingHeader()) {
-                heightSpec = MeasureSpec.makeMeasureSpec(mIndicator.getCurrentPos()
-                        + lp.topMargin, MeasureSpec.EXACTLY);
+                final int maxHeight = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop()
+                        - getPaddingBottom() - lp.topMargin - lp.bottomMargin;
+                int realHeight = Math.min(mIndicator.getCurrentPos() - lp.topMargin - lp.bottomMargin,
+                        maxHeight);
+                childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(realHeight > 0 ? realHeight : 0,
+                        MeasureSpec.EXACTLY);
             } else {
-                heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY);
+                childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY);
             }
-            child.measure(childWidthMeasureSpec, heightSpec);
+            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }
     }
 
@@ -491,15 +491,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
                 || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
             if (height <= 0) {
-                if (height == LayoutParams.MATCH_PARENT)
-                    lp.height = LayoutParams.MATCH_PARENT;
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
-            } else {
-                lp.height = height;
-                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                mIndicator.setFooterHeight(height);
-            }
+                if (height == LayoutParams.MATCH_PARENT) lp.height = LayoutParams.MATCH_PARENT;
+            } else lp.height = height;
+            measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+            mIndicator.setFooterHeight(child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
         } else {
             if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If footer view type is " +
@@ -511,26 +506,31 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             + lp.topMargin + lp.bottomMargin));
                     mIndicator.setFooterHeight(height);
                 } else {
-                    mIndicator.setFooterHeight(height);
+                    mIndicator.setFooterHeight(height + lp.topMargin + lp.bottomMargin);
                 }
             }
             if (mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
-                if (mIndicator.getCurrentPos() <= height) {
+                if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
                     lp.height = height;
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     return;
                 }
             }
             final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp.width);
-            final int heightSpec;
+                    getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin, lp
+                            .width);
+            final int childHeightMeasureSpec;
             if (isMovingFooter()) {
-                heightSpec = MeasureSpec.makeMeasureSpec(mIndicator.getCurrentPos()
-                        + lp.topMargin + lp.bottomMargin, MeasureSpec.EXACTLY);
+                final int maxHeight = MeasureSpec.getSize(heightMeasureSpec) - getPaddingTop()
+                        - getPaddingBottom() - lp.topMargin - lp.bottomMargin;
+                int realHeight = Math.min(mIndicator.getCurrentPos() - lp.topMargin - lp
+                        .bottomMargin, maxHeight);
+                childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(realHeight > 0 ? realHeight : 0,
+                        MeasureSpec.EXACTLY);
             } else {
-                heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY);
+                childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.EXACTLY);
             }
-            child.measure(childWidthMeasureSpec, heightSpec);
+            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }
     }
 
@@ -596,7 +596,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void layoutHeaderView(View child, int offsetHeader) {
-        if (isDisabledRefresh() || isEnabledHideHeaderView()) {
+        if (isDisabledRefresh() || isEnabledHideHeaderView() || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
                 SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
@@ -608,8 +608,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         int left, right, top = 0, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
-                int offset = offsetHeader - mIndicator.getHeaderHeight();
-                top = getPaddingTop() + lp.topMargin + offset;
+                int offset = offsetHeader - child.getMeasuredHeight();
+                top = getPaddingTop() + offset - lp.bottomMargin;
                 break;
             case IRefreshView.STYLE_PIN:
             case IRefreshView.STYLE_SCALE:
@@ -618,14 +618,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             case IRefreshView.STYLE_FOLLOW_PIN:
             case IRefreshView.STYLE_FOLLOW_SCALE:
                 if (offsetHeader <= mIndicator.getHeaderHeight()) {
-                    top = getPaddingTop() + lp.topMargin + offsetHeader - mIndicator.getHeaderHeight();
+                    top = getPaddingTop() + offsetHeader - child.getMeasuredHeight() - lp
+                            .bottomMargin;
                 } else {
                     top = getPaddingTop() + lp.topMargin;
                 }
                 break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
                 if (offsetHeader <= mIndicator.getHeaderHeight()) {
-                    top = getPaddingTop() + lp.topMargin + offsetHeader - mIndicator.getHeaderHeight();
+                    top = getPaddingTop() + offsetHeader - child.getMeasuredHeight() - lp
+                            .bottomMargin;
                 } else {
                     top = getPaddingTop() + lp.topMargin + (offsetHeader - mIndicator
                             .getHeaderHeight()) / 2;
@@ -642,7 +644,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void layoutFooterView(View child, int offsetFooter, boolean pin, int contentBottom) {
-        if (isDisabledLoadMore() || isEnabledHideFooterView()) {
+        if (isDisabledLoadMore() || isEnabledHideFooterView() || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
                 SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
@@ -658,29 +660,24 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0);
                 break;
             case IRefreshView.STYLE_PIN:
-                top = getMeasuredHeight() - child.getMeasuredHeight()
-                        - lp.bottomMargin - lp.topMargin - getPaddingBottom();
+                top = getMeasuredHeight() - child.getMeasuredHeight() - lp.bottomMargin
+                        - getPaddingBottom();
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
             case IRefreshView.STYLE_FOLLOW_SCALE:
                 if (offsetFooter <= mIndicator.getFooterHeight()) {
                     top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0);
                 } else {
-                    top = getMeasuredHeight() - child.getMeasuredHeight()
-                            - lp.bottomMargin - lp.topMargin - getPaddingBottom();
+                    top = getMeasuredHeight() - child.getMeasuredHeight() - lp.bottomMargin
+                            - getPaddingBottom();
                 }
                 break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
                 if (offsetFooter <= mIndicator.getFooterHeight()) {
                     top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0);
                 } else {
-                    if (pin) {
-                        top = lp.topMargin + contentBottom + (offsetFooter - mIndicator
-                                .getFooterHeight()) / 2 - offsetFooter;
-                    } else {
-                        top = lp.topMargin + contentBottom + (offsetFooter - mIndicator
-                                .getFooterHeight()) / 2;
-                    }
+                    top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0)
+                            + (offsetFooter - mIndicator.getFooterHeight()) / 2;
                 }
                 break;
         }
@@ -772,13 +769,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
             if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mHeaderBackgroundColor);
+                final int bottom = Math.min(getPaddingTop() + mIndicator.getCurrentPos(),
+                        getHeight() - getPaddingTop());
                 canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
-                        getPaddingTop() + mIndicator.getCurrentPos(), mBackgroundPaint);
+                        bottom, mBackgroundPaint);
             } else if (!isDisabledLoadMore() && isMovingFooter() && mFooterBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mFooterBackgroundColor);
-                canvas.drawRect(getPaddingLeft(), getHeight() - getPaddingBottom() - mIndicator
-                        .getCurrentPos(), getWidth() - getPaddingRight(), getHeight() -
-                        getPaddingBottom(), mBackgroundPaint);
+                final int top = Math.max(getHeight() - getPaddingBottom() - mIndicator
+                        .getCurrentPos(), getPaddingTop());
+                canvas.drawRect(getPaddingLeft(), top, getWidth() - getPaddingRight(),
+                        getHeight() - getPaddingBottom(), mBackgroundPaint);
             }
         }
     }
@@ -3525,6 +3525,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.d(TAG, "moveHeaderPos(): delta: %s", delta);
         }
         mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
+
         // to keep the consistence with refresh, need to converse the deltaY
         movePos(delta);
     }
@@ -3563,21 +3564,26 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    protected void movePos(float deltaY) {
-        if (deltaY == 0f) {
+    protected void movePos(float delta) {
+        if (delta == 0f) {
             if (sDebug) {
-                SRLog.d(TAG, "movePos(): deltaY is zero");
+                SRLog.d(TAG, "movePos(): delta is zero");
             }
             return;
         }
         // has reached the top
-        if (deltaY < 0 && mIndicator.isInStartPosition()) {
+        if (delta < 0 && mIndicator.isInStartPosition()) {
             if (sDebug) {
                 SRLog.d(TAG, "movePos(): has reached the top");
             }
             return;
         }
-        int to = mIndicator.getCurrentPos() + Math.round(deltaY);
+        if (delta > 0) {
+            delta = tryToFilterMovePos(delta);
+            if (delta <= 0)
+                return;
+        }
+        int to = mIndicator.getCurrentPos() + Math.round(delta);
         // over top
         if (mIndicator.willOverTop(to)) {
             to = IIndicator.START_POS;
@@ -3595,6 +3601,28 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             updatePos(change);
         else if (isMovingFooter())
             updatePos(-change);
+    }
+
+
+    protected float tryToFilterMovePos(float deltaY) {
+        if (isMovingHeader() && !isDisabledRefresh() && mHeaderView != null) {
+            int style = mHeaderView.getStyle();
+            if (style != IRefreshView.STYLE_DEFAULT && style != IRefreshView.STYLE_FOLLOW_CENTER) {
+                final int maxHeight = getHeight() - getPaddingTop() - getPaddingBottom();
+                if (mIndicator.getCurrentPos() + Math.round(deltaY) > maxHeight) {
+                    return maxHeight - mIndicator.getCurrentPos();
+                }
+            }
+        } else if (isMovingFooter() && !isDisabledLoadMore() && mFooterView != null) {
+            int style = mFooterView.getStyle();
+            if (style != IRefreshView.STYLE_DEFAULT && style != IRefreshView.STYLE_FOLLOW_CENTER) {
+                final int maxHeight = getHeight() - getPaddingTop() - getPaddingBottom();
+                if (mIndicator.getCurrentPos() + Math.round(deltaY) > maxHeight) {
+                    return maxHeight - mIndicator.getCurrentPos();
+                }
+            }
+        }
+        return deltaY;
     }
 
     /**

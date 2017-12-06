@@ -4,7 +4,9 @@
 > 修改 `IRefreshView` 接口，统一 `indicator` 参数均为继承 `IIndicator` 的泛型 `T`。    
 > 删除 `addView`相关的final关键字，修改相关实现。    
 > 修改 `StoreHouseHeader` 的绘图问题。    
-> 优化手势传递，使甩动手势更自然。    
+> 优化手势传递，使甩动手势更自然。   
+> 修复刷新视图有Margin时，未正确布局的问题。     
+> 修复当刷新视图样式不为 `STYLE_DEFAULT` 和 `STYLE_FOLLOW_CENTER` ，并且当前的移动距离大于Srl的高度时仍改变移动距离的问题。    
 ## 1.6.0
 > 对现有项目进行分割，考虑到绝大多数都是自定义Header和Footer故拆分Core自带的2种风格Header和Footer到2个包（ext-classic和ext-material），至此Core包不再包含Header和Footer。如果需要可自行依赖。    
 > 修改手势传递实现，使效果更自然。    
