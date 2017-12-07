@@ -2,6 +2,7 @@ package me.dkzwm.widget.srl;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -351,16 +352,16 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     return dispatchTouchEventSuper(ev);
                 }
                 mLastMoveEvent = ev;
-                if (mNeedInterceptTouchEventInOnceTouch) {
+                if (mIsInterceptTouchEventInOnceTouch) {
                     mOverScrollChecker.abortIfWorking();
                     if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning) {
                         makeNewTouchDownEvent(ev);
-                        mNeedInterceptTouchEventInOnceTouch = false;
+                        mIsInterceptTouchEventInOnceTouch = false;
                     }
                     return true;
                 }
                 if (mIsLastOverScrollCanNotAbort) {
-                    if (mIndicator.isInStartPosition() && !mOverScrollChecker.mScrolling) {
+                    if (mIndicator.isInStartPosition() && !mOverScrollChecker.mIsScrolling) {
                         makeNewTouchDownEvent(ev);
                         mIsLastOverScrollCanNotAbort = false;
                     }
@@ -605,12 +606,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
         if (sDebug) {
             SRLog.d(TAG, "onNestedPreScroll(): dx: %s, dy: %s, consumed: %s",
                     dx, dy, Arrays.toString(consumed));
         }
-        if (mNeedInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort) {
+        if (mIsInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort) {
             consumed[0] = dx;
             onNestedPreScroll(dx, dy, consumed);
             return;
@@ -670,7 +671,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
                     " dyUnconsumed: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
         }
-        if (mNeedInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort)
+        if (mIsInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort)
             return;
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);

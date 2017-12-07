@@ -68,6 +68,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
+        mRefreshLayout.setEnabledCanNotInterruptScrollWhenRefreshCompleted(true);
         mRefreshLayout.autoRefresh(false);
 
     }
