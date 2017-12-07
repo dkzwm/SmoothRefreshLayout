@@ -24,6 +24,7 @@ Thank him for providing such a great open source library ！
  - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
  - Support Multi-State:STATE_CONTENT(Default state)、STATE_ERROR(Error state),STATE_EMPTY(Empty state),STATE_CUSTOM(Custom state).
  - Many callback interface and debugging information.
+ - Support synchronous Fling gestures.
 
 ## Demo
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    

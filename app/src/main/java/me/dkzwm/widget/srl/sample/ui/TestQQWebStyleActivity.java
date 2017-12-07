@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -62,6 +63,14 @@ public class TestQQWebStyleActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mWebView != null) {
+            mWebView.removeAllViews();
+            ((ViewGroup) mWebView.getParent()).removeView(mWebView);
+            mWebView.setTag(null);
+            mWebView.clearHistory();
+            mWebView.destroy();
+            mWebView = null;
+        }
         mHandler.removeCallbacksAndMessages(null);
     }
 }

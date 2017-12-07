@@ -22,6 +22,7 @@
  - 支持ListView，GridView，RecyclerView加载更多的平滑滚动.
  - 支持多状态视图,STATE_CONTENT(默认状态)、STATE_ERROR(异常状态),STATE_EMPTY(空状态),STATE_CUSTOM(自定义状态).
  - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
+ - 支持同步Fling手势.
 
 ## 演示程序
 下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
