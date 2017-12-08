@@ -72,29 +72,40 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
         ClassicConfig.createClassicViews(this);
-        mArrowImageView = (ImageView) findViewById(R.id.sr_classic_arrow);
-        mTitleTextView = (TextView) findViewById(R.id.sr_classic_title);
-        mLastUpdateTextView = (TextView) findViewById(R.id.sr_classic_last_update);
-        mProgressBar = (ProgressBar) findViewById(R.id.sr_classic_progress);
-        mLastUpdateTimeUpdater = new LastUpdateTimeUpdater(this, this);
+        mArrowImageView = findViewById(R.id.sr_classic_arrow);
+        mTitleTextView = findViewById(R.id.sr_classic_title);
+        mLastUpdateTextView = findViewById(R.id.sr_classic_last_update);
+        mProgressBar = findViewById(R.id.sr_classic_progress);
+        mLastUpdateTimeUpdater = new LastUpdateTimeUpdater(this);
         mArrowImageView.clearAnimation();
         mArrowImageView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
     }
 
-    @Override
     public void tryUpdateLastUpdateTime() {
-        if (TextUtils.isEmpty(mLastUpdateTimeKey) || !mShouldShowLastUpdate) {
+        if (canUpdate()) {
+            updateTime(this);
+        }
+    }
+
+    public TextView getLastUpdateTextView() {
+        return mLastUpdateTextView;
+    }
+
+    @Override
+    public void updateTime(AbsClassicRefreshView refreshView) {
+        String time = ClassicConfig.getLastUpdateTime(getContext(), mLastUpdateTime, mLastUpdateTimeKey);
+        if (TextUtils.isEmpty(time)) {
             mLastUpdateTextView.setVisibility(GONE);
         } else {
-            String time = ClassicConfig.getLastUpdateTime(getContext(), mLastUpdateTime, mLastUpdateTimeKey);
-            if (TextUtils.isEmpty(time)) {
-                mLastUpdateTextView.setVisibility(GONE);
-            } else {
-                mLastUpdateTextView.setVisibility(VISIBLE);
-                mLastUpdateTextView.setText(time);
-            }
+            mLastUpdateTextView.setVisibility(VISIBLE);
+            mLastUpdateTextView.setText(time);
         }
+    }
+
+    @Override
+    public boolean canUpdate() {
+        return !(TextUtils.isEmpty(mLastUpdateTimeKey) || !mShouldShowLastUpdate);
     }
 
     @Override
@@ -113,6 +124,10 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     public void setStyle(@RefreshViewStyle int style) {
         mStyle = style;
         requestLayout();
+    }
+
+    public void setTimeUpdater(@NonNull LastUpdateTimeUpdater.ITimeUpdater timeUpdater) {
+        mLastUpdateTimeUpdater.setTimeUpdater(timeUpdater);
     }
 
     public void setDefaultHeightInDP(@IntRange(from = 0) int defaultHeightInDP) {
@@ -153,6 +168,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
             mProgressBar.setVisibility(INVISIBLE);
             mTitleTextView.setVisibility(GONE);
             mArrowImageView.setVisibility(GONE);
+            mLastUpdateTextView.setVisibility(GONE);
             mShouldShowLastUpdate = false;
             mLastUpdateTimeUpdater.stop();
             tryUpdateLastUpdateTime();
@@ -160,7 +176,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     }
 
     public void setRotateAniTime(int time) {
-        if (time == mRotateAniTime || time == 0) {
+        if (time == mRotateAniTime || time <= 0) {
             return;
         }
         mRotateAniTime = time;

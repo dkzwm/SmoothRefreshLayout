@@ -128,18 +128,23 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         mArrowImageView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
+        final boolean noMoreData = frame.isEnabledLoadMoreNoMoreData();
         if (frame.isRefreshSuccessful()) {
-            mTitleTextView.setText(mLoadSuccessfulRes);
+            mTitleTextView.setText(noMoreData ? mNoMoreDataRes : mLoadSuccessfulRes);
             mLastUpdateTime = System.currentTimeMillis();
             ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
         } else {
-            mTitleTextView.setText(mLoadFailRes);
+            mTitleTextView.setText(noMoreData ? mNoMoreDataRes : mLoadFailRes);
+        }
+        if (noMoreData) {
+            mLastUpdateTimeUpdater.stop();
+            mLastUpdateTextView.setVisibility(GONE);
         }
     }
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, T indicator) {
-        final int mOffsetToRefresh = indicator.getOffsetToLoadMore();
+        final int offsetToLoadMore = indicator.getOffsetToLoadMore();
         final int currentPos = indicator.getCurrentPos();
         final int lastPos = indicator.getLastPos();
 
@@ -157,7 +162,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
             return;
         }
         mNoMoreDataChangedView = false;
-        if (currentPos < mOffsetToRefresh && lastPos >= mOffsetToRefresh) {
+        if (currentPos < offsetToLoadMore && lastPos >= offsetToLoadMore) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                 mTitleTextView.setVisibility(VISIBLE);
                 if (frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
@@ -169,7 +174,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
                 mArrowImageView.clearAnimation();
                 mArrowImageView.startAnimation(mReverseFlipAnimation);
             }
-        } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
+        } else if (currentPos > offsetToLoadMore && lastPos <= offsetToLoadMore) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                 mTitleTextView.setVisibility(VISIBLE);
                 if (!frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {

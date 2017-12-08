@@ -456,7 +456,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     if (isDisabledRefresh())
                         return dispatchTouchEventSuper(ev);
                     if ((!canHeaderMoveRight && movingRight)) {
-                        sendDownEvent(false);
+                        sendDownEvent();
                         return dispatchTouchEventSuper(ev);
                     }
                     moveHeaderPos(offsetX);
@@ -465,7 +465,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (isDisabledLoadMore())
                     return dispatchTouchEventSuper(ev);
                 if ((!canFooterMoveLeft && !movingRight)) {
-                    sendDownEvent(false);
+                    sendDownEvent();
                     return dispatchTouchEventSuper(ev);
                 }
                 moveFooterPos(offsetX);

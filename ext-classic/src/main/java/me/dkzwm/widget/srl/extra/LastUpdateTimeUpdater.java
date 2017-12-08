@@ -1,6 +1,6 @@
 package me.dkzwm.widget.srl.extra;
 
-import android.view.View;
+import android.support.annotation.NonNull;
 
 /**
  * Created by dkzwm on 2017/10/11.
@@ -8,13 +8,17 @@ import android.view.View;
  * @author dkzwm
  */
 public class LastUpdateTimeUpdater implements Runnable {
-    private boolean mRunning = false;
+    private AbsClassicRefreshView mRefreshView;
     private ITimeUpdater mUpdater;
-    private View mRefreshView;
+    private boolean mRunning = false;
 
-    LastUpdateTimeUpdater(ITimeUpdater updater, View refreshView) {
-        mUpdater = updater;
+    LastUpdateTimeUpdater(AbsClassicRefreshView refreshView) {
         mRefreshView = refreshView;
+        mUpdater = refreshView;
+    }
+
+    void setTimeUpdater(@NonNull ITimeUpdater updater) {
+        mUpdater = updater;
     }
 
     public void start() {
@@ -32,7 +36,9 @@ public class LastUpdateTimeUpdater implements Runnable {
     @Override
     public void run() {
         if (mUpdater != null && mRefreshView != null) {
-            mUpdater.tryUpdateLastUpdateTime();
+            if (mUpdater.canUpdate()) {
+                mUpdater.updateTime(mRefreshView);
+            }
             mRefreshView.removeCallbacks(this);
             if (mRunning) {
                 mRefreshView.postDelayed(this, 1000);
@@ -41,6 +47,8 @@ public class LastUpdateTimeUpdater implements Runnable {
     }
 
     public interface ITimeUpdater {
-        void tryUpdateLastUpdateTime();
+        boolean canUpdate();
+
+        void updateTime(AbsClassicRefreshView view);
     }
 }

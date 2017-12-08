@@ -114,11 +114,11 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout frame, byte status, T indicator) {
-        final int mOffsetToRefresh = indicator.getOffsetToRefresh();
+        final int offsetToRefresh = indicator.getOffsetToRefresh();
         final int currentPos = indicator.getCurrentPos();
         final int lastPos = indicator.getLastPos();
 
-        if (currentPos < mOffsetToRefresh && lastPos >= mOffsetToRefresh) {
+        if (currentPos < offsetToRefresh && lastPos >= offsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                 mTitleTextView.setVisibility(VISIBLE);
                 if (frame.isEnabledPullToRefresh()) {
@@ -130,7 +130,7 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
                 mArrowImageView.clearAnimation();
                 mArrowImageView.startAnimation(mReverseFlipAnimation);
             }
-        } else if (currentPos > mOffsetToRefresh && lastPos <= mOffsetToRefresh) {
+        } else if (currentPos > offsetToRefresh && lastPos <= offsetToRefresh) {
             if (indicator.hasTouched() && status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
                 mTitleTextView.setVisibility(VISIBLE);
                 if (!frame.isEnabledPullToRefresh()) {

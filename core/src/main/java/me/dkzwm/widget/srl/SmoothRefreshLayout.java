@@ -2031,17 +2031,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return (mFlag & FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA) > 0;
     }
 
-    /**
-     * The flag has been set to enabled when Footer has no more data to no longer need spring
-     * back<br/>
-     * <p>
-     * 是否已经开启加载更多完成已无更多数据且不需要回滚动作
-     *
-     * @return Enabled
-     */
-    public boolean isEnabledLoadMoreNoMoreDataNoNeedSpringBack() {
-        return (mFlag & FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK) > 0;
-    }
 
     /**
      * If @param enable has been set to true. The footer will show no more data and will never
@@ -2057,6 +2046,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         } else {
             mFlag = mFlag & ~FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA;
         }
+    }
+
+    /**
+     * The flag has been set to enabled when Footer has no more data to no longer need spring
+     * back<br/>
+     * <p>
+     * 是否已经开启加载更多完成已无更多数据且不需要回滚动作
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledLoadMoreNoMoreDataNoNeedSpringBack() {
+        return (mFlag & FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK) > 0;
     }
 
     /**
@@ -3105,7 +3106,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     offsetX = ev.getX() - pressDownPoint[0];
                     offsetY = ev.getY() - pressDownPoint[1];
                     if (Math.abs(offsetX) > mTouchSlop || Math.abs(offsetY) > mTouchSlop) {
-                        sendCancelEvent(false);
+                        sendCancelEvent();
                         return true;
                     } else {
                         return super.dispatchTouchEvent(ev);
@@ -3116,7 +3117,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (mIndicator.hasLeftStartPosition()) {
                         onFingerUp(false);
                         if (mIndicator.hasMovedAfterPressedDown()) {
-                            sendCancelEvent(false);
+                            sendCancelEvent();
                             return true;
                         }
                         return super.dispatchTouchEvent(ev);
@@ -3271,7 +3272,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (isDisabledRefresh())
                         return super.dispatchTouchEvent(ev);
                     if ((!canHeaderMoveDown && movingDown)) {
-                        sendDownEvent(false);
+                        sendDownEvent();
                         return super.dispatchTouchEvent(ev);
                     }
                     moveHeaderPos(offsetY);
@@ -3280,7 +3281,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (isDisabledLoadMore())
                     return super.dispatchTouchEvent(ev);
                 if ((!canFooterMoveUp && !movingDown)) {
-                    sendDownEvent(false);
+                    sendDownEvent();
                     return super.dispatchTouchEvent(ev);
                 }
                 moveFooterPos(offsetY);
@@ -3363,41 +3364,34 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
 
     protected void makeNewTouchDownEvent(MotionEvent ev) {
-        final boolean isNeedDetectGesture = isEnabledOverScroll();
-        sendCancelEvent(isNeedDetectGesture);
-        sendDownEvent(isNeedDetectGesture);
+        sendCancelEvent();
+        sendDownEvent();
         mIndicator.onFingerUp();
         mIndicator.onFingerDown(ev.getX(), ev.getY());
     }
 
-    protected void sendCancelEvent(boolean eventNeedDetectGesture) {
+    protected void sendCancelEvent() {
         if (mHasSendCancelEvent || mLastMoveEvent == null) return;
         if (sDebug) {
-            SRLog.i(TAG, "sendCancelEvent(): eventNeedDetectGesture: %s", eventNeedDetectGesture);
+            SRLog.i(TAG, "sendCancelEvent()");
         }
         final MotionEvent last = mLastMoveEvent;
         MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime() +
                         ViewConfiguration.getLongPressTimeout(),
                 MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
-        if (eventNeedDetectGesture) {
-            mGestureDetector.onTouchEvent(ev);
-        }
         mHasSendCancelEvent = true;
         mHasSendDownEvent = false;
         super.dispatchTouchEvent(ev);
     }
 
-    protected void sendDownEvent(boolean eventNeedDetectGesture) {
+    protected void sendDownEvent() {
         if (mHasSendDownEvent || mLastMoveEvent == null) return;
         if (sDebug) {
-            SRLog.i(TAG, "sendDownEvent(): eventNeedDetectGesture: %s", eventNeedDetectGesture);
+            SRLog.i(TAG, "sendDownEvent()");
         }
         final MotionEvent last = mLastMoveEvent;
         MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
-        if (eventNeedDetectGesture) {
-            mGestureDetector.onTouchEvent(ev);
-        }
         mHasSendCancelEvent = false;
         mHasSendDownEvent = true;
         super.dispatchTouchEvent(ev);
@@ -3693,7 +3687,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         // once moved, cancel event will be sent to child
         if (mIndicator.hasTouched() && !mNestedScrollInProgress
                 && mIndicator.hasMovedAfterPressedDown()) {
-            sendCancelEvent(false);
+            sendCancelEvent();
         }
         final boolean isMovingHeader = isMovingHeader();
         final boolean isMovingFooter = isMovingFooter();
@@ -3721,7 +3715,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             tryToNotifyReset();
             // recover event to children
             if (mIndicator.hasTouched() && !mNestedScrollInProgress && mHasSendCancelEvent) {
-                sendDownEvent(false);
+                sendDownEvent();
             }
         }
         tryToPerformRefreshWhenMoved();

@@ -51,74 +51,74 @@
             android:id="@+id/button_with_listView_change_empty_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:text="@string/change_state_to_empty"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_change_content_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:layout_toRightOf="@id/button_with_listView_change_empty_state"
             android:text="@string/change_state_to_content"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_change_error_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_with_listView_change_empty_state"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:text="@string/change_state_to_error"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_change_custom_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_with_listView_change_empty_state"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:layout_toRightOf="@id/button_with_listView_change_error_state"
             android:text="@string/change_state_to_custom"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_disable_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_with_listView_change_custom_state"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:text="@string/disable_refresh"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_enable_refresh"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_with_listView_change_custom_state"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:layout_toRightOf="@id/button_with_listView_disable_refresh"
             android:text="@string/enable_refresh"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_disable_loadMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_with_listView_disable_refresh"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:text="@string/disable_loadMore"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
 
         <Button
             android:id="@+id/button_with_listView_enable_loadMore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/button_with_listView_disable_refresh"
-            android:layout_margin="4dp"
+            android:layout_margin="2dp"
             android:layout_toRightOf="@id/button_with_listView_disable_loadMore"
             android:text="@string/enable_loadMore"
-            android:textSize="12sp"/>
+            android:textSize="10sp"/>
     </RelativeLayout>
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

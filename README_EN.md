@@ -13,18 +13,19 @@ Thank him for providing such a great open source library ！
 
 ## Features:
  - Can support all Views, according to the specific needs to adaptation.
+ - Support Multi-Touch.
  - Support Nested-Scroll feature, implemented the NestedScrollingChild, NestedScrollingParent interface.
- - Extends the ViewGroup,has excellent performance,support similar FameLayout feature（Gravity、Margin).
+ - Extends the ViewGroup, has excellent performance,support similar FameLayout feature（Gravity、Margin).
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）.
  - Support Cross boundary rebound(OverScroll).
  - Support Horizontal refresh.
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
- - Support Refresh view has six styles:STYLE_DEFAULT(Do not change the height by default)、STYLE_SCALE(Dynamically change the height)、STYLE_PIN(Pinned the refresh view)、STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
- - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）,PS:TaoBao-Senond-Floor、JD-Activity.
+ - Support Refresh view has six styles: STYLE_DEFAULT(Do not change the height by default)、 STYLE_SCALE(Dynamically change the height)、 STYLE_PIN(Pinned the refresh view)、 STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、 STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、 STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
+ - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）, PS:TaoBao-Senond-Floor、JD-Activity.
  - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
- - Support Multi-State:STATE_CONTENT(Default state)、STATE_ERROR(Error state),STATE_EMPTY(Empty state),STATE_CUSTOM(Custom state).
- - Many callback interface and debugging information.
+ - Support Multi-State: STATE_CONTENT(Default state)、 STATE_ERROR(Error state)、 STATE_EMPTY(Empty state)、 STATE_CUSTOM(Custom state).
  - Support synchronous Fling gestures.
+ - Many callback interface and debugging information.
 
 ## Demo
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
