@@ -564,7 +564,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mHeaderView != null && child == mHeaderView.getView()) {
                 layoutHeaderView(child, offsetHeaderY);
             } else if (mTargetView != null && child == mTargetView
-                    || (mPreviousState != -1 && mChangeStateAnimator != null
+                    || (mPreviousState != STATE_NONE && mChangeStateAnimator != null
                     && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 final int left = paddingLeft + lp.leftMargin;
@@ -2300,6 +2300,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     public void setContentView(@State int state, @NonNull View content) {
         switch (state) {
+            case STATE_NONE:
+                throw new IllegalArgumentException("STATE_NONE can not be used, It only can be " +
+                        "used as an initial value");
             case STATE_CONTENT:
                 if (mContentView != null) {
                     removeView(mContentView);
@@ -2421,7 +2424,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public View getView(@State int state) {
         switch (state) {
             case STATE_NONE:
-                return null;
+                throw new IllegalArgumentException("STATE_NONE can not be used, It only can be " +
+                        "used as an initial value");
             case STATE_CONTENT:
                 ensureContentView();
                 return mContentView;
@@ -2874,7 +2878,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected void destroy() {
         reset();
-        mPreviousState = -1;
+        mPreviousState = STATE_NONE;
         if (mHeaderRefreshCompleteHook != null)
             mHeaderRefreshCompleteHook.mLayout = null;
         mHeaderRefreshCompleteHook = null;
@@ -3042,7 +3046,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mTargetView = mErrorView;
                     break;
                 case STATE_CUSTOM:
-                default:
                     ensureCustomView();
                     mTargetView = mCustomView;
                     break;
@@ -3167,29 +3170,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     return super.dispatchTouchEvent(ev);
                 }
                 mLastMoveEvent = ev;
-                if (mIsInterceptTouchEventInOnceTouch) {
-                    mOverScrollChecker.abortIfWorking();
-                    if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning) {
-                        makeNewTouchDownEvent(ev);
-                        mIsInterceptTouchEventInOnceTouch = false;
-                    }
+                if (tryToFilterTouchEventInDispatchTouchEvent(ev))
                     return true;
-                }
-                if (mIsLastOverScrollCanNotAbort) {
-                    if (mIndicator.isInStartPosition() && !mOverScrollChecker.mIsScrolling) {
-                        makeNewTouchDownEvent(ev);
-                        mIsLastOverScrollCanNotAbort = false;
-                    }
-                    return true;
-                }
-                if (mIsSpringBackCanNotBeInterrupted) {
-                    if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning
-                            && !mOverScrollChecker.mIsScrolling) {
-                        makeNewTouchDownEvent(ev);
-                        mIsSpringBackCanNotBeInterrupted = false;
-                    }
-                    return true;
-                }
                 tryToResetMovingStatus();
                 mIndicator.onFingerMove(ev.getX(index), ev.getY(index));
                 float offsetX, offsetY;
@@ -3305,6 +3287,34 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 return true;
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+
+    protected boolean tryToFilterTouchEventInDispatchTouchEvent(MotionEvent ev) {
+        if (mIsInterceptTouchEventInOnceTouch) {
+            mOverScrollChecker.abortIfWorking();
+            if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning) {
+                makeNewTouchDownEvent(ev);
+                mIsInterceptTouchEventInOnceTouch = false;
+            }
+            return true;
+        }
+        if (mIsLastOverScrollCanNotAbort) {
+            if (mIndicator.isInStartPosition() && !mOverScrollChecker.mIsScrolling) {
+                makeNewTouchDownEvent(ev);
+                mIsLastOverScrollCanNotAbort = false;
+            }
+            return true;
+        }
+        if (mIsSpringBackCanNotBeInterrupted) {
+            if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning
+                    && !mOverScrollChecker.mIsScrolling) {
+                makeNewTouchDownEvent(ev);
+                mIsSpringBackCanNotBeInterrupted = false;
+            }
+            return true;
+        }
+        return false;
     }
 
     protected void preparePaint() {

@@ -182,7 +182,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             if (mHeaderView != null && child == mHeaderView.getView()) {
                 layoutHeaderView(child, offsetHeader);
             } else if (mTargetView != null && child == mTargetView
-                    || (mPreviousState != -1 && mChangeStateAnimator != null
+                    || (mPreviousState != STATE_NONE && mChangeStateAnimator != null
                     && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 final int top = paddingTop + lp.topMargin;
@@ -317,13 +317,16 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
             if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mHeaderBackgroundColor);
-                canvas.drawRect(getPaddingLeft(), getPaddingTop(), getPaddingLeft() + mIndicator
-                        .getCurrentPos(), getHeight() - getPaddingBottom(), mBackgroundPaint);
+                final int right = Math.min(getPaddingLeft() + mIndicator.getCurrentPos(),
+                        getWidth() - getPaddingLeft());
+                canvas.drawRect(getPaddingLeft(), getPaddingTop(), right, getHeight() -
+                        getPaddingBottom(), mBackgroundPaint);
             } else if (!isDisabledLoadMore() && isMovingFooter() && mFooterBackgroundColor != -1) {
                 mBackgroundPaint.setColor(mFooterBackgroundColor);
-                canvas.drawRect(getWidth() - getPaddingRight() - mIndicator.getCurrentPos(),
-                        getPaddingTop(), getWidth() - getPaddingRight(), getHeight() -
-                                getPaddingBottom(), mBackgroundPaint);
+                final int left = Math.max(getWidth() - getPaddingRight() - mIndicator
+                        .getCurrentPos(), getPaddingLeft());
+                canvas.drawRect(left, getPaddingTop(), getWidth() - getPaddingRight(),
+                        getHeight() - getPaddingBottom(), mBackgroundPaint);
             }
         }
     }
@@ -352,21 +355,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     return dispatchTouchEventSuper(ev);
                 }
                 mLastMoveEvent = ev;
-                if (mIsInterceptTouchEventInOnceTouch) {
-                    mOverScrollChecker.abortIfWorking();
-                    if (mIndicator.isInStartPosition() && !mScrollChecker.mIsRunning) {
-                        makeNewTouchDownEvent(ev);
-                        mIsInterceptTouchEventInOnceTouch = false;
-                    }
+                if (tryToFilterTouchEventInDispatchTouchEvent(ev))
                     return true;
-                }
-                if (mIsLastOverScrollCanNotAbort) {
-                    if (mIndicator.isInStartPosition() && !mOverScrollChecker.mIsScrolling) {
-                        makeNewTouchDownEvent(ev);
-                        mIsLastOverScrollCanNotAbort = false;
-                    }
-                    return true;
-                }
                 tryToResetMovingStatus();
                 mIndicator.onFingerMove(ev.getX(index), ev.getY(index));
                 float offsetX, offsetY;
@@ -520,6 +510,11 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
+    protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
+        return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+    }
+
+    @Override
     protected boolean offsetChild(int change, boolean isMovingHeader, boolean isMovingFooter) {
         boolean needRequestLayout = false;
         if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader
@@ -611,7 +606,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             SRLog.d(TAG, "onNestedPreScroll(): dx: %s, dy: %s, consumed: %s",
                     dx, dy, Arrays.toString(consumed));
         }
-        if (mIsInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort) {
+        if (isNeedFilterTouchEvent()) {
             consumed[0] = dx;
             onNestedPreScroll(dx, dy, consumed);
             return;
@@ -671,7 +666,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
                     " dyUnconsumed: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
         }
-        if (mIsInterceptTouchEventInOnceTouch || mIsLastOverScrollCanNotAbort)
+        if (isNeedFilterTouchEvent())
             return;
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
