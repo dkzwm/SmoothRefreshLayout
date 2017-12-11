@@ -4500,7 +4500,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(SmoothRefreshLayout.TAG,
                         "OverScrollChecker: checkPreFling(): finished: %s, currentPos: %s, " +
                                 "currentY:%s, lastY: %s, delta: %s",
-                        finished, mIndicator.getCurrentPos(), currY, mLastY, deltaY);
+                        finished, SmoothRefreshLayout.this.mIndicator.getCurrentPos(), currY,
+                        mLastY, deltaY);
             }
             if (!finished) {
                 mLastY = currY;
@@ -4513,6 +4514,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
             } else {
                 destroy();
+                SmoothRefreshLayout.this.mDelayedNestedFling = false;
                 SmoothRefreshLayout.this.onRelease();
             }
         }
@@ -4651,8 +4653,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(SmoothRefreshLayout.TAG,
                         "ScrollChecker: run(): finished: %s, start: %s, to: %s, currentPos: %s, " +
                                 "currentY:%s, last: %s, delta: %s",
-                        finished, mLastStart, mLastTo, mIndicator.getCurrentPos(), curY,
-                        mLastY, deltaY);
+                        finished, mLastStart, mLastTo, SmoothRefreshLayout.this.mIndicator
+                                .getCurrentPos(), curY, mLastY, deltaY);
             }
             if (!finished) {
                 mLastY = curY;
