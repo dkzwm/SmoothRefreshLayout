@@ -2062,9 +2062,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * The flag has been set to enabled. The scroller rollback can not be interrupted when
-     * refresh completed <br/>
+     * refresh completed<br/>
      * <p>
-     * 是否已经开启加载更多完成已无更多数据且不需要回滚动作
+     * 是否已经开启当刷新完成时，回滚动作不能被打断
      *
      * @return Enabled
      */
