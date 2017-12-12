@@ -80,15 +80,15 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.1'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.1'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.1'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.1'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.1'
 }
 ```
 #### 在Xml中配置
@@ -351,6 +351,7 @@ mRefreshLayout.setFooterView(footer);
 |setEnableCompatLoadMoreScroll|boolean|设置是否开启加载更多时的同步滚动（默认:`true`）|
 |setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
+|setEnabledCanNotInterruptScrollWhenRefreshCompleted|boolean|设置开启当刷新完成时，回滚动作不能被打断|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|

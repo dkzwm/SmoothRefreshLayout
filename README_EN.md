@@ -80,15 +80,15 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.1'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.1'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.1'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.1'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.1'
 }
 ```
 #### Use Xml to config
@@ -382,6 +382,7 @@ public interface IRefreshView<T extends IIndicator> {
  |setEnableCompatLoadMoreScroll|boolean|Set whether to turn on the synchronized scroll when Footer loading（Default: `true`）|
  |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
+ |setEnabledCanNotInterruptScrollWhenRefreshCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
  
  #### SmoothRefreshLayout callbacks
  |Name|Params|Desc|
