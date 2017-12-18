@@ -33,7 +33,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  * @author dkzwm
  */
 public class WaveHeader extends View implements IRefreshView {
-    protected Interpolator mInterpolator = new BounceInterpolator();
+    private static final Interpolator sBounceInterpolator = new BounceInterpolator();
     protected Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -230,7 +230,7 @@ public class WaveHeader extends View implements IRefreshView {
         if (layout.isEnabledKeepRefreshView() && mStatus != SmoothRefreshLayout.SR_STATUS_COMPLETE) {
             final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
             if (mFingerUpY > offsetToKeepHeader && !layout.isDisabledPerformRefresh()) {
-                layout.updateScrollerInterpolator(mInterpolator);
+                layout.updateScrollerInterpolator(sBounceInterpolator);
             } else {
                 layout.resetScrollerInterpolator();
             }

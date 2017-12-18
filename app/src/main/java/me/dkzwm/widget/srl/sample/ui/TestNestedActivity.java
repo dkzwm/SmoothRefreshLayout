@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,12 +15,11 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 import me.dkzwm.widget.srl.utils.PixelUtl;
-import me.dkzwm.widget.srl.utils.ScrollCompat;
+import me.dkzwm.widget.srl.utils.QuickConfigAppBarUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -29,15 +27,11 @@ import me.dkzwm.widget.srl.utils.ScrollCompat;
  * @author dkzwm
  */
 public class TestNestedActivity extends AppCompatActivity {
-    private int mMinOffset;
     private MaterialSmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
-    private AppBarLayout mAppBarLayout;
     private RecyclerViewAdapter mAdapter;
     private Handler mHandler = new Handler();
     private int mCount = 0;
-    private int mOffset = -1;
-    private boolean mFullyExpanded;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +73,7 @@ public class TestNestedActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, isRefresh?2000:10000);
+                }, isRefresh ? 2000 : 10000);
             }
 
             @Override
@@ -88,34 +82,8 @@ public class TestNestedActivity extends AppCompatActivity {
         });
         mRefreshLayout.getDefaultHeader().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
-        mAppBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout_test_nested);
-        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                mOffset = verticalOffset;
-                mFullyExpanded = (appBarLayout.getHeight() - appBarLayout.getBottom()) == 0;
-                mMinOffset = Math.min(mOffset, mMinOffset);
-            }
-        });
-        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
-            @Override
-            public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
-                return !mFullyExpanded || ScrollCompat.canChildScrollUp(mRecyclerView);
-            }
-        });
-        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack() {
-            @Override
-            public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
-                return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(mRecyclerView);
-            }
-        });
         mRefreshLayout.setLoadMoreScrollTargetView(mRecyclerView);
-        mRefreshLayout.setOnLoadMoreScrollCallback(new SmoothRefreshLayout.OnLoadMoreScrollCallback() {
-            @Override
-            public void onScroll(View content, float deltaY) {
-                ScrollCompat.scrollCompat(mRecyclerView, deltaY);
-            }
-        });
+        mRefreshLayout.setLifecycleObserver(new QuickConfigAppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }
 

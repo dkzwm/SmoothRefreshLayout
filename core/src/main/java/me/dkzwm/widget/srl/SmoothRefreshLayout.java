@@ -60,8 +60,7 @@ import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/5/18.
- * <p>
- * Part of the code comes from @see <a href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">
+ * <p>Part of the code comes from @see <a href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">
  * android-Ultra-Pull-To-Refresh</a><br/>
  * 部分代码实现来自 @see <a href="https://github.com/liaohuqiu">LiaoHuQiu</a> 的UltraPullToRefresh项目</p>
  * Support NestedScroll feature;<br/>
@@ -69,7 +68,7 @@ import me.dkzwm.widget.srl.utils.ScrollCompat;
  * Support Refresh and LoadMore feature;<br/>
  * Support AutoRefresh feature;<br/>
  * Support AutoLoadMore feature;<br/>
- * Support MultiState feature;<br/>
+ * Support MultiState feature;<br/></p>
  *
  * @author dkzwm
  */
@@ -101,7 +100,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     };
     protected static final Interpolator sLinearInterpolator = new LinearInterpolator();
-    //local
     private static final byte FLAG_AUTO_REFRESH_AT_ONCE = 0x01;
     private static final byte FLAG_AUTO_REFRESH_BUT_LATER = 0x01 << 1;
     private static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
@@ -197,6 +195,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     protected ValueAnimator mChangeStateAnimator;
     private int mFlag = FLAG_DISABLE_LOAD_MORE;
+    private ILifecycleObserver mLifecycleObserver;
     private Interpolator mSpringInterpolator;
     private Interpolator mOverScrollInterpolator;
     private IGestureDetector mGestureDetector;
@@ -228,14 +227,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         super(context, attrs, defStyleAttr);
         createIndicator();
         if (mIndicator == null)
-            throw new IllegalArgumentException("You must create a IIndicator, current indicator " +
-                    "is null");
+            throw new IllegalArgumentException("You must create a IIndicator, current indicator is null");
         mInflater = LayoutInflater.from(context);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout,
                 0, 0);
         if (arr != null) {
-            mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content,
-                    mContentResId);
+            mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content, mContentResId);
             float resistance = arr.getFloat(R.styleable
                     .SmoothRefreshLayout_sr_resistance, IIndicator.DEFAULT_RESISTANCE);
             mIndicator.setResistance(resistance);
@@ -268,7 +265,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mDurationToCloseFooter = arr.getInt(R.styleable
                     .SmoothRefreshLayout_sr_duration_to_close_of_footer, mDurationToCloseFooter);
 
-            //ratio
             float ratio = arr.getFloat(R.styleable.
                     SmoothRefreshLayout_sr_ratio_of_refresh_height_to_refresh, IIndicator
                     .DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH);
@@ -288,7 +284,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mIndicator.setOffsetRatioToKeepFooterWhileLoading(arr.getFloat(R.styleable
                     .SmoothRefreshLayout_sr_offset_ratio_to_keep_footer_while_Loading, ratio));
 
-            //max move ratio of height
             ratio = arr.getFloat(R.styleable.
                     SmoothRefreshLayout_sr_can_move_the_max_ratio_of_refresh_height, IIndicator
                     .DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT);
@@ -361,9 +356,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set the static refresh view creator, if the refresh view is null and the frame be
-     * needed the refresh view,frame will use this creator to create refresh view<br/>
-     * <p>
-     * 设置默认的刷新视图构造器，当刷新视图为null且需要使用刷新视图时，Frame会使用该构造器构造刷新视图
+     * needed the refresh view,frame will use this creator to create refresh view.
+     * <p>设置默认的刷新视图构造器，当刷新视图为null且需要使用刷新视图时，Frame会使用该构造器构造刷新视图</p>
      *
      * @param creator The static refresh view creator
      */
@@ -394,8 +388,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     protected void onDetachedFromWindow() {
+        if (mLifecycleObserver != null)
+            mLifecycleObserver.onDetached(this);
         super.onDetachedFromWindow();
         destroy();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        if (mLifecycleObserver != null)
+            mLifecycleObserver.onAttached(this);
+        super.onAttachedToWindow();
     }
 
     @Override
@@ -789,16 +792,23 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return ViewCompat.SCROLL_AXIS_VERTICAL;
     }
 
+    public void setLifecycleObserver(ILifecycleObserver observer) {
+        mLifecycleObserver = observer;
+    }
+
+    @Nullable
+    public View getLoadMoreScrollTargetView() {
+        return mScrollTargetView;
+    }
+
     /**
-     * Set loadMore scroll target view<br/>
-     * For example the content view is a FrameLayout,with a listView in it.<br/>
-     * You can call this method,set the listView as load more scroll target view.<br/>
-     * Load more compat will try to make it smooth scrolling<br/>
-     * <p>
-     * 设置加载更多时需要做滑动处理的视图。<br/>
+     * Set loadMore scroll target view,For example the content view is a FrameLayout,with a
+     * listView in it.You can call this method,set the listView as load more scroll target view.
+     * Load more compat will try to make it smooth scrolling.
+     * <p>设置加载更多时需要做滑动处理的视图。<br/>
      * 例如在SmoothRefreshLayout中有一个CoordinatorLayout,
      * CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerVieW
-     * 而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可
+     * 而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可</p>
      *
      * @param view Target view
      */
@@ -808,18 +818,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether to enable the synchronous scroll when load more completed
-     * <p>
-     * 当加载更多完成时是否启用同步滚动。<br/>
+     * Whether to enable the synchronous scroll when load more completed.
+     * <p>当加载更多完成时是否启用同步滚动。</p>
      *
      * @param enable enable
      */
+    @SuppressWarnings({"unused"})
     public void setEnableCompatLoadMoreScroll(boolean enable) {
         mCompatLoadMoreScroll = enable;
     }
 
     /**
-     * Get the background color of the height of the header view
+     * Get the background color of the height of the Header view.
      *
      * @return Color
      */
@@ -829,17 +839,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the background color of the height of the header view
+     * Set the background color of the height of the Header view.
+     * <p>设置移动Header时Header区域的背景颜色</p>
      *
      * @param headerBackgroundColor Color
      */
+    @SuppressWarnings({"unused"})
     public void setHeaderBackgroundColor(@ColorInt int headerBackgroundColor) {
         mHeaderBackgroundColor = headerBackgroundColor;
         preparePaint();
     }
 
     /**
-     * Get the background color of the height of the footer view
+     * Get the background color of the height of the Footer view.
      *
      * @return Color
      */
@@ -849,19 +861,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the background color of the height of the footer view
+     * Set the background color of the height of the Footer view.
+     * <p>设置移动Footer时Footer区域的背景颜色</p>
      *
      * @param footerBackgroundColor Color
      */
+    @SuppressWarnings({"unused"})
     public void setFooterBackgroundColor(int footerBackgroundColor) {
         mFooterBackgroundColor = footerBackgroundColor;
         preparePaint();
     }
 
     /**
-     * Set the custom offset calculator
-     * <p>
-     * 设置自定义偏移计算器
+     * Set the custom offset calculator.
+     * <p>设置自定义偏移计算器</p>
      *
      * @param calculator Offset calculator
      */
@@ -871,9 +884,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the listener to be notified when a refresh is triggered.<br/>
-     * <p>
-     * 设置刷新监听回调
+     * Set the listener to be notified when a refresh is triggered.
+     * <p>设置刷新监听回调</p>
      *
      * @param listener Listener
      */
@@ -882,9 +894,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the listener to be notified when the state changed<br/>
-     * <p>
-     * 设置状态改变回调
+     * Set the listener to be notified when the state changed.
+     * <p>设置状态改变回调</p>
      *
      * @param listener Listener
      */
@@ -894,9 +905,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Add a listener to listen the views position change event<br/>
-     * <p>
-     * 设置UI位置变化回调
+     * Add a listener to listen the views position change event.
+     * <p>设置UI位置变化回调</p>
      *
      * @param listener Listener
      */
@@ -907,9 +917,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * remove the listener<br/>
-     * <p>
-     * 移除UI位置变化回调
+     * remove the listener.
+     * <p>移除UI位置变化回调</p>
      *
      * @param listener Listener
      */
@@ -918,6 +927,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mUIPositionChangedListeners.remove(listener);
     }
 
+    /**
+     * clear the position changed listeners.
+     * <p>情况UI位置变化回调</p>
+     */
     @SuppressWarnings({"unused"})
     public void clearOnUIPositionChangedListeners() {
         if (mUIPositionChangedListeners != null)
@@ -925,23 +938,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set a scrolling callback when loading more.<br/>
-     * <p>
-     * 设置当加载更多时滚动回调，可使用该属性对内部视图做滑动处理。例如内部视图是ListView，完成加载更多时，
-     * 需要将加载出的数据显示出来，那么设置该回调，每次Footer
-     * 回滚时拿到滚动的数值对ListView做向上滚动处理，将数据展示处理
+     * Set a scrolling callback when loading more.
+     * <p>设置当加载更多时滚动回调，可使用该属性对内部视图做滑动处理。例如内部视图是ListView，完成加载更多时，
+     * 需要将加载出的数据显示出来，那么设置该回调，每次Footer回滚时拿到滚动的数值对ListView做向上滚动处理，将数据展示处理</p>
      *
      * @param callback Callback that should be called when scrolling on loading more.
      */
+    @SuppressWarnings({"unused"})
     public void setOnLoadMoreScrollCallback(OnLoadMoreScrollCallback callback) {
         mLoadMoreScrollCallback = callback;
     }
 
     /**
-     * Set a callback to override {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()} method. Non-null
-     * callback will return the value provided by the callback and ignore all internal logic.<br/>
-     * <p>
-     * 设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在顶部
+     * Set a callback to override
+     * {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()} method. Non-null
+     * callback will return the value provided by the callback and ignore all internal logic.
+     * <p>设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在顶部</p>
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
      */
@@ -950,10 +962,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set a callback to override {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()} method. Non-null
-     * callback will return the value provided by the callback and ignore all internal logic.<br/>
-     * <p>
-     * 设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在底部
+     * Set a callback to override
+     * {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()} method. Non-null
+     * callback will return the value provided by the callback and ignore all internal logic.
+     * <p>设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在底部</p>
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
      */
@@ -962,10 +974,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set a callback to make sure you need to customize the specified trigger the auto load more
-     * rule <br/>
-     * <p>
-     * 设置自动加载更多的触发条件回调，可自定义具体的触发自动加载更多的条件
+     * Set a callback to make sure you need to customize the specified trigger the auto load more rule.
+     * <p>设置自动加载更多的触发条件回调，可自定义具体的触发自动加载更多的条件</p>
      *
      * @param callBack Customize the specified triggered rule
      */
@@ -976,9 +986,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a hook callback when the refresh complete event be triggered. Only can be called on
-     * refreshing<br/>
-     * <p>
-     * 设置一个头部视图刷新完成前的Hook回调
+     * refreshing.
+     * <p>设置一个头部视图刷新完成前的Hook回调</p>
      *
      * @param callback Callback that should be called when refreshComplete() is called.
      */
@@ -991,9 +1000,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a hook callback when the refresh complete event be triggered. Only can be called on
-     * loading more<br/>
-     * <p>
-     * 设置一个尾部视图刷新完成前的Hook回调
+     * loading more.
+     * <p>设置一个尾部视图刷新完成前的Hook回调</p>
      *
      * @param callback Callback that should be called when refreshComplete() is called.
      */
@@ -1005,23 +1013,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mFooterRefreshCompleteHook.setHookCallBack(callback);
     }
 
-    /**
-     * Set a callback to override
-     * {@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}} method.
-     * Non-null callback will return the value provided by the callback and ignore all internal
-     * logic.<br/>
-     * <p>
-     * 设置{@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}的重载回调，
-     * 用来检查手指按下的点是否位于水平视图内部
-     *
-     * @param callback Callback that should be called when isFingerInsideAnotherDirectionView(float,
-     *                 float) is called。
-     */
     @SuppressWarnings({"unused"})
-    public void setOnFingerInsideAnotherDirectionViewCallback(OnFingerInsideAnotherDirectionViewCallback callback) {
-        mFingerInsideAnotherDirectionViewCallback = callback;
-    }
-
     public boolean equalsOnHookHeaderRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callBack) {
         return mHeaderRefreshCompleteHook != null && mHeaderRefreshCompleteHook.mCallBack == callBack;
     }
@@ -1032,9 +1024,24 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the change state animator creator<br/>
-     * <p>
-     * 设置切换状态时使用的动画的构造器
+     * Set a callback to override
+     * {@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}} method.
+     * Non-null callback will return the value provided by the callback and ignore all internal
+     * logic.
+     * <p>设置{@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}的重载回调，
+     * 用来检查手指按下的点是否位于水平视图内部</p>
+     *
+     * @param callback Callback that should be called when isFingerInsideAnotherDirectionView(float,
+     *                 float) is called.
+     */
+    @SuppressWarnings({"unused"})
+    public void setOnFingerInsideAnotherDirectionViewCallback(OnFingerInsideAnotherDirectionViewCallback callback) {
+        mFingerInsideAnotherDirectionViewCallback = callback;
+    }
+
+    /**
+     * Set the change state animator creator.
+     * <p>设置切换状态时使用的动画的构造器</p>
      *
      * @param creator The change state animator creator
      */
@@ -1043,9 +1050,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether it is being refreshed<br/>
-     * <p>
-     * 是否在刷新中
+     * Whether it is refreshing state.
+     * <p>是否在刷新中</p>
      *
      * @return Refreshing
      */
@@ -1054,9 +1060,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether it is being refreshed<br/>
-     * <p>
-     * 是否在加载更多种
+     * Whether it is loading more state.
+     * <p>是否在加载更多种</p>
      *
      * @return Loading
      */
@@ -1065,9 +1070,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether it is in start position<br/>
-     * <p>
-     * 是否在起始位置
+     * Whether it is in start position.
+     * <p>是否在起始位置</p>
      *
      * @return Is
      */
@@ -1076,9 +1080,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Whether it is refresh successful<br/>
-     * <p>
-     * 是否刷新成功
+     * Whether it is refresh successful.
+     * <p>是否刷新成功</p>
      *
      * @return Is
      */
@@ -1087,20 +1090,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT},
-     * and set the last refresh operation successfully<br/>
-     * <p>
-     * 完成刷新，刷新状态为成功
+     * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT}
+     * and set the last refresh operation successfully.
+     * <p>完成刷新，刷新状态为成功</p>
      */
     final public void refreshComplete() {
         refreshComplete(true);
     }
 
     /**
-     * Perform refresh complete, to reset the state to
-     * {@link SmoothRefreshLayout#SR_STATUS_INIT}<br/>
-     * <p>
-     * 完成刷新，刷新状态`isSuccessful`
+     * Perform refresh complete, to reset the state to {@link SmoothRefreshLayout#SR_STATUS_INIT}.
+     * <p>完成刷新，刷新状态`isSuccessful`</p>
      *
      * @param isSuccessful Set the last refresh operation status
      */
@@ -1110,10 +1110,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Perform refresh complete, delay to reset the state to
-     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation
-     * successfully<br/>
-     * <p>
-     * 完成刷新，延迟`delayDurationToChangeState`时间
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation successfully.
+     * <p>完成刷新，延迟`delayDurationToChangeState`时间</p>
      *
      * @param delayDurationToChangeState Delay to change the state to
      *                                   {@link SmoothRefreshLayout#SR_STATUS_COMPLETE}
@@ -1124,9 +1122,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Perform refresh complete, delay to reset the state to
-     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation<br/>
-     * <p>
-     * 完成刷新，刷新状态`isSuccessful`，延迟`delayDurationToChangeState`时间
+     * {@link SmoothRefreshLayout#SR_STATUS_INIT} and set the last refresh operation.
+     * <p>完成刷新，刷新状态`isSuccessful`，延迟`delayDurationToChangeState`时间</p>
      *
      * @param delayDurationToChangeState Delay to change the state to
      *                                   {@link SmoothRefreshLayout#SR_STATUS_INIT}
@@ -1139,8 +1136,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIsLastRefreshSuccessful = isSuccessful;
         if (!isRefreshing() && !isLoadingMore())
             return;
+        mIsSpringBackCanNotBeInterrupted = isEnabledCanNotInterruptScrollWhenRefreshCompleted();
+        long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
         if (delayDurationToChangeState <= 0) {
-            long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
             if (delay <= 0) {
                 performRefreshComplete(true);
             } else {
@@ -1159,7 +1157,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mNeedNotifyRefreshComplete = false;
             }
             mDelayedRefreshComplete = true;
-            long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
             if (delayDurationToChangeState < delay)
                 delayDurationToChangeState = delay;
             if (mDelayToRefreshComplete == null)
@@ -1171,9 +1168,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the loading min time<br/>
-     * <p>
-     * 设置加载过程的最小持续时间
+     * Set the loading min time.
+     * <p>设置加载过程的最小持续时间</p>
      *
      * @param time Millis
      */
@@ -1183,10 +1179,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the header height,
-     * After the measurement is completed, the height will have value<br/>
-     * <p>
-     * 获取Header的高度，在布局计算完成前无法得到准确的值
+     * Get the Header height, after the measurement is completed, the height will have value.
+     * <p>获取Header的高度，在布局计算完成前无法得到准确的值</p>
      *
      * @return Height default is -1
      */
@@ -1196,10 +1190,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the footer height,
-     * After the measurement is completed, the height will have value<br/>
-     * <p>
-     * 获取Footer的高度，在布局计算完成前无法得到准确的值
+     * Get the Footer height, after the measurement is completed, the height will have value.
+     * <p>获取Footer的高度，在布局计算完成前无法得到准确的值</p>
      *
      * @return Height default is -1
      */
@@ -1209,18 +1201,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Perform auto refresh at once<br/>
-     * <p>
-     * 自动刷新并立即触发刷新回调
+     * Perform auto refresh at once.
+     * <p>自动刷新并立即触发刷新回调</p>
      */
     public void autoRefresh() {
         autoRefresh(true);
     }
 
     /**
-     * If @param atOnce has been set to true. Auto perform refresh at once.<br/>
-     * <p>
-     * 自动刷新，`atOnce`立即触发刷新回调
+     * If @param atOnce has been set to true. Auto perform refresh at once.
+     * <p>自动刷新，`atOnce`立即触发刷新回调</p>
      *
      * @param atOnce Auto refresh at once
      */
@@ -1230,9 +1220,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param atOnce has been set to true. Auto perform refresh at once.
-     * If @param smooth has been set to true. Auto perform refresh will using smooth scrolling.<br/>
-     * <p>
-     * 自动刷新，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置
+     * If @param smooth has been set to true. Auto perform refresh will using smooth scrolling.
+     * <p>自动刷新，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置</p>
      *
      * @param atOnce       Auto refresh at once
      * @param smoothScroll Auto refresh use smooth scrolling
@@ -1266,9 +1255,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Perform auto load more at once<br/>
-     * <p>
-     * 自动加载更多，并立即触发刷新回调
+     * Perform auto load more at once.
+     * <p>自动加载更多，并立即触发刷新回调</p>
      */
     @SuppressWarnings({"unused"})
     public void autoLoadMore() {
@@ -1276,9 +1264,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param atOnce has been set to true. Auto perform load more at once.<br/>
-     * <p>
-     * 自动加载更多，`atOnce`立即触发刷新回调
+     * If @param atOnce has been set to true. Auto perform load more at once.
+     * <p>自动加载更多，`atOnce`立即触发刷新回调</p>
      *
      * @param atOnce Auto load more at once
      */
@@ -1288,10 +1275,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param atOnce has been set to true. Auto perform load more at once.
-     * If @param smooth has been set to true. Auto perform load more will using smooth scrolling
-     * .<br/>
-     * <p>
-     * 自动加载更多，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置
+     * If @param smooth has been set to true. Auto perform load more will using smooth scrolling.
+     * <p>自动加载更多，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置</p>
      *
      * @param atOnce       Auto load more at once
      * @param smoothScroll Auto load more use smooth scrolling
@@ -1325,9 +1310,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The resistance while you are moving<br/>
-     * <p>
-     * 移动刷新视图时候的移动阻尼
+     * Set the resistance while you are moving.
+     * <p>移动刷新视图时候的移动阻尼</p>
      *
      * @param resistance Resistance
      */
@@ -1337,9 +1321,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The resistance while you are moving footer<br/>
-     * <p>
-     * 移动Footer视图时候的移动阻尼
+     * Set the resistance while you are moving Footer.
+     * <p>移动Footer视图时候的移动阻尼</p>
      *
      * @param resistance Resistance
      */
@@ -1349,9 +1332,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The resistance while you are moving header<br/>
-     * <p>
-     * 移动Header视图时候的移动阻尼
+     * Set the resistance while you are moving Header.
+     * <p>移动Header视图时候的移动阻尼</p>
      *
      * @param resistance Resistance
      */
@@ -1361,9 +1343,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The height ratio of the trigger refresh<br/>
-     * <p>
-     * 设置触发刷新时的位置占刷新视图的高度比
+     * Set the height ratio of the trigger refresh.
+     * <p>设置触发刷新时的位置占刷新视图的高度比</p>
      *
      * @param ratio Height ratio
      */
@@ -1372,15 +1353,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicator.setRatioOfRefreshViewHeightToRefresh(ratio);
     }
 
+    /**
+     * Get the Header height ratio of the trigger refresh.
+     * <p>设置触发下拉刷新时的位置占Header视图的高度比</p>
+     */
     @SuppressWarnings({"unused"})
     public float getRatioOfHeaderHeightToRefresh() {
         return mIndicator.getRatioOfHeaderHeightToRefresh();
     }
 
     /**
-     * The height ratio of the trigger refresh<br/>
-     * <p>
-     * 设置触发下拉刷新时的位置占Header视图的高度比
+     * Set the Header height ratio of the trigger refresh.
+     * <p>设置触发下拉刷新时的位置占Header视图的高度比</p>
      *
      * @param ratio Height ratio
      */
@@ -1389,15 +1373,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicator.setRatioOfHeaderHeightToRefresh(ratio);
     }
 
+    /**
+     * Get the Footer height ratio of the trigger refresh.
+     * <p>设置触发加载更多时的位置占Footer视图的高度比</p>
+     */
     @SuppressWarnings({"unused"})
     public float getRatioOfFooterHeightToRefresh() {
         return mIndicator.getRatioOfFooterHeightToRefresh();
     }
 
     /**
-     * The height ratio of the trigger refresh<br/>
-     * <p>
-     * 设置触发加载更多时的位置占Footer视图的高度比
+     * Set the Footer height ratio of the trigger refresh.
+     * <p>设置触发加载更多时的位置占Footer视图的高度比</p>
      *
      * @param ratio Height ratio
      */
@@ -1407,10 +1394,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the offset of keep view in refreshing occupies the height ratio of the refresh view<br/>
-     * <p>
-     * 刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
-     * 当开启了{@link SmoothRefreshLayout#isEnabledKeepRefreshView}后，该属性会生效
+     * Set the offset of keep view in refreshing occupies the height ratio of the refresh view.
+     * <p>刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果，
+     * 当开启了{@link SmoothRefreshLayout#isEnabledKeepRefreshView}后，该属性会生效</p>
      *
      * @param ratio Height ratio
      */
@@ -1420,9 +1406,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the offset of keep Header in refreshing occupies the height ratio of the Header<br/>
-     * <p>
-     * 刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果
+     * Set the offset of keep Header in refreshing occupies the height ratio of the Header.
+     * <p>刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果</p>
      *
      * @param ratio Height ratio
      */
@@ -1431,9 +1416,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the offset of keep Footer in refreshing occupies the height ratio of the Footer<br/>
-     * <p>
-     * 刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果
+     * Set the offset of keep Footer in refreshing occupies the height ratio of the Footer.
+     * <p>刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果</p>
      *
      * @param ratio Height ratio
      */
@@ -1443,9 +1427,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the max duration for Cross-Boundary-Rebound(OverScroll)<br/>
-     * <p>
-     * 设置越界回弹效果的最大持续时长（默认:`500`）
+     * Set the max duration for Cross-Boundary-Rebound(OverScroll).
+     * <p>设置越界回弹效果的最大持续时长（默认:`500`）</p>
      *
      * @param duration Duration
      */
@@ -1455,9 +1438,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the min duration for Cross-Boundary-Rebound(OverScroll)<br/>
-     * <p>
-     * 设置越界回弹效果的最小持续时长（默认:`150`）
+     * Set the min duration for Cross-Boundary-Rebound(OverScroll).
+     * <p>设置越界回弹效果的最小持续时长（默认:`150`）</p>
      *
      * @param duration Duration
      */
@@ -1467,9 +1449,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of return back to the start position <br/>
-     * <p>
-     * 设置刷新完成回滚到起始位置的时间
+     * Set the duration of return back to the start position.
+     * <p>设置刷新完成回滚到起始位置的时间</p>
      *
      * @param duration Millis
      */
@@ -1480,7 +1461,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the duration of header return to the start position
+     * Get the duration of Header return to the start position.
      *
      * @return mDuration
      */
@@ -1490,9 +1471,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of header return to the start position<br/>
-     * <p>
-     * 设置Header刷新完成回滚到起始位置的时间
+     * Set the duration of Header return to the start position.
+     * <p>设置Header刷新完成回滚到起始位置的时间</p>
      *
      * @param duration Millis
      */
@@ -1502,9 +1482,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the duration of footer return to the start position<br/>
-     * <p>
-     * 设置Footer刷新完成回滚到起始位置的时间
+     * Get the duration of Footer return to the start position.
      *
      * @return mDuration
      */
@@ -1514,7 +1492,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of footer return to the start position
+     * Set the duration of Footer return to the start position.
+     * <p>设置Footer刷新完成回滚到起始位置的时间</p>
      *
      * @param duration Millis
      */
@@ -1524,9 +1503,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of return to the keep refresh view position<br/>
-     * <p>
-     * 设置回滚到保持刷新视图位置的时间
+     * Set the duration of return to the keep refresh view position.
+     * <p>设置回滚到保持刷新视图位置的时间</p>
      *
      * @param duration Millis
      */
@@ -1537,9 +1515,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the duration of return to the keep refresh view position when Header moves<br/>
-     * <p>
-     * 得到回滚到保持Header视图位置的时间
+     * Get the duration of return to the keep refresh view position when Header moves.
      *
      * @return Duration
      */
@@ -1549,9 +1525,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of return to the keep refresh view position when Header moves<br/>
-     * <p>
-     * 设置回滚到保持Header视图位置的时间
+     * Set the duration of return to the keep refresh view position when Header moves.
+     * <p>设置回滚到保持Header视图位置的时间</p>
      *
      * @param duration Millis
      */
@@ -1561,9 +1536,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the duration of return to the keep refresh view position when Footer moves<br/>
-     * <p>
-     * 得到回滚到保持Footer视图位置的时间
+     * Get the duration of return to the keep refresh view position when Footer moves.
      *
      * @return mDuration
      */
@@ -1573,9 +1546,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The duration of return to the keep refresh view position when Footer moves<br/>
-     * <p>
-     * 设置回顾到保持Footer视图位置的时间
+     * Set the duration of return to the keep refresh view position when Footer moves.
+     * <p>设置回顾到保持Footer视图位置的时间</p>
      *
      * @param duration Millis
      */
@@ -1585,9 +1557,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max can move offset occupies the height ratio of the refresh view<br/>
-     * <p>
-     * 设置最大移动距离占刷新视图的高度比
+     * Set the max can move offset occupies the height ratio of the refresh view.
+     * <p>设置最大移动距离占刷新视图的高度比</p>
      *
      * @param ratio The max ratio of refresh view
      */
@@ -1602,11 +1573,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max can move offset occupies the height ratio of the Header<br/>
-     * <p>
-     * 最大移动距离占Header视图的高度比
+     * Set the max can move offset occupies the height ratio of the Header.
+     * <p>设置最大移动距离占Header视图的高度比</p>
      *
-     * @param ratio The max ratio of header view
+     * @param ratio The max ratio of Header view
      */
     @SuppressWarnings({"unused"})
     public void setCanMoveTheMaxRatioOfHeaderHeight(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
@@ -1619,11 +1589,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The max can move offset occupies the height ratio of the Footer<br/>
-     * <p>
-     * 最大移动距离占Footer视图的高度比
+     * Set the max can move offset occupies the height ratio of the Footer.
+     * <p>最大移动距离占Footer视图的高度比</p>
      *
-     * @param ratio The max ratio of footer view
+     * @param ratio The max ratio of Footer view
      */
     @SuppressWarnings({"unused"})
     public void setCanMoveTheMaxRatioOfFooterHeight(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
@@ -1631,9 +1600,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has set to autoRefresh<br/>
-     * <p>
-     * 是否处于自动刷新刷新
+     * The flag has set to autoRefresh.
+     * <p>是否处于自动刷新刷新</p>
      *
      * @return Enabled
      */
@@ -1642,9 +1610,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If enable has been set to true. The user can perform next PTR at once.<br/>
-     * <p>
-     * 是否已经开启完成刷新后即可立即触发刷新
+     * If enable has been set to true. The user can immediately perform next refresh.
+     * <p>是否已经开启完成刷新后即可立即触发刷新</p>
      *
      * @return Is enable
      */
@@ -1653,9 +1620,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. The user can perform next PTR at once.<br/>
-     * <p>
-     * 设置开启完成刷新后即可立即触发刷新
+     * If @param enable has been set to true. The user can immediately perform next refresh.
+     * <p>设置开启完成刷新后即可立即触发刷新</p>
      *
      * @param enable Enable
      */
@@ -1668,9 +1634,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has set enabled overScroll<br/>
-     * <p>
-     * 是否已经开启越界回弹
+     * The flag has set enabled overScroll.
+     * <p>是否已经开启越界回弹</p>
      *
      * @return Enabled
      */
@@ -1679,9 +1644,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. Will supports over scroll.<br/>
-     * <p>
-     * 设置开始越界回弹
+     * If @param enable has been set to true. Will supports over scroll.
+     * <p>设置开始越界回弹</p>
      *
      * @param enable Enable
      */
@@ -1694,9 +1658,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has set enabled to intercept the touch event while loading<br/>
-     * <p>
-     * 是否已经开启刷新中拦截消耗触摸事件
+     * The flag has set enabled to intercept the touch event while loading.
+     * <p>是否已经开启刷新中拦截消耗触摸事件</p>
      *
      * @return Enabled
      */
@@ -1705,9 +1668,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. Will intercept the touch event while loading<br/>
-     * <p>
-     * 开启刷新中拦截消耗触摸事件
+     * If @param enable has been set to true. Will intercept the touch event while loading.
+     * <p>开启刷新中拦截消耗触摸事件</p>
      *
      * @param enable Enable
      */
@@ -1720,9 +1682,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to pull to refresh<br/>
-     * <p>
-     * 是否已经开启拉动刷新，下拉或者上拉到触发刷新位置即立即触发刷新
+     * The flag has been set to pull to refresh.
+     * <p>是否已经开启拉动刷新，下拉或者上拉到触发刷新位置即立即触发刷新</p>
      *
      * @return Enabled
      */
@@ -1731,10 +1692,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. When the current pos >= refresh offsets, perform
-     * refresh<br/>
-     * <p>
-     * 设置开启拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新
+     * If @param enable has been set to true. When the current pos >= refresh offsets perform
+     * refresh.
+     * <p>设置开启拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新</p>
      *
      * @param enable Pull to refresh
      */
@@ -1747,9 +1707,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled header drawerStyle<br/>
-     * <p>
-     * 是否已经开启Header的抽屉效果，即Header在Content下面
+     * The flag has been set to enabled Header drawerStyle.
+     * <p>是否已经开启Header的抽屉效果，即Header在Content下面</p>
      *
      * @return Enabled
      */
@@ -1758,10 +1717,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to check whether the finger pressed point is inside horizontal
-     * view<br/>
-     * <p>
-     * 是否已经开启检查按下点是否位于水平滚动视图内
+     * The flag has been set to check whether the finger pressed point is inside horizontal view.
+     * <p>是否已经开启检查按下点是否位于水平滚动视图内</p>
      *
      * @return Enabled
      */
@@ -1771,9 +1728,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param enable has been set to true. Touch event handling will be check whether the finger
-     * pressed point is inside horizontal view<br/>
-     * <p>
-     * 设置开启检查按下点是否位于水平滚动视图内
+     * pressed point is inside horizontal view.
+     * <p>设置开启检查按下点是否位于水平滚动视图内</p>
      *
      * @param enable Pull to refresh
      */
@@ -1786,12 +1742,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.Enable header drawerStyle<br/>
-     * <p>
-     * 设置开启Header的抽屉效果，即Header在Content下面
-     * 由于该效果需要改变层级关系，所以需要重新布局
+     * If @param enable has been set to true.Enable Header drawerStyle.
+     * <p>设置开启Header的抽屉效果，即Header在Content下面,由于该效果需要改变层级关系，所以需要重新布局</p>
      *
-     * @param enable enable header drawerStyle
+     * @param enable enable Header drawerStyle
      */
     public void setEnableHeaderDrawerStyle(boolean enable) {
         if (enable) {
@@ -1804,9 +1758,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled footer drawerStyle<br/>
-     * <p>
-     * 是否已经开启Footer的抽屉效果，即Footer在Content下面
+     * The flag has been set to enabled Footer drawerStyle.
+     * <p>是否已经开启Footer的抽屉效果，即Footer在Content下面</p>
      *
      * @return Enabled
      */
@@ -1815,12 +1768,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.Enable footer drawerStyle<br/>
-     * <p>
-     * 设置开启Footer的抽屉效果，即Footer在Content下面
-     * 由于该效果需要改变层级关系，所以需要重新布局
+     * If @param enable has been set to true.Enable Footer drawerStyle.
+     * <p>设置开启Footer的抽屉效果，即Footer在Content下面,由于该效果需要改变层级关系，所以需要重新布局</p>
      *
-     * @param enable enable footer drawerStyle
+     * @param enable enable Footer drawerStyle
      */
     public void setEnableFooterDrawerStyle(boolean enable) {
         if (enable) {
@@ -1833,9 +1784,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled perform refresh<br/>
-     * <p>
-     * 是否已经关闭触发下拉刷新
+     * The flag has been set to disabled perform refresh.
+     * <p>是否已经关闭触发下拉刷新</p>
      *
      * @return Disabled
      */
@@ -1844,9 +1794,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will never perform refresh<br/>
-     * <p>
-     * 设置是否关闭触发下拉刷新
+     * If @param disable has been set to true. Will never perform refresh.
+     * <p>设置是否关闭触发下拉刷新</p>
      *
      * @param disable Disable perform refresh
      */
@@ -1859,9 +1808,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled refresh<br/>
-     * <p>
-     * 是否已经关闭刷新
+     * The flag has been set to disabled refresh.
+     * <p>是否已经关闭刷新</p>
      *
      * @return Disabled
      */
@@ -1870,9 +1818,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will disable refresh<br/>
-     * <p>
-     * 设置是否关闭刷新
+     * If @param disable has been set to true.Will disable refresh.
+     * <p>设置是否关闭刷新</p>
      *
      * @param disable Disable refresh
      */
@@ -1887,9 +1834,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled perform load more<br/>
-     * <p>
-     * 是否已经关闭触发加载更多
+     * The flag has been set to disabled perform load more.
+     * <p>是否已经关闭触发加载更多</p>
      *
      * @return Disabled
      */
@@ -1898,9 +1844,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will never perform load more<br/>
-     * <p>
-     * 设置是否关闭触发加载更多
+     * If @param disable has been set to true.Will never perform load more.
+     * <p>设置是否关闭触发加载更多</p>
      *
      * @param disable Disable perform load more
      */
@@ -1913,9 +1858,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled load more<br/>
-     * <p>
-     * 是否已经关闭加载更多
+     * The flag has been set to disabled load more.
+     * <p>是否已经关闭加载更多</p>
      *
      * @return Disabled
      */
@@ -1924,9 +1868,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param disable has been set to true.Will disable load more<br/>
-     * <p>
-     * 设置关闭加载更多
+     * If @param disable has been set to true.Will disable load more.
+     * <p>设置关闭加载更多</p>
      *
      * @param disable Disable load more
      */
@@ -1941,9 +1884,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to hided header view<br/>
-     * <p>
-     * 是否已经开启不显示Header
+     * The flag has been set to hided Header view.
+     * <p>是否已经开启不显示Header</p>
      *
      * @return hided
      */
@@ -1952,11 +1894,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.Will hide the header<br/>
-     * <p>
-     * 设置是否开启不显示Header
+     * If @param enable has been set to true.Will hide the Header.
+     * <p>设置是否开启不显示Header</p>
      *
-     * @param enable Enable hide the header
+     * @param enable Enable hide the Header
      */
     public void setEnableHideHeaderView(boolean enable) {
         if (enable) {
@@ -1968,9 +1909,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to hided footer view<br/>
-     * <p>
-     * 是否已经开启不显示Footer
+     * The flag has been set to hided Footer view.
+     * <p>是否已经开启不显示Footer</p>
      *
      * @return hided
      */
@@ -1979,11 +1919,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.Will hide the footer<br/>
-     * <p>
-     * 设置是否开启不显示Footer
+     * If @param enable has been set to true.Will hide the Footer.
+     * <p>设置是否开启不显示Footer</p>
      *
-     * @param enable Enable hide the footer
+     * @param enable Enable hide the Footer
      */
     public void setEnableHideFooterView(boolean enable) {
         if (enable) {
@@ -1995,9 +1934,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to disabled when horizontal move<br/>
-     * <p>
-     * 是否已经设置不响应横向滑动
+     * The flag has been set to disabled when horizontal move.
+     * <p>是否已经设置不响应横向滑动</p>
      *
      * @return Disabled
      */
@@ -2006,9 +1944,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set whether to filter the horizontal moves<br/>
-     * <p>
-     * 设置不响应横向滑动，当内部视图含有需要响应横向滑动的子视图时，需要设置该属性，否则自视图无法响应横向滑动
+     * Set whether to filter the horizontal moves.
+     * <p>设置不响应横向滑动，当内部视图含有需要响应横向滑动的子视图时，需要设置该属性，否则自视图无法响应横向滑动</p>
      *
      * @param disable Enable
      */
@@ -2021,9 +1958,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled load more has no more data<br/>
-     * <p>
-     * 是否已经开启加载更多完成已无更多数据，自定义Footer可根据该属性判断是否显示无更多数据的提示
+     * The flag has been set to enabled load more has no more data.
+     * <p>是否已经开启加载更多完成已无更多数据，自定义Footer可根据该属性判断是否显示无更多数据的提示</p>
      *
      * @return Enabled
      */
@@ -2033,10 +1969,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
 
     /**
-     * If @param enable has been set to true. The footer will show no more data and will never
-     * trigger load more<br/>
-     * <p>
-     * 设置开启加载更多完成已无更多数据，当该属性设置为`true`时，将不再触发加载更多。
+     * If @param enable has been set to true. The Footer will show no more data and will never
+     * trigger load more.
+     * <p>设置开启加载更多完成已无更多数据，当该属性设置为`true`时，将不再触发加载更多</p>
      *
      * @param enable Enable no more data
      */
@@ -2049,10 +1984,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled when Footer has no more data to no longer need spring
-     * back<br/>
-     * <p>
-     * 是否已经开启加载更多完成已无更多数据且不需要回滚动作
+     * The flag has been set to enabled when Footer has no more data to no longer need spring back.
+     * <p>是否已经开启加载更多完成已无更多数据且不需要回滚动作</p>
      *
      * @return Enabled
      */
@@ -2062,9 +1995,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * The flag has been set to enabled. The scroller rollback can not be interrupted when
-     * refresh completed<br/>
-     * <p>
-     * 是否已经开启当刷新完成时，回滚动作不能被打断
+     * refresh completed.
+     * <p>是否已经开启当刷新完成时，回滚动作不能被打断</p>
      *
      * @return Enabled
      */
@@ -2074,9 +2006,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param enable has been set to true. The rollback can not be interrupted when refresh
-     * completed<br/>
-     * <p>
-     * 设置开启当刷新完成时，回滚动作不能被打断
+     * completed.
+     * <p>设置开启当刷新完成时，回滚动作不能被打断</p>
      *
      * @param enable Enable no more data
      */
@@ -2089,10 +2020,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. When there is no more data will no longer spring
-     * back<br/>
-     * <p>
-     * 设置开启加载更多完成已无更多数据且不需要回滚动作，当该属性设置为`true`时，将不再触发加载更多。
+     * If @param enable has been set to true. When there is no more data will no longer spring back.
+     * <p>设置开启加载更多完成已无更多数据且不需要回滚动作，当该属性设置为`true`时，将不再触发加载更多</p>
      *
      * @param enable Enable no more data
      */
@@ -2105,9 +2034,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to keep refresh view while loading<br/>
-     * <p>
-     * 是否已经开启保持刷新视图
+     * The flag has been set to keep refresh view while loading.
+     * <p>是否已经开启保持刷新视图</p>
      *
      * @return Enabled
      */
@@ -2118,9 +2046,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     /**
      * If @param enable has been set to true.When the current pos> = keep refresh view pos,
      * it rolls back to the keep refresh view pos to perform refresh and remains until the refresh
-     * completed<br/>
-     * <p>
-     * 开启刷新中保持刷新视图位置
+     * completed.
+     * <p>开启刷新中保持刷新视图位置</p>
      *
      * @param enable Keep refresh view
      */
@@ -2134,9 +2061,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to perform load more when the content view scrolling to bottom<br/>
-     * <p>
-     * 是否已经开启到底部自动加载更多
+     * The flag has been set to perform load more when the content view scrolling to bottom.
+     * <p>是否已经开启到底部自动加载更多</p>
      *
      * @return Enabled
      */
@@ -2145,10 +2071,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.When the content view scrolling to bottom,
-     * It will be perform load more<br/>
-     * <p>
-     * 开启到底自动加载更多
+     * If @param enable has been set to true.When the content view scrolling to bottom, it will
+     * be perform load more.
+     * <p>开启到底自动加载更多</p>
      *
      * @param enable Enable
      */
@@ -2161,9 +2086,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to perform refresh when the content view scrolling to top<br/>
-     * <p>
-     * 是否已经开启到顶自动刷新
+     * The flag has been set to perform refresh when the content view scrolling to top.
+     * <p>是否已经开启到顶自动刷新</p>
      *
      * @return Enabled
      */
@@ -2172,10 +2096,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.When the content view scrolling to top,
-     * It will be perform refresh<br/>
-     * <p>
-     * 开启到顶自动刷新
+     * If @param enable has been set to true.When the content view scrolling to top, it will be
+     * perform refresh.
+     * <p>开启到顶自动刷新</p>
      *
      * @param enable Enable
      */
@@ -2189,9 +2112,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to pinned refresh view while loading<br/>
-     * <p>
-     * 是否已经开启刷新过程中固定刷新视图且不响应触摸移动
+     * The flag has been set to pinned refresh view while loading.
+     * <p>是否已经开启刷新过程中固定刷新视图且不响应触摸移动</p>
      *
      * @return Enabled
      */
@@ -2201,10 +2123,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * If @param enable has been set to true.The refresh view will pinned at the keep refresh
-     * position<br/>
-     * <p>
-     * 设置开启刷新过程中固定刷新视图且不响应触摸移动，该属性只有在{@link SmoothRefreshLayout#setEnablePinContentView(boolean)}
-     * 和{@link SmoothRefreshLayout#setEnableKeepRefreshView(boolean)}2个属性都为`true`时才能生效
+     * position.
+     * <p>设置开启刷新过程中固定刷新视图且不响应触摸移动，该属性只有在
+     * {@link SmoothRefreshLayout#setEnablePinContentView(boolean)}和
+     * {@link SmoothRefreshLayout#setEnableKeepRefreshView(boolean)}2个属性都为`true`时才能生效</p>
      *
      * @param enable Pin content view
      */
@@ -2222,9 +2144,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to pinned content view while loading<br/>
-     * <p>
-     * 是否已经开启了固定内容视图
+     * The flag has been set to pinned content view while loading.
+     * <p>是否已经开启了固定内容视图</p>
      *
      * @return Enabled
      */
@@ -2233,10 +2154,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true.The content view will be pinned in the start pos
-     * unless overScroll flag has been set and in overScrolling<br/>
-     * <p>
-     * 设置开启固定内容视图
+     * If @param enable has been set to true. The content view will be pinned in the start pos.
+     * <p>设置开启固定内容视图</p>
      *
      * @param enable Pin content view
      */
@@ -2250,9 +2169,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the footer view<br/>
-     * <p>
-     * 设置Footer
+     * Set the Footer view.
+     * <p>设置Footer视图</p>
      *
      * @param footer Footer view
      */
@@ -2271,9 +2189,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the header view<br/>
-     * <p>
-     * 设置Header
+     * Set the Header view.
+     * <p>设置Header视图</p>
      *
      * @param header Header view
      */
@@ -2292,9 +2209,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the content view<br/>
-     * <p>
-     * 设置内容视图，`state`内容视图状态，`content`状态对应的视图
+     * Set the content view.
+     * <p>设置内容视图，`state`内容视图状态，`content`状态对应的视图</p>
      *
      * @param state   The state of content view
      * @param content Content view
@@ -2343,9 +2259,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Update scroller interpolator<br/>
-     * <p>
-     * 设置Scroller的插值器
+     * Update scroller interpolator.
+     * <p>设置Scroller的插值器</p>
      *
      * @param interpolator Scroller interpolator
      */
@@ -2354,18 +2269,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Reset scroller interpolator<br/>
-     * <p>
-     * 重置Scroller的插值器
+     * Reset scroller interpolator.
+     * <p>重置Scroller的插值器</p>
      */
     public void resetScrollerInterpolator() {
         mScrollChecker.updateInterpolator(mSpringInterpolator);
     }
 
     /**
-     * Set the scroller default interpolator<br/>
-     * <p>
-     * 设置Scroller的默认插值器
+     * Set the scroller default interpolator.
+     * <p>设置Scroller的默认插值器</p>
      *
      * @param interpolator Scroller interpolator
      */
@@ -2375,9 +2288,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the scroller interpolator when in cross boundary rebound<br/>
-     * <p>
-     * 设置触发越界回弹时候Scroller的插值器
+     * Set the scroller interpolator when in cross boundary rebound.
+     * <p>设置触发越界回弹时候Scroller的插值器</p>
      *
      * @param interpolator Scroller interpolator
      */
@@ -2416,9 +2328,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Returns the {@link View} associated with the {@link SmoothRefreshLayout.State}<br/>
-     * <p>
-     * 得到状态对应的内容视图
+     * Returns the {@link View} associated with the {@link SmoothRefreshLayout.State}.
+     * <p>得到状态对应的内容视图</p>
      *
      * @param state The view
      */
@@ -2444,9 +2355,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Returns the current state<br/>
-     * <p>
-     * 获取当前的状态
+     * Returns the current state.
+     * <p>获取当前的状态</p>
      *
      * @return Current state
      */
@@ -2456,9 +2366,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the current state<br/>
-     * <p>
-     * 设置当前的状态
+     * Set the current state.
+     * <p>设置当前的状态</p>
      *
      * @param state Current state
      */
@@ -2468,9 +2377,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set the current state<br/>
-     * <p>
-     * 设置当前的状态，`state`状态，`animate`动画过渡
+     * Set the current state.
+     * <p>设置当前的状态，`state`状态，`animate`动画过渡</p>
      *
      * @param state   Current state
      * @param animate Use animation
@@ -2569,7 +2477,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
     }
 
-    // NestedScrollingChild
     @Override
     public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
         if (sDebug) {
@@ -2745,7 +2652,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         return mNestedScrollingChildHelper.isNestedScrollingEnabled();
     }
 
-    // NestedScrollingChild
     @Override
     public void setNestedScrollingEnabled(boolean enabled) {
         mNestedScrollingChildHelper.setNestedScrollingEnabled(enabled);
@@ -3072,11 +2978,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mTargetViewTreeObserver = observer;
             mTargetViewTreeObserver.addOnScrollChangedListener(this);
         }
-        //Use the static default creator to create the header view
+        //Use the static default creator to create the Header view
         if (!isDisabledRefresh() && !isEnabledHideHeaderView() && mHeaderView == null && sCreator != null) {
             sCreator.createHeader(this);
         }
-        //Use the static default creator to create the footer view
+        //Use the static default creator to create the Footer view
         if (!isDisabledLoadMore() && !isEnabledHideFooterView() && mFooterView == null && sCreator != null) {
             sCreator.createFooter(this);
         }
@@ -3256,7 +3162,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         }
                         return super.dispatchTouchEvent(ev);
                     }
-                    // should show up header
+                    // should show up Header
                     if (movingDown) {
                         if (isDisabledRefresh())
                             return super.dispatchTouchEvent(ev);
@@ -3567,7 +3473,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mRefreshListener.onRefreshComplete(mIsLastRefreshSuccessful);
             }
         }
-        mIsSpringBackCanNotBeInterrupted = isEnabledCanNotInterruptScrollWhenRefreshCompleted();
         if (useScroll) tryScrollBackToTopByPercentDuration();
         tryToNotifyReset();
     }
@@ -3621,13 +3526,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (delta == 0f) {
             if (sDebug) {
                 SRLog.d(TAG, "movePos(): delta is zero");
-            }
-            return;
-        }
-        // has reached the top
-        if (delta < 0 && mIndicator.isInStartPosition()) {
-            if (sDebug) {
-                SRLog.d(TAG, "movePos(): has reached the top");
             }
             return;
         }
@@ -3813,7 +3711,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     .crossRefreshLineFromBottomToTop()))) {
                 tryToPerformRefresh();
             }
-            // reach header height while auto refresh or reach footer height while auto refresh
+            // reach Header height while auto refresh or reach Footer height while auto refresh
             if (!isRefreshing() && !isLoadingMore() && isPerformAutoRefreshButLater()
                     && ((isHeaderInProcessing() && isMovingHeader() && mIndicator
                     .hasJustReachedHeaderHeightFromTopToBottom())
@@ -3994,6 +3892,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mStatus = SR_STATUS_REFRESHING;
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mDelayedRefreshComplete = false;
+        mIsSpringBackCanNotBeInterrupted = false;
         performRefresh();
     }
 
@@ -4001,6 +3900,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mStatus = SR_STATUS_LOADING_MORE;
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
         mDelayedRefreshComplete = false;
+        mIsSpringBackCanNotBeInterrupted = false;
         performRefresh();
     }
 
@@ -4119,7 +4019,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          *
          * @param parent SmoothRefreshLayout that this callback is overriding.
          * @param child  The child view.
-         * @param header The header view.
+         * @param header The Header view.
          * @return Whether it is possible for the child view of parent layout to scroll up.
          */
         boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child,
@@ -4137,7 +4037,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          *
          * @param parent SmoothRefreshLayout that this callback is overriding.
          * @param child  The child view.
-         * @param footer The footer view.
+         * @param footer The Footer view.
          * @return Whether it is possible for the child view of parent layout to scroll down.
          */
         boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child,

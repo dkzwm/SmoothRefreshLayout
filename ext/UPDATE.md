@@ -1,4 +1,8 @@
 # 更新日志
+## 1.6.1.2
+> 修改当刷新完成时，回滚动作是否能被触摸事件打断的逻辑为触发刷新完成（1.6.1.1条件为真实刷新完成才触发逻辑即状态更改为刷新完成触发）。    
+> 新增 `ILifecycleObserver` 接口，用以观察视图生命周期，为后续可能的工具预留接口。    
+> 新增 `ext-utils` 包，现阶段添加了快速适配`AppBarLayout`的工具(`QuickConfigAppBarUtil`),如视图为 `CoordinatorLayout` + `AppBarLayout` + `RecyclerView` 这类视图结构，现在只需使用本工具，配置少量代码即可完成配置。
 ## 1.6.1.1
 > 添加 `isEnabledCanNotInterruptScrollWhenRefreshCompleted` 和 `setEnabledCanNotInterruptScrollWhenRefreshCompleted` 方法，用以控制当刷新完成时，回滚动作是否能被触摸事件打断。    
 > 修复Fling的BUG。    

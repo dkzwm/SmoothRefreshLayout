@@ -24,6 +24,7 @@ dependencies {
     compile project(':ext-horizontal')
     compile project(':ext-classic')
     compile project(':ext-material')
+    compile project(':ext-utils')
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:support-v13:26.1.0'
     compile 'com.android.support:recyclerview-v7:26.1.0'
