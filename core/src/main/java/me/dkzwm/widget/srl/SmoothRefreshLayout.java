@@ -41,8 +41,6 @@ import android.widget.Scroller;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -55,6 +53,7 @@ import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.BoundaryUtil;
 import me.dkzwm.widget.srl.utils.SRLog;
+import me.dkzwm.widget.srl.utils.SRReflectUtil;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 
@@ -3967,33 +3966,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mTargetViewTreeObserver.isAlive())
                 mTargetViewTreeObserver.removeOnScrollChangedListener(this);
             else {
-                try {
-                    Field field = ViewTreeObserver.class.getDeclaredField("mOnScrollChangedListeners");
-                    if (field != null) {
-                        field.setAccessible(true);
-                        Object object = field.get(mTargetViewTreeObserver);
-                        if (object != null) {
-                            Method method = object.getClass().getDeclaredMethod("remove", Object.class);
-                            if (method != null) {
-                                method.setAccessible(true);
-                                method.invoke(object, this);
-                            }
-                            method = object.getClass().getDeclaredMethod("size");
-                            if (method != null) {
-                                method.setAccessible(true);
-                                object = method.invoke(object);
-                                if (object != null && object instanceof Integer) {
-                                    int size = (int) object;
-                                    if (size == 0) {
-                                        field.set(mTargetViewTreeObserver, null);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    //ignore exception
-                }
+                SRReflectUtil.safelyRemoveListeners(mTargetViewTreeObserver, this);
             }
         }
     }
@@ -4529,19 +4502,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         boolean mIsRunning = false;
         Scroller mScroller;
         Interpolator mInterpolator;
-        Field mInterpolatorField;
 
         ScrollChecker() {
             mInterpolator = SmoothRefreshLayout.this.mSpringInterpolator;
             mScroller = new Scroller(SmoothRefreshLayout.this.getContext(), mInterpolator);
-            try {
-                mInterpolatorField = Scroller.class.getDeclaredField("mInterpolator");
-                mInterpolatorField.setAccessible(true);
-            } catch (NoSuchFieldException e) {
-                //ignore exception
-            } catch (SecurityException e) {
-                //ignore exception
-            }
         }
 
         @Override
@@ -4591,23 +4555,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
             } else {
                 reset(false);
-                reflectInterpolator(interpolator);
+                mScroller = SRReflectUtil.setScrollerInterpolatorOrReCreateScroller
+                        (SmoothRefreshLayout.this.getContext(), mScroller, interpolator);
             }
-        }
-
-        private void reflectInterpolator(Interpolator interpolator) {
-            if (mInterpolatorField == null)
-                mScroller = new Scroller(getContext(), interpolator);
-            else
-                try {
-                    if (!mInterpolatorField.isAccessible())
-                        mInterpolatorField.setAccessible(true);
-                    mInterpolatorField.set(mScroller, interpolator);
-                } catch (IllegalAccessException e) {
-                    mScroller = new Scroller(getContext(), interpolator);
-                } catch (SecurityException e) {
-                    mScroller = new Scroller(getContext(), interpolator);
-                }
         }
 
         private void checkInStartPosition() {

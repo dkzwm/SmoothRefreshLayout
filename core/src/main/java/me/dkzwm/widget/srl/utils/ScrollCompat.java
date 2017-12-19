@@ -24,12 +24,6 @@ import java.lang.reflect.Method;
  */
 public class ScrollCompat {
 
-    private static Class sFlingRunnableClass;
-    private static Field sFlingRunnableField;
-    private static Method sReportScrollStateChangeMethod;
-    private static Method sFlingRunnableStartMethod;
-    private static Constructor sFlingRunnableConstructor;
-
     private ScrollCompat() {
     }
 
@@ -237,53 +231,8 @@ public class ScrollCompat {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 ((AbsListView) view).fling(velocityY);
             } else {
-                compatOlderAbsListViewFling((AbsListView) view, velocityY);
+                SRReflectUtil.compatOlderAbsListViewFling((AbsListView) view, velocityY);
             }
-        }
-    }
-
-    @SuppressLint("PrivateApi")
-    @SuppressWarnings("unchecked")
-    private static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
-        if (sFlingRunnableClass == null) {
-            Class<?>[] clazz = AbsListView.class.getDeclaredClasses();
-            for (Class c : clazz) {
-                if (c.getCanonicalName().endsWith("FlingRunnable")) {
-                    sFlingRunnableClass = c;
-                    break;
-                }
-            }
-        }
-        if (sFlingRunnableClass == null)
-            return;
-        try {
-            if (sFlingRunnableField == null) {
-                sFlingRunnableField = AbsListView.class.getDeclaredField("mFlingRunnable");
-                sFlingRunnableField.setAccessible(true);
-            }
-            Object obj = sFlingRunnableField.get(view);
-            if (obj == null) {
-                if (sFlingRunnableConstructor == null) {
-                    sFlingRunnableConstructor = sFlingRunnableClass.getDeclaredConstructor(AbsListView.class);
-                    sFlingRunnableConstructor.setAccessible(true);
-                }
-                obj = sFlingRunnableConstructor.newInstance(view);
-            }
-            sFlingRunnableField.set(view, obj);
-            if (sReportScrollStateChangeMethod == null) {
-                sReportScrollStateChangeMethod = AbsListView.class.getDeclaredMethod
-                        ("reportScrollStateChange", int.class);
-                sReportScrollStateChangeMethod.setAccessible(true);
-            }
-            sReportScrollStateChangeMethod.invoke(view, AbsListView.OnScrollListener
-                    .SCROLL_STATE_FLING);
-            if (sFlingRunnableStartMethod == null) {
-                sFlingRunnableStartMethod = sFlingRunnableClass.getDeclaredMethod("start", int.class);
-                sFlingRunnableStartMethod.setAccessible(true);
-            }
-            sFlingRunnableStartMethod.invoke(obj, velocityY);
-        } catch (Exception e) {
-            //ignore exception
         }
     }
 }
