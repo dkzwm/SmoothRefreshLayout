@@ -24,7 +24,6 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
-        layout.setLifecycleObserver(this);
         CoordinatorLayout coordinatorLayout = findCoordinatorLayout(layout);
         if (coordinatorLayout == null)
             return;
@@ -38,7 +37,6 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
 
     @Override
     public void onDetached(SmoothRefreshLayout layout) {
-        layout.setLifecycleObserver(null);
         layout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(null);
         layout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(null);
         CoordinatorLayout coordinatorLayout = findCoordinatorLayout(layout);
