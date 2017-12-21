@@ -73,22 +73,24 @@
 ## 使用   
 #### Gradle
 ```
-repositories {  
+repositories {
     ...
-    maven { url 'https://jitpack.io' }  
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.2'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.2'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.2'
+    //工具类库，带有一些快捷配置工具(从1.6.1.2版本才有，现提供一个快速配置CoordinatorLayout加AppBarLayout加滚动视图的工具)
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.1.2'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.2'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.2'
 }
 ```
 #### 在Xml中配置
@@ -198,7 +200,6 @@ public interface IRefreshView <T extends IIndicator> {
 ##### 添加自定义刷新视图
 - 全局静态代码构造    
 ```    
-
         SmoothRefreshLayout.setDefaultCreator(new IRefreshViewCreator() {
             @Override
             public void createHeader(SmoothRefreshLayout layout) {
@@ -212,13 +213,14 @@ public interface IRefreshView <T extends IIndicator> {
                 layout.setFooterView(footer);
             }
         });
-
 ```   
 
 - 动态代码添加   
 ```    
-mRefreshLayout.setHeaderView(header);
-mRefreshLayout.setFooterView(footer);
+        ClassicHeader header = new ClassicHeader(mRefreshLayout.getContext());
+        mRefreshLayout.setHeaderView(header);
+        ClassicFooter footer = new ClassicFooter(mRefreshLayout.getContext());
+        mRefreshLayout.setFooterView(footer);
 ```    
 
 - 请直接写入Xml文件,SmoothRefreshLayout会根据添加的View是否是实现了IRefreshView接口进行判断

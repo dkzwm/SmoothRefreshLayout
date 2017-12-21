@@ -73,22 +73,24 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 ## How to use   
 #### Gradle
 ```
-repositories {  
+repositories {
     ...
-    maven { url 'https://jitpack.io' }  
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.2'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.2'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.2'
+    //Uitls library
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.2'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.2'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.1'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.2'
 }
 ```
 #### Use Xml to config
@@ -250,10 +252,29 @@ public interface IRefreshView<T extends IIndicator> {
 ```
 
 ##### Add custom refresh view
+- Global static code construction    
+```    
+        SmoothRefreshLayout.setDefaultCreator(new IRefreshViewCreator() {
+            @Override
+            public void createHeader(SmoothRefreshLayout layout) {
+                ClassicHeader header = new ClassicHeader(layout.getContext());
+                layout.setHeaderView(header);
+            }
+
+            @Override
+            public void createFooter(SmoothRefreshLayout layout) {
+                ClassicFooter footer = new ClassicFooter(layout.getContext());
+                layout.setFooterView(footer);
+            }
+        });
+```   
+
 - Use Java code to config
 ```    
-    setHeaderView(@NonNull IRefreshView header);
-    setFooterView(@NonNull IRefreshView footer);
+        ClassicHeader header = new ClassicHeader(mRefreshLayout.getContext());
+        mRefreshLayout.setHeaderView(header);
+        ClassicFooter footer = new ClassicFooter(mRefreshLayout.getContext());
+        mRefreshLayout.setFooterView(footer);
 ```    
 
 - Please write directly to the Xml file,SmoothRefreshLayout will find the view that impl the IRefreshView interface to added inside.
