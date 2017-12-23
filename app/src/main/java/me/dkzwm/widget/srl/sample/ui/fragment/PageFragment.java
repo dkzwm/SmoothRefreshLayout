@@ -33,7 +33,7 @@ public class PageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
-        TextView textView = (TextView) view.findViewById(R.id.textView_page);
+        TextView textView = view.findViewById(R.id.textView_page);
         textView.setBackgroundColor(mColor);
         textView.setText(String.valueOf(mPage));
         return view;

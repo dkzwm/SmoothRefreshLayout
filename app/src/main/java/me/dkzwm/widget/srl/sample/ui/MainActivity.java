@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mRefreshLayout = (WaveSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_main);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_main);
         //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_horizontal_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_recyclerView).setOnClickListener(this);
         findViewById(R.id.button_main_test_multi_direction_views).setOnClickListener(this);
-        mButtonDebug = (Button) findViewById(R.id.button_main_debug);
+        findViewById(R.id.button_main_test_scroll_to_auto_refresh).setOnClickListener(this);
+        mButtonDebug = findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
 
@@ -165,6 +166,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_multi_direction_views:
                 startActivity(new Intent(MainActivity.this, TestMultiDirectionViewsActivity.class));
+                break;
+            case R.id.button_main_test_scroll_to_auto_refresh:
+                startActivity(new Intent(MainActivity.this, TestScrollToAutoRefreshActivity.class));
                 break;
             case R.id.imageView_main_bottom_icon:
                 Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,

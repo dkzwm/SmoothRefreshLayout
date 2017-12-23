@@ -44,8 +44,7 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_nested_horizontal_views);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_nested_horizontal_views);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_nested_horizontal_views);
         ClassicHeader header = new ClassicHeader(this);
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableKeepRefreshView(true);
@@ -64,7 +63,7 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
                 }, 4000);
             }
         });
-        mViewPager = (ViewPager) findViewById(R.id.viewPager_test_nested_horizontal_views_pager);
+        mViewPager = findViewById(R.id.viewPager_test_nested_horizontal_views_pager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < sColors.length; i++) {
             fragments.add(PageFragment.newInstance(i, sColors[i]));

@@ -66,4 +66,7 @@
     <string name="swipe_to_load_detail">滑\n动\n查\n看\n详\n情</string>
     <string name="release_to_load_detail">释\n放\n查\n看\n详\n情</string>
     <string name="test_multi_direction_views">测试多方向布局下的刷新</string>
+    <string name="test_scroll_to_auto_refresh">测试触发滚动到边缘并自动刷新</string>
+    <string name="back_to_top_to_refresh">滚动到顶部自动刷新</string>
+    <string name="back_to_bottom_to_refresh">滚动到底部自动加载更多</string>
 </resources>

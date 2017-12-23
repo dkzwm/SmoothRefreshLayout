@@ -46,8 +46,7 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_multi_direction_views);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_multi_direction_views);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_multi_direction_views);
         ClassicHeader header = new ClassicHeader(this);
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableKeepRefreshView(true);
@@ -64,7 +63,7 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        mViewPager = (ViewPager) findViewById(R.id.viewPager_test_multi_direction_views_pager);
+        mViewPager = findViewById(R.id.viewPager_test_multi_direction_views_pager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < sColors.length; i++) {
             fragments.add(PageFragment.newInstance(i, sColors[i]));
@@ -72,10 +71,9 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
         mRefreshLayout.autoRefresh(false);
-        mTextView = (TextView) findViewById(R.id.textView_load_detail_footer_details);
-        mScrollView = (ScrollView) findViewById(R.id.scrollView_test_multi_direction_views);
-        mInnerRefreshLayout = (HorizontalSmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_multi_direction_views_inner);
+        mTextView = findViewById(R.id.textView_load_detail_footer_details);
+        mScrollView = findViewById(R.id.scrollView_test_multi_direction_views);
+        mInnerRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_multi_direction_views_inner);
         mInnerRefreshLayout.setDisableRefresh(true);
         mInnerRefreshLayout.setDisableLoadMore(false);
         mInnerRefreshLayout.setLoadingMinTime(0);

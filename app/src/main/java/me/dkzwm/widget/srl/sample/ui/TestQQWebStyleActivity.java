@@ -30,7 +30,7 @@ public class TestQQWebStyleActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_qq_web_style);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_webView);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_webView);
         mRefreshLayout.setHeaderView(new CustomQQWebHeader(this));
         mRefreshLayout.setDisablePerformRefresh(true);
         mRefreshLayout.setDisableLoadMore(false);
@@ -38,7 +38,7 @@ public class TestQQWebStyleActivity extends AppCompatActivity {
         mRefreshLayout.setEnableHideFooterView(true);
         mRefreshLayout.setEnableHeaderDrawerStyle(true);
         mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(1);
-        mWebView = (WebView) findViewById(R.id.webView_with_webView);
+        mWebView = findViewById(R.id.webView_with_webView);
         mWebView.loadUrl("https://github.com/dkzwm");
     }
 

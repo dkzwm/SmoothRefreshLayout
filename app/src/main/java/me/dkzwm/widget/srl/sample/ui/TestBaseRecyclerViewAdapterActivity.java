@@ -44,7 +44,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_base_recyclerView_adapter);
         setContentView(R.layout.activity_test_base_recyclerview_adapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_base_recyclerView_adapter);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_base_recyclerView_adapter);
         ClassicHeader classicHeader = new ClassicHeader(this);
         classicHeader.setLastUpdateTimeKey("header_last_update_time");
         mRefreshLayout.setHeaderView(classicHeader);
@@ -79,20 +79,26 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 }, 2000);
             }
         }, mRecyclerView);
-        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
+        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(new SmoothRefreshLayout
+                .OnChildNotYetInEdgeCannotMoveHeaderCallBack() {
             @Override
-            public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
+            public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent,
+                                                               @Nullable View child,
+                                                               @Nullable IRefreshView header) {
                 return ScrollCompat.canChildScrollUp(mRecyclerView);
             }
         });
-        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(new SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack() {
+        mRefreshLayout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(new SmoothRefreshLayout
+                .OnChildNotYetInEdgeCannotMoveFooterCallBack() {
             @Override
-            public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
+            public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent,
+                                                               @Nullable View child,
+                                                               @Nullable IRefreshView footer) {
                 return ScrollCompat.canChildScrollDown(mRecyclerView);
             }
         });
         mRefreshLayout.autoRefresh(true);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_base_recyclerView_adapter);
+        mRecyclerView = findViewById(R.id.recyclerView_test_base_recyclerView_adapter);
         mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);

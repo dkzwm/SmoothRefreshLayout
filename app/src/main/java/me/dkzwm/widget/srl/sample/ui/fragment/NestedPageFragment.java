@@ -42,14 +42,12 @@ public class NestedPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nested_page, container, false);
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id
-                .recyclerView_nested_page);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerView_nested_page);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(getActivity(),inflater);
+        mAdapter = new RecyclerViewAdapter(getActivity(), inflater);
         recyclerView.setAdapter(mAdapter);
-        mRefreshLayout = (MaterialSmoothRefreshLayout) view.findViewById(R.id
-                .smoothRefreshLayout_nested_page);
+        mRefreshLayout = view.findViewById(R.id.smoothRefreshLayout_nested_page);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableNextPtrAtOnce(false);

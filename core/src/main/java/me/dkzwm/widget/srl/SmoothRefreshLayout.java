@@ -787,6 +787,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    @ViewCompat.ScrollAxis
     public int getSupportScrollAxis() {
         return ViewCompat.SCROLL_AXIS_VERTICAL;
     }
@@ -3247,14 +3248,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 || (isMovingFooter() && isDisabledLoadMore())));
     }
 
-    protected boolean isChildNotYetInEdgeCannotMoveHeader() {
+    public boolean isChildNotYetInEdgeCannotMoveHeader() {
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isChildNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
         return ScrollCompat.canChildScrollUp(mTargetView);
     }
 
-    protected boolean isChildNotYetInEdgeCannotMoveFooter() {
+    public boolean isChildNotYetInEdgeCannotMoveFooter() {
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isChildNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);

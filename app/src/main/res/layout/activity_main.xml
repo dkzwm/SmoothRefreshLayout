@@ -20,159 +20,117 @@
 
             <Button
                 android:id="@+id/button_main_with_frameLayout"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_frameLayout"/>
 
             <Button
                 android:id="@+id/button_main_with_textView"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_textView"/>
 
             <Button
                 android:id="@+id/button_main_with_listView"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_listView"/>
 
             <Button
                 android:id="@+id/button_main_with_recyclerView"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_recyclerView"/>
 
             <Button
                 android:id="@+id/button_main_test_horizontal_recyclerView"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_horizontal_recyclerView"/>
 
             <Button
                 android:id="@+id/button_main_with_gridView"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_gridView"/>
 
             <Button
                 android:id="@+id/button_main_with_webView"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_webView"/>
 
             <Button
                 android:id="@+id/button_main_with_viewPager"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/with_viewPager"/>
 
             <Button
                 android:id="@+id/button_main_with_recyclerView_in_coordinatorLayout"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/in_coordinatorLayout_with_recyclerView"/>
 
             <Button
                 android:id="@+id/button_main_test_nested_view_pager"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_refresh_layout_in_viewPager_under_nested_layout"/>
 
             <Button
                 android:id="@+id/button_main_test_over_scroll"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/over_scroll"/>
 
             <Button
                 android:id="@+id/button_main_test_nested"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_nested"/>
 
             <Button
                 android:id="@+id/button_main_test_pull_to_refresh"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/pull_to_refresh"/>
 
             <Button
                 android:id="@+id/button_main_test_release_to_refresh"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/release_to_refresh"/>
 
             <Button
                 android:id="@+id/button_main_test_enable_next_pull_to_refresh_at_once"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/enable_next_pull_to_refresh_at_once"/>
 
             <Button
                 android:id="@+id/button_main_test_material_style"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_material_style"/>
 
             <Button
                 android:id="@+id/button_main_test_two_level_refresh"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_two_level_refresh"/>
             <Button
                 android:id="@+id/button_main_test_horizontal_refresh"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_horizontal_refresh"/>
             <Button
                 android:id="@+id/button_main_test_multi_direction_views"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_multi_direction_views"/>
             <Button
                 android:id="@+id/button_main_test_QQ_activity_style"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_qq_activity_style"/>
 
             <Button
                 android:id="@+id/button_main_test_QQ_web_style"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_qq_web_style"/>
             <Button
                 android:id="@+id/button_main_test_base_recyclerView_adapter"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_base_recyclerView_adapter"/>
             <Button
                 android:id="@+id/button_main_test_nested_horizontal_views"
-                style="@style/MainButtonStyle"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
+                style="@style/LargeButtonStyle"
                 android:text="@string/test_nested_horizontal_views"/>
+            <Button
+                android:id="@+id/button_main_test_scroll_to_auto_refresh"
+                style="@style/LargeButtonStyle"
+                android:text="@string/test_scroll_to_auto_refresh"/>
         </LinearLayout>
     </ScrollView>
 

@@ -34,8 +34,7 @@ public class TestHorizontalRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_horizontal_refresh);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_horizontal_refresh);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_horizontal_refresh);
         MaterialHeader header = new MaterialHeader(this);
         header.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});

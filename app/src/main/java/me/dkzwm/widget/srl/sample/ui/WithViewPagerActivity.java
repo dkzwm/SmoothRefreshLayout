@@ -42,7 +42,7 @@ public class WithViewPagerActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_viewPager);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_viewPager);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_viewPager);
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
@@ -68,7 +68,7 @@ public class WithViewPagerActivity extends AppCompatActivity {
 
             }
         });
-        mViewPager = (ViewPager) findViewById(R.id.viewPager_with_viewPager);
+        mViewPager = findViewById(R.id.viewPager_with_viewPager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < sColors.length; i++) {
             fragments.add(PageFragment.newInstance(i, sColors[i]));

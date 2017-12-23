@@ -95,6 +95,9 @@
         <activity
             android:name="me.dkzwm.widget.srl.sample.ui.TestMultiDirectionViewsActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="me.dkzwm.widget.srl.sample.ui.TestScrollToAutoRefreshActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

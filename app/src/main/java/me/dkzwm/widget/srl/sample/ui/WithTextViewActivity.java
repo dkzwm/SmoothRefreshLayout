@@ -42,8 +42,8 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_textView);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_textView);
-        mTextView = (TextView) findViewById(R.id.textView_with_textView_desc);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_textView);
+        mTextView = findViewById(R.id.textView_with_textView_desc);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);

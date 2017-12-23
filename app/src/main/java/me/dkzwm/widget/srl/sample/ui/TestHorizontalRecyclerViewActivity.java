@@ -43,12 +43,13 @@ public class TestHorizontalRecyclerViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_horizontal_recyclerView);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_with_horizontal_recyclerView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3, LinearLayoutManager.HORIZONTAL, false));
+        mRecyclerView = findViewById(R.id.recyclerView_with_horizontal_recyclerView);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3, LinearLayoutManager
+                .HORIZONTAL, false));
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new HorizontalRecyclerViewAdapter(this, getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = (HorizontalSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_horizontal_recyclerView);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_horizontal_recyclerView);
         MaterialHeader header = new MaterialHeader(this);
         header.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});

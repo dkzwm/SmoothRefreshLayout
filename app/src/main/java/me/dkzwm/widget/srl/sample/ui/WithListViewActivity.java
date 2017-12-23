@@ -44,13 +44,13 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_listView);
-        mListView = (ListView) findViewById(R.id.listView_with_list);
+        mListView = findViewById(R.id.listView_with_list);
         mAdapter = new ListViewAdapter(this, getLayoutInflater());
         mListView.setAdapter(mAdapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_listView);
-        mClassicHeader = (ClassicHeader) findViewById(R.id.classicHeader_with_listView);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_listView);
+        mClassicHeader = findViewById(R.id.classicHeader_with_listView);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
-        mClassicFooter = (ClassicFooter) findViewById(R.id.classicFooter_with_listView);
+        mClassicFooter = findViewById(R.id.classicFooter_with_listView);
         mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
         mClassicHeader.setTitleTextColor(Color.WHITE);
         mClassicHeader.setLastUpdateTextColor(Color.GRAY);

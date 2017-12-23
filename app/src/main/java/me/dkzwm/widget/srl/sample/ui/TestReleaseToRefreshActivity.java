@@ -36,11 +36,11 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.release_to_refresh);
-        mTextView = (TextView) findViewById(R.id.textView_test_refresh_desc);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_refresh);
+        mTextView = findViewById(R.id.textView_test_refresh_desc);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_refresh);
         mStoreHouseHeader = new StoreHouseHeader(this);
-        mStoreHouseHeader.initPathWithString("RELEASE TO REFRESH",PixelUtl.dp2px(this,18),
-                PixelUtl.dp2px(this,24));
+        mStoreHouseHeader.initPathWithString("RELEASE TO REFRESH", PixelUtl.dp2px(this, 18),
+                PixelUtl.dp2px(this, 24));
         mStoreHouseHeader.setTextColor(Color.WHITE);
         mStoreHouseHeader.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(mStoreHouseHeader);
@@ -63,7 +63,6 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         });
         mRefreshLayout.autoRefresh(false);
     }
-
 
 
     @Override

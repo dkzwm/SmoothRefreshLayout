@@ -23,7 +23,7 @@ import me.dkzwm.widget.srl.utils.SRLog;
  * @author dkzwm
  */
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
-    private TwoLevelRefreshView mTwoLevelRefreshView;
+    private TwoLevelRefreshView<ITwoLevelIndicator> mTwoLevelRefreshView;
     private ITwoLevelIndicator mTwoLevelIndicator;
     private boolean mEnabledTwoLevelRefresh = true;
     private boolean mOnTwoLevelRefreshing = false;
@@ -287,7 +287,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void ensureFreshView(View child) {
         super.ensureFreshView(child);
         if (child instanceof TwoLevelRefreshView) {
-            mTwoLevelRefreshView = (TwoLevelRefreshView) child;
+            mTwoLevelRefreshView = (TwoLevelRefreshView<ITwoLevelIndicator>) child;
         }
     }
 

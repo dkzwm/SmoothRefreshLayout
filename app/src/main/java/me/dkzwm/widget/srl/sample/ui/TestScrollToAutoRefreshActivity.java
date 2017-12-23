@@ -5,28 +5,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 
 import java.util.List;
 
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
-import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
+import me.dkzwm.widget.srl.utils.QuickConfigAutoRefreshUtil;
 
 /**
- * Created by dkzwm on 2017/6/1.
+ * Created by dkzwm on 2017/12/23.
  *
  * @author dkzwm
  */
-public class WithRecyclerViewActivity extends AppCompatActivity {
+public class TestScrollToAutoRefreshActivity extends AppCompatActivity implements View.OnClickListener {
     private MaterialSmoothRefreshLayout mRefreshLayout;
-    private RecyclerView mRecyclerView;
+    private QuickConfigAutoRefreshUtil mAutoRefreshUtil;
     private RecyclerViewAdapter mAdapter;
     private Handler mHandler = new Handler();
     private int mCount = 0;
@@ -34,19 +33,18 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_with_recyclerview);
+        setContentView(R.layout.activity_test_scroll_to_auto_refresh);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.with_recyclerView);
-        mRecyclerView = findViewById(R.id.recyclerView_with_recyclerView);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        mRecyclerView.setHasFixedSize(true);
+        getSupportActionBar().setTitle(R.string.test_scroll_to_auto_refresh);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView_test_scroll_to_auto_refresh);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
-        mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_recyclerView);
+        recyclerView.setAdapter(mAdapter);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_scroll_to_auto_refresh);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -70,34 +68,15 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         });
         mRefreshLayout.setEnabledCanNotInterruptScrollWhenRefreshCompleted(true);
         mRefreshLayout.autoRefresh(false);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case Menu.FIRST:
-                if (mRefreshLayout.getDefaultFooter().getStyle() == IRefreshView.STYLE_SCALE)
-                    mRefreshLayout.getDefaultFooter().setStyle(IRefreshView.STYLE_DEFAULT);
-                else
-                    mRefreshLayout.getDefaultFooter().setStyle(IRefreshView.STYLE_SCALE);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.change_style);
-        return super.onCreateOptionsMenu(menu);
+        mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(recyclerView);
+        mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
+        findViewById(R.id.button_test_scroll_to_auto_refresh_left).setOnClickListener(this);
+        findViewById(R.id.button_test_scroll_to_auto_refresh_right).setOnClickListener(this);
     }
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(WithRecyclerViewActivity.this, MainActivity.class));
+        startActivity(new Intent(TestScrollToAutoRefreshActivity.this, MainActivity.class));
         finish();
     }
 
@@ -105,5 +84,17 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.button_test_scroll_to_auto_refresh_left:
+                mAutoRefreshUtil.autoRefresh(false, false, true);
+                break;
+            case R.id.button_test_scroll_to_auto_refresh_right:
+                mAutoRefreshUtil.autoLoadMore(false, false, true);
+                break;
+        }
     }
 }

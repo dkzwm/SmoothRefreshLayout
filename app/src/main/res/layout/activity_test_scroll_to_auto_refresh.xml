@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.MaterialSmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_scroll_to_auto_refresh"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:sr_content="@id/recyclerView_test_scroll_to_auto_refresh">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_test_scroll_to_auto_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"/>
+
+    <Button
+        android:id="@+id/button_test_scroll_to_auto_refresh_left"
+        style="@style/SmallButtonStyle"
+        android:layout_gravity="bottom|left"
+        android:text="@string/back_to_top_to_refresh"/>
+
+    <Button
+        android:id="@+id/button_test_scroll_to_auto_refresh_right"
+        style="@style/SmallButtonStyle"
+        android:layout_gravity="bottom|right"
+        android:text="@string/back_to_bottom_to_refresh"/>
+</me.dkzwm.widget.srl.MaterialSmoothRefreshLayout>

@@ -33,7 +33,7 @@ public class TestNestedViewPagerActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_with_nested_viewpager);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -42,7 +42,7 @@ public class TestNestedViewPagerActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager_with_nested_pager);
+        ViewPager viewPager = findViewById(R.id.viewPager_with_nested_pager);
         List<NestedPageFragment> fragments = new ArrayList<>();
         for (int color : sColors) {
             fragments.add(NestedPageFragment.newInstance(color));

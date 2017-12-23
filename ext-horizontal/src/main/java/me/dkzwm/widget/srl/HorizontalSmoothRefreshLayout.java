@@ -585,7 +585,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected boolean isChildNotYetInEdgeCannotMoveHeader() {
+    public boolean isChildNotYetInEdgeCannotMoveHeader() {
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isChildNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
@@ -593,7 +593,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected boolean isChildNotYetInEdgeCannotMoveFooter() {
+    public boolean isChildNotYetInEdgeCannotMoveFooter() {
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isChildNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);

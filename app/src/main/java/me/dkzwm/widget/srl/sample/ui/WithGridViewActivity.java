@@ -35,10 +35,10 @@ public class WithGridViewActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.with_gridView);
-        mGridView = (GridView) findViewById(R.id.gridView_with_grid);
-        mAdapter = new ListViewAdapter(this,getLayoutInflater());
+        mGridView = findViewById(R.id.gridView_with_grid);
+        mAdapter = new ListViewAdapter(this, getLayoutInflater());
         mGridView.setAdapter(mAdapter);
-        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_with_gridView);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_gridView);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {

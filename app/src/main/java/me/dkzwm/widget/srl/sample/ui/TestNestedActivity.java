@@ -37,7 +37,7 @@ public class TestNestedActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_nested);
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -46,13 +46,12 @@ public class TestNestedActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_nested);
+        mRecyclerView = findViewById(R.id.recyclerView_test_nested);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = (MaterialSmoothRefreshLayout) findViewById(R.id
-                .smoothRefreshLayout_test_nested);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_nested);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {

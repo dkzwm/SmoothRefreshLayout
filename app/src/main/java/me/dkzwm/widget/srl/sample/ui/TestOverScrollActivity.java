@@ -23,8 +23,7 @@ public class TestOverScrollActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.over_scroll);
-        SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)
-                findViewById(R.id.smoothRefreshLayout_test_over_scroll);
+        SmoothRefreshLayout refreshLayout = findViewById(R.id.smoothRefreshLayout_test_over_scroll);
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setDisablePerformRefresh(true);
         refreshLayout.setDisablePerformLoadMore(true);

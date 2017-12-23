@@ -52,16 +52,16 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_qq_activity_style);
-        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView_test_qq_activity_style);
-        mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup_test_qq_activity_style_container);
-        mRadioButtonNormal = (RadioButton) findViewById(R.id.radioButton_test_qq_activity_style_normal);
-        mRadioButtonActivity = (RadioButton) findViewById(R.id.radioButton_test_qq_activity_style_activity);
+        mRecyclerView = findViewById(R.id.recyclerView_test_qq_activity_style);
+        mRadioGroup = findViewById(R.id.radioGroup_test_qq_activity_style_container);
+        mRadioButtonNormal = findViewById(R.id.radioButton_test_qq_activity_style_normal);
+        mRadioButtonActivity = findViewById(R.id.radioButton_test_qq_activity_style_activity);
         mRadioGroup.setOnCheckedChangeListener(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
-        mAdapter = new RecyclerViewAdapter(this,getLayoutInflater());
+        mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = (SmoothRefreshLayout) findViewById(R.id.smoothRefreshLayout_test_qq_activity_style);
+        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_qq_activity_style);
         mClassicHeader = new ClassicHeader(this);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
         mClassicFooter = new ClassicFooter(this);
@@ -92,7 +92,8 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
             }
 
         });
-        mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout.OnUIPositionChangedListener() {
+        mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout
+                .OnUIPositionChangedListener() {
             @Override
             public void onChanged(byte status, IIndicator indicator) {
                 if (mRefreshLayout.isInStartPosition()) {
