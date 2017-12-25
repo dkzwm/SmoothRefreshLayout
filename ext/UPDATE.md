@@ -30,8 +30,6 @@
 > 支持刷新视图可见情况下，手势向下传递。即当刷新视图高度未达到触发刷新高度时，手势能将刷新视图隐藏的同时继续传递手势到内容视图。       
 ## 1.5.0.5
 > 修复未开启越界回弹情况下，手势甩动关闭刷新视图不起作用问题。    
-## 1.5.0.4(未完整修复已废弃)
-> 修复未开启越界回弹情况下，手势甩动关闭刷新视图不起作用问题。    
 ## 1.5.0.3
 > 修复多层嵌套下和多方向布局下事件处理可能的异常。    
 ## 1.5.0.2
@@ -150,11 +148,6 @@
 > 添加 `setEnableScrollToTopAutoRefresh` 方法。用于开启到顶自动刷新。    
 > 修复加载更多无更多数据没有正确设置问题（PS：即MASK的值错了，应为`0x07<<10`而不是`0x05<<10`）。    
 > 修复若干触摸事件处理BUG。
-## 1.4.2(已废弃)
-> 修改越界回弹实现，优化回弹效果。    
-> 修复自动刷新下，无越界回弹效果问题。    
-> 修复当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动问题。    
-> 修复 `MaterialFooter` 刷新过程中颜色下标错误问题。    
 ## 1.4.1
 > 修复状态视图填充LayoutParams不一致问题。    
 > 修改包名为`me.dkzwm.widget.srl`,使包名更符合规范。    
@@ -200,17 +193,3 @@
 > 添加`setEnableHideFooterView`方法。   
 > 原有Mode对应改用如下属性组合替代。`NONE`->`setDisableRefresh(true)`+`setDisableLoadMore(true)`+`setEnableOverScroll(false)`;`REFRESH`->`setDisableRefresh(false)`+`setDisableLoadMore(true)`;
 `LOAD_MORE`->`setDisableRefresh(true)`+`setDisableLoadMore(false)`;`OVER_SCROLL`->`setDisableRefresh(false)`+`setDisableLoadMore(false)`+`setDisablePerformRefresh(true)`+`setDisablePerformLoadMore(true)`+`setEnableHideHeaderView(true)`+`setEnableHideFooterView(true)`;`BOTH`->`setDisableRefresh(false)`+`setDisableLoadMore(false)`
-
-## 1.3.5.1
-> 修复多点触摸下体验不一致问题，使非NestedScrolling下的体验和NestedScroling下的体验保持一致。    
-> 修改内部ScrollChecker实现，去掉不必要的防止内存泄露代码。    
-> 修正Hook方法可能失效问题。    
-
-## 1.3.5
-> 添加setEnableLoadMoreNoMoreData（）方法。当使用到底部自动加载更多情况下再无数据调用此方法。默认`ClassicFooter`实现了该功能。    
-> 给`MaterialFooter`添加了设置多颜色属性。    
-> 添加支持多状态视图支持。    
-> 修复部分情况下的关闭下拉刷新和关闭加载更多失效问题。    
-> 修复自动加载更多的BUG。    
-> 删除了对`material-progress`的依赖。    
-> 去掉了一些多余代码，减少体积。    
