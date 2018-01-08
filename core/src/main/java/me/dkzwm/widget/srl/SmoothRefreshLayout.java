@@ -14,6 +14,7 @@ import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -2351,6 +2352,57 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             default:
                 ensureCustomView();
                 return mCustomView;
+        }
+    }
+
+    /**
+     * Set layout resource id when the state is Empty state
+     *
+     * @param resId Resource id
+     */
+    public void setEmptyLayoutResId(@LayoutRes int resId) {
+        if (mEmptyLayoutResId != resId) {
+            if (mEmptyLayoutResId != NO_ID && mEmptyView != null) {
+                removeViewInLayout(mEmptyView);
+                mEmptyView = null;
+            }
+            mEmptyLayoutResId = resId;
+            if (mState == STATE_EMPTY)
+                ensureEmptyView();
+        }
+    }
+
+    /**
+     * Set layout resource id when the state is Error state
+     *
+     * @param resId Resource id
+     */
+    public void setErrorLayoutResId(@LayoutRes int resId) {
+        if (mErrorLayoutResId != resId) {
+            if (mErrorLayoutResId != NO_ID && mErrorView != null) {
+                removeViewInLayout(mEmptyView);
+                mErrorView = null;
+            }
+            mErrorLayoutResId = resId;
+            if (mState == STATE_ERROR)
+                ensureErrorView();
+        }
+    }
+
+    /**
+     * Set layout resource id when the state is Custom state
+     *
+     * @param resId Resource id
+     */
+    public void setCustomLayoutResId(@LayoutRes int resId) {
+        if (mCustomLayoutResId != resId) {
+            if (mCustomLayoutResId != NO_ID && mCustomView != null) {
+                removeViewInLayout(mCustomView);
+                mErrorView = null;
+            }
+            mCustomLayoutResId = resId;
+            if (mState == STATE_CUSTOM)
+                ensureCustomView();
         }
     }
 
