@@ -74,4 +74,5 @@
     <string name="test_scroll_to_auto_refresh">Test scroll to auto refresh</string>
     <string name="back_to_top_to_refresh">Back to top to refresh</string>
     <string name="back_to_bottom_to_refresh">Back to bottom to refresh</string>
+    <string name="auto_refresh_func_demo">Auto-Refresh demo</string>
 </resources>

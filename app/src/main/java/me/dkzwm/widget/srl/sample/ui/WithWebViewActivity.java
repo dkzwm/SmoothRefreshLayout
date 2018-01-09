@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -14,6 +15,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.utils.QuickConfigAutoRefreshUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -24,6 +26,7 @@ public class WithWebViewActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private WebView mWebView;
     private Handler mHandler = new Handler();
+    private QuickConfigAutoRefreshUtil mAutoRefreshUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +61,8 @@ public class WithWebViewActivity extends AppCompatActivity {
             }
         });
         mRefreshLayout.autoRefresh(false);
+        mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(mWebView);
+        mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
     }
 
 
@@ -67,9 +72,18 @@ public class WithWebViewActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case Menu.FIRST:
+                mAutoRefreshUtil.autoRefresh(true, false, true);
+               return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.auto_refresh_func_demo);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

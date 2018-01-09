@@ -1,4 +1,10 @@
 # 更新日志
+## 1.6.1.3
+> 修复Attr冲突问题。    
+> 添加自动刷新辅助工具到 `ext-utils` 包。    
+> 添加了 `setEmptyLayoutResId` 和 `setErrorLayoutResId` 和 `setCustomLayoutResId` 方法。    
+> 添加了 `OnFingerDownListener` 接口。    
+> 修改内部实现，如果TargetView为空将不再抛出异常。
 ## 1.6.1.2
 > 修改当刷新完成时，回滚动作是否能被触摸事件打断的逻辑为触发刷新完成（1.6.1.1条件为真实刷新完成才触发逻辑即:内部状态更改为刷新完成触发）。    
 > 新增 `ILifecycleObserver` 接口，用以观察视图生命周期，为后续可能的工具预留接口。    

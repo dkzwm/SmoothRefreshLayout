@@ -69,4 +69,5 @@
     <string name="test_scroll_to_auto_refresh">测试触发滚动到边缘并自动刷新</string>
     <string name="back_to_top_to_refresh">滚动到顶部自动刷新</string>
     <string name="back_to_bottom_to_refresh">滚动到底部自动加载更多</string>
+    <string name="auto_refresh_func_demo">自动刷新工具演示</string>
 </resources>

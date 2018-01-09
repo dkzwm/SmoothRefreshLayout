@@ -3,12 +3,11 @@ package me.dkzwm.widget.srl.utils;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
@@ -190,34 +189,34 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
             }
             if (useSmoothScroll) {
                 cancelAnimator();
+                final float distance;
+                if (toTop) distance = mTargetView.getScrollY();
+                else distance = mTargetView.getHeight() - mTargetView.getScrollY();
                 mAnimator = ObjectAnimator.ofInt(mTargetView, "scrollY",
                         mTargetView.getScrollY(), toTop ? 0 : mTargetView.getHeight());
-                mAnimator.setDuration(200);
+                DisplayMetrics dm = mTargetView.getResources().getDisplayMetrics();
+                mAnimator.setDuration((long) (distance / dm.heightPixels * 200));
                 mAnimator.start();
                 mAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (mTargetView != null) {
-                            mTargetView.setOnTouchListener(null);
-                        }
+                        if (mRefreshLayout != null)
+                            mRefreshLayout.setOnFingerDownListener(null);
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        if (mTargetView != null) {
-                            mTargetView.setOnTouchListener(null);
-                        }
+                        if (mRefreshLayout != null)
+                            mRefreshLayout.setOnFingerDownListener(null);
                         mNeedToTriggerRefresh = false;
                         mNeedToTriggerLoadMore = false;
                     }
                 });
-                mTargetView.setOnTouchListener(new View.OnTouchListener() {
-                    @SuppressLint("ClickableViewAccessibility")
+                mRefreshLayout.setOnFingerDownListener(new SmoothRefreshLayout
+                        .OnFingerDownListener() {
                     @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getActionMasked() == MotionEvent.ACTION_DOWN)
-                            cancelAnimator();
-                        return false;
+                    public void onFingerDown() {
+                        cancelAnimator();
                     }
                 });
             } else {
@@ -255,34 +254,34 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
             }
             if (useSmoothScroll) {
                 cancelAnimator();
+                final float distance;
+                if (toLeft) distance = mTargetView.getScrollX();
+                else distance = mTargetView.getWidth() - mTargetView.getScrollX();
                 mAnimator = ObjectAnimator.ofInt(mTargetView, "scrollX",
-                        mTargetView.getScrollX(), toLeft ? 0 : mTargetView.getHeight());
-                mAnimator.setDuration(200);
+                        mTargetView.getScrollX(), toLeft ? 0 : mTargetView.getWidth());
+                DisplayMetrics dm = mTargetView.getResources().getDisplayMetrics();
+                mAnimator.setDuration((long) (distance / dm.widthPixels * 200));
                 mAnimator.start();
                 mAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (mTargetView != null) {
-                            mTargetView.setOnTouchListener(null);
-                        }
+                        if (mRefreshLayout != null)
+                            mRefreshLayout.setOnFingerDownListener(null);
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        if (mTargetView != null) {
-                            mTargetView.setOnTouchListener(null);
-                        }
+                        if (mRefreshLayout != null)
+                            mRefreshLayout.setOnFingerDownListener(null);
                         mNeedToTriggerRefresh = false;
                         mNeedToTriggerLoadMore = false;
                     }
                 });
-                mTargetView.setOnTouchListener(new View.OnTouchListener() {
-                    @SuppressLint("ClickableViewAccessibility")
+                mRefreshLayout.setOnFingerDownListener(new SmoothRefreshLayout
+                        .OnFingerDownListener() {
                     @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getActionMasked() == MotionEvent.ACTION_DOWN)
-                            cancelAnimator();
-                        return false;
+                    public void onFingerDown() {
+                        cancelAnimator();
                     }
                 });
             } else {
