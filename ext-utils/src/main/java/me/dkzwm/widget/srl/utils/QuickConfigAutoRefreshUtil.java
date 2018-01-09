@@ -230,9 +230,9 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         if (mTargetView instanceof HorizontalScrollView) {
             HorizontalScrollView scrollView = (HorizontalScrollView) mTargetView;
             if (useSmoothScroll) {
-                scrollView.smoothScrollTo(toLeft ? 0 : scrollView.getHeight(), 0);
+                scrollView.smoothScrollTo(toLeft ? 0 : scrollView.getWidth(), 0);
             } else {
-                scrollView.scrollTo(toLeft ? 0 : scrollView.getHeight(), 0);
+                scrollView.scrollTo(toLeft ? 0 : scrollView.getWidth(), 0);
             }
         } else {
             try {
