@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
-[![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-725%20%7C%2072%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.6.1.2)
+[![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-732%20%7C%2073%20KB-e91e63.svg)](http://www.methodscount.com/?lib=com.github.dkzwm.SmoothRefreshLayout%3Acore%3A1.6.1.3)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -80,17 +80,17 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.3'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.3'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.3'
     //Uitls library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.3'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.3'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.3'
 }
 ```
 #### Use Xml to config
