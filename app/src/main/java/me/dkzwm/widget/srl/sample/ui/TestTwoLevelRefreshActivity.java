@@ -55,7 +55,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setOnRefreshListener(new TwoLevelRefreshingListenerAdapter() {
             @Override
             public void onTwoLevelRefreshBegin() {
-                mRefreshLayout.setEnabledInterceptEventWhileLoading(true);
+                mRefreshLayout.setEnableInterceptEventWhileLoading(true);
                 mTwoLevelCount++;
                 mHandler.postDelayed(new Runnable() {
                     @Override
@@ -82,7 +82,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
 
             @Override
             public void onRefreshComplete(boolean isSuccessful) {
-                mRefreshLayout.setEnabledInterceptEventWhileLoading(false);
+                mRefreshLayout.setEnableInterceptEventWhileLoading(false);
             }
         });
         mRefreshLayout.autoTwoLevelRefreshHint(false, 2000, false);

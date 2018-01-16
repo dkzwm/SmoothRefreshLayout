@@ -55,12 +55,12 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                     public void run() {
                         if (isRefresh) {
                             mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            List<String> list = DataUtil.createList(mCount, 3);
+                            mCount += 3;
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            List<String> list = DataUtil.createList(mCount, 3);
+                            mCount += 3;
                             mAdapter.appendData(list);
                         }
                         mRefreshLayout.refreshComplete();
@@ -68,7 +68,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        mRefreshLayout.setEnabledCanNotInterruptScrollWhenRefreshCompleted(true);
+        mRefreshLayout.setEnableCanNotInterruptScrollWhenRefreshCompleted(true);
         mRefreshLayout.autoRefresh(false);
     }
 

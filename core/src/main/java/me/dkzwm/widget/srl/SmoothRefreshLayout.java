@@ -1631,7 +1631,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param enable Enable
      */
-    public void setEnabledInterceptEventWhileLoading(boolean enable) {
+    public void setEnableInterceptEventWhileLoading(boolean enable) {
         if (enable) {
             mFlag = mFlag | FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING;
         } else {
@@ -1968,7 +1968,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param enable Enable no more data
      */
-    public void setEnabledCanNotInterruptScrollWhenRefreshCompleted(boolean enable) {
+    public void setEnableCanNotInterruptScrollWhenRefreshCompleted(boolean enable) {
         if (enable) {
             mFlag = mFlag | FLAG_ENABLE_CAN_NOT_INTERRUPT_SCROLL_WHEN_REFRESH_COMPLETED;
         } else {
