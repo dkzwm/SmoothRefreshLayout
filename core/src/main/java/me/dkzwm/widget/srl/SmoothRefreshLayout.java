@@ -2333,7 +2333,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setErrorLayoutResId(@LayoutRes int resId) {
         if (mErrorLayoutResId != resId) {
             if (mErrorLayoutResId != NO_ID && mErrorView != null) {
-                removeViewInLayout(mEmptyView);
+                removeViewInLayout(mErrorView);
                 mErrorView = null;
             }
             mErrorLayoutResId = resId;
