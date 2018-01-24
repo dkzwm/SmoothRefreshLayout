@@ -80,17 +80,17 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.1.4'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.1.4'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.4'
     //Uitls library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.1.4'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.1.4'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.1.4'
 }
 ```
 #### Use Xml to config
@@ -383,15 +383,15 @@ public interface IRefreshView<T extends IIndicator> {
  |setDurationOfBackToKeepHeaderPosition|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
  |setDurationOfBackToKeepFooterPosition|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|
  |setEnablePinContentView|boolean|Pinned the content view（Default: `false`）|
- |setEnabledPullToRefresh|boolean|Pull to refresh（Default: `false`，meaning release to refresh）|
+ |setEnablePullToRefresh|boolean|Pull to refresh（Default: `false`，meaning release to refresh）|
  |setEnableOverScroll|boolean|Enable OverScroll（Default: `true`）|
- |setEnabledInterceptEventWhileLoading|boolean|Enable intercept the touch event while loading（Default: `false`）|
+ |setEnableInterceptEventWhileLoading|boolean|Enable intercept the touch event while loading（Default: `false`）|
  |setEnableHeaderDrawerStyle|boolean|Enable Header below the content view（Default: `false`）|
  |setEnableFooterDrawerStyle|boolean|Enable Footer below the content view（Default: `false`）|
  |setDisablePerformRefresh|boolean|Disable Header perform refresh（Default: `false`）|
  |setDisablePerformLoadMore|boolean|Disable Footer perform refresh（Default: `false`）|
  |setEnableLoadMoreNoMoreData|boolean|Set the Footer without more data（Default: `false`）|
- |isEnabledLoadMoreNoMoreDataNoNeedSpringBack|boolean|Set when Footer has no more data to no longer need spring back|
+ |setEnableLoadMoreNoMoreDataNoNeedSpringBack|boolean|Set when Footer has no more data to no longer need spring back|
  |setDisableRefresh|boolean|Disable Header refresh（Default: `false`）|
  |setDisableLoadMore|boolean|Disable Footer refresh（Default: `false`）|
  |setEnableKeepRefreshView|boolean|Keep refresh view in refreshing（Default: `true`）|
@@ -403,7 +403,8 @@ public interface IRefreshView<T extends IIndicator> {
  |setEnableCompatLoadMoreScroll|boolean|Set whether to turn on the synchronized scroll when Footer loading（Default: `true`）|
  |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
- |setEnabledCanNotInterruptScrollWhenRefreshCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
+ |setEnableCanNotInterruptScrollWhenRefreshCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
+ |setDisableLoadMoreWhenContentNotFull|boolean|Load more will be disabled when the content is not full|
  
  #### SmoothRefreshLayout callbacks
  |Name|Params|Desc|

@@ -1982,7 +1982,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * full.
      * <p>是否已经设置了内容视图未满屏时关闭加载更多</p>
      *
-     * @return Enabled
+     * @return Disabled
      */
     public boolean isDisabledLoadMoreWhenContentNotFull() {
         return (mFlag & FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL) > 0;
