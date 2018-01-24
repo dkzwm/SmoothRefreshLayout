@@ -354,7 +354,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setEnableCanNotInterruptScrollWhenRefreshCompleted|boolean|设置开启当刷新完成时，回滚动作不能被打断|
-|setEnableLoadMoreNoMoreDataNoNeedSpringBack|boolean|设置当内容视图未满屏时关闭加载更多|
+|setDisableLoadMoreWhenContentNotFull|boolean|设置当内容视图未满屏时关闭加载更多|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|
