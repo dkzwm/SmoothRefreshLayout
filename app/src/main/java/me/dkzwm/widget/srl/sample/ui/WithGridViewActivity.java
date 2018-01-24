@@ -64,8 +64,6 @@ public class WithGridViewActivity extends AppCompatActivity {
             }
         });
         mRefreshLayout.autoRefresh(false);
-
-
     }
 
 

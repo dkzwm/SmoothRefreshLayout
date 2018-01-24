@@ -124,6 +124,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 21;
     private static final int FLAG_ENABLE_LOAD_MORE_NO_MORE_DATA_NO_NEED_SPRING_BACK = 0x01 << 22;
     private static final int FLAG_ENABLE_CAN_NOT_INTERRUPT_SCROLL_WHEN_REFRESH_COMPLETED = 0x01 << 23;
+    private static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 24;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
@@ -1977,6 +1978,32 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * The flag has been set to enabled. Load more will be disabled when the content is not
+     * full.
+     * <p>是否已经设置了内容视图未满屏时关闭加载更多</p>
+     *
+     * @return Enabled
+     */
+    public boolean isDisabledLoadMoreWhenContentNotFull() {
+        return (mFlag & FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL) > 0;
+    }
+
+    /**
+     * If @param disable has been set to true.Load more will be disabled when the content is not
+     * full.
+     * <p>设置当内容视图未满屏时关闭加载更多</p>
+     *
+     * @param disable Disable load more when the content is not full
+     */
+    public void setDisableLoadMoreWhenContentNotFull(boolean disable) {
+        if (disable) {
+            mFlag = mFlag | FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL;
+        } else {
+            mFlag = mFlag & ~FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL;
+        }
+    }
+
+    /**
      * If @param enable has been set to true. When there is no more data will no longer spring back.
      * <p>设置开启加载更多完成已无更多数据且不需要回滚动作，当该属性设置为`true`时，将不再触发加载更多</p>
      *
@@ -2629,7 +2656,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         }
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
-        if (dy < 0 && !isDisabledRefresh() && !isChildNotYetInEdgeCannotMoveHeader()
+        final boolean canNotChildScrollDown = !isChildNotYetInEdgeCannotMoveFooter();
+        final boolean canNotChildScrollUp = !isChildNotYetInEdgeCannotMoveHeader();
+        if (dy < 0 && !isDisabledRefresh() && canNotChildScrollUp
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
@@ -2641,7 +2670,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 moveHeaderPos(distance - mIndicator.getCurrentPos());
             else
                 moveHeaderPos(mIndicator.getOffset());
-        } else if (dy > 0 && !isDisabledLoadMore() && !isChildNotYetInEdgeCannotMoveFooter()
+        } else if (dy > 0 && !isDisabledLoadMore() && canNotChildScrollDown
+                && !(isDisabledLoadMoreWhenContentNotFull() && canNotChildScrollUp
+                && mIndicator.isInStartPosition())
                 && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
@@ -3125,25 +3156,31 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
                     return super.dispatchTouchEvent(ev);
                 }
-                float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-                if (movingDown && isMovingHeader() && !mIndicator.isInStartPosition()
-                        && maxHeaderDistance > 0) {
-                    if (currentY >= maxHeaderDistance) {
-                        updateAnotherDirectionPos();
-                        return super.dispatchTouchEvent(ev);
-                    } else if (currentY + offsetY > maxHeaderDistance) {
-                        moveHeaderPos(maxHeaderDistance - currentY);
-                        return true;
+                if (movingDown) {
+                    final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+                    if (isMovingHeader() && !mIndicator.isInStartPosition()
+                            && maxHeaderDistance > 0) {
+                        if (currentY >= maxHeaderDistance) {
+                            updateAnotherDirectionPos();
+                            return super.dispatchTouchEvent(ev);
+                        } else if (currentY + offsetY > maxHeaderDistance) {
+                            moveHeaderPos(maxHeaderDistance - currentY);
+                            return true;
+                        }
                     }
-                }
-                float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-                if (!movingDown && isMovingFooter() && !mIndicator.isInStartPosition()
-                        && maxFooterDistance > 0) {
-                    if (currentY >= maxFooterDistance) {
-                        updateAnotherDirectionPos();
-                        return super.dispatchTouchEvent(ev);
-                    } else if (currentY - offsetY > maxFooterDistance) {
-                        moveFooterPos(currentY - maxFooterDistance);
+                } else {
+                    final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
+                    if (isMovingFooter() && !mIndicator.isInStartPosition()
+                            && maxFooterDistance > 0) {
+                        if (currentY >= maxFooterDistance) {
+                            updateAnotherDirectionPos();
+                            return super.dispatchTouchEvent(ev);
+                        } else if (currentY - offsetY > maxFooterDistance) {
+                            moveFooterPos(currentY - maxFooterDistance);
+                            return true;
+                        }
+                    } else if (isDisabledLoadMoreWhenContentNotFull() && mIndicator
+                            .isInStartPosition() && canNotChildScrollDown && canNotChildScrollUp) {
                         return true;
                     }
                 }

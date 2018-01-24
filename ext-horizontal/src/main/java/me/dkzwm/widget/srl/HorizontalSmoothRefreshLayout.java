@@ -397,25 +397,31 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
                     return dispatchTouchEventSuper(ev);
                 }
-                float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-                if (movingRight && isMovingHeader() && !mIndicator.isInStartPosition()
-                        && maxHeaderDistance > 0) {
-                    if (current >= maxHeaderDistance) {
-                        updateAnotherDirectionPos();
-                        return dispatchTouchEventSuper(ev);
-                    } else if (current + offsetX > maxHeaderDistance) {
-                        moveHeaderPos(maxHeaderDistance - current);
-                        return true;
+                if (movingRight) {
+                    float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+                    if (isMovingHeader() && !mIndicator.isInStartPosition()
+                            && maxHeaderDistance > 0) {
+                        if (current >= maxHeaderDistance) {
+                            updateAnotherDirectionPos();
+                            return dispatchTouchEventSuper(ev);
+                        } else if (current + offsetX > maxHeaderDistance) {
+                            moveHeaderPos(maxHeaderDistance - current);
+                            return true;
+                        }
                     }
-                }
-                float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-                if (!movingRight && isMovingFooter() && !mIndicator.isInStartPosition()
-                        && maxFooterDistance > 0) {
-                    if (current >= maxFooterDistance) {
-                        updateAnotherDirectionPos();
-                        return dispatchTouchEventSuper(ev);
-                    } else if (current - offsetX > maxFooterDistance) {
-                        moveFooterPos(current - maxFooterDistance);
+                } else {
+                    float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
+                    if (isMovingFooter() && !mIndicator.isInStartPosition()
+                            && maxFooterDistance > 0) {
+                        if (current >= maxFooterDistance) {
+                            updateAnotherDirectionPos();
+                            return dispatchTouchEventSuper(ev);
+                        } else if (current - offsetX > maxFooterDistance) {
+                            moveFooterPos(current - maxFooterDistance);
+                            return true;
+                        }
+                    } else if (isDisabledLoadMoreWhenContentNotFull() && mIndicator
+                            .isInStartPosition() && canNotChildScrollLeft && canNotChildScrollRight) {
                         return true;
                     }
                 }
@@ -483,7 +489,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
      */
     @Override
-    public void setOnChildNotYetInEdgeCannotMoveFooterCallBack(OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
+    public void setOnChildNotYetInEdgeCannotMoveFooterCallBack
+    (OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
         super.setOnChildNotYetInEdgeCannotMoveFooterCallBack(callback);
     }
 
@@ -496,7 +503,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
      */
     @Override
-    public void setOnChildNotYetInEdgeCannotMoveHeaderCallBack(OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
+    public void setOnChildNotYetInEdgeCannotMoveHeaderCallBack
+    (OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
         super.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(callback);
     }
 
@@ -679,7 +687,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return;
         }
         final int dx = dxUnconsumed + mParentOffsetInWindow[1];
-        if (dx < 0 && !isDisabledRefresh() && !isChildNotYetInEdgeCannotMoveHeader()
+        final boolean canNotChildScrollRight = !isChildNotYetInEdgeCannotMoveFooter();
+        final boolean canNotChildScrollLeft = !isChildNotYetInEdgeCannotMoveHeader();
+        if (dx < 0 && !isDisabledRefresh() && canNotChildScrollLeft
                 && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
@@ -691,7 +701,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 moveHeaderPos(distance - mIndicator.getCurrentPos());
             else
                 moveHeaderPos(mIndicator.getOffset());
-        } else if (dx > 0 && !isDisabledLoadMore() && !isChildNotYetInEdgeCannotMoveFooter()
+        } else if (dx > 0 && !isDisabledLoadMore() && canNotChildScrollRight
+                && !(isDisabledLoadMoreWhenContentNotFull() && canNotChildScrollLeft
+                && mIndicator.isInStartPosition())
                 && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();

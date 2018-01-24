@@ -1,4 +1,9 @@
 # 更新日志
+## 1.6.1.4
+> 修复 `setErrorLayoutResId` 方法移除了错误的视图问题。    
+> 重命名 `setEnabledCanNotInterruptScrollWhenRefreshCompleted` 为 `setEnableCanNotInterruptScrollWhenRefreshCompleted` 方法。    
+> 重命名 `setEnabledInterceptEventWhileLoading` 为 `setEnableInterceptEventWhileLoading` 方法。    
+> 添加 `setEnableLoadMoreNoMoreDataNoNeedSpringBack` 和 `isDisabledLoadMoreWhenContentNotFull` 方法，用以控制当内容视图未满屏时禁用加载更多。    
 ## 1.6.1.3
 > 修复Attr冲突问题。    
 > 添加自动刷新辅助工具到 `ext-utils` 包。    
