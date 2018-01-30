@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
         mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
         //自动刷新
-        mRefreshLayout.autoRefresh(true, false);
+        mRefreshLayout.autoRefresh(SmoothRefreshLayout.SR_ACTION_AT_ONCE, true);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);

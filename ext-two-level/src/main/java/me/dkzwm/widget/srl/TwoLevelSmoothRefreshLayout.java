@@ -233,21 +233,21 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    public void autoRefresh(boolean atOnce, boolean smoothScroll) {
+    public void autoRefresh(@Action int action, boolean smoothScroll) {
         if (mNeedFilterRefreshEvent) {
             throw new IllegalArgumentException("Unsupported operation , " +
                     "Auto Two-Level refresh hint is in process !!");
         }
-        super.autoRefresh(atOnce, smoothScroll);
+        super.autoRefresh(action, smoothScroll);
     }
 
     @Override
-    public void autoLoadMore(boolean atOnce, boolean smoothScroll) {
+    public void autoLoadMore(@Action int action, boolean smoothScroll) {
         if (mNeedFilterRefreshEvent) {
             throw new IllegalArgumentException("Unsupported operation , " +
                     "Auto Two-Level refresh hint is in process !!");
         }
-        super.autoLoadMore(atOnce, smoothScroll);
+        super.autoLoadMore(action, smoothScroll);
     }
 
     @Override
@@ -387,7 +387,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             if (mTwoLevelRefreshView != null) {
                 mTwoLevelRefreshView.onTwoLevelRefreshBegin(this, mTwoLevelIndicator);
             }
-            if (mRefreshListener != null && mRefreshListener instanceof OnRefreshListener)
+            if (mNeedNotifyRefreshListener && mRefreshListener != null && mRefreshListener
+                    instanceof OnRefreshListener)
                 ((OnRefreshListener) mRefreshListener).onTwoLevelRefreshBegin();
             return;
         }
