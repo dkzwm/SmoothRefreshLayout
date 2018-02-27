@@ -440,12 +440,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
                             moveHeaderPos(offsetX);
                             return true;
-                        } else if (isAutoRefresh() && !mAutoRefreshBeenSendTouchEvent) {
-                            // When the Auto-Refresh is in progress, the content view can not
-                            // continue to move up when the content view returns to the left
-                            // 当自动刷新正在进行时，移动内容视图返回到最左侧后无法继续向左移动
+                        } else if ((isAutoRefresh() || mIndicator.getCurrentPos() < IIndicator.START_POS)
+                                && !mBeenSendTouchEvent) {
                             makeNewTouchDownEvent(ev);
-                            mAutoRefreshBeenSendTouchEvent = true;
+                            mBeenSendTouchEvent = true;
                         }
                         return dispatchTouchEventSuper(ev);
                     }

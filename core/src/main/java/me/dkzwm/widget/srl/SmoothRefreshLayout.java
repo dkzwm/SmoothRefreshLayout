@@ -157,7 +157,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean mHasSendDownEvent = false;
     protected boolean mDealAnotherDirectionMove = false;
     protected boolean mPreventForAnotherDirection = false;
-    protected boolean mAutoRefreshBeenSendTouchEvent = false;
+    protected boolean mBeenSendTouchEvent = false;
     protected boolean mIsInterceptTouchEventInOnceTouch = false;
     protected boolean mIsLastOverScrollCanNotAbort = false;
     protected boolean mIsFingerInsideAnotherDirectionView = false;
@@ -3113,7 +3113,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mPreventForAnotherDirection = false;
                 mDealAnotherDirectionMove = false;
                 mIsFingerInsideAnotherDirectionView = false;
-                mAutoRefreshBeenSendTouchEvent = false;
+                mBeenSendTouchEvent = false;
                 mIndicator.onFingerUp();
                 if (isNeedFilterTouchEvent()) {
                     mIsInterceptTouchEventInOnceTouch = false;
@@ -3273,12 +3273,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
                             moveHeaderPos(offsetY);
                             return true;
-                        } else if (isAutoRefresh() && !mAutoRefreshBeenSendTouchEvent) {
-                            // When the Auto-Refresh is in progress, the content view can not
-                            // continue to move up when the content view returns to the top
-                            // 当自动刷新正在进行时，移动内容视图返回到顶部后无法继续向上移动
+                        } else if ((isAutoRefresh() || mIndicator.getCurrentPos() < IIndicator.START_POS)
+                                && !mBeenSendTouchEvent) {
                             makeNewTouchDownEvent(ev);
-                            mAutoRefreshBeenSendTouchEvent = true;
+                            mBeenSendTouchEvent = true;
                         }
                         return super.dispatchTouchEvent(ev);
                     }
@@ -3662,7 +3660,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 SRLog.d(TAG, "movePos(): over top");
             }
         }
-        mAutoRefreshBeenSendTouchEvent = false;
+        mBeenSendTouchEvent = false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
         if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched()
