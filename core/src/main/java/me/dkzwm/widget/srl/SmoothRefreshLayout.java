@@ -3656,13 +3656,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         int to = mIndicator.getCurrentPos() + Math.round(delta);
         // over top
-        if (mMode == Constants.MODE_DEFAULT && mIndicator.willOverTop(to)) {
+        if ((mMode == Constants.MODE_DEFAULT || mOverScrollChecker.mIsFling) && mIndicator.willOverTop(to)) {
             to = IIndicator.START_POS;
             if (sDebug) {
                 SRLog.d(TAG, "movePos(): over top");
             }
         }
-        Log.d("", "----------------:" + to);
         mAutoRefreshBeenSendTouchEvent = false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
