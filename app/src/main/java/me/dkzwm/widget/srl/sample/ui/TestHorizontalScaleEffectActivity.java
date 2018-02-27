@@ -24,7 +24,7 @@ public class TestHorizontalScaleEffectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_horizontal_scale_effect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.with_listView);
+        getSupportActionBar().setTitle(R.string.test_horizontal_scale_effect);
         SmoothRefreshLayout refreshLayout = findViewById(R.id
                 .smoothRefreshLayout_test_horizontal_scale_effect);
         refreshLayout.setDisableLoadMore(false);

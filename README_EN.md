@@ -26,27 +26,34 @@ Thank him for providing such a great open source library ！
  - Support Multi-State: STATE_CONTENT(Default state)、 STATE_ERROR(Error state)、 STATE_EMPTY(Empty state)、 STATE_CUSTOM(Custom state).
  - Support synchronous Fling gestures.
  - Many callback interface and debugging information.
+ - Support Scale effect, PS:XiaoMi phone settings page effects.    
 
 ## Demo
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
 ## Snapshots
+- Test Scale effect（Added since version 1.6.2）      
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
+
+- Test Horizontal Scale effect（Added since version 1.6.2）   
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_scale_effect.gif)
+
 - Test Horizontal Refresh（Added since version 1.5.0）    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
 
 - Test Horizontal RecyclerView Refresh（Added since version 1.5.0）    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
 
-- Test multi direction views    
+- Test Multi Direction Views    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
 
-- Test QQ-WebBrowser style    
+- Test QQ-WebBrowser Style    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
 
-- Test QQ-Activity style    
+- Test QQ-Activity Style    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_style.gif)
 
-- Test Two-Level refresh    
+- Test Two-Level Refresh    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
  
 - With ListView    
@@ -64,7 +71,7 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 - With CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
 
-- Test cross boundary rebound(OverScroll)     
+- Test Cross-Boundary-Rebound(OverScroll)     
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_overScroll.gif)
 
 - Test Nested-Scroll   
@@ -341,6 +348,7 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_enable_load_more|boolean|Enable Footer refresh（Default: `false`）|
  |sr_header_background_color|color|Set the background color of the height of the Header view|
  |sr_footer_background_color|color|Set the background color of the height of the Footer view|
+ |sr_mode|enum|Set current mode (Default:`MODE_DEFAULT` as refresh layout)|
 
  ##### TwoLevelSmoothRefreshLayout
  |Name|Format|Desc|
@@ -358,6 +366,7 @@ public interface IRefreshView<T extends IIndicator> {
  |setHeaderView|IRefreshView|Set Header|
  |setFooterView|IRefreshView|Set Footer|
  |setContentView|int,View|Set content view, parameter1: set current State, parameter2: set the State content view|
+ |setMode|int|Set current mode|
  |setState|int|Set current State|
  |setState|int,boolean|Set current State, parameter1: set current State, parameter2: whether use animate|
  |setDisableWhenAnotherDirectionMove|boolean|Set whether to filter another direction moves（Default: `false`）|

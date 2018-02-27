@@ -24,6 +24,7 @@
  - 支持多状态视图:STATE_CONTENT(默认状态)、STATE_ERROR(异常状态)、STATE_EMPTY(空状态)、STATE_CUSTOM(自定义状态).
  - 支持手势:同步Fling(刷新视图仍可见的情况下,会先回滚隐藏刷新视图,而后向下传递Fling手势).
  - 丰富的回调接口和调试信息,可利用现有Api实现丰富的效果.
+ - 支持作为可拉伸内部视图布局使用（类小米设置页效果）.
 
 ## 演示程序
 下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
@@ -31,6 +32,12 @@
 #### 老版本升级务必查看
  [更新日志](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/ext/UPDATE.md) 
 ## 快照
+- 测试拉伸收缩效果（1.6.2版本添加）    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
+
+- 测试横向拉伸收缩效果（1.6.2版本添加）    
+![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_scale_effect.gif)
+
 - 测试横向刷新（1.5.0版本添加）    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
 
@@ -286,11 +293,12 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_empty_layout|reference|指定空状态下对应的布局资源ID|
 |sr_error_layout|reference|指定异常状态下对应的布局资源ID|
 |sr_custom_layout|reference|指定自定义状态下对应的布局资源ID|
-|sr_state|enum|状态设置 （默认:`STATE_CONTENT`）|
+|sr_state|enum|状态设置（默认:`STATE_CONTENT`）|
 |sr_enable_refresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enable_load_more|boolean|设置是否启用加载更多（默认:`false`）|
 |sr_header_background_color|color|设置Header刷新高度区域的背景色|
 |sr_footer_background_color|color|设置Footer刷新高度区域的背景色|
+|sr_mode|enum|模式设置（默认:`MODE_DEFAULT`为刷新控件模式）|
 
 ##### TwoLevelSmoothRefreshLayout 自身配置
 |名称|类型|描述|
@@ -308,6 +316,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
 |setContentView|int,View|配置内容视图,参数1:设置内容视图对应的状态,参数2:状态对应的内容视图|
+|setMode|int|配置当前模式|
 |setState|int|配置当前状态|
 |setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenAnotherDirectionMove|boolean|内部视图含有其他方向滑动视图时需设置该属性为ture（默认:`false`）|

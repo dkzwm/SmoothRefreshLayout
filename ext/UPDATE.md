@@ -1,4 +1,9 @@
 # 更新日志
+## 1.6.2
+> 支持拉伸内部视图功能，`Mode` 为 `MODE_DEFAULT`时为刷新控件用以操作Header/Footer，`Mode` 为 `MODE_SCALE`时为拉伸收缩控件用以操作内部视图（PS:竖向靠SmoothRefreshLayout支持/横向开HorizontalSmoothRefreshLayout支持,效果类似小米设置页拉伸效果）。    
+> 添加了 `sr_mode`、 `mode_default`、`mode_scale` Xml属性。   
+> 将外部可配置的常量和注解整合。    
+> 支持只触发刷新动画。    
 ## 1.6.1.4
 > 修复 `setErrorLayoutResId` 方法移除了错误的视图问题。    
 > 重命名 `setEnabledCanNotInterruptScrollWhenRefreshCompleted` 为 `setEnableCanNotInterruptScrollWhenRefreshCompleted` 方法。    

@@ -29,7 +29,7 @@ public class TestScaleEffectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_test_scale_effect);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.with_listView);
+        getSupportActionBar().setTitle(R.string.test_scale_effect);
         ListView listView = findViewById(R.id.listView_test_scale_effect);
         ListViewAdapter adapter = new ListViewAdapter(this, getLayoutInflater());
         List<String> list = DataUtil.createList(0, 40);
