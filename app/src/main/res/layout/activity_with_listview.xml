@@ -14,7 +14,7 @@
     app:sr_error_layout="@layout/layout_error_view"
     app:sr_footer_background_color="@color/colorAccent"
     app:sr_header_background_color="@color/colorPrimary"
-    app:sr_state="empty">
+    app:sr_state="content">
 
 
     <ListView

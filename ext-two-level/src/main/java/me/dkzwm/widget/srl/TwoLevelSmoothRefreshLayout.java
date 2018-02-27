@@ -11,6 +11,8 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
+import me.dkzwm.widget.srl.annotation.Action;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -203,7 +205,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      */
     public void autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration,
                                         boolean canBeInterrupted) {
-        if (mStatus != SR_STATUS_INIT) {
+        if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT) {
             return;
         }
         if (sDebug) {
@@ -264,8 +266,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void tryToPerformAutoRefresh() {
-        if (!mAutomaticActionInScrolling && mStatus == SR_STATUS_PREPARE
-                && !mHasDealTwoLevelRefreshHint && isMovingHeader()) {
+        if (!mAutomaticActionInScrolling && mStatus == SR_STATUS_PREPARE && mMode == Constants.
+                MODE_DEFAULT && !mHasDealTwoLevelRefreshHint && isMovingHeader()) {
             if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0)
                 return;
             int offsetToRefreshHint = mTwoLevelIndicator.getOffsetToHintTwoLevelRefresh();
@@ -293,9 +295,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void updatePos(int change) {
-        if (canPerformTwoLevelPullToRefresh() && (mStatus == SR_STATUS_PREPARE
-                || (mStatus == SR_STATUS_COMPLETE && mTwoLevelIndicator.crossTwoLevelCompletePos()
-                && isEnabledNextPtrAtOnce()))) {
+        if (canPerformTwoLevelPullToRefresh() && (mStatus == SR_STATUS_PREPARE && mMode ==
+                Constants.MODE_DEFAULT || (mStatus == SR_STATUS_COMPLETE && mTwoLevelIndicator
+                .crossTwoLevelCompletePos() && isEnabledNextPtrAtOnce()))) {
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
             if (mIndicator.hasTouched() && !isAutoRefresh() && isEnabledPullToRefresh()) {
@@ -313,8 +315,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void onFingerUp(boolean stayForLoading) {
-        if (canPerformTwoLevelPullToRefresh() && mTwoLevelIndicator
-                .crossTwoLevelRefreshLine() && mStatus == SR_STATUS_PREPARE) {
+        if (mMode == Constants.MODE_DEFAULT && canPerformTwoLevelPullToRefresh() &&
+                mTwoLevelIndicator.crossTwoLevelRefreshLine() && mStatus == SR_STATUS_PREPARE) {
             onRelease();
             return;
         }
@@ -342,15 +344,16 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void onRelease() {
-        if (mAutomaticActionUseSmoothScroll && mDurationToStayAtHintPos > 0) {
+        if (mMode == Constants.MODE_DEFAULT && mAutomaticActionUseSmoothScroll &&
+                mDurationToStayAtHintPos > 0) {
             delayForStay();
             return;
         }
         if (canPerformTwoLevelPullToRefresh()) {
             tryToPerformRefresh();
         }
-        if (mEnabledTwoLevelRefresh && isMovingHeader() && isTwoLevelRefreshing()
-                && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
+        if (mMode == Constants.MODE_DEFAULT && mEnabledTwoLevelRefresh && isMovingHeader() &&
+                isTwoLevelRefreshing() && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             if (isEnabledKeepRefreshView())
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
                                 .getOffsetToKeepTwoLevelHeaderWhileLoading(),
@@ -368,8 +371,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void tryToPerformRefresh() {
         if (mNeedFilterRefreshEvent)
             return;
-        if (canPerformTwoLevelPullToRefresh() && mStatus == SR_STATUS_PREPARE
-                && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
+        if (mMode == Constants.MODE_DEFAULT && canPerformTwoLevelPullToRefresh() && mStatus ==
+                SR_STATUS_PREPARE && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             mStatus = SR_STATUS_REFRESHING;
             mOnTwoLevelRefreshing = true;
             performRefresh();
@@ -380,8 +383,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void performRefresh() {
-        if (canPerformTwoLevelPullToRefresh() && isTwoLevelRefreshing()
-                && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
+        if (mMode == Constants.MODE_DEFAULT && canPerformTwoLevelPullToRefresh() &&
+                isTwoLevelRefreshing() && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             mLoadingStartTime = SystemClock.uptimeMillis();
             mNeedNotifyRefreshComplete = true;
             if (mTwoLevelRefreshView != null) {
@@ -410,8 +413,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     private boolean canPerformTwoLevelPullToRefresh() {
-        return !isDisabledRefresh() && mTwoLevelRefreshView != null
-                && mEnabledTwoLevelRefresh && canPerformRefresh() && isMovingHeader();
+        return mMode == Constants.MODE_DEFAULT && !isDisabledRefresh() && mTwoLevelRefreshView !=
+                null && mEnabledTwoLevelRefresh && canPerformRefresh() && isMovingHeader();
     }
 
     private void delayForStay() {

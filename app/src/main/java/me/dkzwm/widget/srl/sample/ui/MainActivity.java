@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.BuildConfig;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
         mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
         //自动刷新
-        mRefreshLayout.autoRefresh(SmoothRefreshLayout.SR_ACTION_AT_ONCE, true);
+        mRefreshLayout.autoRefresh(Constants.ACTION_AT_ONCE, true);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_horizontal_recyclerView).setOnClickListener(this);
         findViewById(R.id.button_main_test_multi_direction_views).setOnClickListener(this);
         findViewById(R.id.button_main_test_scroll_to_auto_refresh).setOnClickListener(this);
+        findViewById(R.id.button_main_test_scale_effect).setOnClickListener(this);
+        findViewById(R.id.button_main_test_horizontal_scale_effect).setOnClickListener(this);
         mButtonDebug = findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
@@ -176,6 +179,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_horizontal_refresh:
                 startActivity(new Intent(MainActivity.this, TestHorizontalRefreshActivity.class));
+                break;
+            case R.id.button_main_test_scale_effect:
+                startActivity(new Intent(MainActivity.this, TestScaleEffectActivity.class));
+                break;
+            case R.id.button_main_test_horizontal_scale_effect:
+                startActivity(new Intent(MainActivity.this, TestHorizontalScaleEffectActivity.class));
                 break;
             case R.id.button_main_debug:
                 SmoothRefreshLayout.debug(!SmoothRefreshLayout.isDebug());

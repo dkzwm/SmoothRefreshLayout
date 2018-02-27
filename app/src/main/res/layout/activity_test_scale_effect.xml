@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.SmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_scale_effect"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:sr_mode="mode_scale">
+
+    <ListView
+        android:id="@+id/listView_test_scale_effect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="12dp"
+        android:background="@android:color/white"
+        android:overScrollMode="never"/>
+
+</me.dkzwm.widget.srl.SmoothRefreshLayout>

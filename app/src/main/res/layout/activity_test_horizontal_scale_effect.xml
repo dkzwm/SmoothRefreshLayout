@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout
+    android:id="@+id/smoothRefreshLayout_test_horizontal_scale_effect"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:sr_mode="mode_scale">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_blue_light"
+                android:gravity="center"
+                android:text="One"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_purple"
+                android:gravity="center"
+                android:text="Two"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_red_light"
+                android:gravity="center"
+                android:text="Third"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_orange_light"
+                android:gravity="center"
+                android:text="Four"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/holo_green_light"
+                android:gravity="center"
+                android:text="Five"
+                android:textColor="@android:color/white"
+                android:textSize="32sp"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+</me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout>

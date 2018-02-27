@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.R;
 
@@ -45,7 +46,7 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
+                        mRefreshLayout.setState(Constants.STATE_CONTENT, true);
                         mRefreshLayout.refreshComplete();
                         String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
@@ -122,13 +123,13 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_with_textView_change_empty_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
+                mRefreshLayout.setState(Constants.STATE_EMPTY, true);
                 break;
             case R.id.button_with_textView_change_content_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
+                mRefreshLayout.setState(Constants.STATE_CONTENT, true);
                 break;
             case R.id.button_with_textView_change_error_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_ERROR, true);
+                mRefreshLayout.setState(Constants.STATE_ERROR, true);
                 break;
         }
     }

@@ -75,4 +75,6 @@
     <string name="back_to_top_to_refresh">Back to top to refresh</string>
     <string name="back_to_bottom_to_refresh">Back to bottom to refresh</string>
     <string name="auto_refresh_func_demo">Auto-Refresh demo</string>
+    <string name="test_scale_effect">Test scale effect</string>
+    <string name="test_horizontal_scale_effect">Test horizontal scale effect</string>
 </resources>
