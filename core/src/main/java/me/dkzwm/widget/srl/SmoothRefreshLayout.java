@@ -3651,17 +3651,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (delta <= 0)
                 return;
         }
-        if (delta>0&&mMode == Constants.MODE_SCALE && calculateScale() >= 1.2f) {
+        if (delta > 0 && mMode == Constants.MODE_SCALE && calculateScale() >= 1.2f) {
             return;
         }
         int to = mIndicator.getCurrentPos() + Math.round(delta);
         // over top
-        if (mIndicator.willOverTop(to)) {
+        if (mMode == Constants.MODE_DEFAULT && mIndicator.willOverTop(to)) {
             to = IIndicator.START_POS;
             if (sDebug) {
                 SRLog.d(TAG, "movePos(): over top");
             }
         }
+        Log.d("", "----------------:" + to);
         mAutoRefreshBeenSendTouchEvent = false;
         mIndicator.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
@@ -3710,8 +3711,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final boolean isMovingHeader = isMovingHeader();
         final boolean isMovingFooter = isMovingFooter();
         // leave initiated position or just refresh complete
-        if (((mIndicator.hasJustLeftStartPosition() || mViewStatus == SR_VIEW_STATUS_INIT)
-                && mStatus == SR_STATUS_INIT)
+        if (mMode == Constants.MODE_DEFAULT && ((mIndicator.hasJustLeftStartPosition()
+                || mViewStatus == SR_VIEW_STATUS_INIT) && mStatus == SR_STATUS_INIT)
                 || (mStatus == SR_STATUS_COMPLETE && isEnabledNextPtrAtOnce()
                 && ((isHeaderInProcessing() && isMovingHeader && change > 0)
                 || (isFooterInProcessing() && isMovingFooter && change < 0)))) {
@@ -3850,7 +3851,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected float calculateScale() {
-        return 1 + (float) Math.min(.2f, Math.pow(mIndicator.getCurrentPos(), .72f) / 1000f);
+        if (mIndicator.getCurrentPos() >= 0)
+            return 1 + (float) Math.min(.2f, Math.pow(mIndicator.getCurrentPos(), .72f) / 1000f);
+        else
+            return 1 - (float) Math.min(.2f, Math.pow(-mIndicator.getCurrentPos(), .72f) / 1000f);
     }
 
     protected void tryToPerformRefreshWhenMoved() {

@@ -30,7 +30,12 @@ public class TestHorizontalScaleEffectActivity extends AppCompatActivity {
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setMode(Constants.MODE_SCALE);
         refreshLayout.setDurationToClose(800);
-        Interpolator interpolator = new BounceInterpolator();
+        Interpolator interpolator = new Interpolator() {
+            @Override
+            public float getInterpolation(float input) {
+                return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
+            }
+        };
         refreshLayout.setSpringInterpolator(interpolator);
     }
 

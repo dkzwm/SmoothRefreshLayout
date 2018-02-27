@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.ListView;
 
@@ -38,8 +37,13 @@ public class TestScaleEffectActivity extends AppCompatActivity {
         SmoothRefreshLayout refreshLayout = findViewById(R.id.smoothRefreshLayout_test_scale_effect);
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setMode(Constants.MODE_SCALE);
-        refreshLayout.setDurationToClose(800);
-        Interpolator interpolator=new BounceInterpolator();
+        refreshLayout.setDurationToClose(550);
+        Interpolator interpolator = new Interpolator() {
+            @Override
+            public float getInterpolation(float input) {
+                return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
+            }
+        };
         refreshLayout.setSpringInterpolator(interpolator);
     }
 
