@@ -81,6 +81,10 @@
             <enum name="empty" value="2"/>
             <enum name="custom" value="3"/>
         </attr>
+        <attr name="sr_mode" format="enum">
+            <enum name="mode_default" value="0"/>
+            <enum name="mode_scale" value="1"/>
+        </attr>
         <attr name="sr_header_background_color" format="color"/>
         <attr name="sr_footer_background_color" format="color"/>
     </declare-styleable>

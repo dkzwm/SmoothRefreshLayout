@@ -16,6 +16,7 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
@@ -91,8 +92,8 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
             public void onRefreshComplete(boolean isSuccessful) {
                 Toast.makeText(WithListViewActivity.this, R.string.sr_refresh_complete,
                         Toast.LENGTH_SHORT).show();
-                if (mRefreshLayout.getState() != SmoothRefreshLayout.STATE_CONTENT)
-                    mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, false);
+                if (mRefreshLayout.getState() != Constants.STATE_CONTENT)
+                    mRefreshLayout.setState(Constants.STATE_CONTENT, false);
             }
         });
         mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
@@ -121,16 +122,16 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.button_with_listView_change_empty_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_EMPTY, true);
+                mRefreshLayout.setState(Constants.STATE_EMPTY, true);
                 break;
             case R.id.button_with_listView_change_content_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_CONTENT, true);
+                mRefreshLayout.setState(Constants.STATE_CONTENT, true);
                 break;
             case R.id.button_with_listView_change_error_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_ERROR, true);
+                mRefreshLayout.setState(Constants.STATE_ERROR, true);
                 break;
             case R.id.button_with_listView_change_custom_state:
-                mRefreshLayout.setState(SmoothRefreshLayout.STATE_CUSTOM, true);
+                mRefreshLayout.setState(Constants.STATE_CUSTOM, true);
                 break;
             case R.id.button_with_listView_disable_refresh:
                 mRefreshLayout.setDisableRefresh(true);

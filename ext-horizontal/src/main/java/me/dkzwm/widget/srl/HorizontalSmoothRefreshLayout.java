@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import java.util.Arrays;
 
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -182,17 +183,17 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             if (mHeaderView != null && child == mHeaderView.getView()) {
                 layoutHeaderView(child, offsetHeader);
             } else if (mTargetView != null && child == mTargetView
-                    || (mPreviousState != STATE_NONE && mChangeStateAnimator != null
+                    || (mPreviousState != Constants.STATE_NONE && mChangeStateAnimator != null
                     && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 final int top = paddingTop + lp.topMargin;
                 final int bottom = top + child.getMeasuredHeight();
                 int left, right;
-                if (isMovingHeader()) {
+                if (mMode == Constants.MODE_DEFAULT && isMovingHeader()) {
                     left = paddingLeft + lp.leftMargin + (pin ? 0 : offsetHeader);
                     right = left + child.getMeasuredWidth();
                     child.layout(left, top, right, bottom);
-                } else if (isMovingFooter()) {
+                } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter()) {
                     left = paddingLeft + lp.leftMargin - (pin ? 0 : offsetFooter);
                     right = left + child.getMeasuredWidth();
                     child.layout(left, top, right, bottom);
@@ -217,7 +218,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void layoutHeaderView(View child, int offsetHeader) {
-        if (isDisabledRefresh() || isEnabledHideHeaderView() || child.getMeasuredWidth() == 0) {
+        if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh() || isEnabledHideHeaderView()
+                || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
                 SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
@@ -266,7 +268,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void layoutFooterView(View child, int offsetFooter, boolean pin, int contentRight) {
-        if (isDisabledLoadMore() || isEnabledHideFooterView() || child.getMeasuredWidth() == 0) {
+        if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore() || isEnabledHideFooterView()
+                || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
                 SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
@@ -525,68 +528,98 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected boolean offsetChild(int change, boolean isMovingHeader, boolean isMovingFooter) {
         boolean needRequestLayout = false;
-        if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader
-                && !isEnabledHideHeaderView()) {
-            final int type = mHeaderView.getStyle();
-            switch (type) {
-                case IRefreshView.STYLE_DEFAULT:
-                    mHeaderView.getView().offsetLeftAndRight(change);
-                    break;
-                case IRefreshView.STYLE_SCALE:
-                    needRequestLayout = true;
-                    break;
-                case IRefreshView.STYLE_PIN:
-                    break;
-                case IRefreshView.STYLE_FOLLOW_PIN:
-                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
+        if (mMode == Constants.MODE_DEFAULT) {
+            if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader
+                    && !isEnabledHideHeaderView()) {
+                final int type = mHeaderView.getStyle();
+                switch (type) {
+                    case IRefreshView.STYLE_DEFAULT:
                         mHeaderView.getView().offsetLeftAndRight(change);
-                    break;
-                case IRefreshView.STYLE_FOLLOW_SCALE:
-                case IRefreshView.STYLE_FOLLOW_CENTER:
-                    if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
+                        break;
+                    case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
-                    else
-                        mHeaderView.getView().offsetLeftAndRight(change);
-                    break;
-            }
-            if (isHeaderInProcessing())
-                mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
-            else
-                mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
-        } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter
-                && !isEnabledHideFooterView()) {
-            final int type = mFooterView.getStyle();
-            switch (type) {
-                case IRefreshView.STYLE_DEFAULT:
-                    mFooterView.getView().offsetLeftAndRight(change);
-                    break;
-                case IRefreshView.STYLE_SCALE:
-                    needRequestLayout = true;
-                    break;
-                case IRefreshView.STYLE_PIN:
-                    break;
-                case IRefreshView.STYLE_FOLLOW_PIN:
-                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
+                        break;
+                    case IRefreshView.STYLE_PIN:
+                        break;
+                    case IRefreshView.STYLE_FOLLOW_PIN:
+                        if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
+                            mHeaderView.getView().offsetLeftAndRight(change);
+                        break;
+                    case IRefreshView.STYLE_FOLLOW_SCALE:
+                    case IRefreshView.STYLE_FOLLOW_CENTER:
+                        if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
+                            needRequestLayout = true;
+                        else
+                            mHeaderView.getView().offsetLeftAndRight(change);
+                        break;
+                }
+                if (isHeaderInProcessing())
+                    mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
+                else
+                    mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
+            } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter
+                    && !isEnabledHideFooterView()) {
+                final int type = mFooterView.getStyle();
+                switch (type) {
+                    case IRefreshView.STYLE_DEFAULT:
                         mFooterView.getView().offsetLeftAndRight(change);
-                    break;
-                case IRefreshView.STYLE_FOLLOW_SCALE:
-                case IRefreshView.STYLE_FOLLOW_CENTER:
-                    if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
+                        break;
+                    case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
-                    else
-                        mFooterView.getView().offsetLeftAndRight(change);
-                    break;
+                        break;
+                    case IRefreshView.STYLE_PIN:
+                        break;
+                    case IRefreshView.STYLE_FOLLOW_PIN:
+                        if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
+                            mFooterView.getView().offsetLeftAndRight(change);
+                        break;
+                    case IRefreshView.STYLE_FOLLOW_SCALE:
+                    case IRefreshView.STYLE_FOLLOW_CENTER:
+                        if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
+                            needRequestLayout = true;
+                        else
+                            mFooterView.getView().offsetLeftAndRight(change);
+                        break;
+                }
+                if (isFooterInProcessing())
+                    mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
+                else
+                    mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
-            if (isFooterInProcessing())
-                mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
-            else
-                mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
-        }
-        if (!isEnabledPinContentView()) {
-            if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
-                mScrollTargetView.offsetLeftAndRight(change);
-            } else {
-                mTargetView.offsetLeftAndRight(change);
+            if (!isEnabledPinContentView()) {
+                if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
+                    mScrollTargetView.offsetLeftAndRight(change);
+                } else {
+                    mTargetView.offsetLeftAndRight(change);
+                }
+            }
+        } else {
+            if (mTargetView != null) {
+                if (isMovingHeader) {
+                    mTargetView.setPivotX(0);
+                    mTargetView.setScaleX(calculateScale());
+                } else if (isMovingFooter) {
+                    if (mScrollTargetView != null) {
+                        mScrollTargetView.setPivotX(getWidth());
+                        mScrollTargetView.setScaleX(calculateScale());
+                    } else {
+                        mTargetView.setPivotX(getWidth());
+                        mTargetView.setScaleX(calculateScale());
+                    }
+                } else {
+                    mTargetView.setPivotX(0);
+                    mTargetView.setScaleX(1);
+                    if (mScrollTargetView != null) {
+                        mScrollTargetView.setPivotX(0);
+                        mScrollTargetView.setScaleX(1);
+                    }
+                }
+                mTargetView.setScaleY(1);
+                mTargetView.setPivotY(0);
+                if (mScrollTargetView != null) {
+                    mScrollTargetView.setScaleY(0);
+                    mScrollTargetView.setPivotY(1);
+                }
             }
         }
         return needRequestLayout;

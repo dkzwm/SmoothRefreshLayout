@@ -131,6 +131,14 @@
                 android:id="@+id/button_main_test_scroll_to_auto_refresh"
                 style="@style/LargeButtonStyle"
                 android:text="@string/test_scroll_to_auto_refresh"/>
+            <Button
+                android:id="@+id/button_main_test_scale_effect"
+                style="@style/LargeButtonStyle"
+                android:text="@string/test_scale_effect"/>
+            <Button
+                android:id="@+id/button_main_test_horizontal_scale_effect"
+                style="@style/LargeButtonStyle"
+                android:text="@string/test_horizontal_scale_effect"/>
         </LinearLayout>
     </ScrollView>
 
