@@ -2,6 +2,9 @@ package me.dkzwm.widget.srl.indicator;
 
 import android.support.annotation.NonNull;
 
+import me.dkzwm.widget.srl.annotation.MovingStatus;
+import me.dkzwm.widget.srl.config.Constants;
+
 /**
  * @author dkzwm
  */
@@ -19,7 +22,7 @@ public class DefaultIndicator implements IIndicator {
     protected boolean mTouched = false;
     protected boolean mMoved = false;
     @MovingStatus
-    protected int mStatus = MOVING_CONTENT;
+    protected int mStatus = Constants.MOVING_CONTENT;
     protected float mResistanceHeader = DEFAULT_RESISTANCE;
     protected float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 1;
@@ -255,16 +258,6 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public boolean hasJustReachedHeaderHeightFromTopToBottom() {
-        return mLastPos < mHeaderHeight && mCurrentPos >= mHeaderHeight;
-    }
-
-    @Override
-    public boolean hasJustReachedFooterHeightFromBottomToTop() {
-        return mLastPos < mFooterHeight && mCurrentPos >= mFooterHeight;
-    }
-
-    @Override
     public boolean isOverOffsetToKeepHeaderWhileLoading() {
         return mCurrentPos >= getOffsetToKeepHeaderWhileLoading();
     }
@@ -272,16 +265,6 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public boolean isOverOffsetToKeepFooterWhileLoading() {
         return mCurrentPos >= getOffsetToKeepFooterWhileLoading();
-    }
-
-    @Override
-    public boolean isInKeepFooterWhileLoadingPos() {
-        return mCurrentPos == getOffsetToKeepFooterWhileLoading();
-    }
-
-    @Override
-    public boolean isInKeepHeaderWhileLoadingPos() {
-        return mCurrentPos == getOffsetToKeepHeaderWhileLoading();
     }
 
     @Override
@@ -389,9 +372,9 @@ public class DefaultIndicator implements IIndicator {
         if (mOffsetCalculator != null) {
             mOffset = mOffsetCalculator.calculate(mStatus, mCurrentPos, offset);
         } else {
-            if (mStatus == MOVING_HEADER) {
+            if (mStatus == Constants.MOVING_HEADER) {
                 mOffset = offset / mResistanceHeader;
-            } else if (mStatus == MOVING_FOOTER) {
+            } else if (mStatus == Constants.MOVING_FOOTER) {
                 mOffset = offset / mResistanceFooter;
             } else {
                 if (offset > 0) {

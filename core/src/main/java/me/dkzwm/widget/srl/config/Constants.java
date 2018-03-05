@@ -18,4 +18,8 @@ public interface Constants {
     int STATE_ERROR = 1;
     int STATE_EMPTY = 2;
     int STATE_CUSTOM = 3;
+
+    int MOVING_CONTENT = 0;
+    int MOVING_FOOTER = 1;
+    int MOVING_HEADER = 2;
 }

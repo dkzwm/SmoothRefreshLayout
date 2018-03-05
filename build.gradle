@@ -33,6 +33,12 @@ ext {
             versionCode      : 43,
             versionName      : "1.6.2"
     ]
+    libs = [
+            recyclerview: "com.android.support:recyclerview-v7:27.1.0",
+            design: "com.android.support:design:27.1.0",
+            appcompatV7: "com.android.support:appcompat-v7:27.1.0",
+            supportV13: "com.android.support:support-v13:27.1.0",
+    ]
 }
 
 task clean(type: Delete) {

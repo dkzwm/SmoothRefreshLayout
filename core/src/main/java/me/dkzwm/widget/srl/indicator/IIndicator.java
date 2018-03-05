@@ -1,10 +1,8 @@
 package me.dkzwm.widget.srl.indicator;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import me.dkzwm.widget.srl.annotation.MovingStatus;
 
 /**
  * Created by dkzwm on 2017/5/22.
@@ -17,9 +15,6 @@ public interface IIndicator {
     float DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING = 1;
     float DEFAULT_RESISTANCE = 1.65f;
     int START_POS = 0;
-    int MOVING_CONTENT = 0;
-    int MOVING_FOOTER = 1;
-    int MOVING_HEADER = 2;
 
     @MovingStatus
     int getMovingStatus();
@@ -100,17 +95,9 @@ public interface IIndicator {
 
     boolean crossRefreshLineFromBottomToTop();
 
-    boolean hasJustReachedHeaderHeightFromTopToBottom();
-
-    boolean hasJustReachedFooterHeightFromBottomToTop();
-
     boolean isOverOffsetToKeepHeaderWhileLoading();
 
     boolean isOverOffsetToKeepFooterWhileLoading();
-
-    boolean isInKeepFooterWhileLoadingPos();
-
-    boolean isInKeepHeaderWhileLoadingPos();
 
     int getOffsetToKeepHeaderWhileLoading();
 
@@ -155,12 +142,7 @@ public interface IIndicator {
      *
      * @author dkzwm
      */
-    public interface IOffsetCalculator {
+    interface IOffsetCalculator {
         float calculate(@MovingStatus int status, int currentPos, float offset);
-    }
-
-    @IntDef({MOVING_CONTENT, MOVING_FOOTER, MOVING_HEADER})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface MovingStatus {
     }
 }

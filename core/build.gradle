@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-    compileOnly 'com.android.support:recyclerview-v7:27.0.2'
+    compileOnly rootProject.ext.libs.recyclerview
 }
 
 
