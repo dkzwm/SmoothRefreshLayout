@@ -88,14 +88,12 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout frame, T indicator) {
-        mShouldShowLastUpdate = false;
         mArrowImageView.clearAnimation();
         mArrowImageView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
         mTitleTextView.setText(mRefreshingRes);
         tryUpdateLastUpdateTime();
-        mLastUpdateTimeUpdater.stop();
     }
 
     @Override

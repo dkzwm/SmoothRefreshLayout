@@ -3741,7 +3741,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         notifyUIPositionChanged();
         boolean needRequestLayout = offsetChild(change, isMovingHeader, isMovingFooter);
-        if (needRequestLayout || (!mOverScrollChecker.mIsScrolling && mIndicator.isInStartPosition())) {
+        if (needRequestLayout || (!mOverScrollChecker.mIsScrolling &&
+                mIndicator.isInStartPosition() && !mIndicator.hasTouched())) {
             requestLayout();
         } else {
             invalidate();
@@ -4631,7 +4632,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         "originalDuration: %s", mDuration);
             }
             final int optimizedDistance = Math.min((int) Math.pow(Math.abs(calculateVelocity()),
-                    .62f), mMaxDistance);
+                    .55f), mMaxDistance);
             final float maxViewDistance;
             final int viewHeight;
             if (isMovingHeader) {
