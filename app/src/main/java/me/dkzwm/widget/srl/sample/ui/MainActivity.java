@@ -47,8 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .OnUIPositionChangedListener() {
             @Override
             public void onChanged(byte status, IIndicator indicator) {
-                if (!mRefreshLayout.isOverScrolling()
-                        && indicator.getMovingStatus() == IIndicator.MOVING_FOOTER) {
+                if (!mRefreshLayout.isOverScrolling() && mRefreshLayout.isMovingFooter()) {
                     mRefreshLayout.resetScrollerInterpolator();
                 }
             }

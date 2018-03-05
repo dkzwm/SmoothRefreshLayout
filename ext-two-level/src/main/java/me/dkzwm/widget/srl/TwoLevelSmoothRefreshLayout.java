@@ -216,7 +216,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mDurationToStayAtHintPos = stayDuration;
         if (mHeaderView != null)
             mHeaderView.onRefreshPrepare(this);
-        mIndicator.setMovingStatus(IIndicator.MOVING_HEADER);
+        mIndicator.setMovingStatus(Constants.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         mAutoHintCanBeInterrupted = canBeInterrupted;

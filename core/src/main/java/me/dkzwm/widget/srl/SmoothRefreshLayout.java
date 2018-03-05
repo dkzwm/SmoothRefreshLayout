@@ -3897,23 +3897,23 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    private boolean isMovingHeader() {
+    public boolean isMovingHeader() {
         return mIndicator.getMovingStatus() == Constants.MOVING_HEADER;
     }
 
-    private boolean isMovingContent() {
+    public boolean isMovingContent() {
         return mIndicator.getMovingStatus() == Constants.MOVING_CONTENT;
     }
 
-    private boolean isMovingFooter() {
+    public boolean isMovingFooter() {
         return mIndicator.getMovingStatus() == Constants.MOVING_FOOTER;
     }
 
-    private boolean isHeaderInProcessing() {
+    public boolean isHeaderInProcessing() {
         return mViewStatus == SR_VIEW_STATUS_HEADER_IN_PROCESSING;
     }
 
-    private boolean isFooterInProcessing() {
+    public boolean isFooterInProcessing() {
         return mViewStatus == SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
     }
 

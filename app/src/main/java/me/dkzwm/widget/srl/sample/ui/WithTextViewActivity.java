@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.annotation.MovingStatus;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.R;
@@ -57,9 +58,9 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.autoRefresh(true);
         mRefreshLayout.setIndicatorOffsetCalculator(new IIndicator.IOffsetCalculator() {
             @Override
-            public float calculate(@IIndicator.MovingStatus int status, int currentPos, float
+            public float calculate(@MovingStatus int status, int currentPos, float
                     offset) {
-                if (status == IIndicator.MOVING_HEADER) {
+                if (status == Constants.MOVING_HEADER) {
                     if (offset < 0) {
                         //如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于下拉则可以在此返回offset
                         //如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
@@ -67,7 +68,7 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                     }
                     return (float) Math.pow(Math.pow(currentPos / 2, 1.28d) + offset, 1 / 1.28d) *
                             2 - currentPos;
-                } else if (status == IIndicator.MOVING_FOOTER) {
+                } else if (status == Constants.MOVING_FOOTER) {
                     if (offset > 0) {
                         //如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于上拉则可以在此返回offset
                         //如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句

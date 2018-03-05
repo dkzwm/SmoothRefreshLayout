@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
 
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -13,15 +14,13 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  * @author dkzwm
  */
 public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
-    private MaterialHeader mMaterialHeader;
-    private MaterialFooter mMaterialFooter;
-    private OnUIPositionChangedListener mOnUIPositionChangedListener = new OnUIPositionChangedListener() {
-        int mLastMovingStatus = IIndicator.MOVING_CONTENT;
+    protected OnUIPositionChangedListener mOnUIPositionChangedListener = new OnUIPositionChangedListener() {
+        int mLastMovingStatus = Constants.MOVING_CONTENT;
 
         @Override
         public void onChanged(byte status, IIndicator indicator) {
             int movingStatus = indicator.getMovingStatus();
-            if (movingStatus == IIndicator.MOVING_HEADER) {
+            if (movingStatus == Constants.MOVING_HEADER) {
                 if (movingStatus != mLastMovingStatus) {
                     setEnablePinContentView(true);
                     setEnablePinRefreshViewWhileLoading(true);
@@ -33,6 +32,8 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
             mLastMovingStatus = movingStatus;
         }
     };
+    protected MaterialHeader mMaterialHeader;
+    protected MaterialFooter mMaterialFooter;
 
     public MaterialSmoothRefreshLayout(Context context) {
         this(context, null);
@@ -80,9 +81,5 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public MaterialFooter getDefaultFooter() {
         return mMaterialFooter;
-    }
-
-    public OnUIPositionChangedListener getDefaultOnUIPositionChangedListener() {
-        return mOnUIPositionChangedListener;
     }
 }
