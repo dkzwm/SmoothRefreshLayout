@@ -28,11 +28,11 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
         setHeaderView(mWaveHeader);
         setEnableHeaderDrawerStyle(true);
         setEnableKeepRefreshView(true);
-        setCanMoveTheMaxRatioOfHeaderHeight(.4f);
-        setRatioOfHeaderHeightToRefresh(.22f);
-        setOffsetRatioToKeepHeaderWhileLoading(.22f);
+        setMaxMoveRatioOfHeader(.4f);
+        setRatioOfHeaderToRefresh(.22f);
+        setRatioToKeepHeader(.22f);
         setDurationToCloseHeader(380);
-        setDurationOfBackToKeepHeaderPosition(850);
+        setDurationOfBackToKeepHeader(850);
     }
 
     public WaveHeader getDefaultHeader() {

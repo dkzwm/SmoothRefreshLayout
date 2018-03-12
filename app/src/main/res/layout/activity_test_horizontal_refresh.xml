@@ -5,8 +5,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/smoothRefreshLayout_test_horizontal_refresh"
     android:layout_height="match_parent"
-    app:sr_header_background_color="@android:color/holo_orange_light"
-    app:sr_footer_background_color="@android:color/holo_green_light"
+    app:sr_headerBackgroundColor="@android:color/holo_orange_light"
+    app:sr_footerBackgroundColor="@android:color/holo_green_light"
     android:orientation="vertical">
 
     <HorizontalScrollView

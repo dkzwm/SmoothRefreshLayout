@@ -44,8 +44,8 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         mStoreHouseHeader.setTextColor(Color.WHITE);
         mStoreHouseHeader.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(mStoreHouseHeader);
-        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(1);
-        mRefreshLayout.setRatioOfHeaderHeightToRefresh(1);
+        mRefreshLayout.setRatioToKeepHeader(1);
+        mRefreshLayout.setRatioOfHeaderToRefresh(1);
         mRefreshLayout.setDisableLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

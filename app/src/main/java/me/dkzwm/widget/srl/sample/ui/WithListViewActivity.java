@@ -57,7 +57,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mClassicHeader.setLastUpdateTextColor(Color.GRAY);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
+        mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -73,10 +73,10 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                             List<String> list = DataUtil.createList(mCount, 20);
                             mCount += 20;
                             mAdapter.updateData(list);
-                            mRefreshLayout.setEnableLoadMoreNoMoreData(false);
+                            mRefreshLayout.setEnableNoMoreData(false);
                         } else {
                             if (mCount > 50) {
-                                mRefreshLayout.setEnableLoadMoreNoMoreData(true);
+                                mRefreshLayout.setEnableNoMoreData(true);
                             } else {
                                 List<String> list = DataUtil.createList(mCount, 20);
                                 mCount += 20;
@@ -96,8 +96,8 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                     mRefreshLayout.setState(Constants.STATE_CONTENT, false);
             }
         });
-        mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
-        mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
+        mRefreshLayout.setRatioToKeep(1);
+        mRefreshLayout.setRatioToRefresh(1);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_change_empty_state)
                 .setOnClickListener(this);

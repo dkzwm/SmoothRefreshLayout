@@ -9,11 +9,12 @@
     android:orientation="vertical"
     android:padding="12dp"
     app:sr_content="@+id/listView_with_list"
-    app:sr_custom_layout="@layout/layout_custom_view"
-    app:sr_empty_layout="@layout/layout_empty_view"
-    app:sr_error_layout="@layout/layout_error_view"
-    app:sr_footer_background_color="@color/colorAccent"
-    app:sr_header_background_color="@color/colorPrimary"
+    app:sr_customLayout="@layout/layout_custom_view"
+    app:sr_emptyLayout="@layout/layout_empty_view"
+    app:sr_pinnedHeaderId="@+id/imageView_with_listView_pinned_header"
+    app:sr_errorLayout="@layout/layout_error_view"
+    app:sr_footerBackgroundColor="@color/colorAccent"
+    app:sr_headerBackgroundColor="@color/colorPrimary"
     app:sr_state="content">
 
 
@@ -40,6 +41,12 @@
         android:layout_height="wrap_content"
         app:sr_style="style_scale"/>
 
+    <ImageView
+        android:id="@+id/imageView_with_listView_pinned_header"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:adjustViewBounds="true"
+        android:src="@mipmap/ic_launcher_round"/>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

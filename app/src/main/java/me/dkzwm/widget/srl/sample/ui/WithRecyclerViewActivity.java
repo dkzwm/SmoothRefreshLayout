@@ -46,7 +46,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_recyclerView);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
+        mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
@@ -68,7 +68,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        mRefreshLayout.setEnableCanNotInterruptScrollWhenRefreshCompleted(true);
+        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.autoRefresh(false);
     }
 

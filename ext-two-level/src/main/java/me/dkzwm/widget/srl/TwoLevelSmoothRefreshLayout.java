@@ -13,9 +13,9 @@ import java.lang.ref.WeakReference;
 
 import me.dkzwm.widget.srl.annotation.Action;
 import me.dkzwm.widget.srl.config.Constants;
+import me.dkzwm.widget.srl.ext.twolevel.R;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.utils.SRLog;
 
@@ -32,9 +32,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     private boolean mHasDealTwoLevelRefreshHint = false;
     private boolean mNeedFilterRefreshEvent = false;
     private boolean mAutoHintCanBeInterrupted = true;
-    private int mDurationOfBackToTwoLevelHeaderHeight = 500;
-    private int mDurationToCloseTwoLevelHeader = 500;
-    private int mDurationToStayAtHintPos = 0;
+    private int mDurationOfBackToTwoLevel = 500;
+    private int mDurationToCloseTwoLevel = 500;
+    private int mDurationToStayAtHint = 0;
     private DelayToBackToTop mDelayToBackToTopRunnable;
 
     public TwoLevelSmoothRefreshLayout(Context context) {
@@ -47,11 +47,15 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        TypedArray arr = context.obtainStyledAttributes(attrs, me.dkzwm.widget.srl.ext.twolevel.R.styleable
+        TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable
                 .TwoLevelSmoothRefreshLayout, 0, 0);
         if (arr != null) {
-            setDisableTwoLevelRefresh(!arr.getBoolean(me.dkzwm.widget.srl.ext.twolevel.R.styleable
-                    .TwoLevelSmoothRefreshLayout_sr_enable_two_level_refresh, false));
+            setDisableTwoLevelRefresh(!arr.getBoolean(R.styleable
+                    .TwoLevelSmoothRefreshLayout_sr_enableTwoLevelRefresh, false));
+            mDurationOfBackToTwoLevel = arr.getInt(R.styleable
+                    .TwoLevelSmoothRefreshLayout_sr_backToKeep2Duration, mDurationOfBackToTwoLevel);
+            mDurationToCloseTwoLevel = arr.getInt(R.styleable
+                    .TwoLevelSmoothRefreshLayout_sr_closeHeader2Duration, mDurationToCloseTwoLevel);
             arr.recycle();
         }
     }
@@ -126,8 +130,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param duration Millis
      */
-    public void setDurationOfBackToKeepTwoLevelHeaderViewPosition(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
-        mDurationOfBackToTwoLevelHeaderHeight = duration;
+    public void setDurationOfBackToKeepTwoLevel(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+        mDurationOfBackToTwoLevel = duration;
     }
 
     /**
@@ -137,8 +141,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param duration Millis
      */
-    public void setDurationToCloseTwoLevelHeader(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
-        mDurationToCloseTwoLevelHeader = duration;
+    public void setDurationToCloseTwoLevel(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+        mDurationToCloseTwoLevel = duration;
     }
 
     /**
@@ -213,7 +217,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         }
         mStatus = SR_STATUS_PREPARE;
         mNeedFilterRefreshEvent = true;
-        mDurationToStayAtHintPos = stayDuration;
+        mDurationToStayAtHint = stayDuration;
         if (mHeaderView != null)
             mHeaderView.onRefreshPrepare(this);
         mIndicator.setMovingStatus(Constants.MOVING_HEADER);
@@ -345,7 +349,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected void onRelease() {
         if (mMode == Constants.MODE_DEFAULT && mAutomaticActionUseSmoothScroll &&
-                mDurationToStayAtHintPos > 0) {
+                mDurationToStayAtHint > 0) {
             delayForStay();
             return;
         }
@@ -357,11 +361,11 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             if (isEnabledKeepRefreshView())
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
                                 .getOffsetToKeepTwoLevelHeaderWhileLoading(),
-                        mDurationOfBackToTwoLevelHeaderHeight);
+                        mDurationOfBackToTwoLevel);
             else
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
                                 .getOffsetToKeepTwoLevelHeaderWhileLoading(),
-                        mDurationToCloseTwoLevelHeader);
+                        mDurationToCloseTwoLevel);
             return;
         }
         super.onRelease();
@@ -405,7 +409,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mTwoLevelIndicator.onTwoLevelRefreshComplete();
             if (mTwoLevelIndicator.crossTwoLevelCompletePos()) {
                 super.notifyUIRefreshComplete(false);
-                tryScrollBackToTop(mDurationToCloseTwoLevelHeader);
+                tryScrollBackToTop(mDurationToCloseTwoLevel);
                 return;
             }
         }
@@ -423,7 +427,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         else
             mDelayToBackToTopRunnable.mLayoutWeakRf = new WeakReference<>(this);
         mAutomaticActionUseSmoothScroll = false;
-        postDelayed(mDelayToBackToTopRunnable, mDurationToStayAtHintPos);
+        postDelayed(mDelayToBackToTopRunnable, mDurationToStayAtHint);
     }
 
     public interface OnRefreshListener extends SmoothRefreshLayout.OnRefreshListener {

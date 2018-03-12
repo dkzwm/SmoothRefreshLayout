@@ -29,10 +29,10 @@ public class DefaultIndicator implements IIndicator {
     private int mOffsetToLoadMore = 1;
     private float mOffsetRatioToKeepHeaderWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
     private float mOffsetRatioToKeepFooterWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
-    private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH;
-    private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH;
-    private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT;
-    private float mCanMoveTheMaxRatioOfFooterHeight = DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT;
+    private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_TO_REFRESH;
+    private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_TO_REFRESH;
+    private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_MAX_MOVE_RATIO;
+    private float mCanMoveTheMaxRatioOfFooterHeight = DEFAULT_MAX_MOVE_RATIO;
 
     @Override
     public boolean hasTouched() {
@@ -82,7 +82,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setRatioOfRefreshViewHeightToRefresh(float ratio) {
+    public void setRatioToRefresh(float ratio) {
         mRatioOfHeaderHeightToRefresh = ratio;
         mRatioOfFooterHeightToLoadMore = ratio;
         mOffsetToRefresh = (int) (mHeaderHeight * ratio);
@@ -90,23 +90,23 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getRatioOfHeaderHeightToRefresh() {
+    public float getRatioOfHeaderToRefresh() {
         return mRatioOfHeaderHeightToRefresh;
     }
 
     @Override
-    public void setRatioOfHeaderHeightToRefresh(float ratio) {
+    public void setRatioOfHeaderToRefresh(float ratio) {
         mRatioOfHeaderHeightToRefresh = ratio;
         mOffsetToRefresh = (int) (mHeaderHeight * ratio);
     }
 
     @Override
-    public float getRatioOfFooterHeightToRefresh() {
+    public float getRatioOfFooterToRefresh() {
         return mRatioOfFooterHeightToLoadMore;
     }
 
     @Override
-    public void setRatioOfFooterHeightToRefresh(float ratio) {
+    public void setRatioOfFooterToRefresh(float ratio) {
         mRatioOfFooterHeightToLoadMore = ratio;
         mOffsetToLoadMore = (int) (mFooterHeight * ratio);
     }
@@ -204,8 +204,8 @@ public class DefaultIndicator implements IIndicator {
         mLastPos = indicator.getLastPos();
         mHeaderHeight = indicator.getHeaderHeight();
         mFooterHeight = indicator.getFooterHeight();
-        mRatioOfHeaderHeightToRefresh = indicator.getRatioOfHeaderHeightToRefresh();
-        mRatioOfFooterHeightToLoadMore = indicator.getRatioOfFooterHeightToRefresh();
+        mRatioOfHeaderHeightToRefresh = indicator.getRatioOfHeaderToRefresh();
+        mRatioOfFooterHeightToLoadMore = indicator.getRatioOfFooterToRefresh();
         mOffsetToRefresh = indicator.getOffsetToRefresh();
         mOffsetToLoadMore = indicator.getOffsetToLoadMore();
         mResistanceHeader = indicator.getResistanceOfPullDown();
@@ -278,12 +278,12 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setOffsetRatioToKeepFooterWhileLoading(float ratio) {
+    public void setRatioToKeepFooter(float ratio) {
         mOffsetRatioToKeepFooterWhileLoading = ratio;
     }
 
     @Override
-    public void setOffsetRatioToKeepHeaderWhileLoading(float ratio) {
+    public void setRatioToKeepHeader(float ratio) {
         mOffsetRatioToKeepHeaderWhileLoading = ratio;
     }
 
@@ -313,18 +313,13 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public void setCanMoveTheMaxRatioOfRefreshViewHeight(float ratio) {
-        setCanMoveTheMaxRatioOfHeaderHeight(ratio);
-        setCanMoveTheMaxRatioOfFooterHeight(ratio);
+    public void setMaxMoveRatio(float ratio) {
+        setMaxMoveRatioOfHeader(ratio);
+        setMaxMoveRatioOfFooter(ratio);
     }
 
     @Override
-    public float getCanMoveTheMaxRatioOfHeaderHeight() {
-        return mCanMoveTheMaxRatioOfHeaderHeight;
-    }
-
-    @Override
-    public void setCanMoveTheMaxRatioOfHeaderHeight(float ratio) {
+    public void setMaxMoveRatioOfHeader(float ratio) {
         if (mCanMoveTheMaxRatioOfHeaderHeight > 0
                 && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh)
             throw new RuntimeException("If mCanMoveTheMaxRatioOfHeaderHeight less than " +
@@ -333,12 +328,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getCanMoveTheMaxRatioOfFooterHeight() {
-        return mCanMoveTheMaxRatioOfFooterHeight;
-    }
-
-    @Override
-    public void setCanMoveTheMaxRatioOfFooterHeight(float ratio) {
+    public void setMaxMoveRatioOfFooter(float ratio) {
         if (mCanMoveTheMaxRatioOfFooterHeight > 0
                 && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore)
             throw new RuntimeException("If MaxRatioOfFooterWhenFingerMoves less than " +

@@ -71,7 +71,7 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setPageTransformer(true, new DrawerTransformer());
-        mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(true);
+        mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
         mRefreshLayout.autoRefresh(false);
     }
 
@@ -83,11 +83,11 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mRefreshLayout.isEnableCheckFingerInsideAnotherDirectionView()) {
-                    mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(false);
+                if (mRefreshLayout.isEnableCheckInsideAnotherDirectionView()) {
+                    mRefreshLayout.setEnableCheckInsideAnotherDirectionView(false);
                     item.setTitle(R.string.enable_check_finger_inside_horizontal_view);
                 } else {
-                    mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(true);
+                    mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
                     item.setTitle(R.string.disable_check_finger_inside_horizontal_view);
                 }
                 return true;

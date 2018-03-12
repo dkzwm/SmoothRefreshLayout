@@ -126,7 +126,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         mArrowImageView.setVisibility(INVISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
-        final boolean noMoreData = frame.isEnabledLoadMoreNoMoreData();
+        final boolean noMoreData = frame.isEnabledNoMoreData();
         if (frame.isRefreshSuccessful()) {
             mTitleTextView.setText(noMoreData ? mNoMoreDataRes : mLoadSuccessfulRes);
             mLastUpdateTime = System.currentTimeMillis();
@@ -146,7 +146,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         final int currentPos = indicator.getCurrentPos();
         final int lastPos = indicator.getLastPos();
 
-        if (frame.isEnabledLoadMoreNoMoreData()) {
+        if (frame.isEnabledNoMoreData()) {
             if (currentPos > lastPos && !mNoMoreDataChangedView) {
                 mTitleTextView.setVisibility(VISIBLE);
                 mLastUpdateTextView.setVisibility(GONE);

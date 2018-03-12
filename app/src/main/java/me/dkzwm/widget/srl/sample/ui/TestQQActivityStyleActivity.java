@@ -161,8 +161,8 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setDisablePerformRefresh(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDurationToCloseHeader(1000);
-        mRefreshLayout.setRatioOfHeaderHeightToRefresh(.22f);
-        mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(.55f);
+        mRefreshLayout.setRatioOfHeaderToRefresh(.22f);
+        mRefreshLayout.setMaxMoveRatioOfHeader(.55f);
         mRefreshLayout.requestLayout();
     }
 
@@ -174,8 +174,8 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setEnableFooterDrawerStyle(false);
         mRefreshLayout.setDisablePerformRefresh(false);
         mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.setCanMoveTheMaxRatioOfHeaderHeight(0f);
-        mRefreshLayout.setRatioOfHeaderHeightToRefresh(IIndicator.DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH);
+        mRefreshLayout.setMaxMoveRatioOfHeader(0f);
+        mRefreshLayout.setRatioOfHeaderToRefresh(IIndicator.DEFAULT_RATIO_TO_REFRESH);
         mRefreshLayout.requestLayout();
     }
 

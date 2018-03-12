@@ -10,8 +10,8 @@ import me.dkzwm.widget.srl.annotation.MovingStatus;
  * @author dkzwm
  */
 public interface IIndicator {
-    float DEFAULT_RATIO_OF_REFRESH_VIEW_HEIGHT_TO_REFRESH = 1.1f;
-    float DEFAULT_CAN_MOVE_THE_MAX_RATIO_OF_REFRESH_VIEW_HEIGHT = 0f;
+    float DEFAULT_RATIO_TO_REFRESH = 1.1f;
+    float DEFAULT_MAX_MOVE_RATIO = 0f;
     float DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING = 1;
     float DEFAULT_RESISTANCE = 1.65f;
     int START_POS = 0;
@@ -41,15 +41,15 @@ public interface IIndicator {
 
     void onRefreshComplete();
 
-    void setRatioOfRefreshViewHeightToRefresh(float ratio);
+    void setRatioToRefresh(float ratio);
 
-    float getRatioOfHeaderHeightToRefresh();
+    float getRatioOfHeaderToRefresh();
 
-    void setRatioOfHeaderHeightToRefresh(float ratio);
+    void setRatioOfHeaderToRefresh(float ratio);
 
-    float getRatioOfFooterHeightToRefresh();
+    float getRatioOfFooterToRefresh();
 
-    void setRatioOfFooterHeightToRefresh(float ratio);
+    void setRatioOfFooterToRefresh(float ratio);
 
     int getOffsetToRefresh();
 
@@ -103,23 +103,19 @@ public interface IIndicator {
 
     int getOffsetToKeepFooterWhileLoading();
 
-    void setOffsetRatioToKeepFooterWhileLoading(float ratio);
+    void setRatioToKeepFooter(float ratio);
 
-    void setOffsetRatioToKeepHeaderWhileLoading(float ratio);
+    void setRatioToKeepHeader(float ratio);
 
     boolean isAlreadyHere(int to);
 
     boolean willOverTop(int to);
 
-    void setCanMoveTheMaxRatioOfRefreshViewHeight(float ratio);
+    void setMaxMoveRatio(float ratio);
 
-    float getCanMoveTheMaxRatioOfHeaderHeight();
+    void setMaxMoveRatioOfHeader(float ratio);
 
-    void setCanMoveTheMaxRatioOfHeaderHeight(float ratio);
-
-    float getCanMoveTheMaxRatioOfFooterHeight();
-
-    void setCanMoveTheMaxRatioOfFooterHeight(float ratio);
+    void setMaxMoveRatioOfFooter(float ratio);
 
     float getCanMoveTheMaxDistanceOfHeader();
 

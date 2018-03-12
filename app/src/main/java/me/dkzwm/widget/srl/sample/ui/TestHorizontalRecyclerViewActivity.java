@@ -60,7 +60,7 @@ public class TestHorizontalRecyclerViewActivity extends AppCompatActivity {
                 .GREEN, Color.BLACK});
         mRefreshLayout.setFooterView(footer);
         mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.setEnableScrollToBottomAutoLoadMore(true);
+        mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {

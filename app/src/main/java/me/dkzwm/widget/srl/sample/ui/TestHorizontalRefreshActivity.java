@@ -61,8 +61,8 @@ public class TestHorizontalRefreshActivity extends AppCompatActivity {
                 }, 4000);
             }
         });
-        mRefreshLayout.setOffsetRatioToKeepRefreshViewWhileLoading(1);
-        mRefreshLayout.setRatioOfRefreshViewHeightToRefresh(1);
+        mRefreshLayout.setRatioToKeep(1);
+        mRefreshLayout.setRatioToRefresh(1);
         mRefreshLayout.autoRefresh(false);
     }
 

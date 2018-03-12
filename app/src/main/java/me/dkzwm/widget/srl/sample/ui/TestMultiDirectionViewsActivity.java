@@ -51,7 +51,7 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setEnableCheckFingerInsideAnotherDirectionView(true);
+        mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {

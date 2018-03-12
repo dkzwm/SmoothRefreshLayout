@@ -39,13 +39,13 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(new CustomTwoLevelHeader(this));
         mRefreshLayout.setEnableKeepRefreshView(true);
         //设置保持头部的Offset（占头部的高度比）
-        mRefreshLayout.setOffsetRatioToKeepHeaderWhileLoading(.12f);
+        mRefreshLayout.setRatioToKeepHeader(.12f);
         //设置触发刷新的头部高度比
-        mRefreshLayout.setRatioOfHeaderHeightToRefresh(.12f);
+        mRefreshLayout.setRatioOfHeaderToRefresh(.12f);
         //设置滚动到保持二级刷新的头部位置的时长
-        mRefreshLayout.setDurationOfBackToKeepTwoLevelHeaderViewPosition(1000);
+        mRefreshLayout.setDurationOfBackToKeepTwoLevel(1000);
         //设置关闭二级刷新头部回滚到起始位置的时长
-        mRefreshLayout.setDurationToCloseTwoLevelHeader(0);
+        mRefreshLayout.setDurationToCloseTwoLevel(0);
         //设置刷新时保持头部的Offset(占头部的高度比)
         mRefreshLayout.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(1f);
         //设置触发提示二级刷新的头部高度比

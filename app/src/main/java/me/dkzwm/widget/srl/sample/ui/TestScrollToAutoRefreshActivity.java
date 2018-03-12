@@ -66,7 +66,7 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
                 }, 2000);
             }
         });
-        mRefreshLayout.setEnableCanNotInterruptScrollWhenRefreshCompleted(true);
+        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.autoRefresh(false);
         mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(recyclerView);
         mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
