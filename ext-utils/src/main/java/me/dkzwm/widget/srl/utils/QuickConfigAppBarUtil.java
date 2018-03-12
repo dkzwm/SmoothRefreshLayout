@@ -16,8 +16,8 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
  * @author dkzwm
  */
 public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
-        , SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveHeaderCallBack
-        , SmoothRefreshLayout.OnChildNotYetInEdgeCannotMoveFooterCallBack {
+        , SmoothRefreshLayout.OnHeaderEdgeDetectCallBack
+        , SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private int mMinOffset;
     private int mOffset = -1;
     private boolean mFullyExpanded;
@@ -31,14 +31,14 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
         if (appBarLayout == null)
             return;
         appBarLayout.addOnOffsetChangedListener(this);
-        layout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(this);
-        layout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(this);
+        layout.setOnHeaderEdgeDetectCallBack(this);
+        layout.setOnFooterEdgeDetectCallBack(this);
     }
 
     @Override
     public void onDetached(SmoothRefreshLayout layout) {
-        layout.setOnChildNotYetInEdgeCannotMoveFooterCallBack(null);
-        layout.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(null);
+        layout.setOnFooterEdgeDetectCallBack(null);
+        layout.setOnHeaderEdgeDetectCallBack(null);
         CoordinatorLayout coordinatorLayout = findCoordinatorLayout(layout);
         if (coordinatorLayout == null)
             return;
@@ -78,9 +78,9 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
     }
 
     @Override
-    public boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent,
-                                                       @Nullable View child,
-                                                       @Nullable IRefreshView header) {
+    public boolean isNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent,
+                                                  @Nullable View child,
+                                                  @Nullable IRefreshView header) {
         View targetView = parent.getLoadMoreScrollTargetView();
         if (targetView == null)
             throw new IllegalArgumentException("You must set target view first!");
@@ -88,9 +88,9 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
     }
 
     @Override
-    public boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent,
-                                                       @Nullable View child,
-                                                       @Nullable IRefreshView footer) {
+    public boolean isNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent,
+                                                  @Nullable View child,
+                                                  @Nullable IRefreshView footer) {
         View targetView = parent.getLoadMoreScrollTargetView();
         if (targetView == null)
             throw new IllegalArgumentException("You must set target view first!");

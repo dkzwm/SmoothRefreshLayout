@@ -10,13 +10,13 @@ public interface ITwoLevelIndicator extends IIndicator {
 
     void onTwoLevelRefreshComplete();
 
-    void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio);
+    void setRatioOfHeaderToHintTwoLevel(float ratio);
 
-    void setRatioOfHeaderHeightToTwoLevelRefresh(float ratio);
+    void setRatioOfHeaderToTwoLevel(float ratio);
 
-    void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio);
+    void setRatioToKeepTwoLevelHeader(float ratio);
 
-    int getOffsetToKeepTwoLevelHeaderWhileLoading();
+    int getOffsetToKeepTwoLevelHeader();
 
     int getOffsetToTwoLevelRefresh();
 

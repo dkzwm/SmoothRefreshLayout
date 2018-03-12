@@ -77,12 +77,12 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
     @Override
     public void onScrollChanged() {
         if (mRefreshLayout != null) {
-            if (mNeedToTriggerRefresh && !mRefreshLayout.isChildNotYetInEdgeCannotMoveHeader()) {
+            if (mNeedToTriggerRefresh && !mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
                 mRefreshLayout.autoRefresh(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll);
                 mNeedToTriggerRefresh = false;
                 mCachedActionAtOnce = false;
                 mCachedAutoRefreshUseSmoothScroll = false;
-            } else if (mNeedToTriggerLoadMore && !mRefreshLayout.isChildNotYetInEdgeCannotMoveFooter()) {
+            } else if (mNeedToTriggerLoadMore && !mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
                 mRefreshLayout.autoLoadMore(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll);
                 mNeedToTriggerLoadMore = false;
                 mCachedActionAtOnce = false;
@@ -97,7 +97,7 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         if (mRefreshLayout != null) {
             if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT)
                 return;
-            if (mRefreshLayout.isChildNotYetInEdgeCannotMoveHeader()) {
+            if (mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
                 if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
                     verticalScrollToEdge(true, scrollToEdgeUseSmoothScroll);
                 } else if (mRefreshLayout.getSupportScrollAxis() == ViewCompat
@@ -122,7 +122,7 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         if (mRefreshLayout != null) {
             if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT)
                 return;
-            if (mRefreshLayout.isChildNotYetInEdgeCannotMoveFooter()) {
+            if (mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
                 if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
                     verticalScrollToEdge(false, scrollToEdgeUseSmoothScroll);
                 } else if (mRefreshLayout.getSupportScrollAxis() == ViewCompat

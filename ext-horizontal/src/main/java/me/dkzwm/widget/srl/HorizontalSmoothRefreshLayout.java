@@ -390,8 +390,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (mPreventForAnotherDirection) {
                     return dispatchTouchEventSuper(ev);
                 }
-                final boolean canNotChildScrollRight = !isChildNotYetInEdgeCannotMoveFooter();
-                final boolean canNotChildScrollLeft = !isChildNotYetInEdgeCannotMoveHeader();
+                final boolean canNotChildScrollRight = !isNotYetInEdgeCannotMoveFooter();
+                final boolean canNotChildScrollLeft = !isNotYetInEdgeCannotMoveHeader();
                 offsetX = mIndicator.getOffset();
                 int current = mIndicator.getCurrentPos();
                 boolean movingRight = offsetX > 0;
@@ -482,31 +482,29 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * Set a callback to override {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()} method. Non-null
+     * Set a callback to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()} method. Non-null
      * callback will return the value provided by the callback and ignore all internal logic.<br/>
      * <p>
-     * 设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在最右侧
+     * 设置{@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在最右侧
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
      */
     @Override
-    public void setOnChildNotYetInEdgeCannotMoveFooterCallBack
-    (OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
-        super.setOnChildNotYetInEdgeCannotMoveFooterCallBack(callback);
+    public void setOnFooterEdgeDetectCallBack(OnFooterEdgeDetectCallBack callback) {
+        super.setOnFooterEdgeDetectCallBack(callback);
     }
 
     /**
-     * Set a callback to override {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()} method. Non-null
+     * Set a callback to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method. Non-null
      * callback will return the value provided by the callback and ignore all internal logic.<br/>
      * <p>
-     * 设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在最左边
+     * 设置{@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在最左边
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
      */
     @Override
-    public void setOnChildNotYetInEdgeCannotMoveHeaderCallBack
-    (OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
-        super.setOnChildNotYetInEdgeCannotMoveHeaderCallBack(callback);
+    public void setOnHeaderEdgeDetectCallBack(OnHeaderEdgeDetectCallBack callback) {
+        super.setOnHeaderEdgeDetectCallBack(callback);
     }
 
     @Override
@@ -624,17 +622,17 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    public boolean isChildNotYetInEdgeCannotMoveHeader() {
+    public boolean isNotYetInEdgeCannotMoveHeader() {
         if (mInEdgeCanMoveHeaderCallBack != null)
-            return mInEdgeCanMoveHeaderCallBack.isChildNotYetInEdgeCannotMoveHeader(this,
+            return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
         return HorizontalScrollCompat.canChildScrollLeft(mTargetView);
     }
 
     @Override
-    public boolean isChildNotYetInEdgeCannotMoveFooter() {
+    public boolean isNotYetInEdgeCannotMoveFooter() {
         if (mInEdgeCanMoveFooterCallBack != null)
-            return mInEdgeCanMoveFooterCallBack.isChildNotYetInEdgeCannotMoveFooter(this,
+            return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);
         return HorizontalScrollCompat.canChildScrollRight(mTargetView);
     }
@@ -659,7 +657,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             onNestedPreScroll(dx, dy, consumed);
             return;
         }
-        if (dx > 0 && !isDisabledRefresh() && !isChildNotYetInEdgeCannotMoveHeader()
+        if (dx > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
                 && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
             if (!mIndicator.isInStartPosition() && isMovingHeader()) {
@@ -672,7 +670,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         mIndicator.getLastMovePoint()[1] - dy);
             }
         }
-        if (dx < 0 && !isDisabledLoadMore() && !isChildNotYetInEdgeCannotMoveFooter()
+        if (dx < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
                 && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
             if (!mIndicator.isInStartPosition() && isMovingFooter()) {
@@ -690,7 +688,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mIndicator.getLastMovePoint()[1] - dy);
             updateAnotherDirectionPos();
         } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
-                && mIndicator.hasLeftStartPosition() && isChildNotYetInEdgeCannotMoveFooter()) {
+                && mIndicator.hasLeftStartPosition() && isNotYetInEdgeCannotMoveFooter()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
             consumed[0] = dx;
         }
@@ -718,8 +716,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return;
         }
         final int dx = dxUnconsumed + mParentOffsetInWindow[1];
-        final boolean canNotChildScrollRight = !isChildNotYetInEdgeCannotMoveFooter();
-        final boolean canNotChildScrollLeft = !isChildNotYetInEdgeCannotMoveHeader();
+        final boolean canNotChildScrollRight = !isNotYetInEdgeCannotMoveFooter();
+        final boolean canNotChildScrollLeft = !isNotYetInEdgeCannotMoveHeader();
         if (dx < 0 && !isDisabledRefresh() && canNotChildScrollLeft
                 && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
@@ -756,8 +754,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 || (!isAutoRefresh() && (isNeedInterceptTouchEvent() ||
                 isCanNotAbortOverScrolling())))
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
-        if ((!isChildNotYetInEdgeCannotMoveHeader() && vx > 0) ||
-                (!isChildNotYetInEdgeCannotMoveFooter() && vx < 0))
+        if ((!isNotYetInEdgeCannotMoveHeader() && vx > 0) ||
+                (!isNotYetInEdgeCannotMoveFooter() && vx < 0))
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
@@ -783,9 +781,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
     }
 
-    protected boolean isFingerInsideAnotherDirectionView(final float x, final float y) {
+    protected boolean isInsideAnotherDirectionView(final float x, final float y) {
         if (mFingerInsideAnotherDirectionViewCallback != null)
-            return mFingerInsideAnotherDirectionViewCallback.isFingerInside(x, y, mTargetView);
+            return mFingerInsideAnotherDirectionViewCallback.isInside(x, y, mTargetView);
         return HorizontalBoundaryUtil.isFingerInsideVerticalView(x, y, mTargetView);
     }
 

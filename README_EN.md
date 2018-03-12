@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-745%20%7C%2078%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-731%20%7C%2077%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -25,8 +25,8 @@ Thank him for providing such a great open source library ！
  - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
  - Support Multi-State: STATE_CONTENT(Default state)、 STATE_ERROR(Error state)、 STATE_EMPTY(Empty state)、 STATE_CUSTOM(Custom state).
  - Support synchronous Fling gestures.
- - Many callback interface and debugging information.
  - Support Scale effect, PS:XiaoMi phone settings page effects.    
+ - Many callback interface and debugging information.
 
 ## Demo
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
@@ -87,17 +87,17 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.3'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.3'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3'
     //Uitls library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.3'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.2'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.3'
 }
 ```
 #### Use Xml to config
@@ -319,41 +319,44 @@ public interface IRefreshView<T extends IIndicator> {
  |:---:|:---:|:---:|
  |sr_content|reference|Specifies the resource ID of the content view|
  |sr_resistance|float|The resistance while you are moving（Default: `1.65f`）|
- |sr_resistance_of_footer|float|The resistance while you are moving Footer（Default: `1.65f`）|
- |sr_resistance_of_header|float|The resistance while you are moving Header（Default: `1.65f`）|
- |sr_ratio_of_refresh_height_to_refresh|float|Trigger refresh of the height ratio（Default: `1.1f`）|
- |sr_ratio_of_header_height_to_refresh|float|Trigger refresh of the Header height ratio（Default: `1.1f`）|
- |sr_ratio_of_footer_height_to_refresh|float|Trigger refresh of the Footer height ratio（Default: `1.1f`）|
- |sr_offset_ratio_to_keep_refresh_while_Loading|float|The offset of keep view in refreshing occupies the height ratio of the refresh view（Default: `1f`）|
- |sr_offset_ratio_to_keep_header_while_Loading|float|The offset of keep Header in refreshing occupies the height ratio of the Header（Default: `1f`）|
- |sr_offset_ratio_to_keep_footer_while_Loading|float|The offset of keep Footer in refreshing occupies the height ratio of the Footer（Default: `1f`）|
- |sr_can_move_the_max_ratio_of_refresh_height|float|The max can move offset occupies the height ratio of the refresh view（Default: `0f`，meaning that it will never work）|
- |sr_can_move_the_max_ratio_of_header_height|float|The max can move offset occupies the height ratio of the Header（Default: `0f`，meaning that it will never work）|
- |sr_can_move_the_max_ratio_of_footer_height|float|The max can move offset occupies the height ratio of the Footer（Default: `0f`，meaning that it will never work）|
- |sr_duration_to_close_of_refresh|integer|The duration of return to the start position（Default: `500`）|
- |sr_duration_to_close_of_header|integer|The duration of return to the start position when Header moves（Default: `500`）|
- |sr_duration_to_close_of_footer|integer|The duration of return to the start position when Footer moves（Default: `500`）|
- |sr_duration_of_back_to_keep_refresh_pos|integer|The duration of return to the keep refresh view position（Default: `200`）|
- |sr_duration_of_back_to_keep_header_pos|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
- |sr_duration_of_back_to_keep_header_pos|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|
- |sr_enable_pin_content|boolean|Pinned the content view（Default: `false`）|
- |sr_enable_keep_refresh_view|boolean|Keep refresh view in refreshing（Default: `true`）|
- |sr_enable_pull_to_refresh|boolean|Pull to refresh（Default: `false`，meaning release to refresh）|
- |sr_enable_over_scroll|boolean|OverScroll（Default: `true`|
- |sr_empty_layout|reference|Specifies the layout resource ID in Empty state|
- |sr_error_layout|reference|Specifies the layout resource ID in Error state|
- |sr_custom_layout|reference|Specifies the layout resource ID in Custom state|
+ |sr_resistanceOfFooter|float|The resistance while you are moving Footer（Default: `1.65f`）|
+ |sr_resistanceOfHeader|float|The resistance while you are moving Header（Default: `1.65f`）|
+ |sr_ratioToRefresh|float|Trigger refresh of the height ratio（Default: `1.1f`）|
+ |sr_ratioOfHeaderToRefresh|float|Trigger refresh of the Header height ratio（Default: `1.1f`）|
+ |sr_ratioOfFooterToRefresh|float|Trigger refresh of the Footer height ratio（Default: `1.1f`）|
+ |sr_ratioToKeep|float|The offset of keep view in refreshing occupies the height ratio of the refresh view（Default: `1f`）|
+ |sr_ratioToKeepHeader|float|The offset of keep Header in refreshing occupies the height ratio of the Header（Default: `1f`）|
+ |sr_ratioToKeepFooter|float|The offset of keep Footer in refreshing occupies the height ratio of the Footer（Default: `1f`）|
+ |sr_maxMoveRatio|float|The max can move offset occupies the height ratio of the refresh view（Default: `0f`，meaning that it will never work）|
+ |sr_maxMoveRatioOfHeader|float|The max can move offset occupies the height ratio of the Header（Default: `0f`，meaning that it will never work）|
+ |sr_maxMoveRatioOfFooter|float|The max can move offset occupies the height ratio of the Footer（Default: `0f`，meaning that it will never work）|
+ |sr_closeDuration|integer|The duration of return to the start position（Default: `500`）|
+ |sr_closeHeaderDuration|integer|The duration of return to the start position when Header moves（Default: `500`）|
+ |sr_closeFooterDuration|integer|The duration of return to the start position when Footer moves（Default: `500`）|
+ |sr_backToKeepDuration|integer|The duration of return to the keep refresh view position（Default: `200`）|
+ |sr_backToKeepHeaderDuration|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
+ |sr_backToKeepFooterDuration|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|
+ |sr_enablePinContent|boolean|Pinned the content view（Default: `false`）|
+ |sr_enableKeep|boolean|Keep refresh view in refreshing（Default: `true`）|
+ |sr_enablePullToRefresh|boolean|Pull to refresh（Default: `false`，meaning release to refresh）|
+ |sr_enableOverScroll|boolean|OverScroll（Default: `true`|
+ |sr_emptyLayout|reference|Specifies the layout resource ID in Empty state|
+ |sr_errorLayout|reference|Specifies the layout resource ID in Error state|
+ |sr_customLayout|reference|Specifies the layout resource ID in Custom state|
  |sr_state|enum|Set current state （Default: `STATE_CONTENT`）|
- |sr_enable_refresh|boolean|Enable Header refresh（Default: `ture`）|
- |sr_enable_load_more|boolean|Enable Footer refresh（Default: `false`）|
- |sr_header_background_color|color|Set the background color of the height of the Header view|
- |sr_footer_background_color|color|Set the background color of the height of the Footer view|
+ |sr_enableRefresh|boolean|Enable Header refresh（Default: `ture`）|
+ |sr_enableLoadMore|boolean|Enable Footer refresh（Default: `false`）|
+ |sr_headerBackgroundColor|color|Set the background color of the height of the Header view|
+ |sr_footerBackgroundColor|color|Set the background color of the height of the Footer view|
  |sr_mode|enum|Set current mode (Default:`MODE_DEFAULT` as refresh layout)|
+ |sr_stickyHeaderId|enum|Specifies the resource ID of the sticky header|
 
  ##### TwoLevelSmoothRefreshLayout
  |Name|Format|Desc|
  |:---:|:---:|:---:|
- |sr_enable_two_level_refresh|boolean|Enable Two-Level refresh（Default: `true`）|
+ |sr_enableTwoLevelRefresh|boolean|Enable Two-Level refresh（Default: `true`）|
+ |sr_backToKeep2Duration|boolean|Set the duration of to keep Two-Level refresh view position when Header moves（Default: `500`）|
+ |sr_closeHeader2Duration|boolean|Set the duration for closing the Two-Level refresh（Default: `500`）|
 
  ##### The other views in SmoothRefreshLayout 
  |Name|Format|Desc|
@@ -376,21 +379,21 @@ public interface IRefreshView<T extends IIndicator> {
  |setResistance|float|The resistance while you are moving（Default: `1.65f`）|
  |setResistanceOfFooter|float|The resistance while you are moving Footer（Default: `1.65f`）|
  |setResistanceOfHeader|float|The resistance while you are moving Header（Default: `1.65f`）|
- |setRatioOfRefreshViewHeightToRefresh|float|Trigger refresh of the height ratio（Default: `1.1f`）|
- |setRatioOfHeaderHeightToRefresh|float|Trigger refresh of the Header height ratio（Default: `1.1f`）|
- |setRatioOfFooterHeightToRefresh|float|Trigger refresh of the Footer height ratio（Default: `1.1f`）|
- |setOffsetRatioToKeepRefreshViewWhileLoading|float|The offset of keep view in refreshing occupies the height ratio of the refresh view（Default: `1f`）|
- |setOffsetRatioToKeepHeaderWhileLoading|float|The offset of keep Header in refreshing occupies the height ratio of the Header（Default: `1f`）|
- |setOffsetRatioToKeepFooterWhileLoading|float|The offset of keep Header in refreshing occupies the height ratio of the Footer（Default: `1f`）|
- |setCanMoveTheMaxRatioOfRefreshViewHeight|float|The max can move offset occupies the height ratio of the refresh view（Default: `0f`，meaning that it will never work）|
- |setCanMoveTheMaxRatioOfHeaderHeight|float|The max can move offset occupies the height ratio of the Header（Default: `0f`，meaning that it will never work）|
- |setCanMoveTheMaxRatioOfFooterHeight|float|The max can move offset occupies the height ratio of the Footer（Default: `0f`，meaning that it will never work）|
+ |setRatioToRefresh|float|Trigger refresh of the height ratio（Default: `1.1f`）|
+ |setRatioOfHeaderToRefresh|float|Trigger refresh of the Header height ratio（Default: `1.1f`）|
+ |setRatioOfFooterToRefresh|float|Trigger refresh of the Footer height ratio（Default: `1.1f`）|
+ |setRatioToKeep|float|The offset of keep view in refreshing occupies the height ratio of the refresh view（Default: `1f`）|
+ |setRatioToKeepHeader|float|The offset of keep Header in refreshing occupies the height ratio of the Header（Default: `1f`）|
+ |setRatioToKeepFooter|float|The offset of keep Header in refreshing occupies the height ratio of the Footer（Default: `1f`）|
+ |setMaxMoveRatio|float|The max can move offset occupies the height ratio of the refresh view（Default: `0f`，meaning that it will never work）|
+ |setMaxMoveRatioOfHeader|float|The max can move offset occupies the height ratio of the Header（Default: `0f`，meaning that it will never work）|
+ |setMaxMoveRatioOfFooter|float|The max can move offset occupies the height ratio of the Footer（Default: `0f`，meaning that it will never work）|
  |setDurationToClose|int|The duration of return to the start position（Default: `500`）|
  |setDurationToCloseHeader|int|The duration of return to the start position when Header moves（Default: `500`）|
  |setDurationToCloseFooter|int|The duration of return to the start position when Footer moves（Default: `500`）|
- |setDurationOfBackToKeepRefreshViewPosition|integer|The duration of return to the keep refresh view position（Default: `200`）|
- |setDurationOfBackToKeepHeaderPosition|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
- |setDurationOfBackToKeepFooterPosition|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|
+ |setDurationOfBackToKeep|integer|The duration of return to the keep refresh view position（Default: `200`）|
+ |setDurationOfBackToKeepHeader|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
+ |setDurationOfBackToKeepFooter|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|
  |setEnablePinContentView|boolean|Pinned the content view（Default: `false`）|
  |setEnablePullToRefresh|boolean|Pull to refresh（Default: `false`，meaning release to refresh）|
  |setEnableOverScroll|boolean|Enable OverScroll（Default: `true`）|
@@ -399,20 +402,20 @@ public interface IRefreshView<T extends IIndicator> {
  |setEnableFooterDrawerStyle|boolean|Enable Footer below the content view（Default: `false`）|
  |setDisablePerformRefresh|boolean|Disable Header perform refresh（Default: `false`）|
  |setDisablePerformLoadMore|boolean|Disable Footer perform refresh（Default: `false`）|
- |setEnableLoadMoreNoMoreData|boolean|Set the Footer without more data（Default: `false`）|
- |setEnableLoadMoreNoMoreDataNoNeedSpringBack|boolean|Set when Footer has no more data to no longer need spring back|
+ |setEnableNoMoreData|boolean|Set the Footer without more data（Default: `false`）|
+ |setEnableNoSpringBackWhenNoMoreData|boolean|Set when Footer has no more data to no longer need spring back|
  |setDisableRefresh|boolean|Disable Header refresh（Default: `false`）|
  |setDisableLoadMore|boolean|Disable Footer refresh（Default: `false`）|
  |setEnableKeepRefreshView|boolean|Keep refresh view in refreshing（Default: `true`）|
- |setEnableScrollToBottomAutoLoadMore|boolean|When content view scrolling to bottom, It will be perform load more（Default: `false`）|
+ |setEnableAutoLoadMore|boolean|When content view scrolling to bottom, It will be perform load more（Default: `false`）|
  |setEnablePinRefreshViewWhileLoading|boolean|The refresh view will pinned at the keep refresh position（Default: `false`）|
  |setSpringInterpolator|Interpolator|Set spring interpolator|
  |setOverScrollInterpolator|Interpolator|Set OverScroll interpolator|
- |setEnableCheckFingerInsideAnotherDirectionView|boolean|Enable whether the finger pressed point is inside another direction view，you must set `setDisableWhenAnotherDirectionMove(true)`|
+ |setEnableCheckInsideAnotherDirectionView|boolean|Enable whether the finger pressed point is inside another direction view，you must set `setDisableWhenAnotherDirectionMove(true)`|
  |setEnableCompatLoadMoreScroll|boolean|Set whether to turn on the synchronized scroll when Footer loading（Default: `true`）|
  |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
- |setEnableCanNotInterruptScrollWhenRefreshCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
+ |setEnableSmoothRollbackWhenCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
  |setDisableLoadMoreWhenContentNotFull|boolean|Load more will be disabled when the content is not full|
  
  #### SmoothRefreshLayout callbacks
@@ -424,10 +427,10 @@ public interface IRefreshView<T extends IIndicator> {
  |addOnUIPositionChangedListener|OnUIPositionChangedListener|Add a listener to listen the views position change event|
  |removeOnUIPositionChangedListener|OnUIPositionChangedListener|Remove the listener to listen the views position change event|
  |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Set a scrolling callback when loading more|
- |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|Set a callback to make sure you need to customize the specified trigger the auto load more rule| |setOnChildNotYetInEdgeCannotMoveHeaderCallBack|OnChildNotYetInEdgeCannotMoveHeaderCallBack|Set a callback to check if the content view is in edge can move Header| |setOnChildNotYetInEdgeCannotMoveFooterCallBack|OnChildNotYetInEdgeCannotMoveFooterCallBack|Set a callback to check if the content view is in edge can move Footer|
+ |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|Set a callback to make sure you need to customize the specified trigger the auto load more rule| |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Header| |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Footer|
  |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Header refresh complete event be triggered|
  |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Footer refresh complete event be triggered|
- |setOnFingerInsideAnotherDirectionViewCallback|OnFingerInsideAnotherDirectionViewCallback|Set a callback to check the finger pressed point whether inside another direction view|
+ |setOnInsideAnotherDirectionViewCallback|OnInsideAnotherDirectionViewCallback|Set a callback to check the finger pressed point whether inside another direction view|
  
  #### SmoothRefreshLayout others
  |Name|Params|Desc|
@@ -450,12 +453,12 @@ public interface IRefreshView<T extends IIndicator> {
  #### TwoLevelSmoothRefreshLayout methods
  |Name|Params|Desc|
  |:---:|:---:|:---:|
- |setRatioOfHeaderHeightToHintTwoLevelRefresh|float|Set the height ratio of Header to trigger Two-Level refresh hint|
- |setRatioOfHeaderHeightToTwoLevelRefresh|float|Set the height ratio of Header to trigger Two-Level refresh|
- |setOffsetRatioToKeepTwoLevelHeaderWhileLoading|float|The offset of keep Header in Two-Level refreshing occupies the height ratio of the Header（Default: `1f`）|
+ |setRatioOfHeaderToHintTwoLevel|float|Set the height ratio of Header to trigger Two-Level refresh hint|
+ |setRatioOfHeaderToTwoLevel|float|Set the height ratio of Header to trigger Two-Level refresh|
+ |setRatioToKeepTwoLevelHeader|float|The offset of keep Header in Two-Level refreshing occupies the height ratio of the Header（Default: `1f`）|
  |setDisableTwoLevelRefresh|boolean|Whether disable Two-Level refresh（Default: `false`）|
- |setDurationOfBackToKeepTwoLevelHeaderViewPosition|int|The duration of return to the keep Two-Level refresh view position when Header moves（Default: `500`）|
- |setDurationToCloseTwoLevelHeader|int|The duration of return to the start position when Header moves（Default: `500`）|
+ |setDurationOfBackToKeepTwoLevel|int|The duration of return to the keep Two-Level refresh view position when Header moves（Default: `500`）|
+ |setDurationToCloseTwoLevel|int|The duration of return to the start position when Header moves（Default: `500`）|
 
  #### TwoLevelSmoothRefreshLayout others
  |Name|Params|Desc|

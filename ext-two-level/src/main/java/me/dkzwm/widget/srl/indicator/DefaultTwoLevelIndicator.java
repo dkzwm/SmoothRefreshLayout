@@ -34,13 +34,13 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     }
 
     @Override
-    public void setRatioOfHeaderHeightToHintTwoLevelRefresh(float ratio) {
+    public void setRatioOfHeaderToHintTwoLevel(float ratio) {
         mRatioOfHeaderHeightToHintTwoLevelRefresh = ratio;
         mOffsetToHintTwoLevelRefresh = (int) (mHeaderHeight * ratio);
     }
 
     @Override
-    public void setRatioOfHeaderHeightToTwoLevelRefresh(float ratio) {
+    public void setRatioOfHeaderToTwoLevel(float ratio) {
         if (mRatioOfHeaderHeightToHintTwoLevelRefresh >= mRatioOfHeaderHeightToTwoLevelRefresh) {
             throw new RuntimeException("If RatioOfHeaderHeightToTwoLevelRefresh less than " +
                     "RatioOfHeaderHeightToHintTwoLevelRefresh, Two level refresh will never be " +
@@ -51,12 +51,12 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     }
 
     @Override
-    public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(float ratio) {
+    public void setRatioToKeepTwoLevelHeader(float ratio) {
         mOffsetRatioToKeepTwoLevelHeaderWhileLoading = ratio;
     }
 
     @Override
-    public int getOffsetToKeepTwoLevelHeaderWhileLoading() {
+    public int getOffsetToKeepTwoLevelHeader() {
         return (int) (mOffsetRatioToKeepTwoLevelHeaderWhileLoading * mHeaderHeight);
     }
 

@@ -74,8 +74,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param ratio Height ratio
      */
-    public void setRatioOfHeaderHeightToHintTwoLevelRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
-        mTwoLevelIndicator.setRatioOfHeaderHeightToHintTwoLevelRefresh(ratio);
+    public void setRatioOfHeaderToHintTwoLevel(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+        mTwoLevelIndicator.setRatioOfHeaderToHintTwoLevel(ratio);
     }
 
     /**
@@ -85,8 +85,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param ratio Height ratio
      */
-    public void setRatioOfHeaderHeightToTwoLevelRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
-        mTwoLevelIndicator.setRatioOfHeaderHeightToTwoLevelRefresh(ratio);
+    public void setRatioOfHeaderToTwoLevel(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+        mTwoLevelIndicator.setRatioOfHeaderToTwoLevel(ratio);
     }
 
     /**
@@ -97,8 +97,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * @param ratio Height ratio
      */
-    public void setOffsetRatioToKeepTwoLevelHeaderWhileLoading(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
-        mTwoLevelIndicator.setOffsetRatioToKeepTwoLevelHeaderWhileLoading(ratio);
+    public void setRatioToKeepTwoLevelHeader(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+        mTwoLevelIndicator.setRatioToKeepTwoLevelHeader(ratio);
     }
 
     /**
@@ -124,7 +124,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * The duration of return to the keep Two-Level refresh view position when Header moves<br/>
+     * Set the duration of to keep Two-Level refresh view position when Header moves<br/>
      * <p>
      * 设置回滚到保持二级刷新Header视图位置的时间
      *
@@ -135,7 +135,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     /**
-     * The duration of return to the start position when Header moves<br/>
+     * Set the duration for closing the Two-Level refresh<br/>
      * <p>
      * 设置二级刷新Header刷新完成回滚到起始位置的时间
      *
@@ -360,11 +360,11 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 isTwoLevelRefreshing() && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             if (isEnabledKeepRefreshView())
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
-                                .getOffsetToKeepTwoLevelHeaderWhileLoading(),
+                                .getOffsetToKeepTwoLevelHeader(),
                         mDurationOfBackToTwoLevel);
             else
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
-                                .getOffsetToKeepTwoLevelHeaderWhileLoading(),
+                                .getOffsetToKeepTwoLevelHeader(),
                         mDurationToCloseTwoLevel);
             return;
         }

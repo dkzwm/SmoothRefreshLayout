@@ -33,7 +33,7 @@
 > 修改Xml属性名:`sr_header_background_color` -> `sr_headerBackgroundColor`.    
 > 修改Xml属性名:`sr_footer_background_color` -> `sr_footerBackgroundColor`.    
 > 修改Xml属性名:`sr_enable_two_level_refresh` -> `sr_enableTwoLevelRefresh`.     
-> 支持黏贴头部,添加对应Xml属性:`sr_pinnedHeaderId`和对应的方法 `setPinnedHeaderResId` 用以设置黏贴头部的ResId,当SRL处于移动头部视图时该黏贴头部会跟随Target视图进行移动.   
+> 支持黏贴头部,添加对应Xml属性:`sr_stickyHeaderId`和对应的方法 `setStickyHeaderResId` 用以设置黏贴头部的ResId,当SRL处于移动头部视图时该黏贴头部会跟随Target视图进行移动.   
 > 添加Xml属性:`sr_backToKeep2Duration` 用以设置回滚到保持二级刷新头部处于二级刷新过程中的时长.    
 > 添加Xml属性:`sr_closeHeader2Duration` 用以设置关闭二级刷新头部的时长.    
 > 修改方法:`setRatioOfRefreshViewHeightToRefresh` -> `setRatioToRefresh`.     
@@ -64,6 +64,15 @@
 > 修改方法:`setEnableScrollToTopAutoRefresh` -> `setEnableAutoRefresh`.    
 > 修改方法:`setDurationOfBackToKeepTwoLevelHeaderViewPosition` -> `setDurationOfBackToKeepTwoLevel`.    
 > 修改方法:`setDurationToCloseTwoLevelHeader` -> `setDurationToCloseTwoLevel`.    
+> 修改方法:`setRatioOfHeaderHeightToHintTwoLevelRefresh` -> `setRatioOfHeaderToHintTwoLevel`.    
+> 修改方法:`setRatioOfHeaderHeightToTwoLevelRefresh` -> `setRatioOfHeaderToTwoLevel`.    
+> 修改方法:`setOffsetRatioToKeepTwoLevelHeaderWhileLoading` -> `setRatioToKeepTwoLevelHeader`.    
+> 修改方法:`setOnChildNotYetInEdgeCannotMoveHeaderCallBack` -> `setOnHeaderEdgeDetectCallBack`.    
+> 修改方法:`setOnChildNotYetInEdgeCannotMoveFooterCallBack` -> `setOnFooterEdgeDetectCallBack`.    
+> 修改方法:`setOnFingerInsideAnotherDirectionViewCallback` -> `setOnInsideAnotherDirectionViewCallback`.    
+> 重命名接口: `OnChildNotYetInEdgeCannotMoveHeaderCallBack` -> `OnHeaderEdgeDetectCallBack`.    
+> 重命名接口: `OnChildNotYetInEdgeCannotMoveFooterCallBack` -> `OnFooterEdgeDetectCallBack`.    
+> 重命名接口: `OnFingerInsideAnotherDirectionViewCallback` -> `OnInsideAnotherDirectionViewCallback`.    
 ## 1.6.2
 > 支持拉伸内部视图功能,`Mode` 为 `MODE_DEFAULT`时为刷新控件用以操作Header/Footer,`Mode` 为 `MODE_SCALE`时为拉伸收缩控件用以操作内部视图（PS:竖向靠SmoothRefreshLayout支持/横向开HorizontalSmoothRefreshLayout支持,效果类似小米设置页拉伸效果）.    
 > 添加了 `sr_mode`、 `mode_default`、`mode_scale` Xml属性.   

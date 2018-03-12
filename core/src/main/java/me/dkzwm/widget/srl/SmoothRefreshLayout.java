@@ -174,13 +174,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected View mErrorView;
     protected View mCustomView;
     protected View mScrollTargetView;
-    protected View mPinnedHeaderView;
+    protected View mStickyHeaderView;
     protected LayoutInflater mInflater;
     protected int mContentResId = View.NO_ID;
     protected int mErrorLayoutResId = View.NO_ID;
     protected int mEmptyLayoutResId = View.NO_ID;
     protected int mCustomLayoutResId = View.NO_ID;
-    protected int mPinnedHeaderResId = View.NO_ID;
+    protected int mStickyHeaderResId = View.NO_ID;
     protected ScrollChecker mScrollChecker;
     protected OverScrollChecker mOverScrollChecker;
     protected DelayedScrollChecker mDelayedScrollChecker;
@@ -192,9 +192,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected Paint mBackgroundPaint;
     protected MotionEvent mLastMoveEvent;
     protected OnFingerDownListener mFingerDownListener;
-    protected OnChildNotYetInEdgeCannotMoveHeaderCallBack mInEdgeCanMoveHeaderCallBack;
-    protected OnChildNotYetInEdgeCannotMoveFooterCallBack mInEdgeCanMoveFooterCallBack;
-    protected OnFingerInsideAnotherDirectionViewCallback mFingerInsideAnotherDirectionViewCallback;
+    protected OnHeaderEdgeDetectCallBack mInEdgeCanMoveHeaderCallBack;
+    protected OnFooterEdgeDetectCallBack mInEdgeCanMoveFooterCallBack;
+    protected OnInsideAnotherDirectionViewCallback mFingerInsideAnotherDirectionViewCallback;
     protected OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     protected ValueAnimator mChangeStateAnimator;
     private int mFlag = FLAG_DISABLE_LOAD_MORE;
@@ -307,7 +307,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     NO_ID);
             mCustomLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_customLayout,
                     NO_ID);
-            mPinnedHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_pinnedHeaderId,
+            mStickyHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_pinnedHeaderId,
                     NO_ID);
 
             mHeaderBackgroundColor = arr.getColor(R.styleable
@@ -569,7 +569,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             } else if (mTargetView != null && child == mTargetView
                     || (mPreviousState != Constants.STATE_NONE && mChangeStateAnimator != null
                     && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)
-                    || (mPinnedHeaderView != null && child == mPinnedHeaderView)) {
+                    || (mStickyHeaderView != null && child == mStickyHeaderView)) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 final int left = paddingLeft + lp.leftMargin;
                 final int right = left + child.getMeasuredWidth();
@@ -579,7 +579,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     bottom = top + child.getMeasuredHeight();
                     child.layout(left, top, right, bottom);
                 } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter
-                        && mPinnedHeaderView != child) {
+                        && mStickyHeaderView != child) {
                     top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
                     bottom = top + child.getMeasuredHeight();
                     child.layout(left, top, right, bottom);
@@ -947,25 +947,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a callback to override
-     * {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()} method. Non-null
+     * {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method. Non-null
      * callback will return the value provided by the callback and ignore all internal logic.
-     * <p>设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在顶部</p>
+     * <p>设置{@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在顶部</p>
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
      */
-    public void setOnChildNotYetInEdgeCannotMoveHeaderCallBack(OnChildNotYetInEdgeCannotMoveHeaderCallBack callback) {
+    public void setOnHeaderEdgeDetectCallBack(OnHeaderEdgeDetectCallBack callback) {
         mInEdgeCanMoveHeaderCallBack = callback;
     }
 
     /**
      * Set a callback to override
-     * {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()} method. Non-null
+     * {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()} method. Non-null
      * callback will return the value provided by the callback and ignore all internal logic.
-     * <p>设置{@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在底部</p>
+     * <p>设置{@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在底部</p>
      *
      * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
      */
-    public void setOnChildNotYetInEdgeCannotMoveFooterCallBack(OnChildNotYetInEdgeCannotMoveFooterCallBack callback) {
+    public void setOnFooterEdgeDetectCallBack(OnFooterEdgeDetectCallBack callback) {
         mInEdgeCanMoveFooterCallBack = callback;
     }
 
@@ -1017,16 +1017,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set a callback to override
-     * {@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}} method.
+     * {@link SmoothRefreshLayout#isInsideAnotherDirectionView(float, float)}} method.
      * Non-null callback will return the value provided by the callback and ignore all internal
      * logic.
-     * <p>设置{@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}的重载回调，
+     * <p>设置{@link SmoothRefreshLayout#isInsideAnotherDirectionView(float, float)}的重载回调，
      * 用来检查手指按下的点是否位于水平视图内部</p>
      *
      * @param callback Callback that should be called when isFingerInsideAnotherDirectionView(float,
      *                 float) is called.
      */
-    public void setOnFingerInsideAnotherDirectionViewCallback(OnFingerInsideAnotherDirectionViewCallback callback) {
+    public void setOnInsideAnotherDirectionViewCallback(OnInsideAnotherDirectionViewCallback callback) {
         mFingerInsideAnotherDirectionViewCallback = callback;
     }
 
@@ -2384,9 +2384,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param resId Resource id
      */
-    public void setPinnedHeaderResId(@IdRes int resId) {
-        if (mPinnedHeaderResId != resId) {
-            mPinnedHeaderResId = resId;
+    public void setStickyHeaderResId(@IdRes int resId) {
+        if (mStickyHeaderResId != resId) {
+            mStickyHeaderResId = resId;
             requestLayout();
         }
     }
@@ -2547,8 +2547,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 isCanNotAbortOverScrolling()))) {
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         }
-        if ((!isChildNotYetInEdgeCannotMoveHeader() && vy > 0)
-                || (!isChildNotYetInEdgeCannotMoveFooter() && vy < 0)) {
+        if ((!isNotYetInEdgeCannotMoveHeader() && vy > 0)
+                || (!isNotYetInEdgeCannotMoveFooter() && vy < 0)) {
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         }
         if (!mIndicator.isInStartPosition()) {
@@ -2621,7 +2621,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             onNestedPreScroll(dx, dy, consumed);
             return;
         }
-        if (dy > 0 && !isDisabledRefresh() && !isChildNotYetInEdgeCannotMoveHeader()
+        if (dy > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
             if (!mIndicator.isInStartPosition() && isMovingHeader()) {
@@ -2634,7 +2634,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         mIndicator.getLastMovePoint()[1]);
             }
         }
-        if (dy < 0 && !isDisabledLoadMore() && !isChildNotYetInEdgeCannotMoveFooter()
+        if (dy < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
                 && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
             if (!mIndicator.isInStartPosition() && isMovingFooter()) {
@@ -2652,7 +2652,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mIndicator.getLastMovePoint()[1]);
             updateAnotherDirectionPos();
         } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
-                && mIndicator.hasLeftStartPosition() && isChildNotYetInEdgeCannotMoveFooter()) {
+                && mIndicator.hasLeftStartPosition() && isNotYetInEdgeCannotMoveFooter()) {
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
             consumed[1] = dy;
         }
@@ -2717,8 +2717,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         }
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
-        final boolean canNotChildScrollDown = !isChildNotYetInEdgeCannotMoveFooter();
-        final boolean canNotChildScrollUp = !isChildNotYetInEdgeCannotMoveHeader();
+        final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
+        final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
         if (dy < 0 && !isDisabledRefresh() && canNotChildScrollUp
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
@@ -2829,9 +2829,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void checkAnotherDirectionViewUnInterceptedEvent() {
         if (mIndicator.hasTouched() && mIndicator.hasMoved() && mPreventForAnotherDirection
                 && isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
-            if (isMovingHeader() && isChildNotYetInEdgeCannotMoveHeader()) {
+            if (isMovingHeader() && isNotYetInEdgeCannotMoveHeader()) {
                 mPreventForAnotherDirection = false;
-            } else if (isMovingFooter() && isChildNotYetInEdgeCannotMoveFooter()) {
+            } else if (isMovingFooter() && isNotYetInEdgeCannotMoveFooter()) {
                 mPreventForAnotherDirection = false;
             }
         }
@@ -2991,8 +2991,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
             }
         }
-        if (mPinnedHeaderView == null && mPinnedHeaderResId != NO_ID) {
-            mPinnedHeaderView = findViewById(mPinnedHeaderResId);
+        if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID) {
+            mStickyHeaderView = findViewById(mStickyHeaderResId);
         }
     }
 
@@ -3155,7 +3155,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mIndicator.onFingerDown(ev.getX(), ev.getY());
                 mIsFingerInsideAnotherDirectionView = isDisabledWhenAnotherDirectionMove()
                         && (!isEnableCheckInsideAnotherDirectionView()
-                        || isFingerInsideAnotherDirectionView(ev.getRawX(), ev.getRawY()));
+                        || isInsideAnotherDirectionView(ev.getRawX(), ev.getRawY()));
                 mIsInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
                 mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
                 if (!isNeedFilterTouchEvent()) {
@@ -3188,8 +3188,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 final float[] pressDownPoint = mIndicator.getFingerDownPoint();
                 offsetX = ev.getX(index) - pressDownPoint[0];
                 offsetY = ev.getY(index) - pressDownPoint[1];
-                final boolean canNotChildScrollDown = !isChildNotYetInEdgeCannotMoveFooter();
-                final boolean canNotChildScrollUp = !isChildNotYetInEdgeCannotMoveHeader();
+                final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
+                final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
                 if (isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
                     if (!mDealAnotherDirectionMove) {
                         if ((Math.abs(offsetX) >= mTouchSlop
@@ -3355,24 +3355,24 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 || (isMovingFooter() && isDisabledLoadMore())));
     }
 
-    public boolean isChildNotYetInEdgeCannotMoveHeader() {
+    public boolean isNotYetInEdgeCannotMoveHeader() {
         if (mInEdgeCanMoveHeaderCallBack != null)
-            return mInEdgeCanMoveHeaderCallBack.isChildNotYetInEdgeCannotMoveHeader(this,
+            return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
         return ScrollCompat.canChildScrollUp(mTargetView);
     }
 
-    public boolean isChildNotYetInEdgeCannotMoveFooter() {
+    public boolean isNotYetInEdgeCannotMoveFooter() {
         if (mInEdgeCanMoveFooterCallBack != null)
-            return mInEdgeCanMoveFooterCallBack.isChildNotYetInEdgeCannotMoveFooter(this,
+            return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);
         return ScrollCompat.canChildScrollDown(mTargetView);
     }
 
-    protected boolean isFingerInsideAnotherDirectionView(final float x, final float y) {
+    protected boolean isInsideAnotherDirectionView(final float x, final float y) {
         if (mFingerInsideAnotherDirectionViewCallback != null)
-            return mFingerInsideAnotherDirectionViewCallback.isFingerInside(x, y, mTargetView);
-        return BoundaryUtil.isFingerInsideHorizontalView(x, y, mTargetView);
+            return mFingerInsideAnotherDirectionViewCallback.isInside(x, y, mTargetView);
+        return BoundaryUtil.isInsideHorizontalView(x, y, mTargetView);
     }
 
 
@@ -3765,8 +3765,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             mHeaderView.getView().offsetTopAndBottom(change);
                         break;
                 }
-                if (!isEnabledPinContentView() && mPinnedHeaderView != null)
-                    mPinnedHeaderView.offsetTopAndBottom(change);
+                if (!isEnabledPinContentView() && mStickyHeaderView != null)
+                    mStickyHeaderView.offsetTopAndBottom(change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
@@ -4139,12 +4139,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Classes that wish to override {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()} method
+     * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method
      * behavior should implement this interface.
      */
-    public interface OnChildNotYetInEdgeCannotMoveHeaderCallBack {
+    public interface OnHeaderEdgeDetectCallBack {
         /**
-         * Callback that will be called when {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveHeader()} method
+         * Callback that will be called when {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method
          * is called to allow the implementer to override its behavior.
          *
          * @param parent SmoothRefreshLayout that this callback is overriding.
@@ -4152,17 +4152,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          * @param header The Header view.
          * @return Whether it is possible for the child view of parent layout to scroll up.
          */
-        boolean isChildNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child,
-                                                    @Nullable IRefreshView header);
+        boolean isNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent, @Nullable View child,
+                                               @Nullable IRefreshView header);
     }
 
     /**
-     * Classes that wish to override {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()} method
+     * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()} method
      * behavior should implement this interface.
      */
-    public interface OnChildNotYetInEdgeCannotMoveFooterCallBack {
+    public interface OnFooterEdgeDetectCallBack {
         /**
-         * Callback that will be called when {@link SmoothRefreshLayout#isChildNotYetInEdgeCannotMoveFooter()} method
+         * Callback that will be called when {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()} method
          * is called to allow the implementer to override its behavior.
          *
          * @param parent SmoothRefreshLayout that this callback is overriding.
@@ -4170,18 +4170,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          * @param footer The Footer view.
          * @return Whether it is possible for the child view of parent layout to scroll down.
          */
-        boolean isChildNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child,
-                                                    @Nullable IRefreshView footer);
+        boolean isNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent, @Nullable View child,
+                                               @Nullable IRefreshView footer);
     }
 
     /**
-     * Classes that wish to override {@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}}
+     * Classes that wish to override {@link SmoothRefreshLayout#isInsideAnotherDirectionView(float, float)}}
      * method behavior should implement this interface.
      */
-    public interface OnFingerInsideAnotherDirectionViewCallback {
+    public interface OnInsideAnotherDirectionViewCallback {
         /**
          * Callback that will be called when
-         * {@link SmoothRefreshLayout#isFingerInsideAnotherDirectionView(float, float)}} method
+         * {@link SmoothRefreshLayout#isInsideAnotherDirectionView(float, float)}} method
          * is called to allow the implementer to override its behavior.
          *
          * @param x    The finger pressed x of the screen.
@@ -4189,7 +4189,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          * @param view The target view.
          * @return Whether the finger pressed point is inside horizontal view
          */
-        boolean isFingerInside(float x, float y, View view);
+        boolean isInside(float x, float y, View view);
     }
 
     /**
@@ -4553,7 +4553,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (!mScroller.isFinished()) {
                 final int currY = mScroller.getCurrY();
                 if (currY > 0 && SmoothRefreshLayout.this.isInStartPosition()
-                        && !SmoothRefreshLayout.this.isChildNotYetInEdgeCannotMoveHeader()
+                        && !SmoothRefreshLayout.this.isNotYetInEdgeCannotMoveHeader()
                         && !SmoothRefreshLayout.this.mScrollChecker.mIsRunning) {
                     int to = calculate(true);
                     if (SmoothRefreshLayout.this.isEnabledAutoRefresh()
@@ -4581,7 +4581,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     reset();
                     return;
                 } else if (currY < 0 && SmoothRefreshLayout.this.isInStartPosition()
-                        && !SmoothRefreshLayout.this.isChildNotYetInEdgeCannotMoveFooter()
+                        && !SmoothRefreshLayout.this.isNotYetInEdgeCannotMoveFooter()
                         && !SmoothRefreshLayout.this.mScrollChecker.mIsRunning) {
                     int to = calculate(false);
                     if (SmoothRefreshLayout.this.isEnabledAutoLoadMore()
