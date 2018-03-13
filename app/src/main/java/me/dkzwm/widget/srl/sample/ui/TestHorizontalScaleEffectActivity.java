@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.animation.BounceInterpolator;
+import android.view.MenuItem;
 import android.view.animation.Interpolator;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -37,6 +37,17 @@ public class TestHorizontalScaleEffectActivity extends AppCompatActivity {
             }
         };
         refreshLayout.setSpringInterpolator(interpolator);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

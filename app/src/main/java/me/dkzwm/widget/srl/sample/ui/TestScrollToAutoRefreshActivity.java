@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 
 import java.util.List;
@@ -72,6 +73,17 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
         mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
         findViewById(R.id.button_test_scroll_to_auto_refresh_left).setOnClickListener(this);
         findViewById(R.id.button_test_scroll_to_auto_refresh_right).setOnClickListener(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

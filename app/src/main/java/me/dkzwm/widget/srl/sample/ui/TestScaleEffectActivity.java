@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.animation.Interpolator;
 import android.widget.ListView;
 
@@ -11,6 +13,7 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.config.Constants;
+import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ListViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
@@ -45,6 +48,17 @@ public class TestScaleEffectActivity extends AppCompatActivity {
             }
         };
         refreshLayout.setSpringInterpolator(interpolator);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
