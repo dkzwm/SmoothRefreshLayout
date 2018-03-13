@@ -3,7 +3,7 @@
 buildscript {
     repositories {
         jcenter()
-        maven { url 'https://maven.google.com' }
+        maven { url 'https://jitpack.io' }
         google()
     }
     dependencies {
@@ -19,7 +19,6 @@ allprojects {
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }
-        maven { url 'https://maven.google.com' }
         google()
     }
 }
@@ -30,8 +29,8 @@ ext {
             buildToolsVersion: "27.0.3",
             minSdkVersion    : 11,
             targetSdkVersion : 27,
-            versionCode      : 43,
-            versionName      : "1.6.2"
+            versionCode      : 44,
+            versionName      : "1.6.3"
     ]
     libs = [
             recyclerview: "com.android.support:recyclerview-v7:27.1.0",

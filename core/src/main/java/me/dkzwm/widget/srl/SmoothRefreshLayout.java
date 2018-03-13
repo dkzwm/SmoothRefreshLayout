@@ -307,7 +307,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     NO_ID);
             mCustomLayoutResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_customLayout,
                     NO_ID);
-            mStickyHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_pinnedHeaderId,
+            mStickyHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyHeader,
                     NO_ID);
 
             mHeaderBackgroundColor = arr.getColor(R.styleable

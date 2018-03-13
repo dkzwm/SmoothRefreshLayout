@@ -167,11 +167,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         final int paddingTop = getPaddingTop();
         final int parentRight = r - l - getPaddingRight();
         final int parentBottom = b - t - getPaddingBottom();
+        final boolean isMovingHeader = isMovingHeader();
+        final boolean isMovingFooter = isMovingFooter();
         int offsetHeader = 0;
         int offsetFooter = 0;
-        if (isMovingHeader()) {
+        if (isMovingHeader) {
             offsetHeader = mIndicator.getCurrentPos();
-        } else if (isMovingFooter()) {
+        } else if (isMovingFooter) {
             offsetFooter = mIndicator.getCurrentPos();
         }
         int contentRight = 0;
@@ -184,16 +186,18 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 layoutHeaderView(child, offsetHeader);
             } else if (mTargetView != null && child == mTargetView
                     || (mPreviousState != Constants.STATE_NONE && mChangeStateAnimator != null
-                    && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)) {
+                    && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)
+                    || (mStickyHeaderView != null && child == mStickyHeaderView)) {
                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
                 final int top = paddingTop + lp.topMargin;
                 final int bottom = top + child.getMeasuredHeight();
                 int left, right;
-                if (mMode == Constants.MODE_DEFAULT && isMovingHeader()) {
+                if (mMode == Constants.MODE_DEFAULT && isMovingHeader) {
                     left = paddingLeft + lp.leftMargin + (pin ? 0 : offsetHeader);
                     right = left + child.getMeasuredWidth();
                     child.layout(left, top, right, bottom);
-                } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter()) {
+                } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter
+                        && mStickyHeaderView != child) {
                     left = paddingLeft + lp.leftMargin - (pin ? 0 : offsetFooter);
                     right = left + child.getMeasuredWidth();
                     child.layout(left, top, right, bottom);
@@ -205,7 +209,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (sDebug) {
                     SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
                 }
-                contentRight = right + lp.rightMargin;
+                if (mTargetView == child) contentRight = right + lp.rightMargin;
             } else if (mFooterView == null || mFooterView.getView() != child) {
                 layoutOtherViewUseGravity(child, parentRight, parentBottom);
             }
@@ -549,6 +553,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             mHeaderView.getView().offsetLeftAndRight(change);
                         break;
                 }
+                if (!isEnabledPinContentView() && mStickyHeaderView != null)
+                    mStickyHeaderView.offsetLeftAndRight(change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else

@@ -72,4 +72,5 @@
     <string name="auto_refresh_func_demo">自动刷新工具演示</string>
     <string name="test_scale_effect">测试拉伸缩放效果</string>
     <string name="test_horizontal_scale_effect">测试横向拉伸缩放消费</string>
+    <string name="sticky_header">黏贴头部视图</string>
 </resources>

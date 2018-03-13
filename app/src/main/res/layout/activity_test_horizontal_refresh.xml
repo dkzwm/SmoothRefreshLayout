@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/smoothRefreshLayout_test_horizontal_refresh"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:sr_headerBackgroundColor="@android:color/holo_orange_light"
+    android:orientation="vertical"
+    app:sr_content="@+id/horizontalScrollView_test_horizontal_refresh"
     app:sr_footerBackgroundColor="@android:color/holo_green_light"
-    android:orientation="vertical">
+    app:sr_headerBackgroundColor="@android:color/holo_orange_light"
+    app:sr_stickyHeader="@+id/textView_test_horizontal_refresh_sticky_header">
 
     <HorizontalScrollView
+        android:id="@id/horizontalScrollView_test_horizontal_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingLeft="42dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -65,4 +70,14 @@
                 android:textSize="32sp"/>
         </LinearLayout>
     </HorizontalScrollView>
+
+    <TextView
+        android:id="@id/textView_test_horizontal_refresh_sticky_header"
+        android:layout_width="42dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_orange_dark"
+        android:gravity="center"
+        android:text="@string/sticky_header"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"/>
 </me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout>

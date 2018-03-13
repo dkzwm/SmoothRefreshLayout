@@ -48,13 +48,26 @@
         android:id="@+id/smoothRefreshLayout_with_recyclerView_in_coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:sr_content="@+id/recyclerView_with_recyclerView_in_coordinatorLayout"
+        app:sr_stickyHeader="@+id/textView_with_recyclerView_in_coordinatorLayout_sticky_header">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView_with_recyclerView_in_coordinatorLayout"
+            android:id="@id/recyclerView_with_recyclerView_in_coordinatorLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"/>
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="42dp"/>
 
+        <TextView
+            android:id="@id/textView_with_recyclerView_in_coordinatorLayout_sticky_header"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+            android:background="@android:color/holo_orange_dark"
+            android:gravity="center"
+            android:text="@string/sticky_header"
+            android:textColor="@android:color/black"
+            android:textSize="18sp"/>
     </me.dkzwm.widget.srl.SmoothRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>

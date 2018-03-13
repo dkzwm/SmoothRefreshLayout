@@ -299,7 +299,7 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_headerBackgroundColor|color|设置Header刷新高度区域的背景色|
 |sr_footerBackgroundColor|color|设置Footer刷新高度区域的背景色|
 |sr_mode|enum|模式设置（默认:`MODE_DEFAULT`为刷新控件模式）|
-|sr_stickyHeaderId|enum|指定黏贴头部的资源ID,当SRL处于移动头部视图时该黏贴头部会跟随Target视图进行移动|
+|sr_stickyHeader|reference|指定黏贴头部的资源ID,当SRL处于移动头部视图时该黏贴头部会跟随Target视图进行移动|
 ##### TwoLevelSmoothRefreshLayout 自身配置
 |名称|类型|描述|
 |:---:|:---:|:---:|
@@ -365,6 +365,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setEnableSmoothRollbackWhenCompleted|boolean|设置开启当刷新完成时，回滚动作不能被打断|
 |setDisableLoadMoreWhenContentNotFull|boolean|设置当内容视图未满屏时关闭加载更多|
+|setStickyHeaderResId|int|设置黏贴头部视图的资源ID|
 
 #### SmoothRefreshLayout 回调
 |名称|参数|描述|

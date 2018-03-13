@@ -349,7 +349,7 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_headerBackgroundColor|color|Set the background color of the height of the Header view|
  |sr_footerBackgroundColor|color|Set the background color of the height of the Footer view|
  |sr_mode|enum|Set current mode (Default:`MODE_DEFAULT` as refresh layout)|
- |sr_stickyHeaderId|enum|Specifies the resource ID of the sticky header|
+ |sr_stickyHeader|reference|Specifies the resource ID of the sticky header|
 
  ##### TwoLevelSmoothRefreshLayout
  |Name|Format|Desc|
