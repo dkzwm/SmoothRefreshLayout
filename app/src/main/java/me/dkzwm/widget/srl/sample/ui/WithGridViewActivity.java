@@ -57,8 +57,7 @@ public class WithGridViewActivity extends AppCompatActivity {
                             mCount += 15;
                             mAdapter.appendData(list);
                         }
-                        //由于GridView添加数据后计算量较大，所以延迟30毫秒，滚动上才不会有跳动
-                        mRefreshLayout.refreshComplete(30);
+                        mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
             }
