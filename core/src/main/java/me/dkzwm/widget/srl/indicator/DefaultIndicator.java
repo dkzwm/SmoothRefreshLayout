@@ -27,8 +27,8 @@ public class DefaultIndicator implements IIndicator {
     protected float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 1;
     private int mOffsetToLoadMore = 1;
-    private float mOffsetRatioToKeepHeaderWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
-    private float mOffsetRatioToKeepFooterWhileLoading = DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING;
+    private float mOffsetRatioToKeepHeaderWhileLoading = DEFAULT_RATIO_TO_KEEP;
+    private float mOffsetRatioToKeepFooterWhileLoading = DEFAULT_RATIO_TO_KEEP;
     private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_TO_REFRESH;
     private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_TO_REFRESH;
     private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_MAX_MOVE_RATIO;

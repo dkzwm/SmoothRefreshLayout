@@ -12,7 +12,7 @@ import me.dkzwm.widget.srl.annotation.MovingStatus;
 public interface IIndicator {
     float DEFAULT_RATIO_TO_REFRESH = 1.1f;
     float DEFAULT_MAX_MOVE_RATIO = 0f;
-    float DEFAULT_OFFSET_RATIO_TO_KEEP_REFRESH_WHILE_LOADING = 1;
+    float DEFAULT_RATIO_TO_KEEP = 1;
     float DEFAULT_RESISTANCE = 1.65f;
     int START_POS = 0;
 
