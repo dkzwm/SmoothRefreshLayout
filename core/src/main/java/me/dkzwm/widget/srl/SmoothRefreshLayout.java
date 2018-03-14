@@ -833,15 +833,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Get the background color of the height of the Header view.
-     *
-     * @return Color
-     */
-    public int getHeaderBackgroundColor() {
-        return mHeaderBackgroundColor;
-    }
-
-    /**
      * Set the background color of the height of the Header view.
      * <p>设置移动Header时Header区域的背景颜色</p>
      *
@@ -850,15 +841,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setHeaderBackgroundColor(@ColorInt int headerBackgroundColor) {
         mHeaderBackgroundColor = headerBackgroundColor;
         preparePaint();
-    }
-
-    /**
-     * Get the background color of the height of the Footer view.
-     *
-     * @return Color
-     */
-    public int getFooterBackgroundColor() {
-        return mFooterBackgroundColor;
     }
 
     /**
@@ -923,15 +905,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void removeOnUIPositionChangedListener(OnUIPositionChangedListener listener) {
         if (mUIPositionChangedListeners != null && !mUIPositionChangedListeners.isEmpty())
             mUIPositionChangedListeners.remove(listener);
-    }
-
-    /**
-     * clear the position changed listeners.
-     * <p>情况UI位置变化回调</p>
-     */
-    public void clearOnUIPositionChangedListeners() {
-        if (mUIPositionChangedListeners != null)
-            mUIPositionChangedListeners.clear();
     }
 
     /**
@@ -1709,16 +1682,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to enabled Header drawerStyle.
-     * <p>是否已经开启Header的抽屉效果，即Header在Content下面</p>
-     *
-     * @return Enabled
-     */
-    public boolean isEnabledHeaderDrawerStyle() {
-        return (mFlag & FLAG_ENABLE_HEADER_DRAWER_STYLE) > 0;
-    }
-
-    /**
      * The flag has been set to check whether the finger pressed point is inside horizontal view.
      * <p>是否已经开启检查按下点是否位于水平滚动视图内</p>
      *
@@ -1741,6 +1704,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         } else {
             mFlag = mFlag & ~FLAG_ENABLE_CHECK_FINGER_INSIDE;
         }
+    }
+
+    /**
+     * The flag has been set to enabled Header drawerStyle.
+     * <p>是否已经开启Header的抽屉效果，即Header在Content下面</p>
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledHeaderDrawerStyle() {
+        return (mFlag & FLAG_ENABLE_HEADER_DRAWER_STYLE) > 0;
     }
 
     /**
