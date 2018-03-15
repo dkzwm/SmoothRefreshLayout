@@ -1,4 +1,4 @@
-package me.dkzwm.widget.srl;
+package me.dkzwm.widget.srl.animator;
 
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;

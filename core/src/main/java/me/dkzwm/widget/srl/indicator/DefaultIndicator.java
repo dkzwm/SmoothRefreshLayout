@@ -45,7 +45,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getResistanceOfPullDown() {
+    public float getResistanceOfHeader() {
         return mResistanceHeader;
     }
 
@@ -55,7 +55,7 @@ public class DefaultIndicator implements IIndicator {
     }
 
     @Override
-    public float getResistanceOfPullUp() {
+    public float getResistanceOfFooter() {
         return mResistanceFooter;
     }
 
@@ -208,8 +208,8 @@ public class DefaultIndicator implements IIndicator {
         mRatioOfFooterHeightToLoadMore = indicator.getRatioOfFooterToRefresh();
         mOffsetToRefresh = indicator.getOffsetToRefresh();
         mOffsetToLoadMore = indicator.getOffsetToLoadMore();
-        mResistanceHeader = indicator.getResistanceOfPullDown();
-        mResistanceFooter = indicator.getResistanceOfPullUp();
+        mResistanceHeader = indicator.getResistanceOfHeader();
+        mResistanceFooter = indicator.getResistanceOfFooter();
     }
 
     @Override

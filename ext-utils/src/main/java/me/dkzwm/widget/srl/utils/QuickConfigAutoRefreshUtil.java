@@ -3,6 +3,7 @@ package me.dkzwm.widget.srl.utils;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -200,23 +201,14 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
                 mAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (mRefreshLayout != null)
-                            mRefreshLayout.setOnFingerDownListener(null);
+                        mNeedToTriggerRefresh = false;
+                        mNeedToTriggerLoadMore = false;
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        if (mRefreshLayout != null)
-                            mRefreshLayout.setOnFingerDownListener(null);
                         mNeedToTriggerRefresh = false;
                         mNeedToTriggerLoadMore = false;
-                    }
-                });
-                mRefreshLayout.setOnFingerDownListener(new SmoothRefreshLayout
-                        .OnFingerDownListener() {
-                    @Override
-                    public void onFingerDown() {
-                        cancelAnimator();
                     }
                 });
             } else {
@@ -226,6 +218,7 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void horizontalScrollToEdge(final boolean toLeft, boolean useSmoothScroll) {
         if (mTargetView instanceof HorizontalScrollView) {
             HorizontalScrollView scrollView = (HorizontalScrollView) mTargetView;
@@ -265,23 +258,14 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
                 mAnimator.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        if (mRefreshLayout != null)
-                            mRefreshLayout.setOnFingerDownListener(null);
+                        mNeedToTriggerRefresh = false;
+                        mNeedToTriggerLoadMore = false;
                     }
 
                     @Override
                     public void onAnimationCancel(Animator animation) {
-                        if (mRefreshLayout != null)
-                            mRefreshLayout.setOnFingerDownListener(null);
                         mNeedToTriggerRefresh = false;
                         mNeedToTriggerLoadMore = false;
-                    }
-                });
-                mRefreshLayout.setOnFingerDownListener(new SmoothRefreshLayout
-                        .OnFingerDownListener() {
-                    @Override
-                    public void onFingerDown() {
-                        cancelAnimator();
                     }
                 });
             } else {

@@ -29,11 +29,11 @@ public interface IIndicator {
 
     boolean hasMoved();
 
-    float getResistanceOfPullDown();
+    float getResistanceOfHeader();
 
     void setResistanceOfHeader(float resistance);
 
-    float getResistanceOfPullUp();
+    float getResistanceOfFooter();
 
     void setResistanceOfFooter(float resistance);
 
