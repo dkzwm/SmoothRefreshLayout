@@ -1,4 +1,6 @@
 # 更新日志
+## 1.6.3.2
+> 删除多余部分方法（PS:Fuck JitPack）.
 ## 1.6.3
 > 重命名Xml属性和部分开放API,使Xml属性命名更规范,同时尽量避免过长API名导致的代码冗余.    
 > 修改Xml属性名:`style_follow_scale` -> `style_followScale`.    
