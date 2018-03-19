@@ -3495,9 +3495,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicator.setMovingStatus(Constants.MOVING_FOOTER);
         //check if it is needed to compatible scroll
         if (mCompatLoadMoreScroll && !isEnabledPinContentView() && mIsLastRefreshSuccessful
-                && (mStatus == SR_STATUS_COMPLETE
-                || (isEnabledNextPtrAtOnce() && mStatus == SR_STATUS_PREPARE
-                && !mOverScrollChecker.mIsScrolling && !mIndicator.hasTouched()))) {
+                && (!mIndicator.hasTouched() || mNestedScrollInProgress
+                || isEnabledSmoothRollbackWhenCompleted())
+                && mStatus == SR_STATUS_COMPLETE && !mOverScrollChecker.mIsScrolling) {
             if (sDebug) {
                 SRLog.d(TAG, "moveFooterPos(): compatible scroll delta: %s", delta);
             }

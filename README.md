@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-731%20%7C%2077%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-725%20%7C%2077%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -87,17 +87,17 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.3.1'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.3.1'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3.1'
     //工具类库，带有一些快捷配置工具（自动滚动刷新工具，快速设置AppBarLayout工具）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.3.1'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.3.1'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.3'
+    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.3.1'
 }
 ```
 #### 在Xml中配置

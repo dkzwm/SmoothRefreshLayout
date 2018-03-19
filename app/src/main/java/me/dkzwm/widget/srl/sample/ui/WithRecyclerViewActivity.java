@@ -55,12 +55,12 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                     public void run() {
                         if (isRefresh) {
                             mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 3);
-                            mCount += 3;
+                            List<String> list = DataUtil.createList(mCount, 15);
+                            mCount += 15;
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 3);
-                            mCount += 3;
+                            List<String> list = DataUtil.createList(mCount, 15);
+                            mCount += 15;
                             mAdapter.appendData(list);
                         }
                         mRefreshLayout.refreshComplete();
