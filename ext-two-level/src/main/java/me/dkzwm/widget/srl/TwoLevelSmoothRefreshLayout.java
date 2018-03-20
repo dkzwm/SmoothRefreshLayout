@@ -446,7 +446,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         public void run() {
             if (mLayoutWeakRf.get() != null) {
                 if (SmoothRefreshLayout.sDebug) {
-                    SRLog.i(SmoothRefreshLayout.TAG, "DelayToBackToTop: run()");
+                    SRLog.d(SmoothRefreshLayout.TAG, "DelayToBackToTop: run()");
                 }
                 mLayoutWeakRf.get().onRelease(false);
             }

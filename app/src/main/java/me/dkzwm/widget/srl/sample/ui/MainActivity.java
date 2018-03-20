@@ -188,10 +188,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_debug:
                 SmoothRefreshLayout.debug(!SmoothRefreshLayout.isDebug());
                 if (SmoothRefreshLayout.isDebug()) {
-                    SRLog.setLevel(SRLog.LEVEL_VERBOSE);
                     mButtonDebug.setText(R.string.debug_off);
                 } else {
-                    SRLog.setLevel(SRLog.LEVEL_WARNING);
                     mButtonDebug.setText(R.string.debug_on);
                 }
                 break;

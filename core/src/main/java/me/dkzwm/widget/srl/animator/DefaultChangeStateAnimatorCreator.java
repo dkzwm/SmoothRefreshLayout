@@ -2,7 +2,6 @@ package me.dkzwm.widget.srl.animator;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.support.annotation.NonNull;
 import android.view.View;
@@ -16,7 +15,7 @@ public class DefaultChangeStateAnimatorCreator implements IChangeStateAnimatorCr
     @NonNull
     @Override
     public ValueAnimator create(final View previous, final View current) {
-        ValueAnimator animator = ObjectAnimator.ofFloat(1.0f, 0.0f).setDuration(250L);
+        ValueAnimator animator = ValueAnimator.ofFloat(1.0f, 0.0f).setDuration(250L);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {

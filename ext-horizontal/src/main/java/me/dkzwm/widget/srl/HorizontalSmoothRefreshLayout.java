@@ -615,9 +615,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             consumed[0] = dx;
         } else if (!mIndicator.hasTouched()) {
             if (sDebug) {
-                SRLog.w(TAG, "onNestedPreScroll(): There was an exception in touch event handling，" +
-                        "This method should be performed after the onNestedScrollAccepted() " +
-                        "method is called");
+                SRLog.d(TAG, "onNestedPreScroll(): There was an exception in touch event " +
+                        "handling，This method should be performed after the " +
+                        "onNestedScrollAccepted() method is called");
             }
         } else {
             if (dx > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
@@ -678,7 +678,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
         if (!mIndicator.hasTouched()) {
             if (sDebug) {
-                SRLog.w(TAG, "onNestedScroll(): There was an exception in touch event handling，" +
+                SRLog.d(TAG, "onNestedScroll(): There was an exception in touch event handling，" +
                         "This method should be performed after the onNestedScrollAccepted() " +
                         "method is called");
             }
