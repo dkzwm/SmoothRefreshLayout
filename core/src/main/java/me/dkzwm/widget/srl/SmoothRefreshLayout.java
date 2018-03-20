@@ -544,61 +544,62 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (count == 0)
             return;
         checkViewsZAxisNeedReset();
-        final int paddingLeft = getPaddingLeft();
-        final int paddingTop = getPaddingTop();
         final int parentRight = r - l - getPaddingRight();
         final int parentBottom = b - t - getPaddingBottom();
-        final boolean isMovingHeader = isMovingHeader();
-        final boolean isMovingFooter = isMovingFooter();
         int offsetHeaderY = 0;
         int offsetFooterY = 0;
-        if (isMovingHeader) {
+        if (isMovingHeader())
             offsetHeaderY = mIndicator.getCurrentPos();
-        } else if (isMovingFooter) {
+        else if (isMovingFooter())
             offsetFooterY = mIndicator.getCurrentPos();
-        }
         int contentBottom = 0;
-        boolean pin = (mScrollTargetView != null && !isMovingHeader) || isEnabledPinContentView();
+        boolean pin = (mScrollTargetView != null && !isMovingHeader()) || isEnabledPinContentView();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-            if (child.getVisibility() == GONE)
-                continue;
+            if (child.getVisibility() == GONE) continue;
             if (mHeaderView != null && child == mHeaderView.getView()) {
                 layoutHeaderView(child, offsetHeaderY);
             } else if (mTargetView != null && child == mTargetView
                     || (mPreviousState != Constants.STATE_NONE && mChangeStateAnimator != null
                     && mChangeStateAnimator.isRunning() && getView(mPreviousState) == child)
                     || (mStickyHeaderView != null && child == mStickyHeaderView)) {
-                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-                final int left = paddingLeft + lp.leftMargin;
-                final int right = left + child.getMeasuredWidth();
-                int top, bottom;
-                if (mMode == Constants.MODE_DEFAULT && isMovingHeader) {
-                    top = paddingTop + lp.topMargin + (pin ? 0 : offsetHeaderY);
-                    bottom = top + child.getMeasuredHeight();
-                    child.layout(left, top, right, bottom);
-                } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter
-                        && mStickyHeaderView != child) {
-                    top = paddingTop + lp.topMargin - (pin ? 0 : offsetFooterY);
-                    bottom = top + child.getMeasuredHeight();
-                    child.layout(left, top, right, bottom);
-                } else {
-                    top = paddingTop + lp.topMargin;
-                    bottom = top + child.getMeasuredHeight();
-                    child.layout(left, top, right, bottom);
-                }
-                if (sDebug) {
-                    SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
-                }
-                if (mTargetView == child) contentBottom = bottom + lp.bottomMargin;
+                int bottom = layoutContentView(child, pin, offsetHeaderY, offsetFooterY);
+                if (bottom != 0) contentBottom = bottom;
             } else if (mFooterView == null || mFooterView.getView() != child) {
-                layoutOtherViewUseGravity(child, parentRight, parentBottom);
+                layoutOtherView(child, parentRight, parentBottom);
             }
         }
         if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
             layoutFooterView(mFooterView.getView(), offsetFooterY, pin, contentBottom);
         }
         tryToPerformAutoRefresh();
+    }
+
+    protected int layoutContentView(View child, boolean pin, int offsetHeader, int offsetFooter) {
+        int contentBottom = 0;
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        final int left = getPaddingLeft() + lp.leftMargin;
+        final int right = left + child.getMeasuredWidth();
+        int top, bottom;
+        if (mMode == Constants.MODE_DEFAULT && isMovingHeader()) {
+            top = getPaddingTop() + lp.topMargin + (pin ? 0 : offsetHeader);
+            bottom = top + child.getMeasuredHeight();
+            child.layout(left, top, right, bottom);
+        } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter()
+                && mStickyHeaderView != child) {
+            top = getPaddingTop() + lp.topMargin - (pin ? 0 : offsetFooter);
+            bottom = top + child.getMeasuredHeight();
+            child.layout(left, top, right, bottom);
+        } else {
+            top = getPaddingTop() + lp.topMargin;
+            bottom = top + child.getMeasuredHeight();
+            child.layout(left, top, right, bottom);
+        }
+        if (sDebug) {
+            SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
+        }
+        if (mTargetView == child) contentBottom = bottom + lp.bottomMargin;
+        return contentBottom;
     }
 
     protected void layoutHeaderView(View child, int offsetHeader) {
@@ -699,7 +700,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @SuppressLint({"RtlHardcpded", "RtlHardcoded"})
-    protected void layoutOtherViewUseGravity(View child, int parentRight, int parentBottom) {
+    protected void layoutOtherView(View child, int parentRight, int parentBottom) {
         final int width = child.getMeasuredWidth();
         final int height = child.getMeasuredHeight();
         int childLeft, childTop;
@@ -750,10 +751,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!isEnabled() || mTargetView == null) {
-            return super.dispatchTouchEvent(ev);
-        }
-        if ((isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
+        if (!isEnabled() || mTargetView == null
+                || (isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
                 || (isLoadingMore() && isMovingFooter())))
                 || mNestedScrollInProgress || (isDisabledLoadMore() && isDisabledRefresh())) {
             return super.dispatchTouchEvent(ev);
@@ -768,26 +767,32 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
-        if (mMode == Constants.MODE_DEFAULT) drawRefreshViewBackground(canvas);
+        if (mMode == Constants.MODE_DEFAULT) {
+            if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
+                if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
+                    mBackgroundPaint.setColor(mHeaderBackgroundColor);
+                    drawHeaderBackground(canvas);
+                } else if (!isDisabledLoadMore() && isMovingFooter() && mFooterBackgroundColor != -1) {
+                    mBackgroundPaint.setColor(mFooterBackgroundColor);
+                    drawFooterBackground(canvas);
+                }
+            }
+        }
         super.dispatchDraw(canvas);
     }
 
-    protected void drawRefreshViewBackground(Canvas canvas) {
-        if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
-            if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
-                mBackgroundPaint.setColor(mHeaderBackgroundColor);
-                final int bottom = Math.min(getPaddingTop() + mIndicator.getCurrentPos(),
-                        getHeight() - getPaddingTop());
-                canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
-                        bottom, mBackgroundPaint);
-            } else if (!isDisabledLoadMore() && isMovingFooter() && mFooterBackgroundColor != -1) {
-                mBackgroundPaint.setColor(mFooterBackgroundColor);
-                final int top = Math.max(getHeight() - getPaddingBottom() - mIndicator
-                        .getCurrentPos(), getPaddingTop());
-                canvas.drawRect(getPaddingLeft(), top, getWidth() - getPaddingRight(),
-                        getHeight() - getPaddingBottom(), mBackgroundPaint);
-            }
-        }
+    protected void drawHeaderBackground(Canvas canvas) {
+        final int bottom = Math.min(getPaddingTop() + mIndicator.getCurrentPos(),
+                getHeight() - getPaddingTop());
+        canvas.drawRect(getPaddingLeft(), getPaddingTop(), getWidth() - getPaddingRight(),
+                bottom, mBackgroundPaint);
+    }
+
+    protected void drawFooterBackground(Canvas canvas) {
+        final int top = Math.max(getHeight() - getPaddingBottom() - mIndicator
+                .getCurrentPos(), getPaddingTop());
+        canvas.drawRect(getPaddingLeft(), top, getWidth() - getPaddingRight(),
+                getHeight() - getPaddingBottom(), mBackgroundPaint);
     }
 
     @ViewCompat.ScrollAxis
@@ -2472,41 +2477,42 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean onFling(float vx, final float vy) {
+        final float realVelocity = getRealVelocity(vx, vy);
         if ((isDisabledLoadMore() && isDisabledRefresh())
                 || (!isAutoRefresh() && (isNeedInterceptTouchEvent() ||
-                isCanNotAbortOverScrolling()))) {
-            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
-        }
-        if ((!isNotYetInEdgeCannotMoveHeader() && vy > 0)
-                || (!isNotYetInEdgeCannotMoveFooter() && vy < 0)) {
+                isCanNotAbortOverScrolling()))
+                || (!isNotYetInEdgeCannotMoveHeader() && realVelocity > 0)
+                || (!isNotYetInEdgeCannotMoveFooter() && realVelocity < 0)) {
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
         }
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
-                if (Math.abs(vy) > mMinimumFlingVelocity * 2) {
+                if (Math.abs(realVelocity) > mMinimumFlingVelocity * 2) {
                     mDelayedNestedFling = true;
-                    mOverScrollChecker.preFling(vy);
+                    mOverScrollChecker.preFling(realVelocity);
                 }
                 return true;
             }
         } else {
-            if (isEnabledOverScroll()) {
-                if (!isEnabledPinRefreshViewWhileLoading()
-                        || ((vy >= 0 || !isDisabledLoadMore())
-                        && (vy <= 0 || !isDisabledRefresh()))) {
-                    mOverScrollChecker.fling(vy);
-                }
+            if (isEnabledOverScroll() && (!isEnabledPinRefreshViewWhileLoading()
+                    || ((realVelocity >= 0 || !isDisabledLoadMore())
+                    && (realVelocity <= 0 || !isDisabledRefresh())))) {
+                mOverScrollChecker.fling(realVelocity);
             }
             mDelayedNestedFling = true;
             if (mDelayedScrollChecker == null)
                 mDelayedScrollChecker = new DelayedScrollChecker();
-            mDelayedScrollChecker.updateVelocity((int) vy);
+            mDelayedScrollChecker.updateVelocity((int) realVelocity);
         }
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
     }
 
+    protected float getRealVelocity(float vx, float vy) {
+        return vy;
+    }
+
     @Override
-    public boolean onStartNestedScroll(View child, View target, int nestedScrollAxes) {
+    public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int nestedScrollAxes) {
         if (sDebug) {
             SRLog.d(TAG, "onStartNestedScroll(): nestedScrollAxes: %s", nestedScrollAxes);
         }
@@ -2515,7 +2521,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    public void onNestedScrollAccepted(View child, View target, int axes) {
+    public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes) {
         if (sDebug) {
             SRLog.d(TAG, "onNestedScrollAccepted(): axes: %s", axes);
         }
@@ -2539,58 +2545,50 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (isNeedFilterTouchEvent()) {
             consumed[1] = dy;
-            onNestedPreScroll(dx, dy, consumed);
-            return;
-        }
-        if (!mIndicator.hasTouched()) {
+        } else if (!mIndicator.hasTouched()) {
             if (sDebug) {
                 SRLog.w(TAG, "onNestedPreScroll(): There was an exception in touch event handling，" +
                         "This method should be performed after the onNestedScrollAccepted() " +
                         "method is called");
             }
-            onNestedPreScroll(dx, dy, consumed);
-            return;
-        }
-        if (dy > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
-                && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
-                && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
-            if (!mIndicator.isInStartPosition() && isMovingHeader()) {
-                mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                        mIndicator.getLastMovePoint()[1] - dy);
-                moveHeaderPos(mIndicator.getOffset());
-                consumed[1] = dy;
-            } else {
+        } else {
+            if (dy > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
+                    && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
+                    && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
+                if (!mIndicator.isInStartPosition() && isMovingHeader()) {
+                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                            mIndicator.getLastMovePoint()[1] - dy);
+                    moveHeaderPos(mIndicator.getOffset());
+                    consumed[1] = dy;
+                } else {
+                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                            mIndicator.getLastMovePoint()[1]);
+                }
+            }
+            if (dy < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
+                    && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
+                    && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
+                if (!mIndicator.isInStartPosition() && isMovingFooter()) {
+                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                            mIndicator.getLastMovePoint()[1] - dy);
+                    moveFooterPos(mIndicator.getOffset());
+                    consumed[1] = dy;
+                } else {
+                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                            mIndicator.getLastMovePoint()[1]);
+                }
+            }
+            if (dy == 0) {
                 mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                         mIndicator.getLastMovePoint()[1]);
-            }
-        }
-        if (dy < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
-                && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
-                && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
-            if (!mIndicator.isInStartPosition() && isMovingFooter()) {
-                mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                        mIndicator.getLastMovePoint()[1] - dy);
-                moveFooterPos(mIndicator.getOffset());
+                updateAnotherDirectionPos();
+            } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
+                    && mIndicator.hasLeftStartPosition() && isNotYetInEdgeCannotMoveFooter()) {
+                mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
                 consumed[1] = dy;
-            } else {
-                mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                        mIndicator.getLastMovePoint()[1]);
             }
+            tryToResetMovingStatus();
         }
-        if (dy == 0) {
-            mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                    mIndicator.getLastMovePoint()[1]);
-            updateAnotherDirectionPos();
-        } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
-                && mIndicator.hasLeftStartPosition() && isNotYetInEdgeCannotMoveFooter()) {
-            mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
-            consumed[1] = dy;
-        }
-        tryToResetMovingStatus();
-        onNestedPreScroll(dx, dy, consumed);
-    }
-
-    protected void onNestedPreScroll(int dx, int dy, int[] consumed) {
         // Now let our nested parent consume the leftovers
         final int[] parentConsumed = mParentScrollConsumed;
         if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
