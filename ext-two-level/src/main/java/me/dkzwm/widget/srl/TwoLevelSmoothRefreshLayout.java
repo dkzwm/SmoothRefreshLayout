@@ -17,6 +17,7 @@ import me.dkzwm.widget.srl.ext.twolevel.R;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
+import me.dkzwm.widget.srl.indicator.ITwoLevelIndicatorSetter;
 import me.dkzwm.widget.srl.utils.SRLog;
 
 /**
@@ -27,6 +28,7 @@ import me.dkzwm.widget.srl.utils.SRLog;
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     private TwoLevelRefreshView<ITwoLevelIndicator> mTwoLevelRefreshView;
     private ITwoLevelIndicator mTwoLevelIndicator;
+    private ITwoLevelIndicatorSetter mTwoLevelIndicatorSetter;
     private boolean mEnabledTwoLevelRefresh = true;
     private boolean mOnTwoLevelRefreshing = false;
     private boolean mHasDealTwoLevelRefreshHint = false;
@@ -64,7 +66,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void createIndicator() {
         DefaultTwoLevelIndicator indicator = new DefaultTwoLevelIndicator();
         mIndicator = indicator;
+        mIndicatorSetter = indicator;
         mTwoLevelIndicator = indicator;
+        mTwoLevelIndicatorSetter = indicator;
     }
 
     /**
@@ -75,7 +79,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param ratio Height ratio
      */
     public void setRatioOfHeaderToHintTwoLevel(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
-        mTwoLevelIndicator.setRatioOfHeaderToHintTwoLevel(ratio);
+        mTwoLevelIndicatorSetter.setRatioOfHeaderToHintTwoLevel(ratio);
     }
 
     /**
@@ -86,7 +90,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param ratio Height ratio
      */
     public void setRatioOfHeaderToTwoLevel(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
-        mTwoLevelIndicator.setRatioOfHeaderToTwoLevel(ratio);
+        mTwoLevelIndicatorSetter.setRatioOfHeaderToTwoLevel(ratio);
     }
 
     /**
@@ -98,7 +102,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param ratio Height ratio
      */
     public void setRatioToKeepTwoLevelHeader(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
-        mTwoLevelIndicator.setRatioToKeepTwoLevelHeader(ratio);
+        mTwoLevelIndicatorSetter.setRatioToKeepTwoLevelHeader(ratio);
     }
 
     /**
@@ -220,7 +224,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mDurationToStayAtHint = stayDuration;
         if (mHeaderView != null)
             mHeaderView.onRefreshPrepare(this);
-        mIndicator.setMovingStatus(Constants.MOVING_HEADER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         mAutoHintCanBeInterrupted = canBeInterrupted;
@@ -407,7 +411,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void notifyUIRefreshComplete(boolean useScroll) {
         if (mOnTwoLevelRefreshing) {
             mOnTwoLevelRefreshing = false;
-            mTwoLevelIndicator.onTwoLevelRefreshComplete();
+            mTwoLevelIndicatorSetter.onTwoLevelRefreshComplete();
             if (mTwoLevelIndicator.crossTwoLevelCompletePos()) {
                 super.notifyUIRefreshComplete(false);
                 tryScrollBackToTop(mDurationToCloseTwoLevel);

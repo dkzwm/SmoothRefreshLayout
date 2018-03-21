@@ -12,7 +12,7 @@ import android.view.ViewConfiguration;
  * @author dkzwm
  * @see android.support.v4.view.GestureDetectorCompat
  */
-public class GestureDetector implements IGestureDetector {
+public class GestureDetector  {
     private final OnGestureListener mGestureListener;
     private final int mMaximumFlingVelocity;
     private final int mMinimumFlingVelocity;
@@ -25,7 +25,6 @@ public class GestureDetector implements IGestureDetector {
         mMinimumFlingVelocity = configuration.getScaledMinimumFlingVelocity();
     }
 
-    @Override
     public void onTouchEvent(MotionEvent ev) {
         final int action = ev.getAction();
         // Determine focal point

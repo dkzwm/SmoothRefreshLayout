@@ -19,11 +19,7 @@ public interface IIndicator {
     @MovingStatus
     int getMovingStatus();
 
-    void setMovingStatus(@MovingStatus int direction);
-
     int getCurrentPos();
-
-    void setCurrentPos(int current);
 
     boolean hasTouched();
 
@@ -31,37 +27,15 @@ public interface IIndicator {
 
     float getResistanceOfHeader();
 
-    void setResistanceOfHeader(float resistance);
-
     float getResistanceOfFooter();
-
-    void setResistanceOfFooter(float resistance);
-
-    void setResistance(float resistance);
-
-    void onRefreshComplete();
-
-    void setRatioToRefresh(float ratio);
 
     float getRatioOfHeaderToRefresh();
 
-    void setRatioOfHeaderToRefresh(float ratio);
-
     float getRatioOfFooterToRefresh();
-
-    void setRatioOfFooterToRefresh(float ratio);
 
     int getOffsetToRefresh();
 
     int getOffsetToLoadMore();
-
-    void onFingerDown();
-
-    void onFingerDown(float x, float y);
-
-    void onFingerMove(float x, float y);
-
-    void onFingerUp();
 
     float getOffset();
 
@@ -69,11 +43,7 @@ public interface IIndicator {
 
     int getHeaderHeight();
 
-    void setHeaderHeight(int height);
-
     int getFooterHeight();
-
-    void setFooterHeight(int height);
 
     void convert(IIndicator indicator);
 
@@ -103,19 +73,7 @@ public interface IIndicator {
 
     int getOffsetToKeepFooterWhileLoading();
 
-    void setRatioToKeepFooter(float ratio);
-
-    void setRatioToKeepHeader(float ratio);
-
     boolean isAlreadyHere(int to);
-
-    boolean willOverTop(int to);
-
-    void setMaxMoveRatio(float ratio);
-
-    void setMaxMoveRatioOfHeader(float ratio);
-
-    void setMaxMoveRatioOfFooter(float ratio);
 
     float getCanMoveTheMaxDistanceOfHeader();
 
@@ -130,8 +88,6 @@ public interface IIndicator {
     float getCurrentPercentOfRefreshOffset();
 
     float getCurrentPercentOfLoadMoreOffset();
-
-    void setOffsetCalculator(IOffsetCalculator calculator);
 
     /**
      * Created by dkzwm on 2017/10/24.

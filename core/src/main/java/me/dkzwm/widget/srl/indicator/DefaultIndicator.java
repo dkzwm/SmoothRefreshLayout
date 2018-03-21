@@ -8,7 +8,7 @@ import me.dkzwm.widget.srl.config.Constants;
 /**
  * @author dkzwm
  */
-public class DefaultIndicator implements IIndicator {
+public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     protected final float[] mLastMovePoint = new float[]{0f, 0f};
     protected final float[] mFingerDownPoint = new float[]{0f, 0f};
     protected IOffsetCalculator mOffsetCalculator;
@@ -305,11 +305,6 @@ public class DefaultIndicator implements IIndicator {
     @Override
     public void setOffsetCalculator(IOffsetCalculator calculator) {
         mOffsetCalculator = calculator;
-    }
-
-    @Override
-    public boolean willOverTop(int to) {
-        return to < START_POS;
     }
 
     @Override

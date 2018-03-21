@@ -14,6 +14,7 @@ import java.util.Arrays;
 
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.HorizontalBoundaryUtil;
@@ -49,7 +50,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void createIndicator() {
-        mIndicator = new HorizontalDefaultIndicator();
+        DefaultIndicator indicator = new HorizontalDefaultIndicator();
+        mIndicator = indicator;
+        mIndicatorSetter = indicator;
     }
 
     @Override
@@ -65,7 +68,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (height == LayoutParams.MATCH_PARENT) lp.height = LayoutParams.MATCH_PARENT;
             } else lp.width = height;
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-            mIndicator.setHeaderHeight(child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+            mIndicatorSetter.setHeaderHeight(child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
         } else {
             if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If header view type is " +
@@ -75,9 +78,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     int specSize = MeasureSpec.getSize(heightMeasureSpec);
                     height = Math.max(0, specSize - (getPaddingLeft() + getPaddingRight()
                             + lp.leftMargin + lp.rightMargin));
-                    mIndicator.setHeaderHeight(height);
+                    mIndicatorSetter.setHeaderHeight(height);
                 } else {
-                    mIndicator.setHeaderHeight(height + lp.leftMargin + lp.rightMargin);
+                    mIndicatorSetter.setHeaderHeight(height + lp.leftMargin + lp.rightMargin);
                 }
             }
             if (mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
@@ -118,7 +121,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (height == LayoutParams.MATCH_PARENT) lp.width = LayoutParams.MATCH_PARENT;
             } else lp.width = height;
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-            mIndicator.setFooterHeight(child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
+            mIndicatorSetter.setFooterHeight(child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
         } else {
             if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If footer view type is " +
@@ -128,9 +131,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     int specSize = MeasureSpec.getSize(heightMeasureSpec);
                     height = Math.max(0, specSize - (getPaddingLeft() + getPaddingRight()
                             + lp.leftMargin + lp.rightMargin));
-                    mIndicator.setFooterHeight(height);
+                    mIndicatorSetter.setFooterHeight(height);
                 } else {
-                    mIndicator.setFooterHeight(height + lp.leftMargin + lp.rightMargin);
+                    mIndicatorSetter.setFooterHeight(height + lp.leftMargin + lp.rightMargin);
                 }
             }
             if (mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
@@ -327,7 +330,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (tryToFilterTouchEventInDispatchTouchEvent(ev))
                     return true;
                 tryToResetMovingStatus();
-                mIndicator.onFingerMove(ev.getX(index), ev.getY(index));
+                mIndicatorSetter.onFingerMove(ev.getX(index), ev.getY(index));
                 float offsetX, offsetY;
                 final float[] pressDownPoint = mIndicator.getFingerDownPoint();
                 offsetX = ev.getX(index) - pressDownPoint[0];
@@ -624,12 +627,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                     && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
                 if (!mIndicator.isInStartPosition() && isMovingHeader()) {
-                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                             mIndicator.getLastMovePoint()[1] - dy);
                     moveHeaderPos(mIndicator.getOffset());
                     consumed[0] = dx;
                 } else {
-                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
                             mIndicator.getLastMovePoint()[1] - dy);
                 }
             }
@@ -637,17 +640,17 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
                     && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
                 if (!mIndicator.isInStartPosition() && isMovingFooter()) {
-                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                             mIndicator.getLastMovePoint()[1] - dy);
                     moveFooterPos(mIndicator.getOffset());
                     consumed[0] = dx;
                 } else {
-                    mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
                             mIndicator.getLastMovePoint()[1] - dy);
                 }
             }
             if (dx == 0) {
-                mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0],
+                mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
                         mIndicator.getLastMovePoint()[1] - dy);
                 updateAnotherDirectionPos();
             } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
@@ -693,7 +696,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
             if (distance > 0 && mIndicator.getCurrentPos() >= distance)
                 return;
-            mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                     mIndicator.getLastMovePoint()[1]);
             if (distance > 0 && (mIndicator.getCurrentPos() + mIndicator.getOffset() > distance))
                 moveHeaderPos(distance - mIndicator.getCurrentPos());
@@ -707,7 +710,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
             if (distance > 0 && mIndicator.getCurrentPos() > distance)
                 return;
-            mIndicator.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                     mIndicator.getLastMovePoint()[1]);
             if (distance > 0 && (mIndicator.getCurrentPos() - mIndicator.getOffset() > distance))
                 moveFooterPos(mIndicator.getCurrentPos() - distance);

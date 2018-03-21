@@ -8,14 +8,6 @@ package me.dkzwm.widget.srl.indicator;
 public interface ITwoLevelIndicator extends IIndicator {
     boolean crossTwoLevelCompletePos();
 
-    void onTwoLevelRefreshComplete();
-
-    void setRatioOfHeaderToHintTwoLevel(float ratio);
-
-    void setRatioOfHeaderToTwoLevel(float ratio);
-
-    void setRatioToKeepTwoLevelHeader(float ratio);
-
     int getOffsetToKeepTwoLevelHeader();
 
     int getOffsetToTwoLevelRefresh();

@@ -6,7 +6,8 @@ package me.dkzwm.widget.srl.indicator;
  * @author dkzwm
  */
 
-public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLevelIndicator {
+public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLevelIndicator
+        , ITwoLevelIndicatorSetter {
     private int mOffsetToHintTwoLevelRefresh = 0;
     private int mOffsetToTwoLevelRefresh = 0;
     private int mTwoLevelRefreshCompleteY;
