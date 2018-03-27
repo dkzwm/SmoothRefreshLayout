@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.hardware.SensorManager;
 import android.os.SystemClock;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
@@ -31,6 +32,8 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
@@ -4282,6 +4285,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         private static final byte MODE_PRE_FLING = 0;
         private static final byte MODE_FLING = 1;
         final int mMaxDistance;
+        private final float mDeceleration;
         Scroller mScroller;
         int mDuration = 0;
         int mLastY = 0;
@@ -4297,6 +4301,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mMaxDistance = dm.heightPixels / 8;
             mScroller = new Scroller(SmoothRefreshLayout.this.getContext(),
                     SmoothRefreshLayout.sLinearInterpolator, false);
+            mDeceleration = SensorManager.GRAVITY_EARTH * 39.37f * dm.density * 160f
+                    * ViewConfiguration.getScrollFriction();
         }
 
         void fling(float v) {
@@ -4329,13 +4335,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         " duration: %s", v, finalY, duration);
             }
             mScroller.startScroll(0, 0, 0, finalY, duration);
-            run();
+            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
 
         float calculateVelocity() {
-            final float percent = (mScroller.getDuration() - mScroller.timePassed())
-                    / (float) mScroller.getDuration();
-            return mVelocity * percent * percent / 2;
+            return mVelocity - mDeceleration * mScroller.timePassed() / 2000.0f;
         }
 
         private void reset() {
@@ -4363,7 +4367,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         void computeScrollOffset() {
             if (mMode == MODE_FLING && mIsFling && mScroller.computeScrollOffset()) {
                 SmoothRefreshLayout.this.removeCallbacks(this);
-                SmoothRefreshLayout.this.postDelayed(this, 25);
+                SmoothRefreshLayout.this.postDelayed(this, ValueAnimator.getFrameDelay());
             } else {
                 mIsFling = false;
             }
