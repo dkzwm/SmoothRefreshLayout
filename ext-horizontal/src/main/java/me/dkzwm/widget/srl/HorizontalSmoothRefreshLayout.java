@@ -409,10 +409,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
                             moveHeaderPos(offsetX);
                             return true;
-                        } else if ((isAutoRefresh() || mIndicator.getCurrentPos() < IIndicator.START_POS)
-                                && !mBeenSendTouchEvent) {
+                        } else if ((mIndicator.getCurrentPos() <= IIndicator.START_POS
+                                || isAutoRefresh()) && !mHasSendDownEvent) {
                             makeNewTouchDownEvent(ev);
-                            mBeenSendTouchEvent = true;
                         }
                         return dispatchTouchEventSuper(ev);
                     }
@@ -726,8 +725,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     protected boolean isInsideAnotherDirectionView(final float x, final float y) {
-        if (mFingerInsideAnotherDirectionViewCallback != null)
-            return mFingerInsideAnotherDirectionViewCallback.isInside(x, y, mTargetView);
+        if (mInsideAnotherDirectionViewCallback != null)
+            return mInsideAnotherDirectionViewCallback.isInside(x, y, mTargetView);
         return HorizontalBoundaryUtil.isFingerInsideVerticalView(x, y, mTargetView);
     }
 
@@ -755,27 +754,5 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             HorizontalScrollCompat.flingCompat(mScrollTargetView, -v);
         else
             HorizontalScrollCompat.flingCompat(mTargetView, -v);
-    }
-
-    @Override
-    protected float tryToFilterMovePos(float deltaX) {
-        if (isMovingHeader() && !isDisabledRefresh() && mHeaderView != null) {
-            int style = mHeaderView.getStyle();
-            if (style != IRefreshView.STYLE_DEFAULT && style != IRefreshView.STYLE_FOLLOW_CENTER) {
-                final int maxWidth = getWidth() - getPaddingLeft() - getPaddingRight();
-                if (mIndicator.getCurrentPos() + Math.round(deltaX) > maxWidth) {
-                    return maxWidth - mIndicator.getCurrentPos();
-                }
-            }
-        } else if (isMovingFooter() && !isDisabledLoadMore() && mFooterView != null) {
-            int style = mFooterView.getStyle();
-            if (style != IRefreshView.STYLE_DEFAULT && style != IRefreshView.STYLE_FOLLOW_CENTER) {
-                final int maxWidth = getWidth() - getPaddingLeft() - getPaddingRight();
-                if (mIndicator.getCurrentPos() + Math.round(deltaX) > maxWidth) {
-                    return maxWidth - mIndicator.getCurrentPos();
-                }
-            }
-        }
-        return deltaX;
     }
 }

@@ -71,6 +71,7 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         }
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
+        mRefreshLayout.setLoadingMinTime(0);
         mRefreshLayout.autoRefresh(false);
         mTextView = findViewById(R.id.textView_load_detail_footer_details);
         mScrollView = findViewById(R.id.scrollView_test_multi_direction_views);
@@ -84,9 +85,12 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mInnerRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(boolean isRefresh) {
-                mInnerRefreshLayout.setDurationToClose(500);
+                mInnerRefreshLayout.setDurationToClose(0);
                 mInnerRefreshLayout.refreshComplete();
+                mRefreshLayout.setDurationToClose(0);
+                mRefreshLayout.refreshComplete();
                 mInnerRefreshLayout.setDurationToClose(500);
+                mRefreshLayout.setDurationToClose(500);
                 mScrollView.smoothScrollTo(0, mTextView.getTop());
             }
         });

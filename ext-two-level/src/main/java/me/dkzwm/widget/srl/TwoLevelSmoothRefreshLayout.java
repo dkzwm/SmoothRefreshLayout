@@ -325,7 +325,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void onFingerUp(boolean stayForLoading) {
         if (mMode == Constants.MODE_DEFAULT && canPerformTwoLevelPullToRefresh() &&
                 mTwoLevelIndicator.crossTwoLevelRefreshLine() && mStatus == SR_STATUS_PREPARE) {
-            onRelease(false);
+            onRelease();
             return;
         }
         super.onFingerUp(stayForLoading);
@@ -351,8 +351,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void onRelease(boolean springBack) {
-        if (!springBack && mMode == Constants.MODE_DEFAULT && mAutomaticActionUseSmoothScroll &&
+    protected void onRelease() {
+        if (mMode == Constants.MODE_DEFAULT && mAutomaticActionUseSmoothScroll &&
                 mDurationToStayAtHint > 0) {
             delayForStay();
             return;
@@ -360,20 +360,18 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (canPerformTwoLevelPullToRefresh()) {
             tryToPerformRefresh();
         }
-        if (!springBack && mMode == Constants.MODE_DEFAULT && mEnabledTwoLevelRefresh &&
+        if (mMode == Constants.MODE_DEFAULT && mEnabledTwoLevelRefresh &&
                 isMovingHeader() && isTwoLevelRefreshing() && mTwoLevelIndicator
                 .crossTwoLevelRefreshLine()) {
             if (isEnabledKeepRefreshView())
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
-                                .getOffsetToKeepTwoLevelHeader(),
-                        mDurationOfBackToTwoLevel);
+                        .getOffsetToKeepTwoLevelHeader(), mDurationOfBackToTwoLevel);
             else
                 mScrollChecker.tryToScrollTo(mTwoLevelIndicator
-                                .getOffsetToKeepTwoLevelHeader(),
-                        mDurationToCloseTwoLevel);
+                        .getOffsetToKeepTwoLevelHeader(), mDurationToCloseTwoLevel);
             return;
         }
-        super.onRelease(springBack);
+        super.onRelease();
     }
 
     @Override
@@ -450,9 +448,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         public void run() {
             if (mLayoutWeakRf.get() != null) {
                 if (SmoothRefreshLayout.sDebug) {
-                    SRLog.d(SmoothRefreshLayout.TAG, "DelayToBackToTop: run()");
+                    SRLog.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
                 }
-                mLayoutWeakRf.get().onRelease(false);
+                mLayoutWeakRf.get().onRelease();
             }
         }
     }
