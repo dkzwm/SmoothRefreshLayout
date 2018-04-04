@@ -118,7 +118,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    protected static boolean sDebug = true;
+    protected static boolean sDebug = false;
     private static int sId = 0;
     private static IRefreshViewCreator sCreator;
     protected final String TAG = "SmoothRefreshLayout-" + sId++;
@@ -1184,9 +1184,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     public void autoRefresh(@Action int action, boolean smoothScroll) {
-        if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT) {
+        if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT)
             return;
-        }
         if (sDebug)
             SRLog.d(TAG, "autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll);
         mStatus = SR_STATUS_PREPARE;
@@ -2197,31 +2196,27 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 throw new IllegalArgumentException("STATE_NONE can not be used, It only can be " +
                         "used as an initial value");
             case Constants.STATE_CONTENT:
-                if (mContentView != null) {
+                if (mContentView != null)
                     removeView(mContentView);
-                }
                 mContentResId = View.NO_ID;
                 mContentView = content;
                 break;
             case Constants.STATE_EMPTY:
-                if (mEmptyView != null) {
+                if (mEmptyView != null)
                     removeView(mEmptyView);
-                }
                 mEmptyLayoutResId = View.NO_ID;
                 mEmptyView = content;
                 break;
             case Constants.STATE_ERROR:
-                if (mErrorView != null) {
+                if (mErrorView != null)
                     removeView(mErrorView);
-                }
                 mErrorLayoutResId = View.NO_ID;
                 mErrorView = content;
                 break;
             case Constants.STATE_CUSTOM:
             default:
-                if (mCustomView != null) {
+                if (mCustomView != null)
                     removeView(mCustomView);
-                }
                 mCustomLayoutResId = View.NO_ID;
                 mCustomView = content;
                 break;
@@ -2765,15 +2760,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void reset() {
-        if (!mIndicator.isInStartPosition())
-            mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
         if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning())
             mChangeStateAnimator.cancel();
         mChangeStateAnimator = null;
-        if (isRefreshing() || isLoadingMore()) {
-            mStatus = SR_STATUS_COMPLETE;
+        if (isRefreshing() || isLoadingMore())
             notifyUIRefreshComplete(false);
-        }
+        if (!mIndicator.isInStartPosition())
+            mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
+        mStatus = SR_STATUS_INIT;
         mScrollChecker.destroy();
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
@@ -2850,9 +2844,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
             }
         }
-        if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID) {
+        if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
             mStickyHeaderView = findViewById(mStickyHeaderResId);
-        }
     }
 
     private void ensureErrorView() {
@@ -3398,15 +3391,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void compatLoadMoreScroll(float delta) {
         if (mLoadMoreScrollCallback == null) {
             if (mScrollTargetView != null) {
-                try {
-                    ScrollCompat.scrollCompat(mScrollTargetView, delta);
-                } catch (Exception ignored) {//ignored
-                }
+                ScrollCompat.scrollCompat(mScrollTargetView, delta);
             } else if (mTargetView != null)
-                try {
-                    ScrollCompat.scrollCompat(mTargetView, delta);
-                } catch (Exception ignored) {//ignored
-                }
+                ScrollCompat.scrollCompat(mTargetView, delta);
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }

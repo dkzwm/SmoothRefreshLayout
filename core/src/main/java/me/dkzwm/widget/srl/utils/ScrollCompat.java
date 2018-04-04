@@ -69,8 +69,8 @@ public class ScrollCompat {
                         return recyclerView.getChildCount() == 0 ||
                                 view.canScrollVertically(1);
                 }
-            } catch (NoClassDefFoundError e) {
-                e.printStackTrace();
+            } catch (NoClassDefFoundError ignored) {
+                //ignored
             }
             if (Build.VERSION.SDK_INT < 26)
                 return ViewCompat.canScrollVertically(view, 1);
@@ -112,8 +112,8 @@ public class ScrollCompat {
                     return adapter != null && lastVisiblePosition > 0
                             && lastVisiblePosition >= adapter.getItemCount() - 1;
                 }
-            } catch (NoClassDefFoundError e) {
-                e.printStackTrace();
+            } catch (NoClassDefFoundError ignored) {
+                return false;
             }
             return false;
         }
@@ -151,8 +151,8 @@ public class ScrollCompat {
                     RecyclerView.Adapter adapter = recyclerView.getAdapter();
                     return adapter != null && firstVisiblePosition == 0;
                 }
-            } catch (NoClassDefFoundError e) {
-                e.printStackTrace();
+            } catch (NoClassDefFoundError ignored) {
+                return false;
             }
             return false;
         }
@@ -179,13 +179,13 @@ public class ScrollCompat {
 
     public static boolean scrollCompat(View view, float deltaY) {
         if (view != null) {
-            if (view instanceof AbsListView) {
-                final AbsListView listView = (AbsListView) view;
-                if (Build.VERSION.SDK_INT >= 19) {
-                    listView.scrollListBy((int) deltaY);
-                    return true;
-                } else {
-                    try {
+            try {
+                if (view instanceof AbsListView) {
+                    final AbsListView listView = (AbsListView) view;
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        listView.scrollListBy((int) deltaY);
+                        return true;
+                    } else {
                         @SuppressLint("PrivateApi")
                         Method method = AbsListView.class.getDeclaredMethod("trackMotionScroll",
                                 int.class, int.class);
@@ -193,24 +193,20 @@ public class ScrollCompat {
                             method.setAccessible(true);
                             method.invoke(listView, -(int) deltaY, -(int) deltaY);
                         }
-                    } catch (Exception e) {
-                        return false;
                     }
-                }
-                return true;
-            } else if ((view instanceof WebView)
-                    || (view instanceof ScrollView)
-                    || (view instanceof NestedScrollView)) {
-                view.scrollBy(0, (int) deltaY);
-            } else {
-                try {
+                    return true;
+                } else if ((view instanceof WebView)
+                        || (view instanceof ScrollView)
+                        || (view instanceof NestedScrollView)) {
+                    view.scrollBy(0, (int) deltaY);
+                } else {
                     if (view instanceof RecyclerView) {
                         view.scrollBy(0, (int) deltaY);
                         return true;
                     }
-                } catch (NoClassDefFoundError e) {
-                    //ignore exception
                 }
+            } catch (Exception ignored) {
+                return false;
             }
         }
         return false;

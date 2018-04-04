@@ -72,8 +72,8 @@ public class HorizontalBoundaryUtil {
                     }
                 }
             }
-        } catch (NoClassDefFoundError e) {
-            e.printStackTrace();
+        } catch (NoClassDefFoundError ignored) {
+            //ignored
         }
         return false;
     }
