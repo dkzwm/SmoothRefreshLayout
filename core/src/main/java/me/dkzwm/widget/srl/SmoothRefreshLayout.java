@@ -3257,18 +3257,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         notifyFingerUp();
         if (!stayForLoading && mMode == Constants.MODE_DEFAULT && !mScrollChecker.isPreFling()
                 && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE) {
-            if (isHeaderInProcessing() && !isDisabledRefresh()
+            if (isHeaderInProcessing() && !isDisabledPerformRefresh()
                     && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
-                if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())
-                        && !isDisabledPerformRefresh()) {
+                if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
                     mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
                             mDurationOfBackToHeaderHeight);
                     return;
                 }
-            } else if (isFooterInProcessing() && !isDisabledLoadMore()
+            } else if (isFooterInProcessing() && !isDisabledPerformLoadMore()
                     && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
-                if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())
-                        && !isDisabledPerformLoadMore()) {
+                if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
                     mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
                             mDurationOfBackToFooterHeight);
                     return;
@@ -3725,14 +3723,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         }
         if (sDebug) SRLog.d(TAG, "tryToPerformRefresh()");
-        if (isHeaderInProcessing() && !isDisabledRefresh() && !isDisabledPerformRefresh()
+        if (isHeaderInProcessing() && !isDisabledPerformRefresh()
                 && ((mIndicator.isOverOffsetToKeepHeaderWhileLoading() && isAutoRefresh())
                 || (isEnabledKeepRefreshView() && mIndicator.isOverOffsetToKeepHeaderWhileLoading())
                 || mIndicator.isOverOffsetToRefresh())) {
             triggeredRefresh(true);
             return;
         }
-        if (isFooterInProcessing() && !isDisabledLoadMore() && !isDisabledPerformLoadMore()
+        if (isFooterInProcessing() && !isDisabledPerformLoadMore()
                 && ((mIndicator.isOverOffsetToKeepFooterWhileLoading() && isAutoRefresh())
                 || (isEnabledKeepRefreshView() && mIndicator.isOverOffsetToKeepFooterWhileLoading())
                 || mIndicator.isOverOffsetToLoadMore())) {
@@ -4136,6 +4134,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_PRE_FLING:
+                        destroy();
                         SmoothRefreshLayout.this.onRelease();
                         break;
                 }
