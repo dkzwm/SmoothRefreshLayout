@@ -40,17 +40,28 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     private DelayToBackToTop mDelayToBackToTopRunnable;
 
     public TwoLevelSmoothRefreshLayout(Context context) {
-        this(context, null);
+        super(context);
+        init(context, null, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context, attrs, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr);
+    }
+
+    public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr);
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable
-                .TwoLevelSmoothRefreshLayout, 0, 0);
+                .TwoLevelSmoothRefreshLayout, defStyleAttr, 0);
         if (arr != null) {
             setDisableTwoLevelRefresh(!arr.getBoolean(R.styleable
                     .TwoLevelSmoothRefreshLayout_sr_enableTwoLevelRefresh, false));

@@ -2,10 +2,12 @@ package me.dkzwm.widget.srl;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
@@ -124,8 +126,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected final String TAG = "SmoothRefreshLayout-" + sId++;
     protected final int[] mParentScrollConsumed = new int[2];
     protected final int[] mParentOffsetInWindow = new int[2];
-    private final NestedScrollingParentHelper mNestedScrollingParentHelper;
-    private final NestedScrollingChildHelper mNestedScrollingChildHelper;
     private final List<View> mCachedViews = new ArrayList<>(1);
     @Mode
     protected int mMode = Constants.MODE_DEFAULT;
@@ -188,6 +188,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected OnInsideAnotherDirectionViewCallback mInsideAnotherDirectionViewCallback;
     protected OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     protected ValueAnimator mChangeStateAnimator;
+    private NestedScrollingParentHelper mNestedScrollingParentHelper;
+    private NestedScrollingChildHelper mNestedScrollingChildHelper;
     private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
     private ILifecycleObserver mLifecycleObserver;
     private Interpolator mSpringInterpolator;
@@ -208,15 +210,46 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mHasDispatchedNestedFling = false;
 
     public SmoothRefreshLayout(Context context) {
-        this(context, null);
+        super(context);
+        init(context, null, 0);
     }
 
     public SmoothRefreshLayout(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+        super(context, attrs);
+        init(context, attrs, 0);
     }
 
     public SmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr);
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public SmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        init(context, attrs, defStyleAttr);
+    }
+
+    public static void debug(boolean debug) {
+        sDebug = debug;
+    }
+
+    public static boolean isDebug() {
+        return sDebug;
+    }
+
+    /**
+     * Set the static refresh view creator, if the refresh view is null and the frame be
+     * needed the refresh view,frame will use this creator to create refresh view.
+     * <p>设置默认的刷新视图构造器，当刷新视图为null且需要使用刷新视图时，Frame会使用该构造器构造刷新视图</p>
+     *
+     * @param creator The static refresh view creator
+     */
+    public static void setDefaultCreator(IRefreshViewCreator creator) {
+        sCreator = creator;
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         sId++;
         createIndicator();
         if (mIndicator == null || mIndicatorSetter == null)
@@ -323,25 +356,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mAnimatorCreator = new DefaultChangeStateAnimatorCreator();
         setNestedScrollingEnabled(true);
-    }
-
-    public static void debug(boolean debug) {
-        sDebug = debug;
-    }
-
-    public static boolean isDebug() {
-        return sDebug;
-    }
-
-    /**
-     * Set the static refresh view creator, if the refresh view is null and the frame be
-     * needed the refresh view,frame will use this creator to create refresh view.
-     * <p>设置默认的刷新视图构造器，当刷新视图为null且需要使用刷新视图时，Frame会使用该构造器构造刷新视图</p>
-     *
-     * @param creator The static refresh view creator
-     */
-    public static void setDefaultCreator(IRefreshViewCreator creator) {
-        sCreator = creator;
     }
 
     protected void createIndicator() {
