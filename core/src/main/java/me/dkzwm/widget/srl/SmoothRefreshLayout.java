@@ -211,23 +211,23 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     public SmoothRefreshLayout(Context context) {
         super(context);
-        init(context, null, 0);
+        init(context, null, 0, 0);
     }
 
     public SmoothRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0);
+        init(context, attrs, 0, 0);
     }
 
     public SmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public SmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
     public static void debug(boolean debug) {
@@ -249,14 +249,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         sCreator = creator;
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         sId++;
         createIndicator();
         if (mIndicator == null || mIndicatorSetter == null)
             throw new IllegalArgumentException("You must create a IIndicator, current indicator is null");
         mInflater = LayoutInflater.from(context);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout,
-                0, 0);
+                defStyleAttr, defStyleRes);
         if (arr != null) {
             mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content, mContentResId);
             float resistance = arr.getFloat(R.styleable
@@ -338,7 +338,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             int mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, Constants.MODE_DEFAULT);
             mMode = mode;
             arr.recycle();
-            arr = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS, 0, 0);
+            arr = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS, defStyleAttr, defStyleRes);
             setEnabled(arr.getBoolean(0, true));
             arr.recycle();
         } else {
@@ -3832,7 +3832,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void notifyUIPositionChanged() {
         if (mUIPositionChangedListeners != null && !mUIPositionChangedListeners.isEmpty()) {
-            for (OnUIPositionChangedListener listener : mUIPositionChangedListeners) {
+            final List<OnUIPositionChangedListener> listeners = mUIPositionChangedListeners;
+            for (OnUIPositionChangedListener listener : listeners) {
                 listener.onChanged(mStatus, mIndicator);
             }
         }

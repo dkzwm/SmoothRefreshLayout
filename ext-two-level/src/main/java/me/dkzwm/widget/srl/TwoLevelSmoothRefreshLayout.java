@@ -41,27 +41,27 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public TwoLevelSmoothRefreshLayout(Context context) {
         super(context);
-        init(context, null, 0);
+        init(context, null, 0, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0);
+        init(context, attrs, 0, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr);
+        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable
-                .TwoLevelSmoothRefreshLayout, defStyleAttr, 0);
+                .TwoLevelSmoothRefreshLayout, defStyleAttr, defStyleRes);
         if (arr != null) {
             setDisableTwoLevelRefresh(!arr.getBoolean(R.styleable
                     .TwoLevelSmoothRefreshLayout_sr_enableTwoLevelRefresh, false));
