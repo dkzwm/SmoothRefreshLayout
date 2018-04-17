@@ -3846,12 +3846,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mTargetViewTreeObserver != null) {
             if (mTargetViewTreeObserver.isAlive())
                 mTargetViewTreeObserver.removeOnScrollChangedListener(this);
-            else {
+            else
                 SRReflectUtil.safelyRemoveListeners(mTargetViewTreeObserver, this);
-            }
         }
     }
-
 
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method
@@ -4228,7 +4226,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             to = offsetToKeepHeaderWhileLoading;
                         }
                         mDuration = Math.max(mDuration, SmoothRefreshLayout.this
-                                .getDurationToCloseFooter());
+                                .getDurationToCloseHeader());
                     }
                     SmoothRefreshLayout.this.mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
                     mScroller = SRReflectUtil.setScrollerInterpolatorOrReCreateScroller(mContext,
