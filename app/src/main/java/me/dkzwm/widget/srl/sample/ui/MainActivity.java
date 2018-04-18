@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
-        mRefreshLayout.setEnableHideFooterView(true);
+        mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
         mRefreshLayout.getDefaultHeader().setWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
         mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
         mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);

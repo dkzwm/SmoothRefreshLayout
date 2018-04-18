@@ -107,13 +107,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_AUTO_PERFORM_REFRESH = 0x01 << 16;
     private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 17;
     private static final int FLAG_DISABLE_WHEN_ANOTHER_DIRECTION_MOVE = 0x01 << 18;
-    private static final int FLAG_ENABLE_HIDE_HEADER_VIEW = 0x01 << 19;
-    private static final int FLAG_ENABLE_HIDE_FOOTER_VIEW = 0x01 << 20;
-    private static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 21;
-    private static final int FLAG_ENABLE_NO_MORE_DATA_NO_BACK = 0x01 << 22;
-    private static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 23;
-    private static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 24;
-    private static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 25;
+    private static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 19;
+    private static final int FLAG_ENABLE_NO_MORE_DATA_NO_BACK = 0x01 << 20;
+    private static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 21;
+    private static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
+    private static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
     private static final byte MASK_AUTO_REFRESH = 0x03;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
@@ -431,7 +429,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledRefresh() || isEnabledHideHeaderView())
+        if (isDisabledRefresh())
             return;
         int height = mHeaderView.getCustomHeight();
         if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
@@ -483,7 +481,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledLoadMore() || isEnabledHideFooterView())
+        if (isDisabledLoadMore())
             return;
         int height = mFooterView.getCustomHeight();
         if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
@@ -597,7 +595,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void layoutHeaderView(View child, int offsetHeader) {
-        if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh() || isEnabledHideHeaderView()
+        if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh()
                 || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
@@ -642,7 +640,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void layoutFooterView(View child, int offsetFooter, boolean pin, int contentBottom) {
-        if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore() || isEnabledHideFooterView()
+        if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore()
                 || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
@@ -1849,56 +1847,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * The flag has been set to hided Header view.
-     * <p>是否已经开启不显示Header</p>
-     *
-     * @return hided
-     */
-    public boolean isEnabledHideHeaderView() {
-        return (mFlag & FLAG_ENABLE_HIDE_HEADER_VIEW) > 0;
-    }
-
-    /**
-     * If @param enable has been set to true.Will hide the Header.
-     * <p>设置是否开启不显示Header</p>
-     *
-     * @param enable Enable hide the Header
-     */
-    public void setEnableHideHeaderView(boolean enable) {
-        if (enable) {
-            mFlag = mFlag | FLAG_ENABLE_HIDE_HEADER_VIEW;
-        } else {
-            mFlag = mFlag & ~FLAG_ENABLE_HIDE_HEADER_VIEW;
-        }
-        requestLayout();
-    }
-
-    /**
-     * The flag has been set to hided Footer view.
-     * <p>是否已经开启不显示Footer</p>
-     *
-     * @return hided
-     */
-    public boolean isEnabledHideFooterView() {
-        return (mFlag & FLAG_ENABLE_HIDE_FOOTER_VIEW) > 0;
-    }
-
-    /**
-     * If @param enable has been set to true.Will hide the Footer.
-     * <p>设置是否开启不显示Footer</p>
-     *
-     * @param enable Enable hide the Footer
-     */
-    public void setEnableHideFooterView(boolean enable) {
-        if (enable) {
-            mFlag = mFlag | FLAG_ENABLE_HIDE_FOOTER_VIEW;
-        } else {
-            mFlag = mFlag & ~FLAG_ENABLE_HIDE_FOOTER_VIEW;
-        }
-        requestLayout();
-    }
-
-    /**
      * The flag has been set to disabled when horizontal move.
      * <p>是否已经设置不响应横向滑动</p>
      *
@@ -2157,6 +2105,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    @Nullable
+    public IRefreshView<IIndicator> getFooterView() {
+        //Use the static default creator to create the Footer view
+        if (!isDisabledLoadMore() && mFooterView == null && sCreator != null
+                && mMode == Constants.MODE_DEFAULT) {
+            sCreator.createFooter(this);
+        }
+        return mFooterView;
+    }
+
     /**
      * Set the Footer view.
      * <p>设置Footer视图</p>
@@ -2175,6 +2133,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         addFreshViewLayoutParams(view);
         mViewsZAxisNeedReset = true;
         addView(view);
+    }
+
+    @Nullable
+    public IRefreshView<IIndicator> getHeaderView() {
+        //Use the static default creator to create the Header view
+        if (!isDisabledRefresh() && mHeaderView == null && sCreator != null
+                && mMode == Constants.MODE_DEFAULT) {
+            sCreator.createFooter(this);
+        }
+        return mHeaderView;
     }
 
     /**
@@ -2945,16 +2913,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mTargetViewTreeObserver.addOnScrollChangedListener(this);
             }
         }
-        //Use the static default creator to create the Header view
-        if (!isDisabledRefresh() && !isEnabledHideHeaderView() && mHeaderView == null &&
-                sCreator != null && mMode == Constants.MODE_DEFAULT) {
-            sCreator.createHeader(this);
-        }
-        //Use the static default creator to create the Footer view
-        if (!isDisabledLoadMore() && !isEnabledHideFooterView() && mFooterView == null &&
-                sCreator != null && mMode == Constants.MODE_DEFAULT) {
-            sCreator.createFooter(this);
-        }
+        mHeaderView = getHeaderView();
+        mFooterView = getFooterView();
     }
 
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
@@ -3495,7 +3455,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         boolean needRequestLayout = false;
         if (mMode == Constants.MODE_DEFAULT) {
             if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader
-                    && !isEnabledHideHeaderView()) {
+                    && mHeaderView.getView().getVisibility() == VISIBLE) {
                 final int type = mHeaderView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
@@ -3525,7 +3485,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 else
                     mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter
-                    && !isEnabledHideFooterView()) {
+                    && mFooterView.getView().getVisibility() == VISIBLE) {
                 final int type = mFooterView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
@@ -3628,13 +3588,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void updateAnotherDirectionPos() {
         if (mMode == Constants.MODE_DEFAULT) {
             if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader()
-                    && !isEnabledHideHeaderView()) {
+                    && mHeaderView.getView().getVisibility() == VISIBLE) {
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
                     mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()
-                    && !isEnabledHideFooterView()) {
+                    && mHeaderView.getView().getVisibility() == VISIBLE) {
                 if (isFooterInProcessing())
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else

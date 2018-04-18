@@ -79,7 +79,7 @@ public class TestNestedActivity extends AppCompatActivity {
             public void onRefreshComplete(boolean isSuccessful) {
             }
         });
-        mRefreshLayout.getDefaultHeader().setPadding(0, PixelUtl.dp2px(this, 80),
+        mRefreshLayout.getHeaderView().getView().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
         mRefreshLayout.setLoadMoreScrollTargetView(mRecyclerView);
         mRefreshLayout.setLifecycleObserver(new QuickConfigAppBarUtil());

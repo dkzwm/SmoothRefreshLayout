@@ -15,6 +15,7 @@ import java.util.List;
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
@@ -79,10 +80,10 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                if (mRefreshLayout.getDefaultFooter().getStyle() == IRefreshView.STYLE_SCALE)
-                    mRefreshLayout.getDefaultFooter().setStyle(IRefreshView.STYLE_DEFAULT);
+                if (mRefreshLayout.getFooterView().getStyle() == IRefreshView.STYLE_SCALE)
+                    ((MaterialFooter) mRefreshLayout.getFooterView()).setStyle(IRefreshView.STYLE_DEFAULT);
                 else
-                    mRefreshLayout.getDefaultFooter().setStyle(IRefreshView.STYLE_SCALE);
+                    ((MaterialFooter) mRefreshLayout.getFooterView()).setStyle(IRefreshView.STYLE_SCALE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

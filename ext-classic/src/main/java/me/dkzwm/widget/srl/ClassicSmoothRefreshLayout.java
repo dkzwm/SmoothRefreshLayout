@@ -59,13 +59,4 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
             mClassicFooter.setLastUpdateTimeKey(key);
         }
     }
-
-    public ClassicHeader getDefaultHeader() {
-        return mClassicHeader;
-    }
-
-    public ClassicFooter getDefaultFooter() {
-        return mClassicFooter;
-    }
-
 }

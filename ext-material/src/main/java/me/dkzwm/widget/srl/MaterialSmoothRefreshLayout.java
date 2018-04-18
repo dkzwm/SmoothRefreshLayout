@@ -88,12 +88,4 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
             addOnUIPositionChangedListener(mOnUIPositionChangedListener);
         }
     }
-
-    public MaterialHeader getDefaultHeader() {
-        return mMaterialHeader;
-    }
-
-    public MaterialFooter getDefaultFooter() {
-        return mMaterialFooter;
-    }
 }

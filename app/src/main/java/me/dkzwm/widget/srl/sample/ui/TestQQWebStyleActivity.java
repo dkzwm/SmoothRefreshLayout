@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
@@ -35,7 +36,7 @@ public class TestQQWebStyleActivity extends AppCompatActivity {
         mRefreshLayout.setDisablePerformRefresh(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
-        mRefreshLayout.setEnableHideFooterView(true);
+        mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
         mRefreshLayout.setEnableHeaderDrawerStyle(true);
         mRefreshLayout.setMaxMoveRatioOfHeader(1);
         mWebView = findViewById(R.id.webView_with_webView);

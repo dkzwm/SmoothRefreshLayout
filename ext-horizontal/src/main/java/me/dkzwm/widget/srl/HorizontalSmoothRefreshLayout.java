@@ -64,7 +64,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledRefresh() || isEnabledHideHeaderView())
+        if (isDisabledRefresh())
             return;
         int height = mHeaderView.getCustomHeight();
         if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
@@ -117,7 +117,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledLoadMore() || isEnabledHideFooterView())
+        if (isDisabledLoadMore())
             return;
         int height = mFooterView.getCustomHeight();
         if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
@@ -197,7 +197,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void layoutHeaderView(View child, int offsetHeader) {
-        if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh() || isEnabledHideHeaderView()
+        if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh()
                 || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
@@ -247,7 +247,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void layoutFooterView(View child, int offsetFooter, boolean pin, int contentRight) {
-        if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore() || isEnabledHideFooterView()
+        if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore()
                 || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
@@ -501,7 +501,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         boolean needRequestLayout = false;
         if (mMode == Constants.MODE_DEFAULT) {
             if (mHeaderView != null && !isDisabledRefresh() && isMovingHeader
-                    && !isEnabledHideHeaderView()) {
+                    && mHeaderView.getView().getVisibility() == VISIBLE) {
                 final int type = mHeaderView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
@@ -531,7 +531,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 else
                     mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter
-                    && !isEnabledHideFooterView()) {
+                    && mFooterView.getView().getVisibility() == VISIBLE) {
                 final int type = mFooterView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:

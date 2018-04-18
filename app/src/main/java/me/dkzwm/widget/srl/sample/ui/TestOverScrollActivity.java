@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
@@ -27,8 +28,8 @@ public class TestOverScrollActivity extends AppCompatActivity {
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setDisablePerformRefresh(true);
         refreshLayout.setDisablePerformLoadMore(true);
-        refreshLayout.setEnableHideHeaderView(true);
-        refreshLayout.setEnableHideFooterView(true);
+        refreshLayout.getHeaderView().getView().setVisibility(View.GONE);
+        refreshLayout.getFooterView().getView().setVisibility(View.GONE);
     }
 
 

@@ -1,4 +1,15 @@
 # 更新日志
+## 1.6.4
+> 删除方法:`setEnableHideHeaderView`,改用 `getHeaderView().getView().setVisibility` 进行替代。    
+> 删除方法:`setEnableHideFooterView`,改用 `getFooterView().getView().setVisibility` 进行替代。    
+> 删除方法:`isEnabledHideHeaderView`,改用 `getHeaderView().getView().getVisibility` 进行替代。    
+> 删除方法:`isEnabledHideFooterView`,改用 `getFooterView().getView().getVisibility` 进行替代。    
+> 新增方法:`getFooterView`。    
+> 新增方法:`getHeaderView`。    
+> 删除方法:`getDefaultHeader`(位于 `MaterialSmoothRefreshLayout`和`ClassicSmoothRefreshLayout`)。    
+> 删除方法:`getDefaultFooter`(位于 `MaterialSmoothRefreshLayout`和`ClassicSmoothRefreshLayout`)。    
+> 删除类:`OverScrollerChecker`,合并滚动逻辑到 `ScrollerChecker` 类中，对滚动逻辑进行整合。    
+> 优化部分代码逻辑    
 ## 1.6.3.2
 > 删除多余部分方法（PS:Fuck JitPack）.
 ## 1.6.3
