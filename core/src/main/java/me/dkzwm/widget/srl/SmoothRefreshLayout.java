@@ -2140,7 +2140,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //Use the static default creator to create the Header view
         if (!isDisabledRefresh() && mHeaderView == null && sCreator != null
                 && mMode == Constants.MODE_DEFAULT) {
-            sCreator.createFooter(this);
+            sCreator.createHeader(this);
         }
         return mHeaderView;
     }
