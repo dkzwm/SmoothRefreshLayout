@@ -154,6 +154,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean mIsFingerInsideAnotherDirectionView = false;
     protected boolean mNestedScrollInProgress = false;
     protected boolean mNeedNotifyRefreshListener = true;
+    protected boolean mHasMovedViews = false;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
     protected int mDurationToCloseHeader = 350;
@@ -2442,7 +2443,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     && (realVelocity <= 0 || !isDisabledRefresh())))) {
                 mScrollChecker.tryToFling(realVelocity);
             }
-            if (!mNestedScrollInProgress)
+            if (mHasMovedViews && !mNestedScrollInProgress)
                 dispatchNestedFling((int) realVelocity);
         }
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
@@ -2973,6 +2974,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             case MotionEvent.ACTION_DOWN:
                 mIndicatorSetter.onFingerUp();
                 mHasSendDownEvent = false;
+                mHasMovedViews = false;
                 mTouchPointerId = ev.getPointerId(0);
                 mIndicatorSetter.onFingerDown(ev.getX(), ev.getY());
                 mIsFingerInsideAnotherDirectionView = isDisabledWhenAnotherDirectionMove()
@@ -3077,8 +3079,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
                             moveHeaderPos(offsetY);
                             return true;
-                        } else if ((mIndicator.getCurrentPos() <= IIndicator.START_POS
-                                || isAutoRefresh()) && !mHasSendDownEvent) {
+                        } else if (isAutoRefresh() && !mHasSendDownEvent) {
                             makeNewTouchDownEvent(ev);
                         }
                         return super.dispatchTouchEvent(ev);
@@ -3391,6 +3392,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched()
                 && mIndicator.hasJustLeftStartPosition())
             getParent().requestDisallowInterceptTouchEvent(true);
+        mHasMovedViews = mIndicator.hasTouched();
         if (isMovingHeader())
             updatePos(change);
         else if (isMovingFooter())
@@ -3427,7 +3429,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mFooterView.onRefreshPrepare(this);
             }
         }
-        tryToDispatchNestedFling();
         // back to initiated position
         if (!(isAutoRefresh() && mStatus != SR_STATUS_COMPLETE)
                 && mIndicator.hasJustBackToStartPosition()) {
@@ -3437,14 +3438,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 sendDownEvent();
             }
         }
+        tryToDispatchNestedFling();
         tryToPerformRefreshWhenMoved();
         if (sDebug)
             SRLog.d(TAG, "updatePos(): change: %s, current: %s last: %s",
                     change, mIndicator.getCurrentPos(), mIndicator.getLastPos());
         notifyUIPositionChanged();
         boolean needRequestLayout = offsetChild(change, isMovingHeader, isMovingFooter);
-        if (needRequestLayout || (!mScrollChecker.isOverScrolling() && mIndicator
-                .isInStartPosition())) {
+        if (needRequestLayout || mIndicator.isInStartPosition()) {
             requestLayout();
         } else {
             invalidate();
@@ -3632,7 +3633,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean tryToNotifyReset() {
-        if ((mStatus == SR_STATUS_COMPLETE || mStatus == SR_STATUS_PREPARE)
+        if ((mStatus == SR_STATUS_COMPLETE || mStatus == SR_STATUS_PREPARE
+                || mScrollChecker.isPreFling())
                 && mIndicator.isInStartPosition()) {
             if (sDebug) SRLog.d(TAG, "tryToNotifyReset()");
             if (mHeaderView != null)
@@ -3784,6 +3786,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void dispatchNestedFling(int velocity) {
+        if (sDebug) SRLog.d(TAG, "dispatchNestedFling() : %s", velocity);
         if (mScrollTargetView != null)
             ScrollCompat.flingCompat(mScrollTargetView, -velocity);
         else
