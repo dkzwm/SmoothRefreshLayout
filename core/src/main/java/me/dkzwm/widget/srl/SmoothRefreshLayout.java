@@ -3595,7 +3595,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 else
                     mHeaderView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             } else if (mFooterView != null && !isDisabledLoadMore() && isMovingFooter()
-                    && mHeaderView.getView().getVisibility() == VISIBLE) {
+                    && mFooterView.getView().getVisibility() == VISIBLE) {
                 if (isFooterInProcessing())
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
