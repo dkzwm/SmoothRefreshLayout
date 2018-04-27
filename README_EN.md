@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-717%20%7C%2076%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-702%20%7C%2073%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -87,17 +87,17 @@ repositories {
 
 dependencies {
     //The most basic core library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4'
     //Default Classic-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4'
     //Default Material-Style impl
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
     //Uitls library
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
     //Support Two-Level-Refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4'
     //Support horizontal refresh feature
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4'
 }
 ```
 #### Use Xml to config
@@ -330,9 +330,9 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_maxMoveRatio|float|The max can move offset occupies the height ratio of the refresh view（Default: `0f`，meaning that it will never work）|
  |sr_maxMoveRatioOfHeader|float|The max can move offset occupies the height ratio of the Header（Default: `0f`，meaning that it will never work）|
  |sr_maxMoveRatioOfFooter|float|The max can move offset occupies the height ratio of the Footer（Default: `0f`，meaning that it will never work）|
- |sr_closeDuration|integer|The duration of return to the start position（Default: `500`）|
- |sr_closeHeaderDuration|integer|The duration of return to the start position when Header moves（Default: `500`）|
- |sr_closeFooterDuration|integer|The duration of return to the start position when Footer moves（Default: `500`）|
+ |sr_closeDuration|integer|The duration of return to the start position（Default: `350`）|
+ |sr_closeHeaderDuration|integer|The duration of return to the start position when Header moves（Default: `350`）|
+ |sr_closeFooterDuration|integer|The duration of return to the start position when Footer moves（Default: `350`）|
  |sr_backToKeepDuration|integer|The duration of return to the keep refresh view position（Default: `200`）|
  |sr_backToKeepHeaderDuration|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
  |sr_backToKeepFooterDuration|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|
@@ -374,7 +374,7 @@ public interface IRefreshView<T extends IIndicator> {
  |setState|int,boolean|Set current State, parameter1: set current State, parameter2: whether use animate|
  |setDisableWhenAnotherDirectionMove|boolean|Set whether to filter another direction moves（Default: `false`）|
  |setEnableNextPtrAtOnce|boolean|Set whether user can perform next PTR at once|
- |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `500`）|
+ |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `300`）|
  |setMinOverScrollDuration|int|Set the min duration for Cross-Boundary-Rebound(OverScroll)（Default: `150`）|
  |setResistance|float|The resistance while you are moving（Default: `1.65f`）|
  |setResistanceOfFooter|float|The resistance while you are moving Footer（Default: `1.65f`）|
@@ -388,9 +388,9 @@ public interface IRefreshView<T extends IIndicator> {
  |setMaxMoveRatio|float|The max can move offset occupies the height ratio of the refresh view（Default: `0f`，meaning that it will never work）|
  |setMaxMoveRatioOfHeader|float|The max can move offset occupies the height ratio of the Header（Default: `0f`，meaning that it will never work）|
  |setMaxMoveRatioOfFooter|float|The max can move offset occupies the height ratio of the Footer（Default: `0f`，meaning that it will never work）|
- |setDurationToClose|int|The duration of return to the start position（Default: `500`）|
- |setDurationToCloseHeader|int|The duration of return to the start position when Header moves（Default: `500`）|
- |setDurationToCloseFooter|int|The duration of return to the start position when Footer moves（Default: `500`）|
+ |setDurationToClose|int|The duration of return to the start position（Default: `350`）|
+ |setDurationToCloseHeader|int|The duration of return to the start position when Header moves（Default: `350`）|
+ |setDurationToCloseFooter|int|The duration of return to the start position when Footer moves（Default: `350`）|
  |setDurationOfBackToKeep|integer|The duration of return to the keep refresh view position（Default: `200`）|
  |setDurationOfBackToKeepHeader|integer|The duration of return to the keep refresh view position when Header moves（Default: `200`）|
  |setDurationOfBackToKeepFooter|integer|The duration of return to the keep refresh view position when Footer moves（Default: `200`）|

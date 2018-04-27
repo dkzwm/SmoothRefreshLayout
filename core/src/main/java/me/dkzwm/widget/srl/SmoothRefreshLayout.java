@@ -690,7 +690,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         final int height = child.getMeasuredHeight();
         int childLeft, childTop;
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        int gravity = lp.mGravity;
+        final int gravity = lp.gravity;
         final int layoutDirection = ViewCompat.getLayoutDirection(this);
         final int absoluteGravity = GravityCompat.getAbsoluteGravity(gravity, layoutDirection);
         final int verticalGravity = gravity & Gravity.VERTICAL_GRAVITY_MASK;
@@ -3120,9 +3120,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected boolean tryToFilterTouchEventInDispatchTouchEvent(MotionEvent ev) {
         if (mIsInterceptTouchEventInOnceTouch) {
-            if (mScrollChecker.isOverScrolling())
+            if ((!isAutoRefresh() && mIndicator.isInStartPosition() && !mScrollChecker.mIsScrolling)
+                    || (isAutoRefresh() && (isRefreshing() || isLoadingMore()))) {
                 mScrollChecker.destroy();
-            if (mIndicator.isInStartPosition() && !mScrollChecker.mIsScrolling) {
                 makeNewTouchDownEvent(ev);
                 mIsInterceptTouchEventInOnceTouch = false;
             }
@@ -3438,6 +3438,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 sendDownEvent();
             }
         }
+        if (mScrollChecker.isPreFling() && mIndicator.isInStartPosition())
+            removeCallbacks(mScrollChecker);
         tryToDispatchNestedFling();
         tryToPerformRefreshWhenMoved();
         if (sDebug)
@@ -3633,8 +3635,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean tryToNotifyReset() {
-        if ((mStatus == SR_STATUS_COMPLETE || mStatus == SR_STATUS_PREPARE
-                || mScrollChecker.isPreFling())
+        if ((mStatus == SR_STATUS_COMPLETE || mStatus == SR_STATUS_PREPARE)
                 && mIndicator.isInStartPosition()) {
             if (sDebug) SRLog.d(TAG, "tryToNotifyReset()");
             if (mHeaderView != null)
@@ -3781,8 +3782,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mFooterView != null)
                 mFooterView.onRefreshBegin(this, mIndicator);
         }
-        if (mNeedNotifyRefreshListener && mRefreshListener != null)
+        if (mNeedNotifyRefreshListener && mRefreshListener != null) {
             mRefreshListener.onRefreshBegin(isRefreshing());
+        }
     }
 
     protected void dispatchNestedFling(int velocity) {
@@ -3953,18 +3955,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     public static class LayoutParams extends MarginLayoutParams {
         private static final int[] LAYOUT_ATTRS = new int[]{android.R.attr.layout_gravity};
-        private int mGravity = Gravity.TOP | Gravity.START;
+        public int gravity = Gravity.TOP | Gravity.START;
 
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             final TypedArray a = c.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
-            mGravity = a.getInt(0, mGravity);
+            gravity = a.getInt(0, gravity);
             a.recycle();
         }
 
         public LayoutParams(int width, int height, int gravity) {
             super(width, height);
-            this.mGravity = gravity;
+            this.gravity = gravity;
         }
 
         public LayoutParams(int width, int height) {
@@ -3981,11 +3983,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
         public LayoutParams(LayoutParams source) {
             super(source);
-            mGravity = source.mGravity;
-        }
-
-        public int getGravity() {
-            return mGravity;
+            gravity = source.gravity;
         }
     }
 

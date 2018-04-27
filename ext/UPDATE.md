@@ -9,7 +9,12 @@
 > 删除方法:`getDefaultHeader`(位于 `MaterialSmoothRefreshLayout`和`ClassicSmoothRefreshLayout`)。    
 > 删除方法:`getDefaultFooter`(位于 `MaterialSmoothRefreshLayout`和`ClassicSmoothRefreshLayout`)。    
 > 删除类:`OverScrollerChecker`,合并滚动逻辑到 `ScrollerChecker` 类中，对滚动逻辑进行整合。    
-> 优化部分代码逻辑    
+> 优化部分代码逻辑。    
+> 修正部分参数设置错误。    
+## 1.6.3.3
+> 分割合并部分代码逻辑。    
+> 拆分 `IIndicator` 为 `IIndicator` 和 `IIndicatorSetter` 2个接口，避免非Frame层调用相关setter方法。    
+> 删除部分代码逻辑。    
 ## 1.6.3.2
 > 删除多余部分方法（PS:Fuck JitPack）.
 ## 1.6.3
