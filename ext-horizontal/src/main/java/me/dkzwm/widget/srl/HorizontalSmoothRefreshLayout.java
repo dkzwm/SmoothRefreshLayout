@@ -7,8 +7,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -311,149 +309,28 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected boolean processDispatchTouchEvent(MotionEvent ev) {
-        final int action = ev.getAction() & MotionEvent.ACTION_MASK;
-        switch (action) {
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_POINTER_UP:
-            case MotionEvent.ACTION_POINTER_DOWN:
-            case MotionEvent.ACTION_DOWN:
-                return super.processDispatchTouchEvent(ev);
-            case MotionEvent.ACTION_MOVE:
-                if (sDebug) {
-                    SRLog.d(TAG, "processDispatchTouchEvent(): action: %s", action);
-                }
-                if (!mIndicator.hasTouched()) {
-                    return dispatchTouchEventSuper(ev);
-                }
-                final int index = ev.findPointerIndex(mTouchPointerId);
-                if (index < 0) {
-                    Log.e(TAG, "Error processing scroll; pointer index for id " +
-                            mTouchPointerId + " not found. Did any MotionEvents get skipped?");
-                    return dispatchTouchEventSuper(ev);
-                }
-                mLastMoveEvent = ev;
-                if (tryToFilterTouchEventInDispatchTouchEvent(ev))
-                    return true;
-                tryToResetMovingStatus();
-                mIndicatorSetter.onFingerMove(ev.getX(index), ev.getY(index));
-                float offsetX, offsetY;
-                final float[] pressDownPoint = mIndicator.getFingerDownPoint();
-                offsetX = ev.getX(index) - pressDownPoint[0];
-                offsetY = ev.getY(index) - pressDownPoint[1];
-                if (isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
-                    if (!mDealAnotherDirectionMove) {
-                        if ((Math.abs(offsetY) >= mTouchSlop
-                                && Math.abs(offsetY) > Math.abs(offsetX))) {
-                            mPreventForAnotherDirection = true;
-                            mDealAnotherDirectionMove = true;
-                        } else if (Math.abs(offsetX) < mTouchSlop
-                                && Math.abs(offsetY) < mTouchSlop) {
-                            mDealAnotherDirectionMove = false;
-                            mPreventForAnotherDirection = true;
-                        } else {
-                            mDealAnotherDirectionMove = true;
-                            mPreventForAnotherDirection = false;
-                        }
-                    }
+    protected void tryToDealAnotherDirectionMove(float offsetX, float offsetY) {
+        if (isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
+            if (!mDealAnotherDirectionMove) {
+                if ((Math.abs(offsetY) >= mTouchSlop
+                        && Math.abs(offsetY) > Math.abs(offsetX))) {
+                    mPreventForAnotherDirection = true;
+                    mDealAnotherDirectionMove = true;
+                } else if (Math.abs(offsetX) < mTouchSlop
+                        && Math.abs(offsetY) < mTouchSlop) {
+                    mDealAnotherDirectionMove = false;
+                    mPreventForAnotherDirection = true;
                 } else {
-                    if (Math.abs(offsetX) < mTouchSlop
-                            && Math.abs(offsetY) < mTouchSlop) {
-                        return dispatchTouchEventSuper(ev);
-                    }
+                    mDealAnotherDirectionMove = true;
+                    mPreventForAnotherDirection = false;
                 }
-                if (mPreventForAnotherDirection) {
-                    return dispatchTouchEventSuper(ev);
-                }
-                final boolean canNotChildScrollRight = !isNotYetInEdgeCannotMoveFooter();
-                final boolean canNotChildScrollLeft = !isNotYetInEdgeCannotMoveHeader();
-                offsetX = mIndicator.getOffset();
-                int current = mIndicator.getCurrentPos();
-                boolean movingRight = offsetX > 0;
-                if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
-                        && mIndicator.hasLeftStartPosition() && !canNotChildScrollRight) {
-                    mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
-                    return dispatchTouchEventSuper(ev);
-                }
-                if (movingRight) {
-                    float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-                    if (isMovingHeader() && !mIndicator.isInStartPosition()
-                            && maxHeaderDistance > 0) {
-                        if (current >= maxHeaderDistance) {
-                            updateAnotherDirectionPos();
-                            return dispatchTouchEventSuper(ev);
-                        } else if (current + offsetX > maxHeaderDistance) {
-                            moveHeaderPos(maxHeaderDistance - current);
-                            return true;
-                        }
-                    }
-                } else {
-                    float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-                    if (isMovingFooter() && !mIndicator.isInStartPosition()
-                            && maxFooterDistance > 0) {
-                        if (current >= maxFooterDistance) {
-                            updateAnotherDirectionPos();
-                            return dispatchTouchEventSuper(ev);
-                        } else if (current - offsetX > maxFooterDistance) {
-                            moveFooterPos(current - maxFooterDistance);
-                            return true;
-                        }
-                    } else if (isDisabledLoadMoreWhenContentNotFull() && mIndicator
-                            .isInStartPosition() && canNotChildScrollLeft && canNotChildScrollRight) {
-                        return true;
-                    }
-                }
-                boolean canMoveLeft = isMovingHeader() && mIndicator.hasLeftStartPosition();
-                boolean canMoveRight = isMovingFooter() && mIndicator.hasLeftStartPosition();
-                boolean canHeaderMoveRight = canNotChildScrollLeft && !isDisabledRefresh();
-                boolean canFooterMoveLeft = canNotChildScrollRight && !isDisabledLoadMore();
-                if (!canMoveLeft && !canMoveRight) {
-                    if ((movingRight && !canHeaderMoveRight) || (!movingRight && !canFooterMoveLeft)) {
-                        if (isLoadingMore() && mIndicator.hasLeftStartPosition()) {
-                            moveFooterPos(offsetX);
-                            return true;
-                        } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
-                            moveHeaderPos(offsetX);
-                            return true;
-                        } else if ((mIndicator.getCurrentPos() <= IIndicator.START_POS
-                                || isAutoRefresh()) && !mHasSendDownEvent) {
-                            makeNewTouchDownEvent(ev);
-                        }
-                        return dispatchTouchEventSuper(ev);
-                    }
-                    // should show up header
-                    if (movingRight) {
-                        if (isDisabledRefresh())
-                            return dispatchTouchEventSuper(ev);
-                        moveHeaderPos(offsetX);
-                        return true;
-                    }
-                    if (isDisabledLoadMore())
-                        return dispatchTouchEventSuper(ev);
-                    moveFooterPos(offsetX);
-                    return true;
-                }
-                if (canMoveLeft) {
-                    if (isDisabledRefresh())
-                        return dispatchTouchEventSuper(ev);
-                    if ((!canHeaderMoveRight && movingRight)) {
-                        sendDownEvent();
-                        return dispatchTouchEventSuper(ev);
-                    }
-                    moveHeaderPos(offsetX);
-                    return true;
-                }
-                if (isDisabledLoadMore())
-                    return dispatchTouchEventSuper(ev);
-                if ((!canFooterMoveLeft && !movingRight)) {
-                    sendDownEvent();
-                    return dispatchTouchEventSuper(ev);
-                }
-                moveFooterPos(offsetX);
-                return true;
+            }
+        } else {
+            if (Math.abs(offsetX) < mTouchSlop
+                    && Math.abs(offsetY) < mTouchSlop) {
+                mPreventForAnotherDirection = true;
+            }
         }
-        return dispatchTouchEventSuper(ev);
     }
 
     /**
