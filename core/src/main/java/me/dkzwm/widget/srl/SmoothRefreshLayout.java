@@ -544,7 +544,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         else if (isMovingFooter())
             offsetFooterY = mIndicator.getCurrentPos();
         int contentBottom = 0;
-        boolean pin = (mScrollTargetView != null && !isMovingHeader()) || isEnabledPinContentView();
+        boolean pin = (mScrollTargetView != null && mState == Constants.STATE_CONTENT
+                && !isMovingHeader()) || isEnabledPinContentView();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
@@ -3167,7 +3168,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
-        if (mScrollTargetView != null)
+        if (mScrollTargetView != null && mState == Constants.STATE_CONTENT)
             return ScrollCompat.canChildScrollUp(mScrollTargetView);
         return ScrollCompat.canChildScrollUp(mTargetView);
     }
@@ -3176,7 +3177,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);
-        if (mScrollTargetView != null)
+        if (mScrollTargetView != null && mState == Constants.STATE_CONTENT)
             return ScrollCompat.canChildScrollDown(mScrollTargetView);
         return ScrollCompat.canChildScrollDown(mTargetView);
     }
@@ -3345,7 +3346,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) SRLog.d(TAG, "moveFooterPos(): delta: %s", delta);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         //check if it is needed to compatible scroll
-        if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
+        if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0 && mState == Constants.STATE_CONTENT
                 && !isEnabledPinContentView() && mIsLastRefreshSuccessful
                 && (!mIndicator.hasTouched() || mNestedScrollInProgress
                 || isEnabledSmoothRollbackWhenCompleted())
@@ -3513,7 +3514,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
-                if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
+                if (mScrollTargetView != null && mState == Constants.STATE_CONTENT
+                        && isMovingFooter && !isDisabledLoadMore()) {
                     mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
                 } else {
                     if (mTargetView != null) mTargetView.offsetTopAndBottom(change);
@@ -3525,7 +3527,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mTargetView.setPivotY(0);
                     mTargetView.setScaleY(calculateScale());
                 } else if (isMovingFooter) {
-                    if (mScrollTargetView != null) {
+                    if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
                         mScrollTargetView.setPivotY(getHeight());
                         mScrollTargetView.setScaleY(calculateScale());
                     } else {
@@ -3716,7 +3718,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mTargetView)) {
                 triggeredLoadMore(true);
             } else if (mAutoLoadMoreCallBack == null) {
-                if (isMovingFooter() && mScrollTargetView != null
+                if (isMovingFooter() && mScrollTargetView != null && mState == Constants.STATE_CONTENT
                         && ScrollCompat.canAutoLoadMore(mScrollTargetView)) {
                     triggeredLoadMore(true);
                 } else if (ScrollCompat.canAutoLoadMore(mTargetView)) {
@@ -3785,7 +3787,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     protected void dispatchNestedFling(int velocity) {
         if (sDebug) SRLog.d(TAG, "dispatchNestedFling() : %s", velocity);
-        if (mScrollTargetView != null)
+        if (mScrollTargetView != null && mState == Constants.STATE_CONTENT)
             ScrollCompat.flingCompat(mScrollTargetView, -velocity);
         else
             ScrollCompat.flingCompat(mTargetView, -velocity);
