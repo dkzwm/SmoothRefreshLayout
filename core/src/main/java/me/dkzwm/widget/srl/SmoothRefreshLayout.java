@@ -785,7 +785,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Nullable
-    public View getLoadMoreScrollTargetView() {
+    public View getScrollTargetView() {
         return mScrollTargetView;
     }
 
@@ -800,7 +800,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param view Target view
      */
-    public void setLoadMoreScrollTargetView(@NonNull View view) {
+    public void setScrollTargetView(@NonNull View view) {
         mScrollTargetView = view;
     }
 
@@ -2794,9 +2794,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (mContentResId != View.NO_ID) {
                 for (int i = getChildCount() - 1; i >= 0; i--) {
                     View child = getChildAt(i);
-                    if (!(child instanceof IRefreshView) && mContentResId == child.getId()) {
+                    if (mContentResId == child.getId()) {
                         mContentView = child;
                         break;
+                    } else if (child instanceof ViewGroup) {
+                        final View view = foundViewInViewGroupById((ViewGroup) child, mContentResId);
+                        if (view != null) {
+                            mContentView = child;
+                            mScrollTargetView = view;
+                            break;
+                        }
                     }
                 }
             } else {
@@ -2816,6 +2823,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
             mStickyHeaderView = findViewById(mStickyHeaderResId);
     }
+
 
     private void ensureErrorView() {
         if (mErrorView == null && mErrorLayoutResId != NO_ID) {
@@ -3159,6 +3167,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
+        if (mScrollTargetView != null)
+            return ScrollCompat.canChildScrollUp(mScrollTargetView);
         return ScrollCompat.canChildScrollUp(mTargetView);
     }
 
@@ -3166,6 +3176,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);
+        if (mScrollTargetView != null)
+            return ScrollCompat.canChildScrollDown(mScrollTargetView);
         return ScrollCompat.canChildScrollDown(mTargetView);
     }
 
@@ -3800,6 +3812,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    private View foundViewInViewGroupById(ViewGroup group, int id) {
+        final int size = group.getChildCount();
+        for (int i = 0; i < size; i++) {
+            View view = group.getChildAt(i);
+            if (view.getId() == id)
+                return view;
+            else if (view instanceof ViewGroup) {
+                final View found = foundViewInViewGroupById((ViewGroup) view, id);
+                if (found != null)
+                    return found;
+            }
+        }
+        return null;
+    }
+
+
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method
      * behavior should implement this interface.
@@ -4027,8 +4055,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         int mLastTo;
         Scroller mScroller;
         Interpolator mInterpolator;
-        int mDuration;
-        int mBackDuration;
+        int mOverScrollDuration;
         Context mContext;
         byte mMode = MODE_NONE;
         float mVelocity;
@@ -4085,8 +4112,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_FLING:
-                        mBackDuration = mDuration / 4 * 5;
-                        destroy();
+                        mOverScrollDuration = mOverScrollDuration / 2 * 3;
                         mMode = MODE_SPRING_BACK;
                         updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
                         SmoothRefreshLayout.this.onRelease();
@@ -4146,10 +4172,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
 
         void tryToScrollTo(int to, int duration) {
-            if (mMode == MODE_SPRING_BACK)
-                duration = mBackDuration;
-            destroy();
-            mMode = MODE_SCROLLING;
+            if (mMode == MODE_SPRING_BACK) {
+                duration = mOverScrollDuration;
+            } else {
+                destroy();
+                mMode = MODE_SCROLLING;
+            }
             updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
             if (SmoothRefreshLayout.sDebug)
                 SRLog.d(SmoothRefreshLayout.this.TAG, "ScrollChecker: tryToScrollTo(): " +
@@ -4170,14 +4198,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         if (to > offsetToKeepHeaderWhileLoading) {
                             to = offsetToKeepHeaderWhileLoading;
                         }
-                        mDuration = Math.max(mDuration, SmoothRefreshLayout.this
+                        mOverScrollDuration = Math.max(mOverScrollDuration, SmoothRefreshLayout.this
                                 .getDurationToCloseHeader());
                     }
                     SmoothRefreshLayout.this.mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
                     mScroller = SRReflectUtil.setScrollerInterpolatorOrReCreateScroller(mContext,
                             mScroller, SmoothRefreshLayout.this.mOverScrollInterpolator);
-                    SRLog.d(SmoothRefreshLayout.this.TAG, "----------:" + to + "     :" + mDuration);
-                    scrollTo(to, mDuration);
+                    scrollTo(to, mOverScrollDuration);
                 } else if (mVelocity < 0 && SmoothRefreshLayout.this.isInStartPosition()
                         && !SmoothRefreshLayout.this.isNotYetInEdgeCannotMoveFooter()) {
                     int to = calculate(false);
@@ -4188,13 +4215,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         if (to > offsetToKeepFooterWhileLoading) {
                             to = offsetToKeepFooterWhileLoading;
                         }
-                        mDuration = Math.max(mDuration, SmoothRefreshLayout.this
+                        mOverScrollDuration = Math.max(mOverScrollDuration, SmoothRefreshLayout.this
                                 .getDurationToCloseFooter());
                     }
                     SmoothRefreshLayout.this.mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
                     mScroller = SRReflectUtil.setScrollerInterpolatorOrReCreateScroller(mContext,
                             mScroller, SmoothRefreshLayout.this.mOverScrollInterpolator);
-                    scrollTo(to, mDuration);
+                    scrollTo(to, mOverScrollDuration);
                 }
             }
         }
@@ -4211,7 +4238,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         int distance = mLastTo - mLastStart;
                         mScroller = SRReflectUtil.setScrollerInterpolatorOrReCreateScroller
                                 (mContext, mScroller, interpolator);
-                        mScroller.startScroll(0, 0, 0, distance, mDuration
+                        mScroller.startScroll(0, 0, 0, distance, mOverScrollDuration
                                 - mScroller.timePassed());
                         ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
                         break;
@@ -4245,16 +4272,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mMode = MODE_NONE;
             mIsScrolling = false;
             mScroller.forceFinished(true);
-            mDuration = 0;
+            mOverScrollDuration = 0;
             mLastY = 0;
             mLastTo = -1;
             SmoothRefreshLayout.this.removeCallbacks(this);
         }
 
         private int calculate(boolean isMovingHeader) {
-            mDuration = Math.max(mScroller.getDuration() - mScroller.timePassed(),
+            mOverScrollDuration = Math.max(mScroller.getDuration() - mScroller.timePassed(),
                     SmoothRefreshLayout.this.mMinOverScrollDuration);
-            mDuration = Math.min(mDuration, SmoothRefreshLayout.this.mMaxOverScrollDuration);
+            mOverScrollDuration = Math.min(mOverScrollDuration, SmoothRefreshLayout.this.mMaxOverScrollDuration);
             final int optimizedDistance = (int) Math.min(Math.pow(Math.abs(calculateVelocity()),
                     .55f), mMaxDistance);
             final float maxViewDistance;

@@ -2,9 +2,11 @@
 <me.dkzwm.widget.srl.SmoothRefreshLayout
     android:id="@+id/smoothRefreshLayout_test_base_recyclerView_adapter"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    app:sr_content="@+id/recyclerView_test_base_recyclerView_adapter">
 
     <com.classic.common.MultipleStatusView
         android:layout_width="match_parent"

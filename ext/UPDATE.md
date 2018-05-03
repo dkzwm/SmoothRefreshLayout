@@ -9,6 +9,9 @@
 > 删除方法:`getDefaultHeader`(位于 `MaterialSmoothRefreshLayout`和`ClassicSmoothRefreshLayout`)。    
 > 删除方法:`getDefaultFooter`(位于 `MaterialSmoothRefreshLayout`和`ClassicSmoothRefreshLayout`)。    
 > 删除类:`OverScrollerChecker`,合并滚动逻辑到 `ScrollerChecker` 类中，对滚动逻辑进行整合。    
+> 修改方法:`setLoadMoreScrollTargetView` -> `setScrollTargetView`。    
+> 修改方法:`getLoadMoreScrollTargetView` -> `getScrollTargetView`。    
+> 修改Xml属性`sr_content`实现，支持遍历查找内部所有层级的资源Id。    
 > 优化部分代码逻辑。    
 > 修正部分参数设置错误。    
 ## 1.6.3.3
