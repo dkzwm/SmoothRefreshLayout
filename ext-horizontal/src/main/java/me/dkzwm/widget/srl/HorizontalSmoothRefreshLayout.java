@@ -437,10 +437,14 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
-                if (mScrollTargetView != null && isMovingFooter && !isDisabledLoadMore()) {
+                if (mScrollTargetView != null && mState == Constants.STATE_CONTENT && isMovingFooter) {
                     mScrollTargetView.offsetLeftAndRight(change);
                 } else {
-                    mTargetView.offsetLeftAndRight(change);
+                    if (mTargetView != null)
+                        mTargetView.offsetTopAndBottom(change);
+                    if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
+                            && getView(mPreviousState) != null)
+                        getView(mPreviousState).offsetLeftAndRight(change);
                 }
             }
         } else {
@@ -449,7 +453,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mTargetView.setPivotX(0);
                     mTargetView.setScaleX(calculateScale());
                 } else if (isMovingFooter) {
-                    if (mScrollTargetView != null) {
+                    if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
                         mScrollTargetView.setPivotX(getWidth());
                         mScrollTargetView.setScaleX(calculateScale());
                     } else {

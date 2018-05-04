@@ -2269,8 +2269,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public View getView(@State int state) {
         switch (state) {
             case Constants.STATE_NONE:
-                throw new IllegalArgumentException("STATE_NONE can not be used, It only can be " +
-                        "used as an initial value");
+                return null;
             case Constants.STATE_CONTENT:
                 ensureContentView();
                 return mContentView;
@@ -3514,11 +3513,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
-                if (mScrollTargetView != null && mState == Constants.STATE_CONTENT
-                        && isMovingFooter && !isDisabledLoadMore()) {
-                    mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
+                if (mScrollTargetView != null && mState == Constants.STATE_CONTENT && isMovingFooter) {
+                    mScrollTargetView.offsetTopAndBottom(change);
                 } else {
-                    if (mTargetView != null) mTargetView.offsetTopAndBottom(change);
+                    if (mTargetView != null)
+                        mTargetView.offsetTopAndBottom(change);
+                    if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
+                            && getView(mPreviousState) != null)
+                        getView(mPreviousState).offsetTopAndBottom(change);
                 }
             }
         } else {
