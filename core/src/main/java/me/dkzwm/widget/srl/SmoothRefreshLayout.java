@@ -2409,7 +2409,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public boolean onFling(float vx, final float vy) {
-        final float realVelocity = getRealVelocity(vx, vy);
+        final float realVelocity = isVerticalOrientation() ? vy : vx;
         if ((isDisabledLoadMore() && isDisabledRefresh())
                 || (isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())
                 || (!isNotYetInEdgeCannotMoveHeader() && realVelocity > 0)
@@ -2434,10 +2434,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 dispatchNestedFling((int) realVelocity);
         }
         return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
-    }
-
-    protected float getRealVelocity(float vx, float vy) {
-        return vy;
     }
 
     @Override
@@ -2465,48 +2461,58 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug)
             SRLog.d(TAG, "onNestedPreScroll(): dx: %s, dy: %s, consumed: %s",
                     dx, dy, Arrays.toString(consumed));
+        final boolean isVerticalOrientation = isVerticalOrientation();
         if (isNeedFilterTouchEvent()) {
-            consumed[1] = dy;
+            if (isVerticalOrientation) consumed[1] = dy;
+            else consumed[0] = dx;
         } else if (!mIndicator.hasTouched()) {
             if (sDebug)
                 SRLog.d(TAG, "onNestedPreScroll(): There was an exception in touch event " +
                         "handling，This method should be performed after the " +
                         "onNestedScrollAccepted() method is called");
         } else {
-            if (dy > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
+            final int distance = isVerticalOrientation ? dy : dx;
+            if (distance > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
                     && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
                     && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
                 if (!mIndicator.isInStartPosition() && isMovingHeader()) {
                     mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                             mIndicator.getLastMovePoint()[1] - dy);
                     moveHeaderPos(mIndicator.getOffset());
-                    consumed[1] = dy;
+                    if (isVerticalOrientation) consumed[1] = dy;
+                    else consumed[0] = dx;
                 } else {
-                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                            mIndicator.getLastMovePoint()[1]);
+                    if (isVerticalOrientation)
+                        mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                                mIndicator.getLastMovePoint()[1]);
+                    else
+                        mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
+                                mIndicator.getLastMovePoint()[1] - dy);
                 }
             }
-            if (dy < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
+            if (distance < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
                     && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
                     && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
                 if (!mIndicator.isInStartPosition() && isMovingFooter()) {
                     mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                             mIndicator.getLastMovePoint()[1] - dy);
                     moveFooterPos(mIndicator.getOffset());
-                    consumed[1] = dy;
+                    if (isVerticalOrientation) consumed[1] = dy;
+                    else consumed[0] = dx;
                 } else {
-                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                            mIndicator.getLastMovePoint()[1]);
+                    if (isVerticalOrientation)
+                        mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                                mIndicator.getLastMovePoint()[1]);
+                    else
+                        mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
+                                mIndicator.getLastMovePoint()[1] - dy);
                 }
             }
-            if (dy == 0) {
-                mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                        mIndicator.getLastMovePoint()[1]);
-                updateAnotherDirectionPos();
-            } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
+            if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
                     && mIndicator.hasLeftStartPosition() && isNotYetInEdgeCannotMoveFooter()) {
                 mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
-                consumed[1] = dy;
+                if (isVerticalOrientation) consumed[1] = dy;
+                else consumed[0] = dx;
             }
             tryToResetMovingStatus();
         }
@@ -2533,7 +2539,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
         // Dispatch up our nested parent
         stopNestedScroll();
-        onFingerUp(false);
+        if (!isAutoRefresh())
+            onFingerUp(false);
     }
 
     @Override
@@ -2553,33 +2560,54 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         "method is called");
             return;
         }
+        final int dx = dxUnconsumed + mParentOffsetInWindow[0];
         final int dy = dyUnconsumed + mParentOffsetInWindow[1];
         final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
         final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
-        if (dy < 0 && !isDisabledRefresh() && canNotChildScrollUp
+        final boolean isVerticalOrientation = isVerticalOrientation();
+        final int distance = isVerticalOrientation ? dy : dx;
+        if (distance < 0 && !isDisabledRefresh() && canNotChildScrollUp
                 && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
                 && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
-            float distance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-            if (distance > 0 && mIndicator.getCurrentPos() >= distance)
+            float maxDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+            if (maxDistance > 0 && mIndicator.getCurrentPos() >= maxDistance) {
+                if (isVerticalOrientation)
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                            mIndicator.getLastMovePoint()[1]);
+                else
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
+                            mIndicator.getLastMovePoint()[1] - dy);
+                updateAnotherDirectionPos();
                 return;
-            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
+            }
+            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                     mIndicator.getLastMovePoint()[1] - dy);
-            if (distance > 0 && (mIndicator.getCurrentPos() + mIndicator.getOffset() > distance))
-                moveHeaderPos(distance - mIndicator.getCurrentPos());
+            if (maxDistance > 0 && (mIndicator.getCurrentPos() + mIndicator.getOffset() >
+                    maxDistance))
+                moveHeaderPos(maxDistance - mIndicator.getCurrentPos());
             else
                 moveHeaderPos(mIndicator.getOffset());
-        } else if (dy > 0 && !isDisabledLoadMore() && canNotChildScrollDown
+        } else if (distance > 0 && !isDisabledLoadMore() && canNotChildScrollDown
                 && !(isDisabledLoadMoreWhenContentNotFull() && canNotChildScrollUp
                 && mIndicator.isInStartPosition())
                 && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
                 && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
-            float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-            if (distance > 0 && mIndicator.getCurrentPos() > distance)
+            float maxDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
+            if (maxDistance > 0 && mIndicator.getCurrentPos() > maxDistance) {
+                if (isVerticalOrientation)
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
+                            mIndicator.getLastMovePoint()[1]);
+                else
+                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
+                            mIndicator.getLastMovePoint()[1] - dy);
+                updateAnotherDirectionPos();
                 return;
-            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
+            }
+            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                     mIndicator.getLastMovePoint()[1] - dy);
-            if (distance > 0 && (mIndicator.getCurrentPos() - mIndicator.getOffset() > distance))
-                moveFooterPos(mIndicator.getCurrentPos() - distance);
+            if (maxDistance > 0 && (mIndicator.getCurrentPos() - mIndicator.getOffset() >
+                    maxDistance))
+                moveFooterPos(mIndicator.getCurrentPos() - maxDistance);
             else
                 moveFooterPos(mIndicator.getOffset());
         }
@@ -2668,6 +2696,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mPreventForAnotherDirection = false;
             }
         }
+    }
+
+
+    private boolean isVerticalOrientation() {
+        final int axis = getSupportScrollAxis();
+        if (axis == ViewCompat.SCROLL_AXIS_NONE)
+            throw new IllegalArgumentException("Unsupported operation , " +
+                    "Support scroll axis must be SCROLL_AXIS_HORIZONTAL or SCROLL_AXIS_VERTICAL !!");
+        else
+            return axis == ViewCompat.SCROLL_AXIS_VERTICAL;
     }
 
     /**
@@ -3739,6 +3777,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void triggeredRefresh(boolean notify) {
+        SRLog.d(TAG, "triggeredRefresh()");
         mNeedNotifyRefreshListener = notify;
         mStatus = SR_STATUS_REFRESHING;
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
@@ -3749,6 +3788,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void triggeredLoadMore(boolean notify) {
+        SRLog.d(TAG, "triggeredLoadMore()");
         mNeedNotifyRefreshListener = notify;
         mStatus = SR_STATUS_LOADING_MORE;
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;

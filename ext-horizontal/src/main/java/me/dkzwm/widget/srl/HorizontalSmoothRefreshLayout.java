@@ -4,19 +4,15 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.Arrays;
-
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.utils.HorizontalScrollCompat;
 import me.dkzwm.widget.srl.utils.SRLog;
@@ -493,123 +489,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);
         return HorizontalScrollCompat.canChildScrollRight(mTargetView);
-    }
-
-    @Override
-    public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed) {
-        if (sDebug) {
-            SRLog.d(TAG, "onNestedPreScroll(): dx: %s, dy: %s, consumed: %s",
-                    dx, dy, Arrays.toString(consumed));
-        }
-        if (isNeedFilterTouchEvent()) {
-            consumed[0] = dx;
-        } else if (!mIndicator.hasTouched()) {
-            if (sDebug) {
-                SRLog.d(TAG, "onNestedPreScroll(): There was an exception in touch event " +
-                        "handling，This method should be performed after the " +
-                        "onNestedScrollAccepted() method is called");
-            }
-        } else {
-            if (dx > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
-                    && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
-                    && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
-                if (!mIndicator.isInStartPosition() && isMovingHeader()) {
-                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                            mIndicator.getLastMovePoint()[1] - dy);
-                    moveHeaderPos(mIndicator.getOffset());
-                    consumed[0] = dx;
-                } else {
-                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
-                            mIndicator.getLastMovePoint()[1] - dy);
-                }
-            }
-            if (dx < 0 && !isDisabledLoadMore() && !isNotYetInEdgeCannotMoveFooter()
-                    && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
-                    && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
-                if (!mIndicator.isInStartPosition() && isMovingFooter()) {
-                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                            mIndicator.getLastMovePoint()[1] - dy);
-                    moveFooterPos(mIndicator.getOffset());
-                    consumed[0] = dx;
-                } else {
-                    mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
-                            mIndicator.getLastMovePoint()[1] - dy);
-                }
-            }
-            if (dx == 0) {
-                mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0],
-                        mIndicator.getLastMovePoint()[1] - dy);
-                updateAnotherDirectionPos();
-            } else if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
-                    && mIndicator.hasLeftStartPosition() && isNotYetInEdgeCannotMoveFooter()) {
-                mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
-                consumed[0] = dx;
-            }
-            tryToResetMovingStatus();
-        }
-        // Now let our nested parent consume the leftovers
-        final int[] parentConsumed = mParentScrollConsumed;
-        if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null)) {
-            consumed[0] += parentConsumed[0];
-            consumed[1] += parentConsumed[1];
-        }
-    }
-
-    @Override
-    public void onNestedScroll(final View target, final int dxConsumed, final int dyConsumed,
-                               final int dxUnconsumed, final int dyUnconsumed) {
-        if (sDebug) {
-            SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
-                    " dyUnconsumed: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed);
-        }
-        if (isNeedFilterTouchEvent())
-            return;
-        // Dispatch up to the nested parent first
-        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow);
-        if (!mIndicator.hasTouched()) {
-            if (sDebug) {
-                SRLog.d(TAG, "onNestedScroll(): There was an exception in touch event handling，" +
-                        "This method should be performed after the onNestedScrollAccepted() " +
-                        "method is called");
-            }
-            return;
-        }
-        final int dx = dxUnconsumed + mParentOffsetInWindow[1];
-        final boolean canNotChildScrollRight = !isNotYetInEdgeCannotMoveFooter();
-        final boolean canNotChildScrollLeft = !isNotYetInEdgeCannotMoveHeader();
-        if (dx < 0 && !isDisabledRefresh() && canNotChildScrollLeft
-                && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
-                && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
-            float distance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-            if (distance > 0 && mIndicator.getCurrentPos() >= distance)
-                return;
-            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                    mIndicator.getLastMovePoint()[1]);
-            if (distance > 0 && (mIndicator.getCurrentPos() + mIndicator.getOffset() > distance))
-                moveHeaderPos(distance - mIndicator.getCurrentPos());
-            else
-                moveHeaderPos(mIndicator.getOffset());
-        } else if (dx > 0 && !isDisabledLoadMore() && canNotChildScrollRight
-                && !(isDisabledLoadMoreWhenContentNotFull() && canNotChildScrollLeft
-                && mIndicator.isInStartPosition())
-                && !(isEnabledPinRefreshViewWhileLoading() && (isRefreshing() || isLoadingMore())
-                && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
-            float distance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-            if (distance > 0 && mIndicator.getCurrentPos() > distance)
-                return;
-            mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
-                    mIndicator.getLastMovePoint()[1]);
-            if (distance > 0 && (mIndicator.getCurrentPos() - mIndicator.getOffset() > distance))
-                moveFooterPos(mIndicator.getCurrentPos() - distance);
-            else
-                moveFooterPos(mIndicator.getOffset());
-        }
-        tryToResetMovingStatus();
-    }
-
-    @Override
-    protected float getRealVelocity(float vx, float vy) {
-        return vx;
     }
 
     protected boolean isInsideAnotherDirectionView(final float x, final float y) {
