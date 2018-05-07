@@ -3777,7 +3777,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void triggeredRefresh(boolean notify) {
-        SRLog.d(TAG, "triggeredRefresh()");
+        if (sDebug) SRLog.d(TAG, "triggeredRefresh()");
         mNeedNotifyRefreshListener = notify;
         mStatus = SR_STATUS_REFRESHING;
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
@@ -3788,7 +3788,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void triggeredLoadMore(boolean notify) {
-        SRLog.d(TAG, "triggeredLoadMore()");
+        if (sDebug) SRLog.d(TAG, "triggeredLoadMore()");
         mNeedNotifyRefreshListener = notify;
         mStatus = SR_STATUS_LOADING_MORE;
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
