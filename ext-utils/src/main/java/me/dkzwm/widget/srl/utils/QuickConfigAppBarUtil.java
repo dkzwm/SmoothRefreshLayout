@@ -81,7 +81,7 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
     public boolean isNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent,
                                                   @Nullable View child,
                                                   @Nullable IRefreshView header) {
-        View targetView = parent.getLoadMoreScrollTargetView();
+        View targetView = parent.getScrollTargetView();
         if (targetView == null)
             throw new IllegalArgumentException("You must set target view first!");
         return !mFullyExpanded || ScrollCompat.canChildScrollUp(targetView);
@@ -91,7 +91,7 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
     public boolean isNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent,
                                                   @Nullable View child,
                                                   @Nullable IRefreshView footer) {
-        View targetView = parent.getLoadMoreScrollTargetView();
+        View targetView = parent.getScrollTargetView();
         if (targetView == null)
             throw new IllegalArgumentException("You must set target view first!");
         return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(targetView);

@@ -79,29 +79,12 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 }, 2000);
             }
         }, mRecyclerView);
-        mRefreshLayout.setOnHeaderEdgeDetectCallBack(new SmoothRefreshLayout.OnHeaderEdgeDetectCallBack() {
-            @Override
-            public boolean isNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent,
-                                                          @Nullable View child,
-                                                          @Nullable IRefreshView header) {
-                return ScrollCompat.canChildScrollUp(mRecyclerView);
-            }
-        });
-        mRefreshLayout.setOnFooterEdgeDetectCallBack(new SmoothRefreshLayout.OnFooterEdgeDetectCallBack() {
-            @Override
-            public boolean isNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent,
-                                                          @Nullable View child,
-                                                          @Nullable IRefreshView footer) {
-                return ScrollCompat.canChildScrollDown(mRecyclerView);
-            }
-        });
         mRefreshLayout.autoRefresh(true);
         mRecyclerView = findViewById(R.id.recyclerView_test_base_recyclerView_adapter);
         mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout.setLoadMoreScrollTargetView(mRecyclerView);
     }
 
     @Override

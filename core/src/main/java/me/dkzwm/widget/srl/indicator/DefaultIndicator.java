@@ -72,6 +72,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public void onFingerUp() {
+        mLastPos = 0;
         mTouched = false;
         mMoved = false;
     }

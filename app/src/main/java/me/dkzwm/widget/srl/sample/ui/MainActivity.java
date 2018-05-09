@@ -19,7 +19,6 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.BuildConfig;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.widget.WaveSmoothRefreshLayout;
-import me.dkzwm.widget.srl.utils.SRLog;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Handler mHandler = new Handler();

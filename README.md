@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-717%20%7C%2076%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-705%20%7C%2074%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -87,17 +87,17 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4'
     //工具类库，带有一些快捷配置工具（自动滚动刷新工具，快速设置AppBarLayout工具）
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.4'
     //扩展支持二级刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4'
     //扩展支持横向刷新库
-    compile 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.3.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4'
 }
 ```
 #### 在Xml中配置
@@ -280,9 +280,9 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_maxMoveRatio|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）|
 |sr_maxMoveRatioOfHeader|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）|
 |sr_maxMoveRatioOfFooter|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）|
-|sr_closeDuration|integer|指定收缩刷新视图到起始位置的时长（默认:`500`）|
-|sr_closeHeaderDuration|integer|指定收缩Header视图到起始位置的时长（默认:`500`）|
-|sr_closeFooterDuration|integer|指定收缩Footer视图到起始位置的时长（默认:`500`）|
+|sr_closeDuration|integer|指定收缩刷新视图到起始位置的时长（默认:`350`）|
+|sr_closeHeaderDuration|integer|指定收缩Header视图到起始位置的时长（默认:`350`）|
+|sr_closeFooterDuration|integer|指定收缩Footer视图到起始位置的时长（默认:`350`）|
 |sr_backToKeepDuration|integer|设置回滚到保持刷新视图位置的时间（默认:`200`）|
 |sr_backToKeepHeaderDuration|integer|设置回滚到保持Header视图位置的时间（默认:`200`）|
 |sr_backToKeepFooterDuration|integer|设置回滚到保持Footer视图位置的时间（默认:`200`）|
@@ -322,7 +322,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenAnotherDirectionMove|boolean|内部视图含有其他方向滑动视图时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
-|setMaxOverScrollDuration|int|设置越界回弹动画最长时间（默认:`500`）|
+|setMaxOverScrollDuration|int|设置越界回弹动画最长时间（默认:`300`）|
 |setMinOverScrollDuration|int|设置越界回弹动画最短时间（默认:`150`）|
 |setResistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
 |setResistanceOfFooter|float|移动Footer视图时候的移动阻尼（默认:`1.65f`）|
@@ -336,9 +336,9 @@ public interface IRefreshView <T extends IIndicator> {
 |setMaxMoveRatio|float|最大移动距离占刷新视图的高度比（默认:`0f`，表示不会触发）|
 |setMaxMoveRatioOfHeader|float|最大移动距离占Header视图的高度比（默认:`0f`，表示不会触发）|
 |setMaxMoveRatioOfFooter|float|最大移动距离占Footer视图的高度比（默认:`0f`，表示不会触发）|
-|setDurationToClose|int|指定收缩刷新视图到起始位置的时长（默认:`500`）|
-|setDurationToCloseHeader|int|指定收缩Header视图到起始位置的时长（默认:`500`）|
-|setDurationToCloseFooter|int|指定收缩Footer视图到起始位置的时长（默认:`500`）|
+|setDurationToClose|int|指定收缩刷新视图到起始位置的时长（默认:`350`）|
+|setDurationToCloseHeader|int|指定收缩Header视图到起始位置的时长（默认:`350`）|
+|setDurationToCloseFooter|int|指定收缩Footer视图到起始位置的时长（默认:`350`）|
 |setDurationOfBackToKeep|integer|设置回滚到保持刷新视图位置的时间（默认:`200`）|
 |setDurationOfBackToKeepHeader|integer|设置回滚到保持Header视图位置的时间（默认:`200`）|
 |setDurationOfBackToKeepFooter|integer|设置回滚到保持Footer视图位置的时间（默认:`200`）|

@@ -31,7 +31,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     private ITwoLevelIndicatorSetter mTwoLevelIndicatorSetter;
     private boolean mEnabledTwoLevelRefresh = true;
     private boolean mOnTwoLevelRefreshing = false;
-    private boolean mHasDealTwoLevelRefreshHint = false;
     private boolean mNeedFilterRefreshEvent = false;
     private boolean mAutoHintCanBeInterrupted = true;
     private int mDurationOfBackToTwoLevel = 500;
@@ -241,13 +240,11 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mAutoHintCanBeInterrupted = canBeInterrupted;
         int offsetToRefreshHint = mTwoLevelIndicator.getOffsetToHintTwoLevelRefresh();
         if (offsetToRefreshHint <= 0) {
-            mHasDealTwoLevelRefreshHint = false;
-            mAutomaticActionInScrolling = false;
+            mAutomaticActionTriggered = false;
         } else {
-            mHasDealTwoLevelRefreshHint = true;
+            mAutomaticActionTriggered = true;
             mScrollChecker.tryToScrollTo(offsetToRefreshHint, mAutomaticActionUseSmoothScroll
                     ? mDurationToCloseHeader : 0);
-            mAutomaticActionInScrolling = mAutomaticActionUseSmoothScroll;
             if (!mAutomaticActionUseSmoothScroll)
                 delayForStay();
         }
@@ -285,17 +282,16 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void tryToPerformAutoRefresh() {
-        if (!mAutomaticActionInScrolling && mStatus == SR_STATUS_PREPARE && mMode == Constants.
-                MODE_DEFAULT && !mHasDealTwoLevelRefreshHint && isMovingHeader()) {
+        if (!mAutomaticActionTriggered && mStatus == SR_STATUS_PREPARE && mMode == Constants.
+                MODE_DEFAULT && isMovingHeader()) {
             if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0)
                 return;
             int offsetToRefreshHint = mTwoLevelIndicator.getOffsetToHintTwoLevelRefresh();
             if (offsetToRefreshHint > 0) {
                 mNeedFilterRefreshEvent = true;
-                mHasDealTwoLevelRefreshHint = true;
+                mAutomaticActionTriggered = true;
                 mScrollChecker.tryToScrollTo(offsetToRefreshHint,
                         mAutomaticActionUseSmoothScroll ? mDurationToCloseHeader : 0);
-                mAutomaticActionInScrolling = mAutomaticActionUseSmoothScroll;
                 if (!mAutomaticActionUseSmoothScroll)
                     delayForStay();
             }
