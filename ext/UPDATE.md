@@ -12,6 +12,7 @@
 > 修改方法:`setLoadMoreScrollTargetView` -> `setScrollTargetView`。    
 > 修改方法:`getLoadMoreScrollTargetView` -> `getScrollTargetView`。    
 > 修改Xml属性`sr_content`实现，支持遍历查找内部所有层级的资源Id。    
+> 合并整合横向刷新和纵向刷新触摸事件逻辑。    
 > 优化部分代码逻辑。    
 > 修正部分参数设置错误。    
 ## 1.6.3.3
