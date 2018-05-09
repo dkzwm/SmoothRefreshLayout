@@ -322,10 +322,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 }
             }
         } else {
-            if (Math.abs(offsetX) < mTouchSlop
-                    && Math.abs(offsetY) < mTouchSlop) {
-                mPreventForAnotherDirection = true;
-            }
+            mPreventForAnotherDirection = Math.abs(offsetX) < mTouchSlop
+                    && Math.abs(offsetY) < mTouchSlop;
         }
     }
 
