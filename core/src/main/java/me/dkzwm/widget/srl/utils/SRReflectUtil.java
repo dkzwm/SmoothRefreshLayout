@@ -26,6 +26,7 @@ public class SRReflectUtil {
     private static Method sOnScrollChangedListenersRemoveMethod;
     private static Method sOnScrollChangedListenersSizeMethod;
     private static Field sScrollerInterpolatorField;
+    private static Method sTrackMotionScrollMethod;
 
 
     /**
@@ -128,6 +129,22 @@ public class SRReflectUtil {
             if (sFlingRunnableStartMethod == null)
                 return;
             sFlingRunnableStartMethod.invoke(obj, velocityY);
+        } catch (Exception e) {
+            //ignore exception
+        }
+    }
+
+    @SuppressLint("PrivateApi")
+    static void compatOlderAbsListViewScrollListBy(AbsListView view, int delta) {
+        try {
+            if (sTrackMotionScrollMethod == null) {
+                sTrackMotionScrollMethod = AbsListView.class.getDeclaredMethod("trackMotionScroll",
+                        int.class, int.class);
+                sTrackMotionScrollMethod.setAccessible(true);
+            }
+            if (sTrackMotionScrollMethod != null) {
+                sTrackMotionScrollMethod.invoke(view, -delta, -delta);
+            }
         } catch (Exception e) {
             //ignore exception
         }

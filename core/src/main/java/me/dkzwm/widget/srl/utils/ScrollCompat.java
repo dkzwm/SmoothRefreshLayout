@@ -1,6 +1,5 @@
 package me.dkzwm.widget.srl.utils;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
@@ -12,8 +11,6 @@ import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.ScrollView;
-
-import java.lang.reflect.Method;
 
 /**
  * Created by dkzwm on 2017/5/27.
@@ -28,7 +25,7 @@ public class ScrollCompat {
     public static boolean canChildScrollDown(View view) {
         if (view instanceof AbsListView) {
             final AbsListView absListView = (AbsListView) view;
-            if (Build.VERSION.SDK_INT < 14) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 return absListView.getChildCount() == 0
                         || absListView.getAdapter() == null
                         || (absListView.getChildCount() > 0
@@ -36,7 +33,7 @@ public class ScrollCompat {
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
                         > absListView.getHeight() - absListView.getPaddingBottom());
             } else {
-                if (Build.VERSION.SDK_INT < 26)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                     return absListView.getChildCount() == 0 ||
                             ViewCompat.canScrollVertically(view, 1);
                 else
@@ -45,13 +42,13 @@ public class ScrollCompat {
             }
         } else if (view instanceof ScrollView) {
             final ScrollView scrollView = (ScrollView) view;
-            if (Build.VERSION.SDK_INT < 14) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
                 return scrollView.getChildCount() == 0
                         || (scrollView.getChildCount() != 0
                         && scrollView.getScrollY() < scrollView.getChildAt(0).getHeight()
                         - scrollView.getHeight());
             } else {
-                if (Build.VERSION.SDK_INT < 26)
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                     return scrollView.getChildCount() == 0 ||
                             ViewCompat.canScrollVertically(view, 1);
                 else
@@ -62,7 +59,7 @@ public class ScrollCompat {
             try {
                 if (view instanceof RecyclerView) {
                     final RecyclerView recyclerView = (RecyclerView) view;
-                    if (Build.VERSION.SDK_INT < 26)
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                         return recyclerView.getChildCount() == 0 ||
                                 ViewCompat.canScrollVertically(view, 1);
                     else
@@ -72,7 +69,7 @@ public class ScrollCompat {
             } catch (NoClassDefFoundError ignored) {
                 //ignored
             }
-            if (Build.VERSION.SDK_INT < 26)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 return ViewCompat.canScrollVertically(view, 1);
             else
                 return view.canScrollVertically(1);
@@ -159,7 +156,7 @@ public class ScrollCompat {
     }
 
     public static boolean canChildScrollUp(View view) {
-        if (Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (view instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
@@ -170,7 +167,7 @@ public class ScrollCompat {
                         || view.getScrollY() > 0;
             }
         } else {
-            if (Build.VERSION.SDK_INT < 26)
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 return ViewCompat.canScrollVertically(view, -1);
             else
                 return view.canScrollVertically(-1);
@@ -182,17 +179,12 @@ public class ScrollCompat {
             try {
                 if (view instanceof AbsListView) {
                     final AbsListView listView = (AbsListView) view;
-                    if (Build.VERSION.SDK_INT >= 19) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         listView.scrollListBy((int) deltaY);
                         return true;
                     } else {
-                        @SuppressLint("PrivateApi")
-                        Method method = AbsListView.class.getDeclaredMethod("trackMotionScroll",
-                                int.class, int.class);
-                        if (method != null) {
-                            method.setAccessible(true);
-                            method.invoke(listView, -(int) deltaY, -(int) deltaY);
-                        }
+                        SRReflectUtil.compatOlderAbsListViewScrollListBy((AbsListView) view,
+                                (int) deltaY);
                     }
                     return true;
                 } else if ((view instanceof WebView)
