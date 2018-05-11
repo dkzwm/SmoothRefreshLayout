@@ -1203,28 +1203,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
-        mFlag |= FLAG_AUTO_REFRESH;
         switch (action) {
             case Constants.ACTION_NOTHING:
-                mNeedNotifyRefreshListener = false;
                 triggeredRefresh(false);
                 break;
             case Constants.ACTION_NOTIFY:
+                mFlag |= FLAG_AUTO_REFRESH;
                 mNeedNotifyRefreshListener = true;
                 break;
             case Constants.ACTION_AT_ONCE:
-                mNeedNotifyRefreshListener = true;
                 triggeredRefresh(true);
                 break;
         }
-        int offsetToRefresh = isEnabledKeepRefreshView()
-                ? mIndicator.getOffsetToKeepHeaderWhileLoading()
-                : mIndicator.getOffsetToRefresh();
-        if (offsetToRefresh <= 0) {
+        if (mIndicator.getHeaderHeight() <= 0) {
             mAutomaticActionTriggered = false;
         } else {
+            int offset;
+            if (isEnabledKeepRefreshView()) {
+                final int offsetToKeepHeaderWhileLoading = mIndicator
+                        .getOffsetToKeepHeaderWhileLoading();
+                final int offsetToRefresh = mIndicator.getOffsetToRefresh();
+                offset = (offsetToKeepHeaderWhileLoading >= offsetToRefresh)
+                        ? offsetToKeepHeaderWhileLoading : offsetToRefresh;
+            } else {
+                offset = mIndicator.getOffsetToRefresh();
+            }
             mAutomaticActionTriggered = true;
-            mScrollChecker.tryToScrollTo(offsetToRefresh, smoothScroll ? mDurationToCloseHeader : 0);
+            mScrollChecker.tryToScrollTo(offset, smoothScroll ? mDurationToCloseHeader : 0);
         }
     }
 
@@ -1286,28 +1291,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
-        mFlag |= FLAG_AUTO_REFRESH;
         switch (action) {
             case Constants.ACTION_NOTHING:
-                mNeedNotifyRefreshListener = false;
                 triggeredLoadMore(false);
                 break;
             case Constants.ACTION_NOTIFY:
+                mFlag |= FLAG_AUTO_REFRESH;
                 mNeedNotifyRefreshListener = true;
                 break;
             case Constants.ACTION_AT_ONCE:
-                mNeedNotifyRefreshListener = true;
                 triggeredLoadMore(true);
                 break;
         }
-        int offsetToLoadMore = isEnabledKeepRefreshView()
-                ? mIndicator.getOffsetToKeepFooterWhileLoading()
-                : mIndicator.getOffsetToLoadMore();
-        if (offsetToLoadMore <= 0) {
+        if (mIndicator.getFooterHeight() <= 0) {
             mAutomaticActionTriggered = false;
         } else {
+            int offset;
+            if (isEnabledKeepRefreshView()) {
+                final int offsetToKeepFooterWhileLoading = mIndicator
+                        .getOffsetToKeepFooterWhileLoading();
+                final int offsetToLoadMore = mIndicator.getOffsetToLoadMore();
+                offset = (offsetToKeepFooterWhileLoading >= offsetToLoadMore)
+                        ? offsetToKeepFooterWhileLoading : offsetToLoadMore;
+            } else {
+                offset = mIndicator.getOffsetToLoadMore();
+            }
             mAutomaticActionTriggered = true;
-            mScrollChecker.tryToScrollTo(offsetToLoadMore, smoothScroll ? mDurationToCloseFooter : 0);
+            mScrollChecker.tryToScrollTo(offset, smoothScroll ? mDurationToCloseFooter : 0);
         }
     }
 
@@ -2789,18 +2799,34 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0)
                     return;
                 mAutomaticActionTriggered = true;
-                mScrollChecker.tryToScrollTo(isEnabledKeepRefreshView()
-                                ? mIndicator.getOffsetToKeepHeaderWhileLoading()
-                                : mIndicator.getOffsetToRefresh(),
-                        mAutomaticActionUseSmoothScroll ? mDurationToCloseHeader : 0);
+                int offset;
+                if (isEnabledKeepRefreshView()) {
+                    final int offsetToKeepHeaderWhileLoading = mIndicator
+                            .getOffsetToKeepHeaderWhileLoading();
+                    final int offsetToRefresh = mIndicator.getOffsetToRefresh();
+                    offset = (offsetToKeepHeaderWhileLoading >= offsetToRefresh)
+                            ? offsetToKeepHeaderWhileLoading : offsetToRefresh;
+                } else {
+                    offset = mIndicator.getOffsetToRefresh();
+                }
+                mScrollChecker.tryToScrollTo(offset, mAutomaticActionUseSmoothScroll
+                        ? mDurationToCloseHeader : 0);
             } else if (isFooterInProcessing()) {
                 if (mFooterView == null || mIndicator.getFooterHeight() <= 0)
                     return;
                 mAutomaticActionTriggered = true;
-                mScrollChecker.tryToScrollTo(isEnabledKeepRefreshView()
-                                ? mIndicator.getOffsetToKeepFooterWhileLoading()
-                                : mIndicator.getOffsetToLoadMore(),
-                        mAutomaticActionUseSmoothScroll ? mDurationToCloseFooter : 0);
+                int offset;
+                if (isEnabledKeepRefreshView()) {
+                    final int offsetToKeepFooterWhileLoading = mIndicator
+                            .getOffsetToKeepFooterWhileLoading();
+                    final int offsetToLoadMore = mIndicator.getOffsetToLoadMore();
+                    offset = (offsetToKeepFooterWhileLoading >= offsetToLoadMore)
+                            ? offsetToKeepFooterWhileLoading : offsetToLoadMore;
+                } else {
+                    offset = mIndicator.getOffsetToLoadMore();
+                }
+                mScrollChecker.tryToScrollTo(offset, mAutomaticActionUseSmoothScroll
+                        ? mDurationToCloseFooter : 0);
             }
         }
     }
@@ -3183,7 +3209,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean isNeedInterceptTouchEvent() {
         return (isEnabledInterceptEventWhileLoading() && (isRefreshing() || isLoadingMore()))
                 || mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
-                || (isAutoRefresh() && mAutomaticActionUseSmoothScroll);
+                || mAutomaticActionUseSmoothScroll;
     }
 
     protected boolean isNeedFilterTouchEvent() {
@@ -3287,6 +3313,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mScrollChecker.isPreFling() || (isEnabledNoMoreData() && isMovingFooter() &&
                 isEnabledNoSpringBackWhenNoMoreData()))
             return;
+        mAutomaticActionUseSmoothScroll = false;
         tryToPerformRefresh();
         if (mStatus == SR_STATUS_REFRESHING || mStatus == SR_STATUS_LOADING_MORE) {
             if (isEnabledKeepRefreshView()) {
@@ -4146,8 +4173,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                                 SmoothRefreshLayout.this.moveFooterPos(-deltaY);
                             }
                         }
-                        currentPos = SmoothRefreshLayout.this.mIndicator.getCurrentPos();
-                        if (currentPos != IIndicator.START_POS)
+                        if (!SmoothRefreshLayout.this.isInStartPosition())
                             SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_FLING:
