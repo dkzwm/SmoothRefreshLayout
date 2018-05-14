@@ -435,7 +435,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mScrollTargetView.offsetLeftAndRight(change);
                 } else {
                     if (mTargetView != null)
-                        mTargetView.offsetTopAndBottom(change);
+                        mTargetView.offsetLeftAndRight(change);
                     if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
                             && getView(mPreviousState) != null)
                         getView(mPreviousState).offsetLeftAndRight(change);
