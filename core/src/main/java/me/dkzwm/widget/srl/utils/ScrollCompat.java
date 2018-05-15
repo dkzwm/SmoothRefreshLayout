@@ -204,6 +204,11 @@ public class ScrollCompat {
         return false;
     }
 
+    public static boolean canScaleInternal(View view) {
+        return view instanceof ScrollView && ((ScrollView) view).getChildCount() > 0
+                || view instanceof NestedScrollView && ((NestedScrollView) view).getChildCount() > 0;
+    }
+
     public static void flingCompat(View view, int velocityY) {
         if (view instanceof ScrollView) {
             ((ScrollView) view).fling(velocityY);
