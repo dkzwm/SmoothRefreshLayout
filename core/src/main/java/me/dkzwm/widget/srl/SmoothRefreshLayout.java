@@ -2957,12 +2957,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (mTargetView != null) {
             ViewTreeObserver observer;
-            if (mScrollTargetView == null) {
-                observer = mTargetView.getViewTreeObserver();
-            } else {
+            if (mScrollTargetView != null&&mState==Constants.STATE_CONTENT) {
                 observer = mScrollTargetView.getViewTreeObserver();
                 if (isEnabledOverScroll())
                     mScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
+            } else {
+                observer = mTargetView.getViewTreeObserver();
             }
             if (observer != mTargetViewTreeObserver && observer.isAlive()) {
                 safelyRemoveListeners();
