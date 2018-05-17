@@ -24,7 +24,6 @@ public class SRReflectUtil {
     private static Constructor sFlingRunnableConstructor;
     private static Field sOnScrollChangedListenersField;
     private static Method sOnScrollChangedListenersRemoveMethod;
-    private static Method sOnScrollChangedListenersSizeMethod;
     private static Field sScrollerInterpolatorField;
     private static Method sTrackMotionScrollMethod;
 
@@ -52,21 +51,6 @@ public class SRReflectUtil {
                     }
                     if (sOnScrollChangedListenersRemoveMethod != null) {
                         sOnScrollChangedListenersRemoveMethod.invoke(object, listener);
-                    }
-                    if (sOnScrollChangedListenersSizeMethod == null) {
-                        sOnScrollChangedListenersSizeMethod = object.getClass().getDeclaredMethod
-                                ("size");
-                        if (sOnScrollChangedListenersSizeMethod != null)
-                            sOnScrollChangedListenersSizeMethod.setAccessible(true);
-                    }
-                    if (sOnScrollChangedListenersSizeMethod != null) {
-                        object = sOnScrollChangedListenersSizeMethod.invoke(object);
-                        if (object != null && object instanceof Integer) {
-                            int size = (int) object;
-                            if (size == 0) {
-                                sOnScrollChangedListenersField.set(observer, null);
-                            }
-                        }
                     }
                 }
             }

@@ -2957,12 +2957,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (mTargetView != null) {
             ViewTreeObserver observer;
-            if (mScrollTargetView == null) {
-                observer = mTargetView.getViewTreeObserver();
-            } else {
+            if (mScrollTargetView != null&&mState==Constants.STATE_CONTENT) {
                 observer = mScrollTargetView.getViewTreeObserver();
                 if (isEnabledOverScroll())
                     mScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
+            } else {
+                observer = mTargetView.getViewTreeObserver();
             }
             if (observer != mTargetViewTreeObserver && observer.isAlive()) {
                 safelyRemoveListeners();
@@ -3584,29 +3584,34 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         } else {
             if (mTargetView != null) {
                 if (isMovingHeader) {
-                    mTargetView.setPivotY(0);
-                    mTargetView.setScaleY(calculateScale());
-                } else if (isMovingFooter) {
-                    if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
-                        mScrollTargetView.setPivotY(getHeight());
-                        mScrollTargetView.setScaleY(calculateScale());
+                    if (ScrollCompat.canScaleInternal(mTargetView)) {
+                        View view = ((ViewGroup) mTargetView).getChildAt(0);
+                        view.setPivotY(0);
+                        view.setScaleY(calculateScale());
                     } else {
-                        mTargetView.setPivotY(getHeight());
+                        mTargetView.setPivotY(0);
                         mTargetView.setScaleY(calculateScale());
                     }
-                } else {
-                    mTargetView.setPivotY(0);
-                    mTargetView.setScaleY(1);
-                    if (mScrollTargetView != null) {
-                        mScrollTargetView.setPivotY(0);
-                        mScrollTargetView.setScaleY(1);
+                } else if (isMovingFooter) {
+                    if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
+                        if (ScrollCompat.canScaleInternal(mScrollTargetView)) {
+                            View view = ((ViewGroup) mScrollTargetView).getChildAt(0);
+                            view.setPivotY(view.getHeight());
+                            view.setScaleY(calculateScale());
+                        } else {
+                            mScrollTargetView.setPivotY(getHeight());
+                            mScrollTargetView.setScaleY(calculateScale());
+                        }
+                    } else {
+                        if (ScrollCompat.canScaleInternal(mTargetView)) {
+                            View view = ((ViewGroup) mTargetView).getChildAt(0);
+                            view.setPivotY(view.getHeight());
+                            view.setScaleY(calculateScale());
+                        } else {
+                            mTargetView.setPivotY(getHeight());
+                            mTargetView.setScaleY(calculateScale());
+                        }
                     }
-                }
-                mTargetView.setScaleX(1);
-                mTargetView.setPivotX(0);
-                if (mScrollTargetView != null) {
-                    mScrollTargetView.setScaleX(0);
-                    mScrollTargetView.setPivotX(1);
                 }
             }
         }
@@ -3716,11 +3721,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mTargetView.setPivotY(0);
                 mTargetView.setScaleX(1);
                 mTargetView.setScaleY(1);
-                if (mScrollTargetView != null) {
+                if (isVerticalOrientation() && ScrollCompat.canScaleInternal(mTargetView)) {
+                    View view = ((ViewGroup) mTargetView).getChildAt(0);
+                    view.setPivotX(0);
+                    view.setPivotY(0);
+                    view.setScaleX(1);
+                    view.setScaleY(1);
+                }
+                if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
                     mScrollTargetView.setPivotX(0);
                     mScrollTargetView.setPivotY(0);
                     mScrollTargetView.setScaleX(1);
                     mScrollTargetView.setScaleY(1);
+                    if (isVerticalOrientation() && ScrollCompat.canScaleInternal(mScrollTargetView)) {
+                        View view = ((ViewGroup) mScrollTargetView).getChildAt(0);
+                        view.setPivotX(0);
+                        view.setPivotY(0);
+                        view.setScaleX(1);
+                        view.setScaleY(1);
+                    }
                 }
             }
             if (getParent() != null)

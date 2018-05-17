@@ -62,4 +62,8 @@ public class HorizontalScrollCompat {
             ((HorizontalScrollView) view).fling(velocityX);
         }
     }
+
+    public static boolean canScaleInternal(View view) {
+        return view instanceof HorizontalScrollView && ((HorizontalScrollView) view).getChildCount() > 0;
+    }
 }
