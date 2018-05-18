@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 
 import java.util.List;
 
@@ -68,6 +69,7 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
             }
         });
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
+        mRefreshLayout.setAutomaticSpringInterpolator(new OvershootInterpolator(3));
         mRefreshLayout.autoRefresh(false);
         mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(recyclerView);
         mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);

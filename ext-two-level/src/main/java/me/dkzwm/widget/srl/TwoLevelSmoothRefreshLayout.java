@@ -245,8 +245,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mAutomaticActionTriggered = true;
             mScrollChecker.tryToScrollTo(offsetToRefreshHint, mAutomaticActionUseSmoothScroll
                     ? mDurationToCloseHeader : 0);
-            if (!mAutomaticActionUseSmoothScroll)
-                delayForStay();
         }
     }
 
@@ -292,8 +290,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 mAutomaticActionTriggered = true;
                 mScrollChecker.tryToScrollTo(offsetToRefreshHint,
                         mAutomaticActionUseSmoothScroll ? mDurationToCloseHeader : 0);
-                if (!mAutomaticActionUseSmoothScroll)
-                    delayForStay();
             }
         }
         if (mNeedFilterRefreshEvent)
@@ -344,6 +340,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (reset) {
             mNeedFilterRefreshEvent = false;
             mAutoHintCanBeInterrupted = true;
+            mDurationToStayAtHint = 0;
             if (mDelayToBackToTopRunnable != null)
                 removeCallbacks(mDelayToBackToTopRunnable);
         }
@@ -359,8 +356,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void onRelease() {
-        if (mMode == Constants.MODE_DEFAULT && mAutomaticActionUseSmoothScroll &&
-                mDurationToStayAtHint > 0) {
+        if (mMode == Constants.MODE_DEFAULT && mDurationToStayAtHint > 0) {
+            mAutomaticActionUseSmoothScroll = false;
             delayForStay();
             return;
         }
@@ -436,7 +433,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mDelayToBackToTopRunnable = new DelayToBackToTop(this);
         else
             mDelayToBackToTopRunnable.mLayoutWeakRf = new WeakReference<>(this);
-        mAutomaticActionUseSmoothScroll = false;
         postDelayed(mDelayToBackToTopRunnable, mDurationToStayAtHint);
     }
 
@@ -457,6 +453,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 if (SmoothRefreshLayout.sDebug) {
                     SRLog.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
                 }
+                mLayoutWeakRf.get().mDurationToStayAtHint = 0;
                 mLayoutWeakRf.get().onRelease();
             }
         }
