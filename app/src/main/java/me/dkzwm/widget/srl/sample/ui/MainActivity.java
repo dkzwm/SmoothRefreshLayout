@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -58,7 +59,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
         mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
         //自动刷新
-        mRefreshLayout.autoRefresh(Constants.ACTION_AT_ONCE, true);
+        mRefreshLayout.setAutomaticSpringInterpolator(new OvershootInterpolator(3f));
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRefreshLayout.autoRefresh(Constants.ACTION_NOTIFY, true);
+            }
+        },100);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);

@@ -3,6 +3,7 @@
 > 修复横向刷新错误设置偏移的问题。    
 > 优化`MODE_SCALE`模式下部分场景，如果内部视图为ScrollView或者NestedScrollView或者HoriztonalScrollView，拉伸对象将为内部视图内的第一个视图，以达到更好的效果。    
 > 减少反射逻辑。    
+> 新增方法:`setAutomaticSpringInterpolator`,用来设置自动刷新时的滚动插值器。    
 ## 1.6.4
 > 删除方法:`setEnableHideHeaderView`,改用 `getHeaderView().getView().setVisibility` 进行替代。    
 > 删除方法:`setEnableHideFooterView`,改用 `getFooterView().getView().setVisibility` 进行替代。    

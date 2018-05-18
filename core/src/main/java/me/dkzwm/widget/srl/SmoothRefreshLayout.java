@@ -189,6 +189,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private ILifecycleObserver mLifecycleObserver;
     private Interpolator mSpringInterpolator;
     private Interpolator mOverScrollInterpolator;
+    private Interpolator mAutomaticSpringInterpolator;
     private IChangeStateAnimatorCreator mAnimatorCreator;
     private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
@@ -2241,6 +2242,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * Set the scroller interpolator when in automatic spring
+     *
+     * @param interpolator
+     */
+    public void setAutomaticSpringInterpolator(Interpolator interpolator) {
+        mAutomaticSpringInterpolator = interpolator;
+    }
+
+    /**
      * Is in over scrolling
      *
      * @return Is
@@ -2957,7 +2967,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (mTargetView != null) {
             ViewTreeObserver observer;
-            if (mScrollTargetView != null&&mState==Constants.STATE_CONTENT) {
+            if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
                 observer = mScrollTargetView.getViewTreeObserver();
                 if (isEnabledOverScroll())
                     mScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
@@ -3354,7 +3364,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             percent = percent > 1 || percent <= 0 ? 1 : percent;
             tryScrollBackToTop(Math.round(mDurationToCloseFooter * percent));
         } else {
-            tryScrollBackToTop(0);
+            tryToNotifyReset();
         }
     }
 
@@ -3392,7 +3402,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mRefreshListener.onRefreshComplete(mIsLastRefreshSuccessful);
         }
         if (useScroll) tryScrollBackToTopByPercentDuration();
-        tryToNotifyReset();
     }
 
     protected void moveHeaderPos(float delta) {
@@ -3636,12 +3645,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     .crossRefreshLineFromTopToBottom())
                     || (isFooterInProcessing() && isMovingFooter() && mIndicator
                     .crossRefreshLineFromBottomToTop()))) {
-                tryToPerformRefresh();
-            }
-            // reach Header height while auto refresh or reach Footer height while auto refresh
-            if (!isRefreshing() && !isLoadingMore() && isAutoRefresh()
-                    && ((isHeaderInProcessing() && isMovingHeader())
-                    || (isFooterInProcessing() && isMovingFooter()))) {
                 tryToPerformRefresh();
             }
         }
@@ -4261,7 +4264,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 destroy();
                 mMode = MODE_SCROLLING;
             }
-            updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
+            if (SmoothRefreshLayout.this.mAutomaticActionUseSmoothScroll
+                    && SmoothRefreshLayout.this.mAutomaticSpringInterpolator != null)
+                updateInterpolator(SmoothRefreshLayout.this.mAutomaticSpringInterpolator);
+            else
+                updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
             if (SmoothRefreshLayout.sDebug)
                 SRLog.d(SmoothRefreshLayout.this.TAG, "ScrollChecker: tryToScrollTo(): " +
                         "to:%s, duration:%s", to, duration);
@@ -4411,6 +4418,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         SmoothRefreshLayout.this.moveFooterPos(-distance);
                 }
                 destroy();
+                SmoothRefreshLayout.this.onRelease();
             }
         }
     }
