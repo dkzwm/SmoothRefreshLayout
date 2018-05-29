@@ -3694,6 +3694,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private void tryToDispatchNestedFling() {
         if (mScrollChecker.isPreFling() && mIndicator.isInStartPosition()) {
             final int velocity = (int) (mScrollChecker.calculateVelocity() + 0.5f);
+            tryToResetMovingStatus();
             mScrollChecker.tryToFling(velocity);
             dispatchNestedFling(velocity);
         }
