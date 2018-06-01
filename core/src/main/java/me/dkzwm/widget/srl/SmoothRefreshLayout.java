@@ -735,10 +735,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (!isEnabled() || mTargetView == null
                 || (isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
                 || (isLoadingMore() && isMovingFooter())))
-                || mNestedScrollInProgress || (isDisabledLoadMore() && isDisabledRefresh())) {
+                || mNestedScrollInProgress) {
             return super.dispatchTouchEvent(ev);
         }
         mGestureDetector.onTouchEvent(ev);
+        if ((isDisabledLoadMore() && isDisabledRefresh()))
+            return super.dispatchTouchEvent(ev);
         return processDispatchTouchEvent(ev);
     }
 
@@ -1194,7 +1196,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     public void autoRefresh(@Action int action, boolean smoothScroll) {
-        if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT)
+        if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
             return;
         if (sDebug)
             SRLog.d(TAG, "autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll);
@@ -1281,9 +1283,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param smoothScroll Auto load more use smooth scrolling
      */
     public void autoLoadMore(@Action int action, boolean smoothScroll) {
-        if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT) {
+        if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
             return;
-        }
         if (sDebug)
             SRLog.d(TAG, "autoLoadMore(): action: %s, smoothScroll: %s", action, smoothScroll);
         mStatus = SR_STATUS_PREPARE;
@@ -2429,8 +2430,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public boolean onFling(float vx, final float vy) {
         final float realVelocity = isVerticalOrientation() ? vy : vx;
-        if ((isDisabledLoadMore() && isDisabledRefresh())
-                || (isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())
+        if ((isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())
                 || (!isNotYetInEdgeCannotMoveHeader() && realVelocity > 0)
                 || (!isNotYetInEdgeCannotMoveFooter() && realVelocity < 0)) {
             return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
