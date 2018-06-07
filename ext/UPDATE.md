@@ -1,4 +1,8 @@
 # 更新日志
+## 1.6.4.2
+> 修正`MODE_SCALE` 模式下仍能调用自动刷新的问题。    
+> 修正Fling动作某些情况下的BUG。    
+> 优化Fling在开启OverScroll情况下的逻辑。    
 ## 1.6.4.1
 > 修复横向刷新错误设置偏移的问题。    
 > 优化`MODE_SCALE`模式下部分场景，如果内部视图为ScrollView或者NestedScrollView或者HoriztonalScrollView，拉伸对象将为内部视图内的第一个视图，以达到更好的效果。    
