@@ -87,17 +87,17 @@ repositories {
 
 dependencies {
     //The most basic core library
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4.2'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4.3'
     //Default Classic-Style impl
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4.2'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4.3'
     //Default Material-Style impl
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.2'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.3'
     //Uitls library
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.2'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.3'
     //Support Two-Level-Refresh feature
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4.2'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4.3'
     //Support horizontal refresh feature
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4.2'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4.3'
 }
 ```
 #### Use Xml to config
