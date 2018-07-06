@@ -2,6 +2,7 @@ package me.dkzwm.widget.srl.utils;
 
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.webkit.WebView;
@@ -66,4 +67,12 @@ public class HorizontalScrollCompat {
     public static boolean canScaleInternal(View view) {
         return view instanceof HorizontalScrollView && ((HorizontalScrollView) view).getChildCount() > 0;
     }
+
+    public static boolean isScrollingView(View view) {
+        return (view instanceof HorizontalScrollView
+                || view instanceof WebView
+                || view instanceof RecyclerView
+                || view instanceof ViewPager);
+    }
+
 }

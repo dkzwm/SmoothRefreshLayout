@@ -539,4 +539,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         } else
             HorizontalScrollCompat.flingCompat(mTargetView, -velocity);
     }
+
+    @Override
+    protected boolean isScrollingView(View target) {
+        return HorizontalScrollCompat.isScrollingView(target);
+    }
 }

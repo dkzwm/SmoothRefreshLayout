@@ -2667,7 +2667,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (target instanceof IRefreshView || target.getVisibility() != VISIBLE
                 || target.getAnimation() != null)
             return null;
-        if (ScrollCompat.isScrollingView(target))
+        if (isScrollingView(target))
             return target;
         if (target instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) target;
@@ -2683,6 +2683,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
         }
         return null;
+    }
+
+    protected boolean isScrollingView(View target) {
+        return ScrollCompat.isScrollingView(target);
     }
 
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
@@ -3218,6 +3222,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         mIndicatorSetter.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
+        if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched())
+            getParent().requestDisallowInterceptTouchEvent(true);
         if (isMovingHeader())
             updatePos(change);
         else if (isMovingFooter())
