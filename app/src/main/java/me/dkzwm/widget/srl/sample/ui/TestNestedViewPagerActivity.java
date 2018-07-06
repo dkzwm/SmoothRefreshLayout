@@ -16,7 +16,7 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ViewPagerAdapter;
-import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageFragment;
+import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageWithSrlFragment;
 
 /**
  * Created by dkzwm on 2017/7/4.
@@ -43,9 +43,9 @@ public class TestNestedViewPagerActivity extends AppCompatActivity {
             }
         });
         ViewPager viewPager = findViewById(R.id.viewPager_with_nested_pager);
-        List<NestedPageFragment> fragments = new ArrayList<>();
+        List<NestedPageWithSrlFragment> fragments = new ArrayList<>();
         for (int color : sColors) {
-            fragments.add(NestedPageFragment.newInstance(color));
+            fragments.add(NestedPageWithSrlFragment.newInstance(color));
         }
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(adapter);

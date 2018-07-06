@@ -307,23 +307,23 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected void tryToDealAnotherDirectionMove(float offsetX, float offsetY) {
         if (isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
-            if (!mDealAnotherDirectionMove) {
-                if ((Math.abs(offsetY) >= mTouchSlop
-                        && Math.abs(offsetY) > Math.abs(offsetX))) {
-                    mPreventForAnotherDirection = true;
-                    mDealAnotherDirectionMove = true;
-                } else if (Math.abs(offsetX) < mTouchSlop
-                        && Math.abs(offsetY) < mTouchSlop) {
-                    mDealAnotherDirectionMove = false;
-                    mPreventForAnotherDirection = true;
-                } else {
-                    mDealAnotherDirectionMove = true;
-                    mPreventForAnotherDirection = false;
-                }
+            if ((Math.abs(offsetY) >= mTouchSlop
+                    && Math.abs(offsetY) > Math.abs(offsetX))) {
+                mPreventForAnotherDirection = true;
+                mDealAnotherDirectionMove = true;
+            } else if (Math.abs(offsetX) < mTouchSlop
+                    && Math.abs(offsetY) < mTouchSlop) {
+                mDealAnotherDirectionMove = false;
+                mPreventForAnotherDirection = true;
+            } else {
+                mDealAnotherDirectionMove = true;
+                mPreventForAnotherDirection = false;
             }
         } else {
             mPreventForAnotherDirection = Math.abs(offsetX) < mTouchSlop
                     && Math.abs(offsetY) < mTouchSlop;
+            if (!mPreventForAnotherDirection)
+                mDealAnotherDirectionMove = true;
         }
     }
 
@@ -368,26 +368,14 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected boolean tryToNotifyReset() {
-        boolean reset = super.tryToNotifyReset();
-        if (reset) {
-            if (HorizontalScrollCompat.canScaleInternal(mTargetView)) {
-                View view = ((ViewGroup) mTargetView).getChildAt(0);
-                view.setPivotX(0);
-                view.setPivotY(0);
-                view.setScaleX(1);
-                view.setScaleY(1);
-            }
-            if (mScrollTargetView != null && mState == Constants.STATE_CONTENT
-                    && HorizontalScrollCompat.canScaleInternal(mScrollTargetView)) {
-                View view = ((ViewGroup) mScrollTargetView).getChildAt(0);
-                view.setPivotX(0);
-                view.setPivotY(0);
-                view.setScaleX(1);
-                view.setScaleY(1);
-            }
+    protected void resetViewScale(View targetView) {
+        if (HorizontalScrollCompat.canScaleInternal(targetView)) {
+            View view = ((ViewGroup) targetView).getChildAt(0);
+            view.setPivotX(0);
+            view.setPivotY(0);
+            view.setScaleX(1);
+            view.setScaleY(1);
         }
-        return reset;
     }
 
     @Override
@@ -454,14 +442,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
-                if (mScrollTargetView != null && mState == Constants.STATE_CONTENT && isMovingFooter) {
+                if (mScrollTargetView != null && isMovingFooter) {
                     mScrollTargetView.offsetLeftAndRight(change);
+                } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
+                    mAutoFoundScrollTargetView.offsetLeftAndRight(change);
                 } else {
                     if (mTargetView != null)
                         mTargetView.offsetLeftAndRight(change);
-                    if (mChangeStateAnimator != null && mChangeStateAnimator.isRunning()
-                            && getView(mPreviousState) != null)
-                        getView(mPreviousState).offsetLeftAndRight(change);
                 }
             }
         } else {
@@ -476,24 +463,21 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         mTargetView.setScaleX(calculateScale());
                     }
                 } else if (isMovingFooter) {
-                    if (mScrollTargetView != null && mState == Constants.STATE_CONTENT) {
-                        if (HorizontalScrollCompat.canScaleInternal(mScrollTargetView)) {
-                            View view = ((ViewGroup) mScrollTargetView).getChildAt(0);
-                            view.setPivotX(view.getWidth());
-                            view.setScaleX(calculateScale());
-                        } else {
-                            mScrollTargetView.setPivotX(getWidth());
-                            mScrollTargetView.setScaleX(calculateScale());
-                        }
+                    final View targetView;
+                    if (mScrollTargetView != null) {
+                        targetView = mScrollTargetView;
+                    } else if (mAutoFoundScrollTargetView != null) {
+                        targetView = mAutoFoundScrollTargetView;
                     } else {
-                        if (HorizontalScrollCompat.canScaleInternal(mTargetView)) {
-                            View view = ((ViewGroup) mTargetView).getChildAt(0);
-                            view.setPivotX(view.getWidth());
-                            view.setScaleX(calculateScale());
-                        } else {
-                            mTargetView.setPivotX(getWidth());
-                            mTargetView.setScaleX(calculateScale());
-                        }
+                        targetView = mTargetView;
+                    }
+                    if (HorizontalScrollCompat.canScaleInternal(targetView)) {
+                        View view = ((ViewGroup) targetView).getChildAt(0);
+                        view.setPivotX(view.getWidth());
+                        view.setScaleX(calculateScale());
+                    } else {
+                        targetView.setPivotX(getWidth());
+                        targetView.setScaleX(calculateScale());
                     }
                 }
             }
@@ -506,6 +490,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
                     mTargetView, mHeaderView);
+        if (mScrollTargetView != null)
+            return HorizontalScrollCompat.canChildScrollLeft(mScrollTargetView);
+        if (mAutoFoundScrollTargetView != null)
+            return HorizontalScrollCompat.canChildScrollLeft(mAutoFoundScrollTargetView);
         return HorizontalScrollCompat.canChildScrollLeft(mTargetView);
     }
 
@@ -514,6 +502,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
                     mTargetView, mFooterView);
+        if (mScrollTargetView != null)
+            return HorizontalScrollCompat.canChildScrollRight(mScrollTargetView);
+        if (mAutoFoundScrollTargetView != null)
+            return HorizontalScrollCompat.canChildScrollRight(mAutoFoundScrollTargetView);
         return HorizontalScrollCompat.canChildScrollRight(mTargetView);
     }
 
@@ -526,26 +518,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected void compatLoadMoreScroll(float delta) {
         if (mLoadMoreScrollCallback == null) {
-            if (mScrollTargetView != null) {
-                try {
-                    HorizontalScrollCompat.scrollCompat(mScrollTargetView, delta);
-                } catch (Exception ignored) {//ignored
-                }
+            if (mScrollTargetView != null)
+                HorizontalScrollCompat.scrollCompat(mScrollTargetView, delta);
+            if (mAutoFoundScrollTargetView != null) {
+                HorizontalScrollCompat.scrollCompat(mAutoFoundScrollTargetView, delta);
             } else if (mTargetView != null)
-                try {
-                    HorizontalScrollCompat.scrollCompat(mTargetView, delta);
-                } catch (Exception ignored) {//ignored
-                }
+                HorizontalScrollCompat.scrollCompat(mTargetView, delta);
         } else {
             mLoadMoreScrollCallback.onScroll(mTargetView, delta);
         }
     }
 
     @Override
-    protected void dispatchNestedFling(int v) {
+    protected void dispatchNestedFling(int velocity) {
+        if (sDebug) SRLog.d(TAG, "dispatchNestedFling() : %s", velocity);
         if (mScrollTargetView != null)
-            HorizontalScrollCompat.flingCompat(mScrollTargetView, -v);
-        else
-            HorizontalScrollCompat.flingCompat(mTargetView, -v);
+            HorizontalScrollCompat.flingCompat(mScrollTargetView, -velocity);
+        else if (mAutoFoundScrollTargetView != null) {
+            HorizontalScrollCompat.flingCompat(mAutoFoundScrollTargetView, -velocity);
+        } else
+            HorizontalScrollCompat.flingCompat(mTargetView, -velocity);
     }
 }

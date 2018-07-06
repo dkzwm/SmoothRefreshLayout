@@ -29,14 +29,14 @@ ext {
             buildToolsVersion: "27.0.3",
             minSdkVersion    : 11,
             targetSdkVersion : 27,
-            versionCode      : 50,
-            versionName      : "1.6.4.3"
+            versionCode      : 51,
+            versionName      : "1.6.5"
     ]
     libs = [
-            recyclerview: "com.android.support:recyclerview-v7:27.1.0",
-            design: "com.android.support:design:27.1.0",
-            appcompatV7: "com.android.support:appcompat-v7:27.1.0",
-            supportV13: "com.android.support:support-v13:27.1.0",
+            recyclerview: "com.android.support:recyclerview-v7:27.1.1",
+            design: "com.android.support:design:27.1.1",
+            appcompatV7: "com.android.support:appcompat-v7:27.1.1",
+            supportV13: "com.android.support:support-v13:27.1.1",
     ]
 }
 

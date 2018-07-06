@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 mRefreshLayout.autoRefresh(Constants.ACTION_NOTIFY, true);
             }
-        },100);
+        }, 100);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_activity_style).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_web_style).setOnClickListener(this);
-        findViewById(R.id.button_main_test_nested_view_pager).setOnClickListener(this);
+        findViewById(R.id.button_main_test_nested_viewPager).setOnClickListener(this);
         findViewById(R.id.button_main_test_base_recyclerView_adapter).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested_horizontal_views).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_refresh).setOnClickListener(this);
@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_scroll_to_auto_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_scale_effect).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_scale_effect).setOnClickListener(this);
+        findViewById(R.id.button_main_test_nested_with_viewPager_in_one_srl).setOnClickListener(this);
         mButtonDebug = findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
@@ -157,10 +158,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_test_nested:
                 startActivity(new Intent(MainActivity.this, TestNestedActivity.class));
                 break;
+            case R.id.button_main_test_nested_with_viewPager_in_one_srl:
+                startActivity(new Intent(MainActivity.this, TestNestedWithViewPagerActivity.class));
+                break;
             case R.id.button_main_test_QQ_web_style:
                 startActivity(new Intent(MainActivity.this, TestQQWebStyleActivity.class));
                 break;
-            case R.id.button_main_test_nested_view_pager:
+            case R.id.button_main_test_nested_viewPager:
                 startActivity(new Intent(MainActivity.this, TestNestedViewPagerActivity.class));
                 break;
             case R.id.button_main_test_base_recyclerView_adapter:

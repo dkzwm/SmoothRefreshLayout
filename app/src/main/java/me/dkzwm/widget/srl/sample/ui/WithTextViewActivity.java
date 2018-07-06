@@ -21,7 +21,7 @@ import me.dkzwm.widget.srl.sample.R;
  *
  * @author dkzwm
  */
-public class WithTextViewActivity extends AppCompatActivity implements View.OnClickListener {
+public class WithTextViewActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private TextView mTextView;
     private Handler mHandler = new Handler();
@@ -47,7 +47,6 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRefreshLayout.setState(Constants.STATE_CONTENT, true);
                         mRefreshLayout.refreshComplete();
                         String times = getString(R.string.number_of_refresh) + mCount;
                         mTextView.setText(times);
@@ -87,12 +86,6 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
                 }
             }
         });
-        findViewById(R.id.button_with_textView_change_empty_state)
-                .setOnClickListener(this);
-        findViewById(R.id.button_with_textView_change_content_state)
-                .setOnClickListener(this);
-        findViewById(R.id.button_with_textView_change_error_state)
-                .setOnClickListener(this);
     }
 
 
@@ -120,18 +113,5 @@ public class WithTextViewActivity extends AppCompatActivity implements View.OnCl
         mHandler.removeCallbacksAndMessages(null);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.button_with_textView_change_empty_state:
-                mRefreshLayout.setState(Constants.STATE_EMPTY, true);
-                break;
-            case R.id.button_with_textView_change_content_state:
-                mRefreshLayout.setState(Constants.STATE_CONTENT, true);
-                break;
-            case R.id.button_with_textView_change_error_state:
-                mRefreshLayout.setState(Constants.STATE_ERROR, true);
-                break;
-        }
-    }
+
 }

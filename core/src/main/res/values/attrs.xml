@@ -76,12 +76,6 @@
         <attr name="sr_errorLayout" format="reference"/>
         <attr name="sr_customLayout" format="reference"/>
         <attr name="sr_stickyHeader" format="reference"/>
-        <attr name="sr_state" format="enum">
-            <enum name="content" value="0"/>
-            <enum name="error" value="1"/>
-            <enum name="empty" value="2"/>
-            <enum name="custom" value="3"/>
-        </attr>
         <attr name="sr_mode" format="enum">
             <enum name="mode_default" value="0"/>
             <enum name="mode_scale" value="1"/>

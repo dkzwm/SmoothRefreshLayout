@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
-import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
@@ -45,38 +44,22 @@ public class NestedPageFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView_nested_page);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
+        recyclerView.setBackgroundColor(mColor);
         mAdapter = new RecyclerViewAdapter(getActivity(), inflater);
         recyclerView.setAdapter(mAdapter);
-        mRefreshLayout = view.findViewById(R.id.smoothRefreshLayout_nested_page);
-        mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.materialStyle();
-        mRefreshLayout.setEnableNextPtrAtOnce(false);
-        mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshBegin(final boolean isRefresh) {
-                mHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.updateData(list);
-                        } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.appendData(list);
-                        }
-                        mRefreshLayout.refreshComplete();
-                    }
-                }, 2000);
-            }
-        });
-
-        mRefreshLayout.setBackgroundColor(mColor);
-        mRefreshLayout.autoRefresh(true);
         return view;
+    }
+
+    public void updateData() {
+        List<String> list = DataUtil.createList(0, 20);
+        mCount = 20;
+        mAdapter.updateData(list);
+    }
+
+    public void appendData() {
+        List<String> list = DataUtil.createList(mCount, 20);
+        mCount += 20;
+        mAdapter.appendData(list);
     }
 
     @Override

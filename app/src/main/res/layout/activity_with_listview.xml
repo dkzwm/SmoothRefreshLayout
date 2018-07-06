@@ -9,12 +9,8 @@
     android:orientation="vertical"
     android:padding="12dp"
     app:sr_content="@+id/listView_with_list"
-    app:sr_customLayout="@layout/layout_custom_view"
-    app:sr_emptyLayout="@layout/layout_empty_view"
-    app:sr_errorLayout="@layout/layout_error_view"
     app:sr_footerBackgroundColor="@color/colorAccent"
-    app:sr_headerBackgroundColor="@color/colorPrimary"
-    app:sr_state="content">
+    app:sr_headerBackgroundColor="@color/colorPrimary">
 
 
     <ListView
@@ -48,39 +44,13 @@
         android:gravity="center">
 
         <Button
-            android:id="@+id/button_with_listView_change_empty_state"
-            style="@style/SmallButtonStyle"
-            android:text="@string/change_state_to_empty"/>
-
-        <Button
-            android:id="@+id/button_with_listView_change_content_state"
-            style="@style/SmallButtonStyle"
-            android:layout_toRightOf="@id/button_with_listView_change_empty_state"
-            android:text="@string/change_state_to_content"/>
-
-        <Button
-            android:id="@+id/button_with_listView_change_error_state"
-            style="@style/SmallButtonStyle"
-            android:layout_below="@id/button_with_listView_change_empty_state"
-            android:text="@string/change_state_to_error"/>
-
-        <Button
-            android:id="@+id/button_with_listView_change_custom_state"
-            style="@style/SmallButtonStyle"
-            android:layout_below="@id/button_with_listView_change_empty_state"
-            android:layout_toRightOf="@id/button_with_listView_change_error_state"
-            android:text="@string/change_state_to_custom"/>
-
-        <Button
             android:id="@+id/button_with_listView_disable_refresh"
             style="@style/SmallButtonStyle"
-            android:layout_below="@id/button_with_listView_change_custom_state"
             android:text="@string/disable_refresh"/>
 
         <Button
             android:id="@+id/button_with_listView_enable_refresh"
             style="@style/SmallButtonStyle"
-            android:layout_below="@id/button_with_listView_change_custom_state"
             android:layout_toRightOf="@id/button_with_listView_disable_refresh"
             android:text="@string/enable_refresh"/>
 

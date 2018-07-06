@@ -7,11 +7,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:sr_content="@+id/textView_with_textView_desc"
-    app:sr_emptyLayout="@layout/layout_empty_view"
     app:sr_footerBackgroundColor="@android:color/holo_orange_light"
-    app:sr_headerBackgroundColor="@android:color/holo_green_light"
-    app:sr_errorLayout="@layout/layout_error_view"
-    app:sr_state="empty">
+    app:sr_headerBackgroundColor="@android:color/holo_green_light">
 
 
     <TextView
@@ -23,36 +20,5 @@
         android:text="@string/with_textView"
         android:textColor="#333333"
         android:textSize="28sp"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/button_with_textView_change_empty_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:text="@string/change_state_to_empty"
-            android:textSize="12sp"/>
-
-        <Button
-            android:id="@+id/button_with_textView_change_content_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:text="@string/change_state_to_content"
-            android:textSize="12sp"/>
-
-        <Button
-            android:id="@+id/button_with_textView_change_error_state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="6dp"
-            android:text="@string/change_state_to_error"
-            android:textSize="12sp"/>
-    </LinearLayout>
 
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

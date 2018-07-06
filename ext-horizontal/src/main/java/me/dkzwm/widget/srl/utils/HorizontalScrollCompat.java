@@ -35,20 +35,20 @@ public class HorizontalScrollCompat {
 
 
     public static boolean scrollCompat(View view, float deltaY) {
-        if (view != null) {
-            if ((view instanceof WebView)
-                    || (view instanceof HorizontalScrollView)) {
-                view.scrollBy((int) deltaY, 0);
-            } else {
-                try {
+        try {
+            if (view != null) {
+                if ((view instanceof WebView)
+                        || (view instanceof HorizontalScrollView)) {
+                    view.scrollBy((int) deltaY, 0);
+                } else {
                     if (view instanceof RecyclerView) {
                         view.scrollBy((int) deltaY, 0);
                         return true;
                     }
-                } catch (NoClassDefFoundError e) {
-                    //ignore exception
                 }
             }
+        } catch (Exception e) {
+            //ignored
         }
         return false;
     }

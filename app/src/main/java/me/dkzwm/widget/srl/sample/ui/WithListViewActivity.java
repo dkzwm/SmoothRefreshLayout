@@ -86,26 +86,10 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                     }
                 }, 5000);
             }
-
-            @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-                Toast.makeText(WithListViewActivity.this, R.string.sr_refresh_complete,
-                        Toast.LENGTH_SHORT).show();
-                if (mRefreshLayout.getState() != Constants.STATE_CONTENT)
-                    mRefreshLayout.setState(Constants.STATE_CONTENT, false);
-            }
         });
         mRefreshLayout.setRatioToKeep(1);
         mRefreshLayout.setRatioToRefresh(1);
         mRefreshLayout.autoRefresh(false);
-        findViewById(R.id.button_with_listView_change_empty_state)
-                .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_change_content_state)
-                .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_change_error_state)
-                .setOnClickListener(this);
-        findViewById(R.id.button_with_listView_change_custom_state)
-                .setOnClickListener(this);
         findViewById(R.id.button_with_listView_disable_refresh)
                 .setOnClickListener(this);
         findViewById(R.id.button_with_listView_enable_refresh)
@@ -120,18 +104,6 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.button_with_listView_change_empty_state:
-                mRefreshLayout.setState(Constants.STATE_EMPTY, true);
-                break;
-            case R.id.button_with_listView_change_content_state:
-                mRefreshLayout.setState(Constants.STATE_CONTENT, true);
-                break;
-            case R.id.button_with_listView_change_error_state:
-                mRefreshLayout.setState(Constants.STATE_ERROR, true);
-                break;
-            case R.id.button_with_listView_change_custom_state:
-                mRefreshLayout.setState(Constants.STATE_CUSTOM, true);
-                break;
             case R.id.button_with_listView_disable_refresh:
                 mRefreshLayout.setDisableRefresh(true);
                 break;

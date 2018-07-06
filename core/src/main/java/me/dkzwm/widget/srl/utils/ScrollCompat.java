@@ -1,6 +1,7 @@
 package me.dkzwm.widget.srl.utils;
 
 import android.os.Build;
+import android.support.v4.view.ScrollingView;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
+import android.widget.ListView;
 import android.widget.ScrollView;
 
 /**
@@ -167,10 +169,7 @@ public class ScrollCompat {
                         || view.getScrollY() > 0;
             }
         } else {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                return ViewCompat.canScrollVertically(view, -1);
-            else
-                return view.canScrollVertically(-1);
+            return view.canScrollVertically(-1);
         }
     }
 
@@ -209,21 +208,32 @@ public class ScrollCompat {
                 || view instanceof NestedScrollView && ((NestedScrollView) view).getChildCount() > 0;
     }
 
+    public static boolean isScrollingView(View view) {
+        return (view instanceof ListView
+                || view instanceof ScrollView
+                || view instanceof ScrollingView
+                || view instanceof WebView);
+    }
+
     public static void flingCompat(View view, int velocityY) {
-        if (view instanceof ScrollView) {
-            ((ScrollView) view).fling(velocityY);
-        } else if (view instanceof WebView) {
-            ((WebView) view).flingScroll(0, velocityY);
-        } else if (view instanceof RecyclerView) {
-            ((RecyclerView) view).fling(0, velocityY);
-        } else if (view instanceof NestedScrollView) {
-            ((NestedScrollView) view).fling(velocityY);
-        } else if (view instanceof AbsListView) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ((AbsListView) view).fling(velocityY);
-            } else {
-                SRReflectUtil.compatOlderAbsListViewFling((AbsListView) view, velocityY);
+        try {
+            if (view instanceof ScrollView) {
+                ((ScrollView) view).fling(velocityY);
+            } else if (view instanceof WebView) {
+                ((WebView) view).flingScroll(0, velocityY);
+            } else if (view instanceof RecyclerView) {
+                ((RecyclerView) view).fling(0, velocityY);
+            } else if (view instanceof NestedScrollView) {
+                ((NestedScrollView) view).fling(velocityY);
+            } else if (view instanceof AbsListView) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ((AbsListView) view).fling(velocityY);
+                } else {
+                    SRReflectUtil.compatOlderAbsListViewFling((AbsListView) view, velocityY);
+                }
             }
+        } catch (Exception e) {
+            //ignored
         }
     }
 }
