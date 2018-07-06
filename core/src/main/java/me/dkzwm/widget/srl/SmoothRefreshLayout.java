@@ -2574,8 +2574,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     private void ensureTargetView() {
         if (mTargetView == null) {
+            final int count = getChildCount();
             if (mContentResId != View.NO_ID) {
-                for (int i = getChildCount() - 1; i >= 0; i--) {
+                for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (mContentResId == child.getId()) {
                         mTargetView = child;
@@ -2590,7 +2591,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     }
                 }
             } else {
-                for (int i = getChildCount() - 1; i >= 0; i--) {
+                for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     View topTempView = null;
                     if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
@@ -2672,7 +2673,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (target instanceof ViewGroup) {
             ViewGroup group = (ViewGroup) target;
             final int count = group.getChildCount();
-            for (int i = 0; i < count; i++) {
+            for (int i = count - 1; i >= 0; i--) {
                 View child = group.getChildAt(i);
                 if (isTransformedTouchPointInView(x, y, group, child)) {
                     View view = ensureScrollTargetView(child, x + mCachesPoint[0], y +
