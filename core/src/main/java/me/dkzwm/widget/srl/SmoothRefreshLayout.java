@@ -2034,10 +2034,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //Use the static default creator to create the Footer view
         if (!isDisabledLoadMore() && mFooterView == null && sCreator != null
                 && mMode == Constants.MODE_DEFAULT) {
-            mFooterView = sCreator.createFooter(this);
-            if (mFooterView != null && mFooterView.getType() != IRefreshView.TYPE_FOOTER)
-                throw new IllegalArgumentException("Wrong type,FooterView type must be " +
-                        "TYPE_FOOTER");
+            final IRefreshView<IIndicator> footer = sCreator.createFooter(this);
+            if (footer != null) {
+                setFooterView(footer);
+            }
         }
         return mFooterView;
     }
@@ -2067,10 +2067,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //Use the static default creator to create the Header view
         if (!isDisabledRefresh() && mHeaderView == null && sCreator != null
                 && mMode == Constants.MODE_DEFAULT) {
-            mHeaderView = sCreator.createHeader(this);
-            if (mHeaderView != null && mHeaderView.getType() != IRefreshView.TYPE_HEADER)
-                throw new IllegalArgumentException("Wrong type,HeaderView type must be " +
-                        "TYPE_HEADER");
+            final IRefreshView<IIndicator> header = sCreator.createHeader(this);
+            if (header != null) {
+                setHeaderView(header);
+            }
         }
         return mHeaderView;
     }
