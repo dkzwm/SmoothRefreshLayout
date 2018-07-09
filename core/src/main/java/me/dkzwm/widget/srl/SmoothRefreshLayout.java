@@ -106,6 +106,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 21;
     private static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
     private static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
+    private static final int FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW = 0x01 << 24;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
     private static final int[] LAYOUT_ATTRS = new int[]{
@@ -2005,12 +2006,38 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    /**
+     * The flag has been set to dynamic search the target view.
+     * <p>是否已经开启了固定内容视图</p>
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledDynamicEnsureTargetView() {
+        return (mFlag & FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true. Frame will be dynamic search the target view.
+     *
+     * @param enable dynamic search
+     */
+    public void setEnableDynamicEnsureTargetView(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW;
+        }
+    }
+
     @Nullable
     public IRefreshView<IIndicator> getFooterView() {
         //Use the static default creator to create the Footer view
         if (!isDisabledLoadMore() && mFooterView == null && sCreator != null
                 && mMode == Constants.MODE_DEFAULT) {
-            sCreator.createFooter(this);
+            mFooterView = sCreator.createFooter(this);
+            if (mFooterView != null && mFooterView.getType() != IRefreshView.TYPE_FOOTER)
+                throw new IllegalArgumentException("Wrong type,FooterView type must be " +
+                        "TYPE_FOOTER");
         }
         return mFooterView;
     }
@@ -2040,7 +2067,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         //Use the static default creator to create the Header view
         if (!isDisabledRefresh() && mHeaderView == null && sCreator != null
                 && mMode == Constants.MODE_DEFAULT) {
-            sCreator.createHeader(this);
+            mHeaderView = sCreator.createHeader(this);
+            if (mHeaderView != null && mHeaderView.getType() != IRefreshView.TYPE_HEADER)
+                throw new IllegalArgumentException("Wrong type,HeaderView type must be " +
+                        "TYPE_HEADER");
         }
         return mHeaderView;
     }
@@ -2595,15 +2625,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     View child = getChildAt(i);
                     View topTempView = null;
                     if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
-                        View view = ensureScrollTargetView(child, getLeft() + mTouchSlop,
-                                getTop() + mTouchSlop);
-                        topTempView = child;
-                        if (view != null) {
-                            mTargetView = child;
-                            if (view != child) {
-                                mAutoFoundScrollTargetView = view;
+                        if (isEnabledDynamicEnsureTargetView()) {
+                            View view = ensureScrollTargetView(child, getLeft() + getWidth() / 2,
+                                    getTop() + getHeight() / 2);
+                            topTempView = child;
+                            if (view != null) {
+                                mTargetView = child;
+                                if (view != child) {
+                                    mAutoFoundScrollTargetView = view;
+                                }
+                                break;
                             }
-                            break;
+                        } else {
+                            mTargetView = child;
                         }
                     }
                     if (mTargetView == null)
@@ -2758,7 +2792,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mHasSendCancelEvent = false;
                 mPreventForAnotherDirection = false;
                 dispatchTouchEventSuper(ev);
-                if (mScrollTargetView == null) {
+                if (mScrollTargetView == null && isEnabledDynamicEnsureTargetView()) {
                     View view = ensureScrollTargetView(this, ev.getX(), ev.getY());
                     if (view != null && mTargetView != view) {
                         mAutoFoundScrollTargetView = view;
@@ -3291,7 +3325,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 final int type = mHeaderView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        mHeaderView.getView().offsetTopAndBottom(change);
+                        ViewCompat.offsetTopAndBottom(mHeaderView.getView(), change);
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
@@ -3300,18 +3334,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
-                            mHeaderView.getView().offsetTopAndBottom(change);
+                            ViewCompat.offsetTopAndBottom(mHeaderView.getView(), change);
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
                         if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
                             needRequestLayout = true;
                         else
-                            mHeaderView.getView().offsetTopAndBottom(change);
+                            ViewCompat.offsetTopAndBottom(mHeaderView.getView(), change);
                         break;
                 }
                 if (!isEnabledPinContentView() && mStickyHeaderView != null)
-                    mStickyHeaderView.offsetTopAndBottom(change);
+                    ViewCompat.offsetTopAndBottom(mStickyHeaderView, change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
@@ -3321,7 +3355,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 final int type = mFooterView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        mFooterView.getView().offsetTopAndBottom(change);
+                        ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
@@ -3330,14 +3364,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
-                            mFooterView.getView().offsetTopAndBottom(change);
+                            ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
                         if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
                             needRequestLayout = true;
                         else
-                            mFooterView.getView().offsetTopAndBottom(change);
+                            ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
                         break;
                 }
                 if (isFooterInProcessing())
@@ -3347,12 +3381,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             if (!isEnabledPinContentView()) {
                 if (mScrollTargetView != null && isMovingFooter) {
-                    mScrollTargetView.offsetTopAndBottom(change);
+                    ViewCompat.offsetTopAndBottom(mScrollTargetView, change);
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
-                    mAutoFoundScrollTargetView.offsetTopAndBottom(change);
+                    ViewCompat.offsetTopAndBottom(mAutoFoundScrollTargetView, change);
                 } else {
                     if (mTargetView != null)
-                        mTargetView.offsetTopAndBottom(change);
+                        ViewCompat.offsetTopAndBottom(mTargetView, change);
                 }
             }
         } else {

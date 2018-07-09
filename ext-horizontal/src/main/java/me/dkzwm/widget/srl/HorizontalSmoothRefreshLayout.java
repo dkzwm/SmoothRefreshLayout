@@ -387,7 +387,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 final int type = mHeaderView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        mHeaderView.getView().offsetLeftAndRight(change);
+                        ViewCompat.offsetLeftAndRight(mHeaderView.getView(),change);
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
@@ -396,18 +396,18 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
-                            mHeaderView.getView().offsetLeftAndRight(change);
+                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(),change);
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
                         if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
                             needRequestLayout = true;
                         else
-                            mHeaderView.getView().offsetLeftAndRight(change);
+                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(),change);
                         break;
                 }
                 if (!isEnabledPinContentView() && mStickyHeaderView != null)
-                    mStickyHeaderView.offsetLeftAndRight(change);
+                    ViewCompat.offsetLeftAndRight(mStickyHeaderView,change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
@@ -417,7 +417,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 final int type = mFooterView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        mFooterView.getView().offsetLeftAndRight(change);
+                        ViewCompat.offsetLeftAndRight(mFooterView.getView(),change);
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
@@ -426,14 +426,14 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
-                            mFooterView.getView().offsetLeftAndRight(change);
+                            ViewCompat.offsetLeftAndRight(mFooterView.getView(),change);
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
                         if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
                             needRequestLayout = true;
                         else
-                            mFooterView.getView().offsetLeftAndRight(change);
+                            ViewCompat.offsetLeftAndRight(mFooterView.getView(),change);
                         break;
                 }
                 if (isFooterInProcessing())
@@ -443,12 +443,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             }
             if (!isEnabledPinContentView()) {
                 if (mScrollTargetView != null && isMovingFooter) {
-                    mScrollTargetView.offsetLeftAndRight(change);
+                    ViewCompat.offsetLeftAndRight(mScrollTargetView,change);
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
-                    mAutoFoundScrollTargetView.offsetLeftAndRight(change);
+                    ViewCompat.offsetLeftAndRight(mAutoFoundScrollTargetView,change);
                 } else {
                     if (mTargetView != null)
-                        mTargetView.offsetLeftAndRight(change);
+                        ViewCompat.offsetLeftAndRight(mTargetView,change);
                 }
             }
         } else {

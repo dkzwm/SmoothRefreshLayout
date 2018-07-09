@@ -84,6 +84,7 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
             }
         });
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
+        mRefreshLayout.setEnableDynamicEnsureTargetView(true);
         mRefreshLayout.setLifecycleObserver(new QuickConfigAppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }

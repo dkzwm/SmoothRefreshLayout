@@ -3,7 +3,9 @@ package me.dkzwm.widget.srl.utils;
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.HorizontalScrollView;
@@ -69,10 +71,33 @@ public class HorizontalScrollCompat {
     }
 
     public static boolean isScrollingView(View view) {
-        return (view instanceof HorizontalScrollView
+        boolean isScrollingView = (view instanceof HorizontalScrollView
                 || view instanceof WebView
-                || view instanceof RecyclerView
                 || view instanceof ViewPager);
+        if (isScrollingView)
+            return true;
+        else {
+            try {
+                if (view instanceof RecyclerView) {
+                    RecyclerView recyclerView = (RecyclerView) view;
+                    RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                    if (manager != null) {
+                        if (manager instanceof LinearLayoutManager) {
+                            LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                            if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                                return true;
+                        } else if (manager instanceof StaggeredGridLayoutManager) {
+                            StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                            if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
+                                return true;
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                //ignored
+            }
+        }
+        return false;
     }
 
 }

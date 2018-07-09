@@ -1,14 +1,16 @@
 package me.dkzwm.widget.srl.sample;
 
 import android.app.Application;
-import android.graphics.Color;
+import android.support.annotation.NonNull;
 
 import com.squareup.leakcanary.LeakCanary;
 
 import me.dkzwm.widget.srl.IRefreshViewCreator;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
+import me.dkzwm.widget.srl.indicator.IIndicator;
 
 /**
  * Created by dkzwm on 2017/6/28.
@@ -23,17 +25,17 @@ public class DemoApplication extends Application {
         LeakCanary.install(this);
         SmoothRefreshLayout.setDefaultCreator(new IRefreshViewCreator() {
             @Override
-            public void createHeader(SmoothRefreshLayout layout) {
-                ClassicHeader header = new ClassicHeader(layout.getContext());
+            public IRefreshView<IIndicator> createHeader(SmoothRefreshLayout layout) {
+                ClassicHeader<IIndicator> header = new ClassicHeader<>(layout.getContext());
                 header.setLastUpdateTimeKey("header_last_update_time");
-                layout.setHeaderView(header);
+                return header;
             }
 
             @Override
-            public void createFooter(SmoothRefreshLayout layout) {
-                ClassicFooter footer = new ClassicFooter(layout.getContext());
+            public IRefreshView<IIndicator> createFooter(SmoothRefreshLayout layout) {
+                ClassicFooter<IIndicator> footer = new ClassicFooter<>(layout.getContext());
                 footer.setLastUpdateTimeKey("footer_last_update_time");
-                layout.setFooterView(footer);
+                return footer;
             }
         });
     }
