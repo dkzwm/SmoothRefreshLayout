@@ -209,7 +209,7 @@ public class ScrollCompat {
     }
 
     public static boolean isScrollingView(View view) {
-        return (view instanceof ListView
+        return (view instanceof AbsListView
                 || view instanceof ScrollView
                 || view instanceof ScrollingView
                 || view instanceof WebView);
