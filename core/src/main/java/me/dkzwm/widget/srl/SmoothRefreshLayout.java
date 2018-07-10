@@ -2730,40 +2730,30 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         switch (action) {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mPreventForAnotherDirection = false;
-                mDealAnotherDirectionMove = false;
                 mIsFingerInsideAnotherDirectionView = false;
                 mIndicatorSetter.onFingerUp();
+                boolean hasMoved = mDealAnotherDirectionMove && !mPreventForAnotherDirection;
+                mPreventForAnotherDirection = false;
+                mDealAnotherDirectionMove = false;
                 if (isNeedFilterTouchEvent()) {
                     mIsInterceptTouchEventInOnceTouch = false;
                     if (mIsLastOverScrollCanNotAbort && mIndicator.isInStartPosition())
                         mScrollChecker.destroy();
                     mIsLastOverScrollCanNotAbort = false;
-                    float offsetX, offsetY;
-                    float[] pressDownPoint = mIndicator.getFingerDownPoint();
-                    offsetX = ev.getX() - pressDownPoint[0];
-                    offsetY = ev.getY() - pressDownPoint[1];
-                    if (Math.abs(offsetX) > mTouchSlop || Math.abs(offsetY) > mTouchSlop) {
-                        sendCancelEvent();
-                        return true;
-                    } else {
-                        return dispatchTouchEventSuper(ev);
-                    }
                 } else {
                     mIsInterceptTouchEventInOnceTouch = false;
                     mIsLastOverScrollCanNotAbort = false;
                     if (mIndicator.hasLeftStartPosition()) {
                         onFingerUp(false);
-                        if (mIndicator.hasMovedAfterPressedDown()) {
-                            sendCancelEvent();
-                            return true;
-                        }
-                        return dispatchTouchEventSuper(ev);
                     } else {
                         notifyFingerUp();
-                        return dispatchTouchEventSuper(ev);
                     }
                 }
+                if (hasMoved && mIndicator.hasLeftStartPosition()) {
+                    sendCancelEvent();
+                    return true;
+                }
+                break;
             case MotionEvent.ACTION_POINTER_UP:
                 final int actionIndex = ev.getActionIndex();
                 if (ev.getPointerId(actionIndex) == mTouchPointerId) {
@@ -3381,9 +3371,15 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             }
             if (!isEnabledPinContentView()) {
                 if (mScrollTargetView != null && isMovingFooter) {
-                    ViewCompat.offsetTopAndBottom(mScrollTargetView, change);
+                    mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
-                    ViewCompat.offsetTopAndBottom(mAutoFoundScrollTargetView, change);
+                    final View targetView;
+                    if (ScrollCompat.isViewPager(mAutoFoundScrollTargetView.getParent())) {
+                        targetView = (View) mAutoFoundScrollTargetView.getParent();
+                    } else {
+                        targetView = mAutoFoundScrollTargetView;
+                    }
+                    targetView.setTranslationY(-mIndicator.getCurrentPos());
                 } else {
                     if (mTargetView != null)
                         ViewCompat.offsetTopAndBottom(mTargetView, change);
@@ -3405,7 +3401,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if (mScrollTargetView != null) {
                         targetView = mScrollTargetView;
                     } else if (mAutoFoundScrollTargetView != null) {
-                        targetView = mAutoFoundScrollTargetView;
+                        if (ScrollCompat.isViewPager(mAutoFoundScrollTargetView.getParent())) {
+                            targetView = (View) mAutoFoundScrollTargetView.getParent();
+                        } else {
+                            targetView = mAutoFoundScrollTargetView;
+                        }
                     } else {
                         targetView = mTargetView;
                     }
@@ -3523,8 +3523,19 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 resetViewScale(mTargetView);
                 if (mScrollTargetView != null) {
                     resetViewScale(mScrollTargetView);
-                } else if (mAutoFoundScrollTargetView != null)
-                    resetViewScale(mAutoFoundScrollTargetView);
+                    mScrollTargetView.setTranslationY(0);
+                    mScrollTargetView.setTranslationX(0);
+                } else if (mAutoFoundScrollTargetView != null) {
+                    final View targetView;
+                    if (ScrollCompat.isViewPager(mAutoFoundScrollTargetView.getParent())) {
+                        targetView = (View) mAutoFoundScrollTargetView.getParent();
+                    } else {
+                        targetView = mAutoFoundScrollTargetView;
+                    }
+                    resetViewScale(targetView);
+                    targetView.setTranslationY(0);
+                    targetView.setTranslationX(0);
+                }
             }
             if (getParent() != null)
                 getParent().requestDisallowInterceptTouchEvent(false);
@@ -3621,8 +3632,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mStatus = SR_STATUS_REFRESHING;
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mDelayedRefreshComplete = false;
-        mFlag &= ~(FLAG_AUTO_REFRESH | FLAG_ENABLE_NO_MORE_DATA
-                | FLAG_ENABLE_NO_MORE_DATA_NO_BACK);
+        mFlag &= ~(FLAG_AUTO_REFRESH | FLAG_ENABLE_NO_MORE_DATA);
         mIsSpringBackCanNotBeInterrupted = false;
         performRefresh();
     }

@@ -16,7 +16,6 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
@@ -74,13 +73,11 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                             mCount += 20;
                             mAdapter.updateData(list);
                         } else {
-                            if (mCount > 50) {
+                            List<String> list = DataUtil.createList(mCount, 20);
+                            mCount += 20;
+                            mAdapter.appendData(list);
+                            if (mCount > 50)
                                 mRefreshLayout.setEnableNoMoreData(true);
-                            } else {
-                                List<String> list = DataUtil.createList(mCount, 20);
-                                mCount += 20;
-                                mAdapter.appendData(list);
-                            }
                         }
                         mRefreshLayout.refreshComplete(1200);
                     }
@@ -89,6 +86,9 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         });
         mRefreshLayout.setRatioToKeep(1);
         mRefreshLayout.setRatioToRefresh(1);
+        mRefreshLayout.setMaxMoveRatioOfFooter(1);
+        mRefreshLayout.setEnableNoSpringBackWhenNoMoreData(true);
+        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_disable_refresh)
                 .setOnClickListener(this);

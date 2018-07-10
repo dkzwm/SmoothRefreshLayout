@@ -21,16 +21,15 @@ public class HorizontalScrollCompat {
 
     }
 
-
     public static boolean canChildScrollLeft(View view) {
-        if (Build.VERSION.SDK_INT < 26)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return ViewCompat.canScrollHorizontally(view, -1);
         else
             return view.canScrollHorizontally(-1);
     }
 
     public static boolean canChildScrollRight(View view) {
-        if (Build.VERSION.SDK_INT < 26)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return ViewCompat.canScrollHorizontally(view, 1);
         else
             return view.canScrollHorizontally(1);
@@ -38,20 +37,17 @@ public class HorizontalScrollCompat {
 
 
     public static boolean scrollCompat(View view, float deltaY) {
-        try {
-            if (view != null) {
+        if (view != null) {
+            try {
                 if ((view instanceof WebView)
-                        || (view instanceof HorizontalScrollView)) {
+                        || (view instanceof HorizontalScrollView)
+                        || ScrollCompat.isRecyclerView(view)) {
                     view.scrollBy((int) deltaY, 0);
-                } else {
-                    if (view instanceof RecyclerView) {
-                        view.scrollBy((int) deltaY, 0);
-                        return true;
-                    }
+                    return true;
                 }
+            } catch (Exception e) {
+                //ignored
             }
-        } catch (Exception e) {
-            //ignored
         }
         return false;
     }
@@ -59,7 +55,7 @@ public class HorizontalScrollCompat {
     public static void flingCompat(View view, int velocityX) {
         if (view instanceof WebView) {
             ((WebView) view).flingScroll(velocityX, 0);
-        } else if (view instanceof RecyclerView) {
+        } else if (ScrollCompat.isRecyclerView(view)) {
             ((RecyclerView) view).fling(velocityX, 0);
         } else if (view instanceof HorizontalScrollView) {
             ((HorizontalScrollView) view).fling(velocityX);
@@ -76,25 +72,17 @@ public class HorizontalScrollCompat {
                 || view instanceof ViewPager);
         if (isScrollingView)
             return true;
-        else {
-            try {
-                if (view instanceof RecyclerView) {
-                    RecyclerView recyclerView = (RecyclerView) view;
-                    RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                    if (manager != null) {
-                        if (manager instanceof LinearLayoutManager) {
-                            LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                            if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
-                                return true;
-                        } else if (manager instanceof StaggeredGridLayoutManager) {
-                            StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                            if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
-                                return true;
-                        }
-                    }
+        else if (ScrollCompat.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager != null) {
+                if (manager instanceof LinearLayoutManager) {
+                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                    return linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL;
+                } else if (manager instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                    return gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL;
                 }
-            } catch (Exception e) {
-                //ignored
             }
         }
         return false;

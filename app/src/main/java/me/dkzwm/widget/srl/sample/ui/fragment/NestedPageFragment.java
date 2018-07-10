@@ -1,7 +1,7 @@
 package me.dkzwm.widget.srl.sample.ui.fragment;
 
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,9 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
@@ -26,9 +26,8 @@ import me.dkzwm.widget.srl.sample.utils.DataUtil;
 public class NestedPageFragment extends Fragment {
     private int mColor;
     private int mCount;
-    private Handler mHandler = new Handler();
-    private MaterialSmoothRefreshLayout mRefreshLayout;
     private RecyclerViewAdapter mAdapter;
+    private ArrayList<String> mList = new ArrayList<>();
 
     public static NestedPageFragment newInstance(int color) {
         NestedPageFragment fragment = new NestedPageFragment();
@@ -38,7 +37,7 @@ public class NestedPageFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nested_page, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView_nested_page);
@@ -47,24 +46,25 @@ public class NestedPageFragment extends Fragment {
         recyclerView.setBackgroundColor(mColor);
         mAdapter = new RecyclerViewAdapter(getActivity(), inflater);
         recyclerView.setAdapter(mAdapter);
+        mAdapter.updateData(mList);
         return view;
     }
 
     public void updateData() {
         List<String> list = DataUtil.createList(0, 20);
         mCount = 20;
-        mAdapter.updateData(list);
+        mList.clear();
+        mList.addAll(list);
+        if (mAdapter != null)
+            mAdapter.updateData(list);
     }
 
     public void appendData() {
         List<String> list = DataUtil.createList(mCount, 20);
         mCount += 20;
-        mAdapter.appendData(list);
+        mList.addAll(list);
+        if (mAdapter != null)
+            mAdapter.appendData(list);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mHandler.removeCallbacksAndMessages(null);
-    }
 }

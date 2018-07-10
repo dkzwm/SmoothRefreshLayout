@@ -387,7 +387,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 final int type = mHeaderView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        ViewCompat.offsetLeftAndRight(mHeaderView.getView(),change);
+                        ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
@@ -396,18 +396,18 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
-                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(),change);
+                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
                         if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
                             needRequestLayout = true;
                         else
-                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(),change);
+                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
                         break;
                 }
                 if (!isEnabledPinContentView() && mStickyHeaderView != null)
-                    ViewCompat.offsetLeftAndRight(mStickyHeaderView,change);
+                    ViewCompat.offsetLeftAndRight(mStickyHeaderView, change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
@@ -417,7 +417,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 final int type = mFooterView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        ViewCompat.offsetLeftAndRight(mFooterView.getView(),change);
+                        ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
@@ -426,14 +426,14 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
-                            ViewCompat.offsetLeftAndRight(mFooterView.getView(),change);
+                            ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
                         if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
                             needRequestLayout = true;
                         else
-                            ViewCompat.offsetLeftAndRight(mFooterView.getView(),change);
+                            ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
                         break;
                 }
                 if (isFooterInProcessing())
@@ -443,12 +443,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             }
             if (!isEnabledPinContentView()) {
                 if (mScrollTargetView != null && isMovingFooter) {
-                    ViewCompat.offsetLeftAndRight(mScrollTargetView,change);
+                    mScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
-                    ViewCompat.offsetLeftAndRight(mAutoFoundScrollTargetView,change);
+                    mAutoFoundScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
                 } else {
                     if (mTargetView != null)
-                        ViewCompat.offsetLeftAndRight(mTargetView,change);
+                        ViewCompat.offsetLeftAndRight(mTargetView, change);
                 }
             }
         } else {

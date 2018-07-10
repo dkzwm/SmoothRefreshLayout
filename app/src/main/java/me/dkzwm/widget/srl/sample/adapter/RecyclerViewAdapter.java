@@ -1,7 +1,7 @@
 package me.dkzwm.widget.srl.sample.adapter;
 
-import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +25,7 @@ import me.dkzwm.widget.srl.sample.R;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder> {
     private LayoutInflater mInflater;
     private Context mContext;
-    private List<String> mList = new ArrayList<>();
+    private ArrayList<String> mList = new ArrayList<>();
 
     public RecyclerViewAdapter(Context context, LayoutInflater inflater) {
         mContext = context;
@@ -45,13 +45,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @NonNull
+    public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.layout_list_view_item, parent, false);
         return new RecyclerViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
         holder.mTextView.setText(String.valueOf(position));
         Glide.with(mContext).asBitmap().load(mList.get(position)).into(holder.mImageView);
     }
@@ -61,14 +62,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mList.size();
     }
 
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+    class RecyclerViewHolder extends RecyclerView.ViewHolder {
         private TextView mTextView;
         private ImageView mImageView;
 
-        public RecyclerViewHolder(View itemView) {
+        RecyclerViewHolder(View itemView) {
             super(itemView);
-            mImageView = (ImageView) itemView.findViewById(R.id.imageView_list_item);
-            mTextView = (TextView) itemView.findViewById(R.id.textView_list_item);
+            mImageView = itemView.findViewById(R.id.imageView_list_item);
+            mTextView = itemView.findViewById(R.id.textView_list_item);
             mTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

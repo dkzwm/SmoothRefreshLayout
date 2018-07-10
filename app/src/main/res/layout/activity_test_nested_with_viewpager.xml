@@ -12,12 +12,18 @@
         android:layout_height="match_parent"
         android:addStatesFromChildren="true">
 
-        <me.dkzwm.widget.srl.sample.widget.PrepareScrollViewPager
-            android:id="@+id/viewPager_test_nested_with_viewPager"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:overScrollMode="never"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewPager_test_nested_with_viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:overScrollMode="never"/>
+        </FrameLayout>
+
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appBarLayout_test_nested"

@@ -3,15 +3,16 @@ package me.dkzwm.widget.srl.utils;
 import android.os.Build;
 import android.support.v4.view.ScrollingView;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
+import android.view.ViewParent;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
-import android.widget.ListView;
 import android.widget.ScrollView;
 
 /**
@@ -25,56 +26,25 @@ public class ScrollCompat {
     }
 
     public static boolean canChildScrollDown(View view) {
-        if (view instanceof AbsListView) {
-            final AbsListView absListView = (AbsListView) view;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                return absListView.getChildCount() == 0
-                        || absListView.getAdapter() == null
-                        || (absListView.getChildCount() > 0
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            if (view instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) view;
+                return absListView.getChildCount() > 0
                         && (absListView.getLastVisiblePosition() < absListView.getAdapter().getCount() - 1)
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
-                        > absListView.getHeight() - absListView.getPaddingBottom());
-            } else {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                    return absListView.getChildCount() == 0 ||
-                            ViewCompat.canScrollVertically(view, 1);
-                else
-                    return absListView.getChildCount() == 0 ||
-                            view.canScrollVertically(1);
-            }
-        } else if (view instanceof ScrollView) {
-            final ScrollView scrollView = (ScrollView) view;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                return scrollView.getChildCount() == 0
-                        || (scrollView.getChildCount() != 0
+                        > absListView.getHeight() - absListView.getPaddingBottom();
+            } else if (view instanceof ScrollView) {
+                final ScrollView scrollView = (ScrollView) view;
+                return scrollView.getChildCount() != 0
                         && scrollView.getScrollY() < scrollView.getChildAt(0).getHeight()
-                        - scrollView.getHeight());
+                        - scrollView.getHeight();
             } else {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                    return scrollView.getChildCount() == 0 ||
-                            ViewCompat.canScrollVertically(view, 1);
-                else
-                    return scrollView.getChildCount() == 0 ||
-                            view.canScrollVertically(1);
-            }
-        } else {
-            try {
-                if (view instanceof RecyclerView) {
-                    final RecyclerView recyclerView = (RecyclerView) view;
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                        return recyclerView.getChildCount() == 0 ||
-                                ViewCompat.canScrollVertically(view, 1);
-                    else
-                        return recyclerView.getChildCount() == 0 ||
-                                view.canScrollVertically(1);
-                }
-            } catch (NoClassDefFoundError ignored) {
-                //ignored
-            }
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 return ViewCompat.canScrollVertically(view, 1);
-            else
-                return view.canScrollVertically(1);
+            }
+        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return ViewCompat.canScrollVertically(view, 1);
+        } else {
+            return view.canScrollVertically(1);
         }
     }
 
@@ -85,37 +55,31 @@ public class ScrollCompat {
             final Adapter adapter = listView.getAdapter();
             return adapter != null && lastVisiblePosition > 0
                     && lastVisiblePosition >= adapter.getCount() - 1;
-        } else {
-            try {
-                if (view instanceof RecyclerView) {
-                    RecyclerView recyclerView = (RecyclerView) view;
-                    RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                    if (manager == null)
-                        return false;
-                    int lastVisiblePosition = 0;
-                    if (manager instanceof LinearLayoutManager) {
-                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                        lastVisiblePosition = linearManager.findLastVisibleItemPosition();
-                    } else if (manager instanceof StaggeredGridLayoutManager) {
-                        StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                        int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
-                        gridLayoutManager.findLastVisibleItemPositions(lastPositions);
-                        lastVisiblePosition = lastPositions[0];
-                        for (int value : lastPositions) {
-                            if (value > lastVisiblePosition) {
-                                lastVisiblePosition = value;
-                            }
-                        }
-                    }
-                    RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                    return adapter != null && lastVisiblePosition > 0
-                            && lastVisiblePosition >= adapter.getItemCount() - 1;
-                }
-            } catch (NoClassDefFoundError ignored) {
+        } else if (isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null)
                 return false;
+            int lastVisiblePosition = 0;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                lastVisiblePosition = linearManager.findLastVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findLastVisibleItemPositions(lastPositions);
+                lastVisiblePosition = lastPositions[0];
+                for (int value : lastPositions) {
+                    if (value > lastVisiblePosition) {
+                        lastVisiblePosition = value;
+                    }
+                }
             }
-            return false;
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null && lastVisiblePosition > 0
+                    && lastVisiblePosition >= adapter.getItemCount() - 1;
         }
+        return false;
     }
 
     public static boolean canAutoRefresh(View view) {
@@ -124,37 +88,31 @@ public class ScrollCompat {
             final int lastVisiblePosition = listView.getLastVisiblePosition();
             final Adapter adapter = listView.getAdapter();
             return adapter != null && lastVisiblePosition == 0;
-        } else {
-            try {
-                if (view instanceof RecyclerView) {
-                    RecyclerView recyclerView = (RecyclerView) view;
-                    RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                    if (manager == null)
-                        return false;
-                    int firstVisiblePosition = -1;
-                    if (manager instanceof LinearLayoutManager) {
-                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                        firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
-                    } else if (manager instanceof StaggeredGridLayoutManager) {
-                        StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                        int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
-                        gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
-                        firstVisiblePosition = firstPositions[0];
-                        for (int value : firstPositions) {
-                            if (value == 0) {
-                                firstVisiblePosition = 0;
-                                break;
-                            }
-                        }
-                    }
-                    RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                    return adapter != null && firstVisiblePosition == 0;
-                }
-            } catch (NoClassDefFoundError ignored) {
+        } else if (isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null)
                 return false;
+            int firstVisiblePosition = -1;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
+                firstVisiblePosition = firstPositions[0];
+                for (int value : firstPositions) {
+                    if (value == 0) {
+                        firstVisiblePosition = 0;
+                        break;
+                    }
+                }
             }
-            return false;
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null && firstVisiblePosition == 0;
         }
+        return false;
     }
 
     public static boolean canChildScrollUp(View view) {
@@ -191,7 +149,7 @@ public class ScrollCompat {
                         || (view instanceof NestedScrollView)) {
                     view.scrollBy(0, (int) deltaY);
                 } else {
-                    if (view instanceof RecyclerView) {
+                    if (isRecyclerView(view)) {
                         view.scrollBy(0, (int) deltaY);
                         return true;
                     }
@@ -215,13 +173,25 @@ public class ScrollCompat {
                 || view instanceof WebView);
     }
 
+    public static boolean isViewPager(ViewParent parent) {
+        return parent != null && parent instanceof ViewPager;
+    }
+
+    public static boolean isRecyclerView(View view) {
+        try {
+            return view != null && view instanceof RecyclerView;
+        } catch (NoClassDefFoundError ignored) {
+            return false;
+        }
+    }
+
     public static void flingCompat(View view, int velocityY) {
         try {
             if (view instanceof ScrollView) {
                 ((ScrollView) view).fling(velocityY);
             } else if (view instanceof WebView) {
                 ((WebView) view).flingScroll(0, velocityY);
-            } else if (view instanceof RecyclerView) {
+            } else if (isRecyclerView(view)) {
                 ((RecyclerView) view).fling(0, velocityY);
             } else if (view instanceof NestedScrollView) {
                 ((NestedScrollView) view).fling(velocityY);

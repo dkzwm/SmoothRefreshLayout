@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -18,7 +19,6 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ViewPagerAdapter;
 import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageFragment;
-import me.dkzwm.widget.srl.sample.widget.PrepareScrollViewPager;
 import me.dkzwm.widget.srl.utils.QuickConfigAppBarUtil;
 
 /**
@@ -30,9 +30,8 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
     private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
             Color.BLUE, Color.RED, Color.BLACK};
     private MaterialSmoothRefreshLayout mRefreshLayout;
-    private PrepareScrollViewPager mViewPager;
-    private ViewPagerAdapter mAdapter;
     private Handler mHandler = new Handler();
+    private List<NestedPageFragment> mFragments;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,40 +46,40 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        mViewPager = findViewById(R.id.viewPager_test_nested_with_viewPager);
-        final List<NestedPageFragment> fragments = new ArrayList<>();
+        ViewPager viewPager = findViewById(R.id.viewPager_test_nested_with_viewPager);
+        mFragments = new ArrayList<>();
         for (int sColor : sColors) {
-            fragments.add(NestedPageFragment.newInstance(sColor));
+            mFragments.add(NestedPageFragment.newInstance(sColor));
         }
-        mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
-        mViewPager.setAdapter(mAdapter);
-        mViewPager.setOffscreenPageLimit(sColors.length);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), mFragments);
+        viewPager.setAdapter(adapter);
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_nested_with_viewPager);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
-                if (!isRefresh) {
-                    mViewPager.setEnableScroll(false);
-                }
-                final int currentItem = mViewPager.getCurrentItem();
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         if (isRefresh) {
-                            fragments.get(currentItem).updateData();
+                            for (int i = 0; i < mFragments.size(); i++) {
+                                NestedPageFragment fragment = mFragments.get(i);
+                                fragment.updateData();
+                            }
                         } else {
-                            fragments.get(currentItem).appendData();
+                            for (int i = 0; i < mFragments.size(); i++) {
+                                NestedPageFragment fragment = mFragments.get(i);
+                                fragment.appendData();
+                            }
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, isRefresh ? 2000 : 10000);
+                }, 2000);
             }
 
             @Override
             public void onRefreshComplete(boolean isSuccessful) {
-                mViewPager.setEnableScroll(true);
             }
         });
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
@@ -109,6 +108,7 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mFragments.clear();
         mHandler.removeCallbacksAndMessages(null);
     }
 }
