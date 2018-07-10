@@ -39,8 +39,8 @@ public class HorizontalScrollCompat {
     public static boolean scrollCompat(View view, float deltaY) {
         if (view != null) {
             try {
-                if ((view instanceof WebView)
-                        || (view instanceof HorizontalScrollView)
+                if (view instanceof WebView
+                        || view instanceof HorizontalScrollView
                         || ScrollCompat.isRecyclerView(view)) {
                     view.scrollBy((int) deltaY, 0);
                     return true;
@@ -67,9 +67,9 @@ public class HorizontalScrollCompat {
     }
 
     public static boolean isScrollingView(View view) {
-        boolean isScrollingView = (view instanceof HorizontalScrollView
+        boolean isScrollingView = view instanceof HorizontalScrollView
                 || view instanceof WebView
-                || view instanceof ViewPager);
+                || view instanceof ViewPager;
         if (isScrollingView)
             return true;
         else if (ScrollCompat.isRecyclerView(view)) {

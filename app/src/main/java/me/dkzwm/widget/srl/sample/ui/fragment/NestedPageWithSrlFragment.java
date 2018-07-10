@@ -84,14 +84,6 @@ public class NestedPageWithSrlFragment extends Fragment {
         return view;
     }
 
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putStringArrayList("key_saved_data", mList);
-    }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();

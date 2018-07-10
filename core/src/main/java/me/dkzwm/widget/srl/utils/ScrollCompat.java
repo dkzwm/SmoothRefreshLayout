@@ -138,21 +138,17 @@ public class ScrollCompat {
                     final AbsListView listView = (AbsListView) view;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                         listView.scrollListBy((int) deltaY);
-                        return true;
                     } else {
                         SRReflectUtil.compatOlderAbsListViewScrollListBy((AbsListView) view,
                                 (int) deltaY);
                     }
                     return true;
-                } else if ((view instanceof WebView)
-                        || (view instanceof ScrollView)
-                        || (view instanceof NestedScrollView)) {
+                } else if (view instanceof WebView
+                        || view instanceof ScrollView
+                        || view instanceof NestedScrollView
+                        || isRecyclerView(view)) {
                     view.scrollBy(0, (int) deltaY);
-                } else {
-                    if (isRecyclerView(view)) {
-                        view.scrollBy(0, (int) deltaY);
-                        return true;
-                    }
+                    return true;
                 }
             } catch (Exception ignored) {
                 return false;
