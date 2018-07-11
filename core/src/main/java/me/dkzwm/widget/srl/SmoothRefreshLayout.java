@@ -168,6 +168,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected OnFooterEdgeDetectCallBack mInEdgeCanMoveFooterCallBack;
     protected OnInsideAnotherDirectionViewCallback mInsideAnotherDirectionViewCallback;
     protected OnLoadMoreScrollCallback mLoadMoreScrollCallback;
+    protected OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
+    protected OnPerformAutoRefreshCallBack mAutoRefreshCallBack;
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
     private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
@@ -175,7 +177,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private Interpolator mSpringInterpolator;
     private Interpolator mOverScrollInterpolator;
     private Interpolator mAutomaticSpringInterpolator;
-    private OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private GestureDetector mGestureDetector;
     private DelayToRefreshComplete mDelayToRefreshComplete;
@@ -887,13 +888,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * Set a callback to make sure you need to customize the specified trigger the auto load more rule.
+     * Set a callback to make sure you need to customize the specified trigger the auto load more
+     * rule.
      * <p>设置自动加载更多的触发条件回调，可自定义具体的触发自动加载更多的条件</p>
      *
      * @param callBack Customize the specified triggered rule
      */
     public void setOnPerformAutoLoadMoreCallBack(OnPerformAutoLoadMoreCallBack callBack) {
         mAutoLoadMoreCallBack = callBack;
+    }
+
+    /**
+     * Set a callback to make sure you need to customize the specified trigger the auto refresh
+     * rule.
+     * <p>设置滚到到顶自动刷新的触发条件回调，可自定义具体的触发自动刷新的条件</p>
+     *
+     * @param callBack Customize the specified triggered rule
+     */
+    public void setOnPerformAutoRefreshCallBack(OnPerformAutoRefreshCallBack callBack) {
+        mAutoRefreshCallBack = callBack;
     }
 
     /**
@@ -2593,7 +2606,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-
     protected void addFreshViewLayoutParams(View view) {
         ViewGroup.LayoutParams lp = view.getLayoutParams();
         if (lp == null) {
@@ -2678,7 +2690,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @see ViewGroup source code
      */
-    protected boolean isTransformedTouchPointInView(float x, float y, View group, View child) {
+    private boolean isTransformedTouchPointInView(float x, float y, View group, View child) {
         if (child.getVisibility() != VISIBLE || child.getAnimation() != null) {
             return false;
         }
@@ -3018,25 +3030,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     public boolean isNotYetInEdgeCannotMoveHeader() {
-        if (mInEdgeCanMoveHeaderCallBack != null)
-            return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
-                    mTargetView, mHeaderView);
         if (mScrollTargetView != null)
-            return ScrollCompat.canChildScrollUp(mScrollTargetView);
+            return isNotYetInEdgeCannotMoveHeader(mScrollTargetView);
         if (mAutoFoundScrollTargetView != null)
-            return ScrollCompat.canChildScrollUp(mAutoFoundScrollTargetView);
-        return ScrollCompat.canChildScrollUp(mTargetView);
+            return isNotYetInEdgeCannotMoveHeader(mAutoFoundScrollTargetView);
+        return isNotYetInEdgeCannotMoveHeader(mTargetView);
     }
 
     public boolean isNotYetInEdgeCannotMoveFooter() {
-        if (mInEdgeCanMoveFooterCallBack != null)
-            return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
-                    mTargetView, mFooterView);
         if (mScrollTargetView != null)
-            return ScrollCompat.canChildScrollDown(mScrollTargetView);
+            return isNotYetInEdgeCannotMoveFooter(mScrollTargetView);
         if (mAutoFoundScrollTargetView != null)
-            return ScrollCompat.canChildScrollDown(mAutoFoundScrollTargetView);
-        return ScrollCompat.canChildScrollDown(mTargetView);
+            return isNotYetInEdgeCannotMoveFooter(mAutoFoundScrollTargetView);
+        return isNotYetInEdgeCannotMoveFooter(mTargetView);
+    }
+
+    protected boolean isNotYetInEdgeCannotMoveHeader(View view) {
+        if (mInEdgeCanMoveFooterCallBack != null)
+            return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this, view,
+                    mFooterView);
+        return ScrollCompat.canChildScrollUp(view);
+    }
+
+    protected boolean isNotYetInEdgeCannotMoveFooter(View view) {
+        if (mInEdgeCanMoveFooterCallBack != null)
+            return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this, view,
+                    mFooterView);
+        return ScrollCompat.canChildScrollDown(view);
     }
 
     protected boolean isInsideAnotherDirectionView(final float x, final float y) {
@@ -3211,21 +3231,21 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             if (sDebug)
                 SRLog.d(TAG, "moveFooterPos(): compatible scroll delta: %s", delta);
             mNeedFilterScrollEvent = true;
-            compatLoadMoreScroll(delta);
+            if (mScrollTargetView != null)
+                compatLoadMoreScroll(mScrollTargetView, delta);
+            if (mAutoFoundScrollTargetView != null) {
+                compatLoadMoreScroll(mAutoFoundScrollTargetView, delta);
+            } else if (mTargetView != null)
+                compatLoadMoreScroll(mTargetView, delta);
         }
         movePos(-delta);
     }
 
-    protected void compatLoadMoreScroll(float delta) {
-        if (mLoadMoreScrollCallback == null) {
-            if (mScrollTargetView != null)
-                ScrollCompat.scrollCompat(mScrollTargetView, delta);
-            if (mAutoFoundScrollTargetView != null) {
-                ScrollCompat.scrollCompat(mAutoFoundScrollTargetView, delta);
-            } else if (mTargetView != null)
-                ScrollCompat.scrollCompat(mTargetView, delta);
+    protected void compatLoadMoreScroll(View view, float delta) {
+        if (mLoadMoreScrollCallback != null) {
+            mLoadMoreScrollCallback.onScroll(view, delta);
         } else {
-            mLoadMoreScrollCallback.onScroll(mTargetView, delta);
+            ScrollCompat.scrollCompat(view, delta);
         }
     }
 
@@ -3602,18 +3622,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected void tryToPerformScrollToBottomToLoadMore() {
         if (isEnabledAutoLoadMore() && !isDisabledPerformLoadMore() && mMode ==
                 Constants.MODE_DEFAULT && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
-            if (mAutoLoadMoreCallBack != null && mAutoLoadMoreCallBack.canAutoLoadMore(this,
-                    mTargetView)) {
+            if (mScrollTargetView != null) {
+                if (canAutoLoadMore(mScrollTargetView))
+                    triggeredLoadMore(true);
+            } else if (mAutoFoundScrollTargetView != null) {
+                if (canAutoLoadMore(mAutoFoundScrollTargetView))
+                    triggeredLoadMore(true);
+            } else if (canAutoLoadMore(mTargetView)) {
                 triggeredLoadMore(true);
-            } else if (mAutoLoadMoreCallBack == null) {
-                if (mScrollTargetView != null && ScrollCompat.canAutoLoadMore(mScrollTargetView)) {
-                    triggeredLoadMore(true);
-                } else if (mAutoFoundScrollTargetView != null && ScrollCompat.canAutoLoadMore
-                        (mAutoFoundScrollTargetView)) {
-                    triggeredLoadMore(true);
-                } else if (ScrollCompat.canAutoLoadMore(mTargetView)) {
-                    triggeredLoadMore(true);
-                }
             }
         }
     }
@@ -3622,8 +3638,28 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (isEnabledAutoRefresh() && !isDisabledPerformRefresh() && mMode == Constants.MODE_DEFAULT
                 && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)
                 && ScrollCompat.canAutoRefresh(mTargetView)) {
-            triggeredRefresh(true);
+            if (mScrollTargetView != null) {
+                if (canAutoRefresh(mScrollTargetView))
+                    triggeredRefresh(true);
+            } else if (mAutoFoundScrollTargetView != null) {
+                if (canAutoRefresh(mAutoFoundScrollTargetView))
+                    triggeredRefresh(true);
+            } else if (canAutoRefresh(mTargetView)) {
+                triggeredRefresh(true);
+            }
         }
+    }
+
+    protected boolean canAutoLoadMore(View view) {
+        if (mAutoLoadMoreCallBack != null)
+            return mAutoLoadMoreCallBack.canAutoLoadMore(this, view);
+        return ScrollCompat.canAutoLoadMore(view);
+    }
+
+    protected boolean canAutoRefresh(View view) {
+        if (mAutoRefreshCallBack != null)
+            return mAutoRefreshCallBack.canAutoRefresh(this, view);
+        return ScrollCompat.canAutoRefresh(view);
     }
 
     protected void triggeredRefresh(boolean notify) {
@@ -3846,6 +3882,22 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
          * @return whether need trigger
          */
         boolean canAutoLoadMore(SmoothRefreshLayout parent, @Nullable View child);
+    }
+
+    /**
+     * Classes that wish to be called when {@link SmoothRefreshLayout#setEnableAutoRefresh(boolean)}
+     * has been set true and {@link SmoothRefreshLayout#isDisabledRefresh()} ()} not be true and
+     * sure you need to customize the specified trigger rule
+     */
+    public interface OnPerformAutoRefreshCallBack {
+        /**
+         * Whether need trigger auto refresh
+         *
+         * @param parent The frame
+         * @param child  the child view
+         * @return whether need trigger
+         */
+        boolean canAutoRefresh(SmoothRefreshLayout parent, @Nullable View child);
     }
 
     public static class LayoutParams extends MarginLayoutParams {

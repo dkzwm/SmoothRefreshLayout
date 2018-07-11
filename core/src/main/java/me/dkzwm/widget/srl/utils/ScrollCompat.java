@@ -53,7 +53,7 @@ public class ScrollCompat {
             AbsListView listView = (AbsListView) view;
             final int lastVisiblePosition = listView.getLastVisiblePosition();
             final Adapter adapter = listView.getAdapter();
-            return adapter != null && lastVisiblePosition > 0
+            return adapter != null && adapter.getCount() > 0 && lastVisiblePosition >= 0
                     && lastVisiblePosition >= adapter.getCount() - 1;
         } else if (isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
@@ -63,9 +63,13 @@ public class ScrollCompat {
             int lastVisiblePosition = 0;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                    return false;
                 lastVisiblePosition = linearManager.findLastVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                if (gridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                    return false;
                 int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findLastVisibleItemPositions(lastPositions);
                 lastVisiblePosition = lastPositions[0];
@@ -76,7 +80,7 @@ public class ScrollCompat {
                 }
             }
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
-            return adapter != null && lastVisiblePosition > 0
+            return adapter != null && adapter.getItemCount() > 0 && lastVisiblePosition >= 0
                     && lastVisiblePosition >= adapter.getItemCount() - 1;
         }
         return false;
@@ -96,9 +100,13 @@ public class ScrollCompat {
             int firstVisiblePosition = -1;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                    return false;
                 firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                if (gridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                    return false;
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
                 firstVisiblePosition = firstPositions[0];

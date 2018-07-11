@@ -88,4 +88,68 @@ public class HorizontalScrollCompat {
         return false;
     }
 
+    public static boolean canAutoLoadMore(View view) {
+        if (ScrollCompat.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null)
+                return false;
+            int lastVisiblePosition = 0;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                if (linearManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
+                    return false;
+                lastVisiblePosition = linearManager.findLastVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                if (gridLayoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
+                    return false;
+                int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findLastVisibleItemPositions(lastPositions);
+                lastVisiblePosition = lastPositions[0];
+                for (int value : lastPositions) {
+                    if (value > lastVisiblePosition) {
+                        lastVisiblePosition = value;
+                    }
+                }
+            }
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null && adapter.getItemCount() > 0 && lastVisiblePosition >= 0
+                    && lastVisiblePosition >= adapter.getItemCount() - 1;
+        }
+        return false;
+    }
+
+    public static boolean canAutoRefresh(View view) {
+        if (ScrollCompat.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null)
+                return false;
+            int firstVisiblePosition = -1;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                if (linearManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
+                    return false;
+                firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                if (gridLayoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
+                    return false;
+                int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
+                firstVisiblePosition = firstPositions[0];
+                for (int value : firstPositions) {
+                    if (value == 0) {
+                        firstVisiblePosition = 0;
+                        break;
+                    }
+                }
+            }
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null && firstVisiblePosition == 0;
+        }
+        return false;
+    }
+
 }

@@ -486,27 +486,19 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    public boolean isNotYetInEdgeCannotMoveHeader() {
+    public boolean isNotYetInEdgeCannotMoveHeader(View view) {
         if (mInEdgeCanMoveHeaderCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this,
-                    mTargetView, mHeaderView);
-        if (mScrollTargetView != null)
-            return HorizontalScrollCompat.canChildScrollLeft(mScrollTargetView);
-        if (mAutoFoundScrollTargetView != null)
-            return HorizontalScrollCompat.canChildScrollLeft(mAutoFoundScrollTargetView);
-        return HorizontalScrollCompat.canChildScrollLeft(mTargetView);
+                    view, mHeaderView);
+        return HorizontalScrollCompat.canChildScrollLeft(view);
     }
 
     @Override
-    public boolean isNotYetInEdgeCannotMoveFooter() {
+    public boolean isNotYetInEdgeCannotMoveFooter(View view) {
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(this,
-                    mTargetView, mFooterView);
-        if (mScrollTargetView != null)
-            return HorizontalScrollCompat.canChildScrollRight(mScrollTargetView);
-        if (mAutoFoundScrollTargetView != null)
-            return HorizontalScrollCompat.canChildScrollRight(mAutoFoundScrollTargetView);
-        return HorizontalScrollCompat.canChildScrollRight(mTargetView);
+                    view, mFooterView);
+        return HorizontalScrollCompat.canChildScrollRight(view);
     }
 
     protected boolean isInsideAnotherDirectionView(final float x, final float y) {
@@ -516,16 +508,11 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void compatLoadMoreScroll(float delta) {
+    protected void compatLoadMoreScroll(View view, float delta) {
         if (mLoadMoreScrollCallback == null) {
-            if (mScrollTargetView != null)
-                HorizontalScrollCompat.scrollCompat(mScrollTargetView, delta);
-            if (mAutoFoundScrollTargetView != null) {
-                HorizontalScrollCompat.scrollCompat(mAutoFoundScrollTargetView, delta);
-            } else if (mTargetView != null)
-                HorizontalScrollCompat.scrollCompat(mTargetView, delta);
+            HorizontalScrollCompat.scrollCompat(view, delta);
         } else {
-            mLoadMoreScrollCallback.onScroll(mTargetView, delta);
+            mLoadMoreScrollCallback.onScroll(view, delta);
         }
     }
 
@@ -538,6 +525,20 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             HorizontalScrollCompat.flingCompat(mAutoFoundScrollTargetView, -velocity);
         } else
             HorizontalScrollCompat.flingCompat(mTargetView, -velocity);
+    }
+
+    @Override
+    protected boolean canAutoLoadMore(View view) {
+        if (mAutoLoadMoreCallBack != null)
+            mAutoLoadMoreCallBack.canAutoLoadMore(this, view);
+        return HorizontalScrollCompat.canAutoLoadMore(view);
+    }
+
+    @Override
+    protected boolean canAutoRefresh(View view) {
+        if (mAutoRefreshCallBack != null)
+            mAutoRefreshCallBack.canAutoRefresh(this, view);
+        return HorizontalScrollCompat.canAutoRefresh(view);
     }
 
     @Override
