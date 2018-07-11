@@ -1,4 +1,12 @@
 # 更新日志
+## 1.6.5
+> 删除状态布局功能。    
+> 添加方法:`setEnableDynamicEnsureTargetView` 方法即动态搜索布局功能，开启后理论上不需要手动指定边界判断视图就能适配某些特殊场景，例如：ViewPager共用一个刷新控件。    
+> 修改接口:`IRefreshViewCreator` 的方法返回参数，避免漏设刷新视图。    
+> 添加接口:`OnPerformAutoRefreshCallBack` 和对应的设置方法:`setOnPerformAutoRefreshCallBack`。    
+> 修复`isEnabledNoSpringBackWhenNoMoreData`第二次不起作用的问题。    
+> 完善部分代码逻辑。    
+> 修复部分代码逻辑错误。   
 ## 1.6.4.3
 > 修复`MODE_SCALE` 模式下的拉伸BUG。    
 ## 1.6.4.2

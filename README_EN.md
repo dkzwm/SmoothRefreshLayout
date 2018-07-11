@@ -23,7 +23,6 @@ Thank him for providing such a great open source library ！
  - Support Refresh view has six styles: STYLE_DEFAULT(Do not change the height by default)、 STYLE_SCALE(Dynamically change the height)、 STYLE_PIN(Pinned the refresh view)、 STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、 STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、 STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
  - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）, PS:TaoBao-Senond-Floor、JD-Activity.
  - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
- - Support Multi-State: STATE_CONTENT(Default state)、 STATE_ERROR(Error state)、 STATE_EMPTY(Empty state)、 STATE_CUSTOM(Custom state).
  - Support synchronous Fling gestures.
  - Support Scale effect, PS:XiaoMi phone settings page effects.    
  - Many callback interface and debugging information.
@@ -87,17 +86,17 @@ repositories {
 
 dependencies {
     //The most basic core library
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.5'
     //Default Classic-Style impl
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.5'
     //Default Material-Style impl
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.5'
     //Uitls library
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.5'
     //Support Two-Level-Refresh feature
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.5'
     //Support horizontal refresh feature
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.5'
 }
 ```
 #### Use Xml to config
@@ -263,15 +262,15 @@ public interface IRefreshView<T extends IIndicator> {
 ```    
         SmoothRefreshLayout.setDefaultCreator(new IRefreshViewCreator() {
             @Override
-            public void createHeader(SmoothRefreshLayout layout) {
+            public IRefreshView<IIndicator> createHeader(SmoothRefreshLayout layout) {
                 ClassicHeader header = new ClassicHeader(layout.getContext());
-                layout.setHeaderView(header);
+                return header;
             }
 
             @Override
-            public void createFooter(SmoothRefreshLayout layout) {
+            public IRefreshView<IIndicator> createFooter(SmoothRefreshLayout layout) {
                 ClassicFooter footer = new ClassicFooter(layout.getContext());
-                layout.setFooterView(footer);
+                return footer;
             }
         });
 ```   
@@ -340,10 +339,6 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_enableKeep|boolean|Keep refresh view in refreshing（Default: `true`）|
  |sr_enablePullToRefresh|boolean|Pull to refresh（Default: `false`，meaning release to refresh）|
  |sr_enableOverScroll|boolean|OverScroll（Default: `true`|
- |sr_emptyLayout|reference|Specifies the layout resource ID in Empty state|
- |sr_errorLayout|reference|Specifies the layout resource ID in Error state|
- |sr_customLayout|reference|Specifies the layout resource ID in Custom state|
- |sr_state|enum|Set current state （Default: `STATE_CONTENT`）|
  |sr_enableRefresh|boolean|Enable Header refresh（Default: `ture`）|
  |sr_enableLoadMore|boolean|Enable Footer refresh（Default: `false`）|
  |sr_headerBackgroundColor|color|Set the background color of the height of the Header view|
@@ -368,10 +363,8 @@ public interface IRefreshView<T extends IIndicator> {
  |:---:|:---:|:---:|
  |setHeaderView|IRefreshView|Set Header|
  |setFooterView|IRefreshView|Set Footer|
- |setContentView|int,View|Set content view, parameter1: set current State, parameter2: set the State content view|
+ |setContentView|View|Set content view|
  |setMode|int|Set current mode|
- |setState|int|Set current State|
- |setState|int,boolean|Set current State, parameter1: set current State, parameter2: whether use animate|
  |setDisableWhenAnotherDirectionMove|boolean|Set whether to filter another direction moves（Default: `false`）|
  |setEnableNextPtrAtOnce|boolean|Set whether user can perform next PTR at once|
  |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `300`）|
@@ -427,6 +420,7 @@ public interface IRefreshView<T extends IIndicator> {
  |addOnUIPositionChangedListener|OnUIPositionChangedListener|Add a listener to listen the views position change event|
  |removeOnUIPositionChangedListener|OnUIPositionChangedListener|Remove the listener to listen the views position change event|
  |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Set a scrolling callback when loading more|
+ |setOnPerformAutoRefreshCallBack|OnPerformAutoRefreshCallBack|Set a callback to make sure you need to customize the specified trigger the auto refresh rule|
  |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|Set a callback to make sure you need to customize the specified trigger the auto load more rule| |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Header| |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Footer|
  |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Header refresh complete event be triggered|
  |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Footer refresh complete event be triggered|

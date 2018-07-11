@@ -21,7 +21,6 @@
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）,PS:淘宝二楼、京东活动.
  - 支持横向刷新(HorizontalSmoothRefreshLayout).
  - 支持ListView、GridView、RecyclerView加载更多的同步平滑滚动.
- - 支持多状态视图:STATE_CONTENT(默认状态)、STATE_ERROR(异常状态)、STATE_EMPTY(空状态)、STATE_CUSTOM(自定义状态).
  - 支持手势:同步Fling(刷新视图仍可见的情况下,会先回滚隐藏刷新视图,而后向下传递Fling手势).
  - 支持作为可拉伸内部视图布局使用（类小米设置页效果）.
  - 丰富的回调接口和调试信息,可利用现有API实现丰富的效果.
@@ -87,17 +86,17 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.5'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.5'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.5'
     //工具类库，带有一些快捷配置工具（自动滚动刷新工具，快速设置AppBarLayout工具）
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.5'
     //扩展支持二级刷新库
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.5'
     //扩展支持横向刷新库
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4.3'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.5'
 }
 ```
 #### 在Xml中配置
@@ -209,15 +208,15 @@ public interface IRefreshView <T extends IIndicator> {
 ```    
         SmoothRefreshLayout.setDefaultCreator(new IRefreshViewCreator() {
             @Override
-            public void createHeader(SmoothRefreshLayout layout) {
+            public IRefreshView<IIndicator> createHeader(SmoothRefreshLayout layout) {
                 ClassicHeader header = new ClassicHeader(layout.getContext());
-                layout.setHeaderView(header);
+                return header;
             }
 
             @Override
-            public void createFooter(SmoothRefreshLayout layout) {
+            public IRefreshView<IIndicator> createFooter(SmoothRefreshLayout layout) {
                 ClassicFooter footer = new ClassicFooter(layout.getContext());
-                layout.setFooterView(footer);
+                return footer;
             }
         });
 ```   
@@ -290,10 +289,6 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_enableKeep|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |sr_enablePullToRefresh|boolean|拉动刷新,下拉或者上拉到触发刷新位置即立即触发刷新（默认:`false`）|
 |sr_enableOverScroll|boolean|越界回弹（默认:`true`）|
-|sr_emptyLayout|reference|指定空状态下对应的布局资源ID|
-|sr_errorLayout|reference|指定异常状态下对应的布局资源ID|
-|sr_customLayout|reference|指定自定义状态下对应的布局资源ID|
-|sr_state|enum|状态设置（默认:`STATE_CONTENT`）|
 |sr_enableRefresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enableLoadMore|boolean|设置是否启用加载更多（默认:`false`）|
 |sr_headerBackgroundColor|color|设置Header刷新高度区域的背景色|
@@ -316,10 +311,8 @@ public interface IRefreshView <T extends IIndicator> {
 |:---:|:---:|:---:|
 |setHeaderView|IRefreshView|配置头部视图|
 |setFooterView|IRefreshView|配置尾部视图|
-|setContentView|int,View|配置内容视图,参数1:设置内容视图对应的状态,参数2:状态对应的内容视图|
+|setContentView|View|配置内容视图|
 |setMode|int|配置当前模式|
-|setState|int|配置当前状态|
-|setState|int,boolean|配置当前状态,参数1:当前状态,参数2:是否使用渐变动画过渡|
 |setDisableWhenAnotherDirectionMove|boolean|内部视图含有其他方向滑动视图时需设置该属性为ture（默认:`false`）|
 |setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setMaxOverScrollDuration|int|设置越界回弹动画最长时间（默认:`300`）|
@@ -377,6 +370,7 @@ public interface IRefreshView <T extends IIndicator> {
 |removeOnUIPositionChangedListener|OnUIPositionChangedListener|移除视图位置变化的监听回调|
 |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|
 |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
+|setOnPerformAutoRefreshCallBack|OnPerformAutoRefreshCallBack|设置触发自动刷新的条件回调，如果回调的`canAutoRefresh()`方法返回`true`则会立即触发刷新|
 |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`isNotYetInEdgeCannotMoveHeader()`方法）|
 |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`isNotYetInEdgeCannotMoveFooter()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
@@ -399,7 +393,7 @@ public interface IRefreshView <T extends IIndicator> {
 |autoLoadMore|无参|自动触发Footer刷新,立即触发刷新事件并滚动到触发Footer刷新位置|
 |autoLoadMore|boolean|自动触发Footer刷新,参数:是否立即触发刷新事件,会滚动到触发Footer刷新位置|
 |autoLoadMore|boolean,boolean|自动触发Footer刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到触发Footer刷新位置|
-|setLoadMoreScrollTargetView|View|设置Footer移动时,响应移动事件的内容视图,例如在SmoothRefreshLayout中有一个CoordinatorLayout,CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerView而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可|
+|setScrollTargetView|View|设置判断是否滚到到边界对应的视图,例如在SmoothRefreshLayout中有一个CoordinatorLayout,CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerView而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可|
 
 #### TwoLevelSmoothRefreshLayout java属性设置方法
 |名称|参数|描述|
