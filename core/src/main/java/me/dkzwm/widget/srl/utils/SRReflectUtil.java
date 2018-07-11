@@ -1,12 +1,7 @@
 package me.dkzwm.widget.srl.utils;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.Build;
-import android.view.ViewTreeObserver;
-import android.view.animation.Interpolator;
 import android.widget.AbsListView;
-import android.widget.Scroller;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -23,43 +18,7 @@ public class SRReflectUtil {
     private static Method sReportScrollStateChangeMethod;
     private static Method sFlingRunnableStartMethod;
     private static Constructor sFlingRunnableConstructor;
-    private static Field sOnScrollChangedListenersField;
-    private static Method sOnScrollChangedListenersRemoveMethod;
     private static Method sTrackMotionScrollMethod;
-
-
-    /**
-     * Safely remove the onScrollChangedListener from target ViewTreeObserver
-     */
-    public static void safelyRemoveListeners(ViewTreeObserver observer,
-                                             ViewTreeObserver.OnScrollChangedListener listener) {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O_MR1) {
-            try {
-                if (sOnScrollChangedListenersField == null) {
-                    sOnScrollChangedListenersField = ViewTreeObserver.class.getDeclaredField
-                            ("mOnScrollChangedListeners");
-                    if (sOnScrollChangedListenersField != null)
-                        sOnScrollChangedListenersField.setAccessible(true);
-                }
-                if (sOnScrollChangedListenersField != null) {
-                    Object object = sOnScrollChangedListenersField.get(observer);
-                    if (object != null) {
-                        if (sOnScrollChangedListenersRemoveMethod == null) {
-                            sOnScrollChangedListenersRemoveMethod = object.getClass().getDeclaredMethod
-                                    ("remove", Object.class);
-                            if (sOnScrollChangedListenersRemoveMethod != null)
-                                sOnScrollChangedListenersRemoveMethod.setAccessible(true);
-                        }
-                        if (sOnScrollChangedListenersRemoveMethod != null) {
-                            sOnScrollChangedListenersRemoveMethod.invoke(object, listener);
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                //ignore exception
-            }
-        }
-    }
 
     @SuppressLint("PrivateApi")
     @SuppressWarnings("unchecked")

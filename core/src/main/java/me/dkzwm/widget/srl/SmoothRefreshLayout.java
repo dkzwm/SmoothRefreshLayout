@@ -52,7 +52,6 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
 import me.dkzwm.widget.srl.utils.BoundaryUtil;
 import me.dkzwm.widget.srl.utils.SRLog;
-import me.dkzwm.widget.srl.utils.SRReflectUtil;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 
@@ -183,6 +182,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
     private ViewTreeObserver mTargetViewTreeObserver;
+    private View mLastObserverView;
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
@@ -605,6 +605,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         left = getPaddingLeft() + lp.leftMargin;
         right = left + child.getMeasuredWidth();
+        if (isInEditMode())
+            top = top + child.getMeasuredHeight();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
         if (sDebug) SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
@@ -649,6 +651,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         left = getPaddingLeft() + lp.leftMargin;
         right = left + child.getMeasuredWidth();
+        if (isInEditMode())
+            top = top - child.getMeasuredHeight();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
         if (sDebug) SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
@@ -2160,8 +2164,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * Set the scroller interpolator when in automatic spring
-     *
-     * @param interpolator
      */
     public void setAutomaticSpringInterpolator(Interpolator interpolator) {
         mAutomaticSpringInterpolator = interpolator;
@@ -2586,6 +2588,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void ensureFreshView(View child) {
         if (child instanceof IRefreshView) {
             IRefreshView<IIndicator> view = (IRefreshView<IIndicator>) child;
@@ -2659,29 +2662,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
             mStickyHeaderView = findViewById(mStickyHeaderResId);
-        if (mTargetView != null && isEnabledOverScroll())
-            mTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
-        if (mTargetView != null) {
-            ViewTreeObserver observer;
-            if (mScrollTargetView != null) {
-                observer = mScrollTargetView.getViewTreeObserver();
-                if (isEnabledOverScroll())
-                    mScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
-            } else if (mAutoFoundScrollTargetView != null) {
-                observer = mAutoFoundScrollTargetView.getViewTreeObserver();
-                if (isEnabledOverScroll())
-                    mAutoFoundScrollTargetView.setOverScrollMode(OVER_SCROLL_NEVER);
-            } else {
-                observer = mTargetView.getViewTreeObserver();
-            }
-            if (observer != mTargetViewTreeObserver && observer.isAlive()) {
-                safelyRemoveListeners();
-                mTargetViewTreeObserver = observer;
-                mTargetViewTreeObserver.addOnScrollChangedListener(this);
-            }
-        }
+        checkObserverScrollChangedListener();
         mHeaderView = getHeaderView();
         mFooterView = getFooterView();
+    }
+
+    private void checkObserverScrollChangedListener() {
+        if (mTargetView != null) {
+            final View observerView;
+            if (mScrollTargetView != null)
+                observerView = mScrollTargetView;
+            else if (mAutoFoundScrollTargetView != null)
+                observerView = mAutoFoundScrollTargetView;
+            else
+                observerView = mTargetView;
+            final ViewTreeObserver observer = observerView.getViewTreeObserver();
+            if (observer != mTargetViewTreeObserver && observer.isAlive()) {
+                if (isEnabledOverScroll()) observerView.setOverScrollMode(OVER_SCROLL_NEVER);
+                if (mTargetViewTreeObserver != null && mTargetViewTreeObserver.isAlive()) {
+                    mTargetViewTreeObserver.removeOnScrollChangedListener(this);
+                    observer.addOnScrollChangedListener(this);
+                } else if (mLastObserverView != observerView) {
+                    observer.addOnScrollChangedListener(this);
+                }
+                mLastObserverView = observerView;
+                mTargetViewTreeObserver = observer;
+            }
+        }
     }
 
     /**
@@ -2796,8 +2803,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 dispatchTouchEventSuper(ev);
                 if (mScrollTargetView == null && isEnabledDynamicEnsureTargetView()) {
                     View view = ensureScrollTargetView(this, ev.getX(), ev.getY());
-                    if (view != null && mTargetView != view) {
+                    if (view != null && mTargetView != view && mAutoFoundScrollTargetView != view) {
                         mAutoFoundScrollTargetView = view;
+                        checkObserverScrollChangedListener();
                     }
                 } else {
                     mAutoFoundScrollTargetView = null;
@@ -3732,18 +3740,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    /**
-     * Safely remove the onScrollChangedListener from target ViewTreeObserver
-     */
-    private void safelyRemoveListeners() {
-        if (mTargetViewTreeObserver != null) {
-            if (mTargetViewTreeObserver.isAlive())
-                mTargetViewTreeObserver.removeOnScrollChangedListener(this);
-            else
-                SRReflectUtil.safelyRemoveListeners(mTargetViewTreeObserver, this);
-        }
-    }
-
     private View foundViewInViewGroupById(ViewGroup group, int id) {
         final int size = group.getChildCount();
         for (int i = 0; i < size; i++) {
@@ -3904,6 +3900,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         private static final int[] LAYOUT_ATTRS = new int[]{android.R.attr.layout_gravity};
         public int gravity = Gravity.TOP | Gravity.START;
 
+        @SuppressWarnings("WeakerAccess")
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             final TypedArray a = c.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
@@ -3911,6 +3908,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             a.recycle();
         }
 
+        @SuppressWarnings("unused")
         public LayoutParams(int width, int height, int gravity) {
             super(width, height);
             this.gravity = gravity;
@@ -3920,14 +3918,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             super(width, height);
         }
 
+        @SuppressWarnings("unused")
         public LayoutParams(MarginLayoutParams source) {
             super(source);
         }
 
+        @SuppressWarnings("WeakerAccess")
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
         }
 
+        @SuppressWarnings("unused")
         public LayoutParams(LayoutParams source) {
             super(source);
             gravity = source.gravity;

@@ -69,8 +69,6 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         mTargetView.removeCallbacks(mDelayAddListenerRunnable);
         if (mViewTreeObserver.isAlive())
             mViewTreeObserver.removeOnScrollChangedListener(this);
-        else
-            SRReflectUtil.safelyRemoveListeners(mViewTreeObserver, this);
         cancelAnimator();
         mRefreshLayout = null;
     }

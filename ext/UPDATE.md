@@ -5,6 +5,7 @@
 > 修改接口:`IRefreshViewCreator` 的方法返回参数，避免漏设刷新视图。    
 > 添加接口:`OnPerformAutoRefreshCallBack` 和对应的设置方法:`setOnPerformAutoRefreshCallBack`。    
 > 修复`isEnabledNoSpringBackWhenNoMoreData`第二次不起作用的问题。    
+> 删除部分反射逻辑，应对Android P。    
 > 完善部分代码逻辑。    
 > 修复部分代码逻辑错误。   
 ## 1.6.4.3

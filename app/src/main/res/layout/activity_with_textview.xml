@@ -20,5 +20,4 @@
         android:text="@string/with_textView"
         android:textColor="#333333"
         android:textSize="28sp"/>
-
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

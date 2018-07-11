@@ -231,6 +231,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 break;
         }
         top = getPaddingTop() + lp.topMargin;
+        if (isInEditMode())
+            left = left + child.getMeasuredWidth();
         right = left + child.getMeasuredWidth();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
@@ -280,6 +282,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 break;
         }
         top = getPaddingTop() + lp.topMargin;
+        if (isInEditMode())
+            left = left - child.getMeasuredWidth();
         right = left + child.getMeasuredWidth();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
