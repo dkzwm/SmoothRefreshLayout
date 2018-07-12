@@ -7,6 +7,7 @@
 > 修复`isEnabledNoSpringBackWhenNoMoreData`第二次不起作用的问题。    
 > 删除部分反射逻辑，应对Android P。    
 > 完善部分代码逻辑。    
+> 迁移厂库，有JitPack迁移到JCenter。    
 > 修复部分代码逻辑错误。   
 ## 1.6.4.3
 > 修复`MODE_SCALE` 模式下的拉伸BUG。    

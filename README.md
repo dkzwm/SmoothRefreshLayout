@@ -1,6 +1,6 @@
 # SmoothRefreshLayout
 
-[![Release](https://jitpack.io/v/com.github.dkzwm/SmoothRefreshLayout.svg)](https://jitpack.io/#dkzwm/SmoothRefreshLayout)
+[![Release](https://img.shields.io/badge/JCenter-1.6.5--beta--1-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-707%20%7C%2074%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -78,6 +78,18 @@
 
 ## 使用   
 #### Gradle
+##### 新版本
+```
+dependencies {
+    implementation 'me.dkzwm.widget.srl:core:1.6.5-beta-1'
+    implementation 'me.dkzwm.widget.srl:ext-utils:1.6.5-beta-1'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5-beta-1'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5-beta-1'
+    implementation 'me.dkzwm.widget.srl:ext-classic:1.6.5-beta-1'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5-beta-1'
+}
+```
+##### 老版本（即版本<1.6.5，有多状态视图能力的版本）
 ```
 repositories {
     ...
@@ -86,17 +98,17 @@ repositories {
 
 dependencies {
     //核心基础库，包含绝大多数功能，扩展库必须依赖本库（从1.6.0版本开始Core库不再自带刷新视图实现，只包含核心功能）
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.5'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:core:1.6.4.3'
     //默认Classic样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.5'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-classic:1.6.4.3'
     //默认Material样式的刷新视图实现库(从1.6.0版本才有，是从老版本的Core库中拆分出来的库)
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.5'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-material:1.6.4.3'
     //工具类库，带有一些快捷配置工具（自动滚动刷新工具，快速设置AppBarLayout工具）
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.5'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-utils:1.6.4.3'
     //扩展支持二级刷新库
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.5'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-two-level:1.6.4.3'
     //扩展支持横向刷新库
-    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.5'
+    implementation 'com.github.dkzwm.SmoothRefreshLayout:ext-horizontal:1.6.4.3'
 }
 ```
 #### 在Xml中配置
