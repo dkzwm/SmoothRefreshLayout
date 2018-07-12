@@ -738,10 +738,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void drawFooterBackground(Canvas canvas) {
-        final int top = Math.max(getHeight() - getPaddingBottom() - mIndicator
-                .getCurrentPos(), getPaddingTop());
+        final int top;
+        final int bottom;
+        if (mTargetView != null) {
+            final LayoutParams lp = (LayoutParams) mTargetView.getLayoutParams();
+            bottom = getPaddingTop() + lp.topMargin + mTargetView.getMeasuredHeight() + lp
+                    .bottomMargin;
+            top = bottom - mIndicator.getCurrentPos();
+        } else {
+            top = Math.max(getHeight() - getPaddingBottom() - mIndicator.getCurrentPos(),
+                    getPaddingTop());
+            bottom = getHeight() - getPaddingBottom();
+        }
         canvas.drawRect(getPaddingLeft(), top, getWidth() - getPaddingRight(),
-                getHeight() - getPaddingBottom(), mBackgroundPaint);
+                bottom, mBackgroundPaint);
     }
 
     @ViewCompat.ScrollAxis

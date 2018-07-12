@@ -1,7 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
-group = 'com.github.dkzwm'
+group = rootProject.ext.bintray['groupId']
+version=rootProject.ext.android['versionName']
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -48,4 +50,56 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives sourcesJar
     archives javadocJar
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'SmoothRefreshLayout-ClassicKit'
+                groupId rootProject.ext.bintray['groupId']
+                url rootProject.ext.bintray['siteUrl']
+                artifactId 'ext-classic'
+                description 'Classic style view kit for SmoothRefreshLayout'
+                licenses {
+                    license {
+                        name rootProject.ext.bintray['licenseName']
+                        url rootProject.ext.bintray['licenseUrl']
+                    }
+                }
+                developers {
+                    developer {
+                        id rootProject.ext.bintray['developerId']
+                        name rootProject.ext.bintray['developerName']
+                        email rootProject.ext.bintray['developerEmail']
+                    }
+                }
+                scm {
+                    connection rootProject.ext.bintray['gitUrl']
+                    developerConnection rootProject.ext.bintray['gitUrl']
+                    url rootProject.ext.bintray['siteUrl']
+                }
+            }
+        }
+    }
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.key")
+
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'ext-classic'
+        desc = 'Classic style view kit for SmoothRefreshLayout'
+        websiteUrl = rootProject.ext.bintray['siteUrl']
+        vcsUrl = rootProject.ext.bintray['gitUrl']
+        licenses = rootProject.ext.allLicenses
+        publish = true
+    }
 }

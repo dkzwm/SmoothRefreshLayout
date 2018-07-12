@@ -302,9 +302,18 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void drawFooterBackground(Canvas canvas) {
-        final int left = Math.max(getWidth() - getPaddingRight() - mIndicator
-                .getCurrentPos(), getPaddingLeft());
-        canvas.drawRect(left, getPaddingTop(), getWidth() - getPaddingRight(),
+        final int left,right;
+        if (mTargetView != null) {
+            final LayoutParams lp = (LayoutParams) mTargetView.getLayoutParams();
+            right = getPaddingLeft() + lp.leftMargin + mTargetView.getMeasuredWidth() + lp
+                    .rightMargin;
+            left = right - mIndicator.getCurrentPos();
+        } else {
+            left = Math.max(getWidth() - getPaddingRight() - mIndicator
+                    .getCurrentPos(), getPaddingLeft());
+            right = getWidth() - getPaddingRight();
+        }
+        canvas.drawRect(left, getPaddingTop(), right,
                 getHeight() - getPaddingBottom(), mBackgroundPaint);
     }
 

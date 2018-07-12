@@ -11,7 +11,8 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.2'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
@@ -29,15 +30,27 @@ ext {
             buildToolsVersion: "27.0.3",
             minSdkVersion    : 11,
             targetSdkVersion : 27,
-            versionCode      : 51,
-            versionName      : "1.6.5"
+            versionCode      : 52,
+            versionName      : "1.6.5-beta-1"
     ]
     libs = [
             recyclerview: "com.android.support:recyclerview-v7:27.1.1",
             design: "com.android.support:design:27.1.1",
             appcompatV7: "com.android.support:appcompat-v7:27.1.1",
-            supportV13: "com.android.support:support-v13:27.1.1",
+            supportV13: "com.android.support:support-v13:27.1.1"
     ]
+    bintray=[
+            siteUrl : 'https://github.com/dkzwm/SmoothRefreshLayout',
+            gitUrl :'https://github.com/dkzwm/SmoothRefreshLayout.git',
+            groupId :"me.dkzwm.widget.srl",
+            libVersion : android.versionName,
+            developerId : "dkzwm",
+            developerName : "Zhang Weiming",
+            developerEmail : "aidkzwm@gmail.com",
+            licenseName : "MIT License",
+            licenseUrl :"https://opensource.org/licenses/MIT",
+    ]
+    allLicenses =['MIT']
 }
 
 task clean(type: Delete) {
