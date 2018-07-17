@@ -78,6 +78,7 @@
     <string name="test_scale_effect">Test scale effect</string>
     <string name="test_horizontal_scale_effect">Test horizontal scale effect</string>
     <string name="sticky_header">Sticky header view</string>
+    <string name="sticky_footer">Sticky footer view</string>
     <string name="test_nested_with_viewpager">Test nested with viewPager in one
         refreshLayout</string>
 </resources>

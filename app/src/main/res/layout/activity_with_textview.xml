@@ -8,7 +8,8 @@
     android:orientation="vertical"
     app:sr_content="@+id/textView_with_textView_desc"
     app:sr_footerBackgroundColor="@android:color/holo_orange_light"
-    app:sr_headerBackgroundColor="@android:color/holo_green_light">
+    app:sr_headerBackgroundColor="@android:color/holo_green_light"
+    app:sr_stickyFooter="@+id/textView_with_textView_sticky_footer">
 
 
     <TextView
@@ -20,4 +21,15 @@
         android:text="@string/with_textView"
         android:textColor="#333333"
         android:textSize="28sp"/>
+
+    <TextView
+        android:id="@id/textView_with_textView_sticky_footer"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:background="@android:color/holo_orange_dark"
+        android:gravity="center"
+        android:text="@string/sticky_footer"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"/>
+
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

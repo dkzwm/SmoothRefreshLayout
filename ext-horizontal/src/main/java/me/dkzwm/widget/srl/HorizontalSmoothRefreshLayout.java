@@ -163,17 +163,15 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected int layoutContentView(View child, boolean pin, int offsetHeader, int offsetFooter) {
-        int contentRight = 0;
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int top = getPaddingTop() + lp.topMargin;
         final int bottom = top + child.getMeasuredHeight();
         int left, right;
-        if (mMode == Constants.MODE_DEFAULT && isMovingHeader()) {
+        if (isMovingHeader()) {
             left = getPaddingLeft() + lp.leftMargin + (pin ? 0 : offsetHeader);
             right = left + child.getMeasuredWidth();
             child.layout(left, top, right, bottom);
-        } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter()
-                && mStickyHeaderView != child) {
+        } else if (isMovingFooter()) {
             left = getPaddingLeft() + lp.leftMargin - (pin ? 0 : offsetFooter);
             right = left + child.getMeasuredWidth();
             child.layout(left, top, right, bottom);
@@ -182,11 +180,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             right = left + child.getMeasuredWidth();
             child.layout(left, top, right, bottom);
         }
-        if (sDebug) {
-            SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
-        }
-        if (mTargetView == child) contentRight = right + lp.rightMargin;
-        return contentRight;
+        if (sDebug) SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
+        return right;
     }
 
     @Override
@@ -293,6 +288,38 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
+    protected void layoutStickyHeader(boolean pin, int offsetHeader) {
+        final LayoutParams lp = (LayoutParams) mStickyHeaderView.getLayoutParams();
+        final int top = getPaddingTop() + lp.topMargin;
+        final int bottom = top + mStickyHeaderView.getMeasuredHeight();
+        int left, right;
+        if (isMovingHeader()) {
+            left = getPaddingLeft() + lp.leftMargin + (pin ? 0 : offsetHeader);
+        } else {
+            left = getPaddingLeft() + lp.leftMargin;
+        }
+        right = left + mStickyHeaderView.getMeasuredWidth();
+        mStickyHeaderView.layout(left, top, right, bottom);
+        if (sDebug) SRLog.d(TAG, "onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom);
+    }
+
+    @Override
+    protected void layoutStickyFooter(int contentRight, int offsetFooterY) {
+        if (!isMovingFooter()) contentRight = getMeasuredWidth();
+        final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
+        final int top = getPaddingTop() + lp.topMargin;
+        final int bottom = top + mStickyFooterView.getMeasuredHeight();
+        final int right;
+        if (isMovingFooter() && !isEnabledPinContentView())
+            right = contentRight - lp.bottomMargin - offsetFooterY;
+        else
+            right = contentRight - lp.bottomMargin;
+        final int left = right - mStickyFooterView.getMeasuredWidth();
+        mStickyFooterView.layout(left, top, right, bottom);
+        if (sDebug) SRLog.d(TAG, "onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom);
+    }
+
+    @Override
     protected void drawHeaderBackground(Canvas canvas) {
         final int right = Math.min(getPaddingLeft() + mIndicator.getCurrentPos(),
                 getWidth() - getPaddingLeft());
@@ -302,7 +329,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void drawFooterBackground(Canvas canvas) {
-        final int left,right;
+        final int left, right;
         if (mTargetView != null) {
             final LayoutParams lp = (LayoutParams) mTargetView.getLayoutParams();
             right = getPaddingLeft() + lp.leftMargin + mTargetView.getMeasuredWidth() + lp

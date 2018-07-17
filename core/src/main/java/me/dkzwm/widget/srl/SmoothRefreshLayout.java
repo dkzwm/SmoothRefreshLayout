@@ -152,9 +152,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected View mScrollTargetView;
     protected View mAutoFoundScrollTargetView;
     protected View mStickyHeaderView;
+    protected View mStickyFooterView;
     protected LayoutInflater mInflater;
     protected int mContentResId = View.NO_ID;
     protected int mStickyHeaderResId = View.NO_ID;
+    protected int mStickyFooterResId = View.NO_ID;
     protected ScrollChecker mScrollChecker;
     protected int mTouchSlop;
     protected int mTouchPointerId;
@@ -188,7 +190,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mNeedFilterScrollEvent = false;
     private int mMaxOverScrollDuration = 300;
     private int mMinOverScrollDuration = 150;
-    private float[] mCachesPoint = null;
+    private float[] mCachedPoint = null;
 
     public SmoothRefreshLayout(Context context) {
         super(context);
@@ -298,6 +300,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             setDisableLoadMore(!arr.getBoolean(R.styleable
                     .SmoothRefreshLayout_sr_enableLoadMore, false));
             mStickyHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyHeader,
+                    NO_ID);
+            mStickyFooterResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyFooter,
                     NO_ID);
             mHeaderBackgroundColor = arr.getColor(R.styleable
                     .SmoothRefreshLayout_sr_headerBackgroundColor, -1);
@@ -519,39 +523,44 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         else if (isMovingFooter())
             offsetFooterY = mIndicator.getCurrentPos();
         int contentBottom = 0;
-        boolean pin = ((mScrollTargetView != null || mAutoFoundScrollTargetView != null)
-                && !isMovingHeader()) || isEnabledPinContentView();
+        boolean pin = mMode == Constants.MODE_SCALE
+                || ((mScrollTargetView != null || mAutoFoundScrollTargetView != null) && !isMovingHeader())
+                || isEnabledPinContentView();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
             if (mHeaderView != null && child == mHeaderView.getView()) {
                 layoutHeaderView(child, offsetHeaderY);
-            } else if (mTargetView != null && child == mTargetView
-                    || (mStickyHeaderView != null && child == mStickyHeaderView)) {
-                int bottom = layoutContentView(child, pin, offsetHeaderY, offsetFooterY);
-                if (bottom != 0) contentBottom = bottom;
-            } else if (mFooterView == null || mFooterView.getView() != child) {
+            } else if (mTargetView != null && child == mTargetView) {
+                contentBottom = layoutContentView(child, pin, offsetHeaderY, offsetFooterY);
+            } else if ((mFooterView == null || mFooterView.getView() != child)
+                    && (mStickyFooterView == null || mStickyFooterView != child)
+                    && (mStickyHeaderView == null || mStickyHeaderView != child)) {
                 layoutOtherView(child, parentRight, parentBottom);
             }
         }
         if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
             layoutFooterView(mFooterView.getView(), offsetFooterY, pin, contentBottom);
         }
+        if (mStickyHeaderView != null && mStickyHeaderView.getVisibility() != GONE) {
+            layoutStickyHeader(pin, offsetHeaderY);
+        }
+        if (mStickyFooterView != null && mStickyFooterView.getVisibility() != GONE) {
+            layoutStickyFooter(contentBottom, offsetFooterY);
+        }
         tryToPerformAutoRefresh();
     }
 
     protected int layoutContentView(View child, boolean pin, int offsetHeader, int offsetFooter) {
-        int contentBottom = 0;
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
         final int right = left + child.getMeasuredWidth();
         int top, bottom;
-        if (mMode == Constants.MODE_DEFAULT && isMovingHeader()) {
+        if (isMovingHeader()) {
             top = getPaddingTop() + lp.topMargin + (pin ? 0 : offsetHeader);
             bottom = top + child.getMeasuredHeight();
             child.layout(left, top, right, bottom);
-        } else if (mMode == Constants.MODE_DEFAULT && isMovingFooter()
-                && mStickyHeaderView != child) {
+        } else if (isMovingFooter()) {
             top = getPaddingTop() + lp.topMargin - (pin ? 0 : offsetFooter);
             bottom = top + child.getMeasuredHeight();
             child.layout(left, top, right, bottom);
@@ -561,8 +570,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             child.layout(left, top, right, bottom);
         }
         if (sDebug) SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
-        if (mTargetView == child) contentBottom = bottom + lp.bottomMargin;
-        return contentBottom;
+        return bottom;
     }
 
     protected void layoutHeaderView(View child, int offsetHeader) {
@@ -656,6 +664,37 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
         if (sDebug) SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
+    }
+
+
+    protected void layoutStickyHeader(boolean pin, int offsetHeader) {
+        final LayoutParams lp = (LayoutParams) mStickyHeaderView.getLayoutParams();
+        final int left = getPaddingLeft() + lp.leftMargin;
+        final int right = left + mStickyHeaderView.getMeasuredWidth();
+        final int top;
+        if (isMovingHeader()) {
+            top = getPaddingTop() + lp.topMargin + (pin ? 0 : offsetHeader);
+        } else {
+            top = getPaddingTop() + lp.topMargin;
+        }
+        final int bottom = top + mStickyHeaderView.getMeasuredHeight();
+        mStickyHeaderView.layout(left, top, right, bottom);
+        if (sDebug) SRLog.d(TAG, "onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom);
+    }
+
+    protected void layoutStickyFooter(int contentBottom, int offsetFooterY) {
+        if (!isMovingFooter()) contentBottom = getMeasuredHeight();
+        final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
+        final int left = getPaddingLeft() + lp.leftMargin;
+        final int right = left + mStickyFooterView.getMeasuredWidth();
+        final int bottom;
+        if (isMovingFooter() && !isEnabledPinContentView())
+            bottom = contentBottom - lp.bottomMargin - offsetFooterY;
+        else
+            bottom = contentBottom - lp.bottomMargin;
+        final int top = bottom - mStickyFooterView.getMeasuredHeight();
+        mStickyFooterView.layout(left, top, right, bottom);
+        if (sDebug) SRLog.d(TAG, "onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom);
     }
 
     @SuppressLint({"RtlHardcpded", "RtlHardcoded"})
@@ -2216,9 +2255,24 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setStickyHeaderResId(@IdRes int resId) {
         if (mStickyHeaderResId != resId) {
             mStickyHeaderResId = resId;
+            mStickyHeaderView = null;
             requestLayout();
         }
     }
+
+    /**
+     * Set the pinned footer view resource id
+     *
+     * @param resId Resource id
+     */
+    public void setStickyFooterResId(@IdRes int resId) {
+        if (mStickyFooterResId != resId) {
+            mStickyFooterResId = resId;
+            mStickyFooterView = null;
+            requestLayout();
+        }
+    }
+
 
     public void setMode(@Mode int mode) {
         mMode = mode;
@@ -2672,6 +2726,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
             mStickyHeaderView = findViewById(mStickyHeaderResId);
+        if (mStickyFooterView == null && mStickyFooterResId != NO_ID)
+            mStickyFooterView = findViewById(mStickyFooterResId);
         checkObserverScrollChangedListener();
         mHeaderView = getHeaderView();
         mFooterView = getFooterView();
@@ -2711,18 +2767,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (child.getVisibility() != VISIBLE || child.getAnimation() != null) {
             return false;
         }
-        if (mCachesPoint == null)
-            mCachesPoint = new float[2];
-        mCachesPoint[0] = x;
-        mCachesPoint[1] = y;
-        mCachesPoint[0] += group.getScrollX() - child.getLeft();
-        mCachesPoint[1] += group.getScrollY() - child.getTop();
-        final boolean isInView = mCachesPoint[0] >= 0 && mCachesPoint[1] >= 0
-                && mCachesPoint[0] < (child.getWidth())
-                && mCachesPoint[1] < ((child.getHeight()));
+        if (mCachedPoint == null)
+            mCachedPoint = new float[2];
+        mCachedPoint[0] = x;
+        mCachedPoint[1] = y;
+        mCachedPoint[0] += group.getScrollX() - child.getLeft();
+        mCachedPoint[1] += group.getScrollY() - child.getTop();
+        final boolean isInView = mCachedPoint[0] >= 0 && mCachedPoint[1] >= 0
+                && mCachedPoint[0] < (child.getWidth())
+                && mCachedPoint[1] < ((child.getHeight()));
         if (isInView) {
-            mCachesPoint[0] = mCachesPoint[0] - x;
-            mCachesPoint[1] = mCachesPoint[1] - y;
+            mCachedPoint[0] = mCachedPoint[0] - x;
+            mCachedPoint[1] = mCachedPoint[1] - y;
         }
         return isInView;
     }
@@ -2739,8 +2795,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             for (int i = count - 1; i >= 0; i--) {
                 View child = group.getChildAt(i);
                 if (isTransformedTouchPointInView(x, y, group, child)) {
-                    View view = ensureScrollTargetView(child, x + mCachesPoint[0], y +
-                            mCachesPoint[1]);
+                    View view = ensureScrollTargetView(child, x + mCachedPoint[0], y +
+                            mCachedPoint[1]);
                     if (view != null)
                         return view;
                 }
@@ -3337,7 +3393,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             SRLog.d(TAG, "updatePos(): change: %s, current: %s last: %s",
                     change, mIndicator.getCurrentPos(), mIndicator.getLastPos());
         notifyUIPositionChanged();
-        boolean needRequestLayout = offsetChild(change, isMovingHeader, isMovingFooter);
+        boolean needRequestLayout = change != 0 && offsetChild(change, isMovingHeader,
+                isMovingFooter);
         if (needRequestLayout || mIndicator.isInStartPosition()) {
             requestLayout();
         } else {
@@ -3408,6 +3465,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
+                if (mStickyFooterView != null && isMovingFooter)
+                    ViewCompat.offsetTopAndBottom(mStickyFooterView, change);
                 if (mScrollTargetView != null && isMovingFooter) {
                     mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {

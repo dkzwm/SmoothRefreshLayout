@@ -73,5 +73,6 @@
     <string name="test_scale_effect">测试拉伸缩放效果</string>
     <string name="test_horizontal_scale_effect">测试横向拉伸缩放消费</string>
     <string name="sticky_header">黏贴头部视图</string>
+    <string name="sticky_footer">黏贴尾部视图</string>
     <string name="test_nested_with_viewpager">测试ViewPager嵌套下共用一个刷新布局</string>
 </resources>
