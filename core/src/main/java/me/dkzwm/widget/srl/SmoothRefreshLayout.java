@@ -888,10 +888,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param listener Listener
      */
-    public void addOnUIPositionChangedListener(OnUIPositionChangedListener listener) {
-        if (mUIPositionChangedListeners == null)
+    public void addOnUIPositionChangedListener(@NonNull OnUIPositionChangedListener listener) {
+        if (mUIPositionChangedListeners == null) {
             mUIPositionChangedListeners = new ArrayList<>();
-        mUIPositionChangedListeners.add(listener);
+            mUIPositionChangedListeners.add(listener);
+        } else if (!mUIPositionChangedListeners.contains(listener)) {
+            mUIPositionChangedListeners.add(listener);
+        }
     }
 
     /**
@@ -900,7 +903,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      *
      * @param listener Listener
      */
-    public void removeOnUIPositionChangedListener(OnUIPositionChangedListener listener) {
+    public void removeOnUIPositionChangedListener(@NonNull OnUIPositionChangedListener listener) {
         if (mUIPositionChangedListeners != null && !mUIPositionChangedListeners.isEmpty())
             mUIPositionChangedListeners.remove(listener);
     }
@@ -2618,8 +2621,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mFooterRefreshCompleteHook != null)
             mFooterRefreshCompleteHook.mLayout = null;
         mFooterRefreshCompleteHook = null;
-        if (mUIPositionChangedListeners != null)
-            mUIPositionChangedListeners.clear();
         if (sDebug) SRLog.d(TAG, "destroy()");
     }
 
