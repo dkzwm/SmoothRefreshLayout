@@ -365,9 +365,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
         if (mLifecycleObserver != null)
             mLifecycleObserver.onAttached(this);
-        super.onAttachedToWindow();
     }
 
     @Override
@@ -975,7 +975,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setOnHookHeaderRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callback) {
         if (mHeaderRefreshCompleteHook == null)
             mHeaderRefreshCompleteHook = new RefreshCompleteHook();
-        mHeaderRefreshCompleteHook.mLayout = this;
         mHeaderRefreshCompleteHook.setHookCallBack(callback);
     }
 
@@ -989,7 +988,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public void setOnHookFooterRefreshCompleteCallback(OnHookUIRefreshCompleteCallBack callback) {
         if (mFooterRefreshCompleteHook == null)
             mFooterRefreshCompleteHook = new RefreshCompleteHook();
-        mFooterRefreshCompleteHook.mLayout = this;
         mFooterRefreshCompleteHook.setHookCallBack(callback);
     }
 
@@ -2617,10 +2615,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         reset();
         if (mHeaderRefreshCompleteHook != null)
             mHeaderRefreshCompleteHook.mLayout = null;
-        mHeaderRefreshCompleteHook = null;
         if (mFooterRefreshCompleteHook != null)
             mFooterRefreshCompleteHook.mLayout = null;
-        mFooterRefreshCompleteHook = null;
         if (sDebug) SRLog.d(TAG, "destroy()");
     }
 
@@ -2634,7 +2630,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollChecker.destroy();
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
-        mDelayToRefreshComplete = null;
         if (sDebug) SRLog.d(TAG, "reset()");
     }
 
@@ -3208,7 +3203,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return;
         mAutomaticActionUseSmoothScroll = false;
         tryToPerformRefresh();
-        if (mStatus == SR_STATUS_REFRESHING || mStatus == SR_STATUS_LOADING_MORE) {
+        if (isRefreshing() || isLoadingMore()) {
             if (isEnabledKeepRefreshView()) {
                 if (isHeaderInProcessing()) {
                     if (isMovingHeader() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
