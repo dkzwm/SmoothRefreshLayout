@@ -424,8 +424,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     private boolean canPerformTwoLevelPullToRefresh() {
-        return mMode == Constants.MODE_DEFAULT && !isDisabledRefresh() && mTwoLevelRefreshView !=
-                null && mEnabledTwoLevelRefresh && canPerformRefresh() && isMovingHeader();
+        return !isDisabledRefresh() && mTwoLevelRefreshView != null
+                && mEnabledTwoLevelRefresh && canPerformRefresh() && isMovingHeader();
     }
 
     private void delayForStay() {

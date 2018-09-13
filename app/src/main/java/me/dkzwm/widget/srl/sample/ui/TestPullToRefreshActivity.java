@@ -38,6 +38,7 @@ public class TestPullToRefreshActivity extends AppCompatActivity {
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnablePullToRefresh(true);
+        mRefreshLayout.setEnableNextPtrAtOnce(true);
         mRefreshLayout.setDisableLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override

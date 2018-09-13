@@ -45,11 +45,12 @@ public class WaveHeader extends View implements IRefreshView {
     protected int mDefaultHeight;
     @RefreshViewStyle
     protected int mStyle = STYLE_PIN;
-    protected float mFingerUpY = 0;
+    protected float mMaxY = 0;
     protected float mProgress = 0f;
     protected int mCurrentPosY = 0;
     protected int mCircleRadius;
     private boolean mFromFront = true;
+    private boolean mHasFingerUp = false;
     private double mGrowingTime = 0;
     private float mBarExtraLength = 0;
     private long mLastDrawProgressTime = 0;
@@ -226,16 +227,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-        mFingerUpY = indicator.getCurrentPos();
-        if (layout.isEnabledKeepRefreshView() && mStatus != SmoothRefreshLayout.SR_STATUS_COMPLETE) {
-            final int offsetToKeepHeader = indicator.getOffsetToKeepHeaderWhileLoading();
-            if (mFingerUpY > offsetToKeepHeader && !layout.isDisabledPerformRefresh()) {
-                layout.setSpringInterpolator(sBounceInterpolator);
-            } else {
-                layout.resetScrollerInterpolator();
-            }
-        }
-        invalidate();
+        mHasFingerUp = true;
     }
 
     @Override
@@ -256,6 +248,7 @@ public class WaveHeader extends View implements IRefreshView {
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
         mStatus = SmoothRefreshLayout.SR_STATUS_REFRESHING;
+        layout.resetScrollerInterpolator();
         updateProgressBounds();
         invalidate();
     }
@@ -275,6 +268,7 @@ public class WaveHeader extends View implements IRefreshView {
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         mCurrentPosY = indicator.getCurrentPos();
+        mMaxY = Math.max(mCurrentPosY, mMaxY);
         final int width = getWidth();
         final float[] lastMovePoint = indicator.getLastMovePoint();
         final int offsetToKeepHeader;
@@ -289,13 +283,20 @@ public class WaveHeader extends View implements IRefreshView {
             } else if (layout.isOverScrolling()) {
                 mLastPoint = new float[]{width / 2, mCurrentPosY};
             } else {
+                if (layout.isEnabledKeepRefreshView()) {
+                    if (mMaxY > offsetToKeepHeader && !layout.isDisabledPerformRefresh()) {
+                        layout.setSpringInterpolator(sBounceInterpolator);
+                    } else {
+                        layout.resetScrollerInterpolator();
+                    }
+                }
                 float x = lastMovePoint[0];
                 float percent;
-                if (mFingerUpY > 0) {
-                    if (mFingerUpY > offsetToKeepHeader) {
+                if (mMaxY > 0 && mHasFingerUp) {
+                    if (mMaxY > offsetToKeepHeader) {
                         if (mCurrentPosY > offsetToKeepHeader) {
                             percent = (mCurrentPosY - offsetToKeepHeader)
-                                    / (mFingerUpY - offsetToKeepHeader);
+                                    / (mMaxY - offsetToKeepHeader);
                         } else {
                             percent = 0;
                         }
@@ -305,7 +306,7 @@ public class WaveHeader extends View implements IRefreshView {
                             x = x + (width / 2 - x) * (1 - percent);
                         }
                     } else {
-                        percent = mCurrentPosY / mFingerUpY;
+                        percent = mCurrentPosY / mMaxY;
                         if (x > width) {
                             x = x - (x - width / 2) * (1 - percent);
                         } else {
@@ -350,7 +351,8 @@ public class WaveHeader extends View implements IRefreshView {
     }
 
     private void reset() {
-        mFingerUpY = 0;
+        mMaxY = 0;
+        mHasFingerUp=false;
         mProgress = 0;
         mLastDrawProgressTime = 0;
         mBarExtraLength = 0;

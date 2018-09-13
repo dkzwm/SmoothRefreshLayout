@@ -309,11 +309,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
         final int top = getPaddingTop() + lp.topMargin;
         final int bottom = top + mStickyFooterView.getMeasuredHeight();
-        final int right;
-        if (isMovingFooter() && !isEnabledPinContentView())
-            right = contentRight - lp.bottomMargin - offsetFooterY;
-        else
-            right = contentRight - lp.bottomMargin;
+        final int right = contentRight - lp.bottomMargin;
         final int left = right - mStickyFooterView.getMeasuredWidth();
         mStickyFooterView.layout(left, top, right, bottom);
         if (sDebug) SRLog.d(TAG, "onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom);
@@ -476,6 +472,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
                         break;
                 }
+                if (!isEnabledPinContentView() && mStickyFooterView != null)
+                    ViewCompat.offsetLeftAndRight(mStickyFooterView, change);
                 if (isFooterInProcessing())
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
