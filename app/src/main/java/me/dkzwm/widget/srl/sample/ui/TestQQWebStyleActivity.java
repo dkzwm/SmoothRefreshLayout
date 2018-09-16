@@ -39,6 +39,7 @@ public class TestQQWebStyleActivity extends AppCompatActivity {
         mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
         mRefreshLayout.setEnableHeaderDrawerStyle(true);
         mRefreshLayout.setMaxMoveRatioOfHeader(1);
+        mRefreshLayout.setEnableKeepRefreshView(false);
         mWebView = findViewById(R.id.webView_with_webView);
         mWebView.loadUrl("https://github.com/dkzwm");
     }

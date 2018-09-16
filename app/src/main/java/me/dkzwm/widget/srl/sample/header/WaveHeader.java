@@ -23,6 +23,7 @@ import android.view.animation.Interpolator;
 
 import me.dkzwm.widget.srl.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.animation.ViscousFluidInterpolator;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.PixelUtl;
@@ -34,6 +35,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  */
 public class WaveHeader extends View implements IRefreshView {
     private static final Interpolator sBounceInterpolator = new BounceInterpolator();
+    private static final Interpolator sSpringBackInterpolator = new ViscousFluidInterpolator();
     protected Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -50,7 +52,6 @@ public class WaveHeader extends View implements IRefreshView {
     protected int mCurrentPosY = 0;
     protected int mCircleRadius;
     private boolean mFromFront = true;
-    private boolean mHasFingerUp = false;
     private double mGrowingTime = 0;
     private float mBarExtraLength = 0;
     private long mLastDrawProgressTime = 0;
@@ -227,7 +228,6 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-        mHasFingerUp = true;
     }
 
     @Override
@@ -248,7 +248,7 @@ public class WaveHeader extends View implements IRefreshView {
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
         mStatus = SmoothRefreshLayout.SR_STATUS_REFRESHING;
-        layout.resetScrollerInterpolator();
+        layout.setSpringBackInterpolator(sSpringBackInterpolator);
         updateProgressBounds();
         invalidate();
     }
@@ -278,47 +278,37 @@ public class WaveHeader extends View implements IRefreshView {
             offsetToKeepHeader = 0;
         }
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
-            if (indicator.hasTouched()) {
-                mLastPoint = new float[]{lastMovePoint[0], mCurrentPosY};
-            } else if (layout.isOverScrolling()) {
-                mLastPoint = new float[]{width / 2, mCurrentPosY};
-            } else {
-                if (layout.isEnabledKeepRefreshView()) {
-                    if (mMaxY > offsetToKeepHeader && !layout.isDisabledPerformRefresh()) {
-                        layout.setSpringInterpolator(sBounceInterpolator);
+            if (offsetToKeepHeader > 0 && mCurrentPosY > offsetToKeepHeader) {
+                layout.setSpringBackInterpolator(sBounceInterpolator);
+            }
+            float x = lastMovePoint[0];
+            float percent;
+            if (!layout.isAutoRefresh()) {
+                if (mMaxY > offsetToKeepHeader) {
+                    if (mCurrentPosY > offsetToKeepHeader) {
+                        percent = (mCurrentPosY - offsetToKeepHeader)
+                                / (mMaxY - offsetToKeepHeader);
                     } else {
-                        layout.resetScrollerInterpolator();
+                        percent = 0;
                     }
-                }
-                float x = lastMovePoint[0];
-                float percent;
-                if (mMaxY > 0 && mHasFingerUp) {
-                    if (mMaxY > offsetToKeepHeader) {
-                        if (mCurrentPosY > offsetToKeepHeader) {
-                            percent = (mCurrentPosY - offsetToKeepHeader)
-                                    / (mMaxY - offsetToKeepHeader);
-                        } else {
-                            percent = 0;
-                        }
-                        if (x > width) {
-                            x = x - (x - width / 2) * (1 - percent);
-                        } else {
-                            x = x + (width / 2 - x) * (1 - percent);
-                        }
+                    if (x > width) {
+                        x = x - (x - width / 2) * (1 - percent);
                     } else {
-                        percent = mCurrentPosY / mMaxY;
-                        if (x > width) {
-                            x = x - (x - width / 2) * (1 - percent);
-                        } else {
-                            x = x + (width / 2 - x) * (1 - percent);
-                        }
+                        x = x + (width / 2 - x) * (1 - percent);
                     }
                 } else {
-                    x = width / 2;
+                    percent = mCurrentPosY / mMaxY;
+                    if (x > width) {
+                        x = x - (x - width / 2) * (1 - percent);
+                    } else {
+                        x = x + (width / 2 - x) * (1 - percent);
+                    }
                 }
-                mLastPoint[0] = x;
-                mLastPoint[1] = mCurrentPosY;
+            } else {
+                x = width / 2;
             }
+            mLastPoint[0] = x;
+            mLastPoint[1] = mCurrentPosY;
         } else if (status == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
             updateProgressBounds();
         } else if (status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
@@ -352,7 +342,6 @@ public class WaveHeader extends View implements IRefreshView {
 
     private void reset() {
         mMaxY = 0;
-        mHasFingerUp=false;
         mProgress = 0;
         mLastDrawProgressTime = 0;
         mBarExtraLength = 0;

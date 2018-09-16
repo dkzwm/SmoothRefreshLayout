@@ -69,7 +69,7 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
             }
         });
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
-        mRefreshLayout.setAutomaticSpringInterpolator(new OvershootInterpolator(3));
+        mRefreshLayout.setSpringInterpolator(new OvershootInterpolator(3));
         mRefreshLayout.autoRefresh(false);
         mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(recyclerView);
         mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);

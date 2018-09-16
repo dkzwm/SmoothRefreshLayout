@@ -176,8 +176,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
     private ILifecycleObserver mLifecycleObserver;
     private Interpolator mSpringInterpolator;
+    private Interpolator mSpringBackInterpolator;
     private Interpolator mOverScrollInterpolator;
-    private Interpolator mAutomaticSpringInterpolator;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private GestureDetector mGestureDetector;
     private DelayToRefreshComplete mDelayToRefreshComplete;
@@ -326,6 +326,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mGestureDetector = new GestureDetector(context, this);
         mScrollChecker = new ScrollChecker();
         mSpringInterpolator = sSpringInterpolator;
+        mSpringBackInterpolator = mSpringInterpolator;
         mOverScrollInterpolator = new DecelerateInterpolator(1.2f);
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
@@ -665,7 +666,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         child.layout(left, top, right, bottom);
         if (sDebug) SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
     }
-
 
     protected void layoutStickyHeader(boolean pin, int offsetHeader) {
         final LayoutParams lp = (LayoutParams) mStickyHeaderView.getLayoutParams();
@@ -2183,8 +2183,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * <p>重置Scroller的插值器</p>
      */
     public void resetScrollerInterpolator() {
-        mSpringInterpolator = sSpringInterpolator;
-        mScrollChecker.updateInterpolator(mSpringInterpolator);
+        if (mSpringInterpolator != sSpringInterpolator) {
+            setSpringInterpolator(sSpringInterpolator);
+        }
     }
 
     /**
@@ -2195,7 +2196,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     public void setSpringInterpolator(Interpolator interpolator) {
         mSpringInterpolator = interpolator;
-        mScrollChecker.updateInterpolator(interpolator);
+        if (!mScrollChecker.isFling() && !mScrollChecker.isPreFling()) {
+            mScrollChecker.updateInterpolator(interpolator);
+        }
+    }
+
+    public void setSpringBackInterpolator(Interpolator interpolator) {
+        mSpringBackInterpolator = interpolator;
+        if (mScrollChecker.isSpringBack()) {
+            mScrollChecker.updateInterpolator(interpolator);
+        }
     }
 
     /**
@@ -2205,14 +2215,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      * @param interpolator Scroller interpolator
      */
     public void setOverScrollInterpolator(Interpolator interpolator) {
-        mOverScrollInterpolator = interpolator;
-    }
-
-    /**
-     * Set the scroller interpolator when in automatic spring
-     */
-    public void setAutomaticSpringInterpolator(Interpolator interpolator) {
-        mAutomaticSpringInterpolator = interpolator;
+        if (mOverScrollInterpolator != interpolator) {
+            mOverScrollInterpolator = interpolator;
+            if (mScrollChecker.isFling() || mScrollChecker.isPreFling()) {
+                mScrollChecker.updateInterpolator(interpolator);
+            }
+        }
     }
 
     /**
@@ -2270,7 +2278,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-
     public void setMode(@Mode int mode) {
         mMode = mode;
         requestLayout();
@@ -2287,9 +2294,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (Math.abs(realVelocity) > mMinimumFlingVelocity * 2) {
                     if ((!isNotYetInEdgeCannotMoveHeader() && realVelocity > 0)
                             || (!isNotYetInEdgeCannotMoveFooter() && realVelocity < 0)) {
-                        boolean invert = realVelocity < 0;
-                        realVelocity = (float) Math.pow(Math.abs(realVelocity), .68f);
-                        mScrollChecker.tryToPreFling(invert ? -realVelocity : realVelocity);
+                        if (isEnabledOverScroll()) {
+                            boolean invert = realVelocity < 0;
+                            realVelocity = (float) Math.pow(Math.abs(realVelocity), .68f);
+                            mScrollChecker.tryToPreFling(invert ? -realVelocity : realVelocity);
+                        }
                     } else {
                         mScrollChecker.tryToPreFling(realVelocity);
                     }
@@ -2407,8 +2416,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             tryToPerformScrollToTopToRefresh();
             mScrollChecker.onScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
-            consumed[0] += parentConsumed[0];
-            consumed[1] += parentConsumed[1];
+            if (!isMovingContent()) {
+                if (isVerticalOrientation) consumed[1] = dy;
+                else consumed[0] = dx;
+            }
         }
     }
 
@@ -2425,9 +2436,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     @Override
     public void onStopNestedScroll(@NonNull View target, int type) {
         if (sDebug) SRLog.d(TAG, "onStopNestedScroll()");
-        if (type == ViewCompat.TYPE_NON_TOUCH) {
-            onRelease();
-        }
         mNestedScrollingParentHelper.onStopNestedScroll(target, type);
         mIndicatorSetter.onFingerUp();
         mNestedScrollInProgress = false;
@@ -2477,11 +2485,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                         mIndicator.getLastMovePoint()[1] - dy);
-                if (maxDistance > 0 && (mIndicator.getCurrentPos() + mIndicator.getOffset() >
-                        maxDistance))
-                    moveHeaderPos(maxDistance - mIndicator.getCurrentPos());
-                else
-                    moveHeaderPos(mIndicator.getOffset());
+                moveHeaderPos(mIndicator.getOffset());
             } else if (distance > 0 && !isDisabledLoadMore() && canNotChildScrollDown
                     && !(isDisabledLoadMoreWhenContentNotFull() && canNotChildScrollUp
                     && mIndicator.isInStartPosition())
@@ -2500,11 +2504,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                         mIndicator.getLastMovePoint()[1] - dy);
-                if (maxDistance > 0 && (mIndicator.getCurrentPos() - mIndicator.getOffset() >
-                        maxDistance))
-                    moveFooterPos(mIndicator.getCurrentPos() - maxDistance);
-                else
-                    moveFooterPos(mIndicator.getOffset());
+                moveFooterPos(mIndicator.getOffset());
             }
             tryToResetMovingStatus();
         }
@@ -2924,6 +2924,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 }
                 return true;
             case MotionEvent.ACTION_MOVE:
+                mLastMoveEvent = ev;
                 if (!mIndicator.hasTouched())
                     return super.dispatchTouchEvent(ev);
                 final int index = ev.findPointerIndex(mTouchPointerId);
@@ -2932,7 +2933,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             mTouchPointerId + " not found. Did any MotionEvents get skipped?");
                     return dispatchTouchEventSuper(ev);
                 }
-                mLastMoveEvent = ev;
                 if (tryToFilterTouchEventInDispatchTouchEvent(ev))
                     return true;
                 tryToResetMovingStatus();
@@ -2961,9 +2961,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         if (current >= maxHeaderDistance) {
                             updateAnotherDirectionPos();
                             return dispatchTouchEventSuper(ev);
-                        } else if (current + offset > maxHeaderDistance) {
-                            moveHeaderPos(maxHeaderDistance - current);
-                            return true;
                         }
                     }
                 } else {
@@ -2973,9 +2970,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         if (current >= maxFooterDistance) {
                             updateAnotherDirectionPos();
                             return dispatchTouchEventSuper(ev);
-                        } else if (current - offset > maxFooterDistance) {
-                            moveFooterPos(current - maxFooterDistance);
-                            return true;
                         }
                     } else if (isDisabledLoadMoreWhenContentNotFull() && mIndicator
                             .isInStartPosition() && canNotChildScrollDown && canNotChildScrollUp) {
@@ -3196,23 +3190,25 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mHasSendCancelEvent || mLastMoveEvent == null) return;
         if (sDebug) SRLog.d(TAG, "sendCancelEvent()");
         final MotionEvent last = mLastMoveEvent;
-        MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime() +
+        final MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime() +
                         ViewConfiguration.getLongPressTimeout(),
                 MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
         mHasSendCancelEvent = true;
         mHasSendDownEvent = false;
         super.dispatchTouchEvent(ev);
+        ev.recycle();
     }
 
     protected void sendDownEvent() {
         if (mHasSendDownEvent || mLastMoveEvent == null) return;
         if (sDebug) SRLog.d(TAG, "sendDownEvent()");
         final MotionEvent last = mLastMoveEvent;
-        MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
+        final MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
         mHasSendCancelEvent = false;
         mHasSendDownEvent = true;
         super.dispatchTouchEvent(ev);
+        ev.recycle();
     }
 
     protected void notifyFingerUp() {
@@ -3313,6 +3309,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected void notifyUIRefreshComplete(boolean useScroll) {
+        mScrollChecker.destroy();
         mIndicatorSetter.onRefreshComplete();
         if (mNeedNotifyRefreshComplete) {
             if (isHeaderInProcessing() && mHeaderView != null) {
@@ -3334,12 +3331,20 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) SRLog.d(TAG, "moveHeaderPos(): delta: %s", delta);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         // to keep the consistence with refresh, need to converse the deltaY
+        final float maxDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+        if (maxDistance > 0 && delta > 0 && mIndicator.getCurrentPos() + delta > maxDistance) {
+            delta = maxDistance - mIndicator.getCurrentPos();
+        }
         movePos(delta);
     }
 
     protected void moveFooterPos(float delta) {
         if (sDebug) SRLog.d(TAG, "moveFooterPos(): delta: %s", delta);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
+        final float maxDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
+        if (maxDistance > 0 && delta < 0 && mIndicator.getCurrentPos() - delta > maxDistance) {
+            delta = mIndicator.getCurrentPos() - maxDistance;
+        }
         //check if it is needed to compatible scroll
         if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
                 && !isEnabledPinContentView() && mIsLastRefreshSuccessful
@@ -3473,8 +3478,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             ViewCompat.offsetTopAndBottom(mHeaderView.getView(), change);
                         break;
                 }
-                if (!isEnabledPinContentView() && mStickyHeaderView != null)
-                    ViewCompat.offsetTopAndBottom(mStickyHeaderView, change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
@@ -3503,14 +3506,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
                         break;
                 }
-                if (!isEnabledPinContentView() && mStickyFooterView != null)
-                    ViewCompat.offsetTopAndBottom(mStickyFooterView, change);
                 if (isFooterInProcessing())
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
+                if (isMovingHeader && mStickyHeaderView != null)
+                    ViewCompat.offsetTopAndBottom(mStickyHeaderView, change);
+                if (isMovingFooter && mStickyFooterView != null)
+                    ViewCompat.offsetTopAndBottom(mStickyFooterView, change);
                 if (mScrollTargetView != null && isMovingFooter) {
                     mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
@@ -3817,8 +3822,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean canPerformRefresh() {
-        return mMode == Constants.MODE_DEFAULT && !(mScrollChecker.isOverScrolling() ||
-                isMovingContent());
+        return mMode == Constants.MODE_DEFAULT && !isMovingContent();
     }
 
     protected void performRefresh() {
@@ -4165,13 +4169,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_FLING:
-                        mDuration = mDuration / 2 * 3;
+                        mDuration = Math.max(500, mDuration / 2 * 3);
                         mMode = MODE_SPRING_BACK;
-                        updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
                         SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_PRE_FLING:
-                        destroy();
+                        if (!SmoothRefreshLayout.this.isMovingContent()) {
+                            mDuration = Math.max(500, mDuration / 2 * 3);
+                            mMode = MODE_SPRING_BACK;
+                        } else {
+                            destroy();
+                        }
                         SmoothRefreshLayout.this.onRelease();
                         break;
                 }
@@ -4186,6 +4194,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             return mMode == MODE_PRE_FLING;
         }
 
+        boolean isFling() {
+            return mMode == MODE_FLING;
+        }
+
+        boolean isSpringBack() {
+            return mMode == MODE_FLING;
+        }
+
         float calculateVelocity() {
             final float percent = mScroller.timePassed() / (float) mScroller.getDuration();
             return mVelocity * (1 - mInterpolator.getInterpolation(percent));
@@ -4194,17 +4210,17 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         void tryToPreFling(float v) {
             destroy();
             mMode = MODE_PRE_FLING;
-            updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
+            updateInterpolator(SmoothRefreshLayout.this.mOverScrollInterpolator);
             mVelocity = v;
             mLastTo = IIndicator.START_POS;
             mScroller.fling(0, 0, 0, (int) v, Integer.MIN_VALUE, Integer.MAX_VALUE,
                     Integer.MIN_VALUE, Integer.MAX_VALUE);
             final int finalY = mScroller.getFinalY();
-            final int duration = mScroller.getDuration();
+            mDuration = mScroller.getDuration();
             if (SmoothRefreshLayout.sDebug)
                 SRLog.d(SmoothRefreshLayout.this.TAG, "ScrollChecker: tryToPreFling(): v: %s, finalY: %s," +
-                        " duration: %s", v, finalY, duration);
-            mScroller.startScroll(0, 0, 0, finalY, duration);
+                        " duration: %s", v, finalY, mDuration);
+            mScroller.startScroll(0, 0, 0, finalY, mDuration);
             ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
 
@@ -4230,11 +4246,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 destroy();
                 mMode = MODE_SCROLLING;
             }
-            if (SmoothRefreshLayout.this.mAutomaticActionUseSmoothScroll
-                    && SmoothRefreshLayout.this.mAutomaticSpringInterpolator != null)
-                updateInterpolator(SmoothRefreshLayout.this.mAutomaticSpringInterpolator);
-            else
+            if (to > SmoothRefreshLayout.this.mIndicator.getCurrentPos()) {
                 updateInterpolator(SmoothRefreshLayout.this.mSpringInterpolator);
+            } else if (to < SmoothRefreshLayout.this.mIndicator.getCurrentPos()) {
+                updateInterpolator(SmoothRefreshLayout.this.mSpringBackInterpolator);
+            }
             if (SmoothRefreshLayout.sDebug)
                 SRLog.d(SmoothRefreshLayout.this.TAG, "ScrollChecker: tryToScrollTo(): " +
                         "to:%s, duration:%s", to, duration);
@@ -4292,6 +4308,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     case MODE_SPRING_BACK:
                         mLastStart = SmoothRefreshLayout.this.mIndicator.getCurrentPos();
                         int distance = mLastTo - mLastStart;
+                        if (distance < 0)
+                            break;
                         int passed = mScroller.timePassed();
                         mScroller = new Scroller(mContext, interpolator);
                         mScroller.startScroll(0, 0, 0, distance, mDuration - passed);

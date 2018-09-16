@@ -442,8 +442,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
                         break;
                 }
-                if (!isEnabledPinContentView() && mStickyHeaderView != null)
-                    ViewCompat.offsetLeftAndRight(mStickyHeaderView, change);
                 if (isHeaderInProcessing())
                     mHeaderView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
@@ -472,14 +470,16 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
                         break;
                 }
-                if (!isEnabledPinContentView() && mStickyFooterView != null)
-                    ViewCompat.offsetLeftAndRight(mStickyFooterView, change);
                 if (isFooterInProcessing())
                     mFooterView.onRefreshPositionChanged(this, mStatus, mIndicator);
                 else
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
+                if (!isMovingHeader && mStickyHeaderView != null)
+                    ViewCompat.offsetLeftAndRight(mStickyHeaderView, change);
+                if (!isMovingFooter && mStickyFooterView != null)
+                    ViewCompat.offsetLeftAndRight(mStickyFooterView, change);
                 if (mScrollTargetView != null && isMovingFooter) {
                     mScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
