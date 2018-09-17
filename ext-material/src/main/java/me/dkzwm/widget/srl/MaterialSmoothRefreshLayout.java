@@ -76,6 +76,7 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
     public void materialStyle() {
         setRatioOfFooterToRefresh(.95f);
         setMaxMoveRatioOfFooter(1f);
+        setRatioToKeep(1f);
         setMaxMoveRatioOfHeader(1.5f);
         setEnablePinContentView(true);
         setEnableKeepRefreshView(true);

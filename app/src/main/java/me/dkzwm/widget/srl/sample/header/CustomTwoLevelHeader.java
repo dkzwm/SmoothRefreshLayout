@@ -114,7 +114,7 @@ public class CustomTwoLevelHeader extends FrameLayout implements TwoLevelRefresh
                         mStatus = STATUS_TWO_LEVEL_REFRESH_HINT;
                     }
                     return;
-                } else if (currentPos > offSetToTwoLevelRefresh) {
+                } else if (currentPos >= offSetToTwoLevelRefresh) {
                     if (mStatus != STATUS_TWO_LEVEL_RELEASE_TO_REFRESH) {
                         mStatus = STATUS_TWO_LEVEL_RELEASE_TO_REFRESH;
                         if (!layout.isEnabledPullToRefresh()) {

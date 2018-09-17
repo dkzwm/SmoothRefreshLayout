@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
@@ -17,7 +16,6 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.BuildConfig;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.widget.WaveSmoothRefreshLayout;
@@ -42,15 +40,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mRefreshLayout.refreshComplete(800);
                     }
                 }, 4000);
-            }
-        });
-        mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout
-                .OnUIPositionChangedListener() {
-            @Override
-            public void onChanged(byte status, IIndicator indicator) {
-                if (!mRefreshLayout.isOverScrolling() && mRefreshLayout.isMovingFooter()) {
-                    mRefreshLayout.resetScrollerInterpolator();
-                }
             }
         });
         mRefreshLayout.setDisableLoadMore(false);

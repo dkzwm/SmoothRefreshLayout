@@ -25,14 +25,6 @@ public interface IIndicator {
 
     boolean hasMoved();
 
-    float getResistanceOfHeader();
-
-    float getResistanceOfFooter();
-
-    float getRatioOfHeaderToRefresh();
-
-    float getRatioOfFooterToRefresh();
-
     int getOffsetToRefresh();
 
     int getOffsetToLoadMore();
@@ -45,17 +37,15 @@ public interface IIndicator {
 
     int getFooterHeight();
 
-    void convert(IIndicator indicator);
-
     boolean hasLeftStartPosition();
 
     boolean hasJustLeftStartPosition();
 
     boolean hasJustBackToStartPosition();
 
-    boolean isOverOffsetToRefresh();
+    boolean isJustReturnedOffsetToRefresh();
 
-    boolean isOverOffsetToLoadMore();
+    boolean isJustReturnedOffsetToLoadMore();
 
     boolean hasMovedAfterPressedDown();
 

@@ -232,7 +232,8 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        layout.resetScrollerInterpolator();
+        layout.setSpringInterpolator(sSpringBackInterpolator);
+        layout.setSpringBackInterpolator(sSpringBackInterpolator);
         mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         reset();
         invalidate();
@@ -240,6 +241,8 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
+        layout.setSpringInterpolator(sSpringBackInterpolator);
+        layout.setSpringBackInterpolator(sSpringBackInterpolator);
         mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         reset();
         invalidate();
