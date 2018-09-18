@@ -2349,7 +2349,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (isNeedFilterTouchEvent()) {
             if (isVerticalOrientation) consumed[1] = dy;
             else consumed[0] = dx;
-        } else if (mIndicator.hasTouched() || type == ViewCompat.TYPE_TOUCH) {
+        } else if (type == ViewCompat.TYPE_TOUCH) {
             final int distance = isVerticalOrientation ? dy : dx;
             if (distance > 0 && !isDisabledRefresh() && !isNotYetInEdgeCannotMoveHeader()
                     && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
@@ -2405,8 +2405,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             mScrollChecker.onScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
             if (!isMovingContent()) {
-                if (isVerticalOrientation) consumed[1] = dy;
-                else consumed[0] = dx;
+                if (!(isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
+                        || (isLoadingMore() && isMovingFooter()))))
+                    if (isVerticalOrientation) consumed[1] = dy;
+                    else consumed[0] = dx;
             }
         }
     }
@@ -2450,7 +2452,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow, type);
-        if (mIndicator.hasTouched()) {
+        if (type == ViewCompat.TYPE_TOUCH) {
             final int dx = dxUnconsumed + mParentOffsetInWindow[0];
             final int dy = dyUnconsumed + mParentOffsetInWindow[1];
             final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
