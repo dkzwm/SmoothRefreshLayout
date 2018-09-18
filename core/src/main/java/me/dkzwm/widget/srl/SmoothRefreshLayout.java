@@ -3578,7 +3578,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mMode == Constants.MODE_DEFAULT && mStatus == SR_STATUS_PREPARE && !isAutoRefresh()) {
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
-            if (isHeaderInProcessing() && isMovingHeader()) {
+            if (isHeaderInProcessing() && isMovingHeader() && !isDisabledPerformRefresh()) {
                 if (isEnabledPullToRefresh() && mIndicator.crossRefreshLineFromTopToBottom())
                     triggeredRefresh(true);
                 else if (!mIndicator.hasTouched()
@@ -3587,7 +3587,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     triggeredRefresh(true);
                     mScrollChecker.destroy();
                 }
-            } else if (isFooterInProcessing() && isMovingFooter()) {
+            } else if (isFooterInProcessing() && isMovingFooter() && !isDisabledPerformLoadMore()) {
                 if (isEnabledPullToRefresh() && mIndicator.crossRefreshLineFromBottomToTop())
                     triggeredLoadMore(true);
                 else if (!mIndicator.hasTouched()
