@@ -3164,7 +3164,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean isNotYetInEdgeCannotMoveHeader(View view) {
         if (mInEdgeCanMoveFooterCallBack != null)
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(this, view,
-                    mFooterView);
+                    mHeaderView);
         return ScrollCompat.canChildScrollUp(view);
     }
 
