@@ -28,6 +28,7 @@ public class TestOverScrollActivity extends AppCompatActivity {
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setDisablePerformRefresh(true);
         refreshLayout.setDisablePerformLoadMore(true);
+        refreshLayout.setEnableKeepRefreshView(false);
         refreshLayout.getHeaderView().getView().setVisibility(View.GONE);
         refreshLayout.getFooterView().getView().setVisibility(View.GONE);
     }

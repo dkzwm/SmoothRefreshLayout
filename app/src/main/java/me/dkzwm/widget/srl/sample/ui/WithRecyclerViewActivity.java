@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -51,6 +52,10 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshBegin(final boolean isRefresh) {
+                if (!isRefresh) {
+                    Toast.makeText(WithRecyclerViewActivity.this, R.string.has_been_triggered_to_load_more,
+                            Toast.LENGTH_SHORT).show();
+                }
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
