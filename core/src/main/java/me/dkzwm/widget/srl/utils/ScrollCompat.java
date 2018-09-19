@@ -15,6 +15,8 @@ import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.ScrollView;
 
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
+
 /**
  * Created by dkzwm on 2017/5/27.
  *
@@ -139,7 +141,7 @@ public class ScrollCompat {
         }
     }
 
-    public static boolean scrollCompat(View view, float deltaY) {
+    public static boolean scrollCompat(SmoothRefreshLayout refreshLayout, View view, float deltaY) {
         if (view != null) {
             try {
                 if (view instanceof AbsListView) {
@@ -159,7 +161,11 @@ public class ScrollCompat {
                 } else if (isRecyclerView(view)) {
                     //Fix the problem of adding new data to RecyclerView while in Fling state,
                     //the new items will continue to Fling
-                    ((RecyclerView) view).stopScroll();
+                    RecyclerView recyclerView = (RecyclerView) view;
+                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
+                        recyclerView.stopScroll();
+                        refreshLayout.stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
+                    }
                     view.scrollBy(0, (int) deltaY);
                     return true;
                 }

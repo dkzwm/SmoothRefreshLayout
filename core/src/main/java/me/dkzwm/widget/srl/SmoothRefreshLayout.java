@@ -3400,7 +3400,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (mLoadMoreScrollCallback != null) {
             mLoadMoreScrollCallback.onScroll(view, delta);
         } else {
-            ScrollCompat.scrollCompat(view, delta);
+            ScrollCompat.scrollCompat(this, view, delta);
         }
     }
 
