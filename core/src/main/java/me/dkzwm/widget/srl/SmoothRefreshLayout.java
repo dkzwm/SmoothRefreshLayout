@@ -2437,7 +2437,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
         // Dispatch up our nested parent
         stopNestedScroll(type);
-        if (!isAutoRefresh())
+        if (!isAutoRefresh() && type == ViewCompat.TYPE_TOUCH)
             onFingerUp();
     }
 

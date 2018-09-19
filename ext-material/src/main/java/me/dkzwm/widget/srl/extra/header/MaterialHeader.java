@@ -207,6 +207,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
             mCachedDuration = duration;
         mDrawable.setAlpha(255);
         mDrawable.start();
+        invalidate();
     }
 
     @Override

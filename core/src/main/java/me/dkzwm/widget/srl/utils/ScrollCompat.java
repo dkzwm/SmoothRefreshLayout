@@ -153,8 +153,13 @@ public class ScrollCompat {
                     return true;
                 } else if (view instanceof WebView
                         || view instanceof ScrollView
-                        || view instanceof NestedScrollView
-                        || isRecyclerView(view)) {
+                        || view instanceof NestedScrollView) {
+                    view.scrollBy(0, (int) deltaY);
+                    return true;
+                } else if (isRecyclerView(view)) {
+                    //Fix the problem of adding new data to RecyclerView while in Fling state,
+                    //the new items will continue to Fling
+                    ((RecyclerView) view).stopScroll();
                     view.scrollBy(0, (int) deltaY);
                     return true;
                 }
