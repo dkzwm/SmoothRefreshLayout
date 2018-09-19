@@ -92,12 +92,8 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
         super.onDetachedFromWindow();
         resetDrawable();
         cancelAnimator();
-        if (mRefreshLayout != null) {
-            if (mRefreshLayout.equalsOnHookHeaderRefreshCompleteCallback
-                    (mHookUIRefreshCompleteCallBack)) {
-                mHasHook = true;
-                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(null);
-            }
+        if (mRefreshLayout != null && mHasHook) {
+            mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(null);
         }
     }
 
@@ -161,6 +157,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
 
     public void doHookUIRefreshComplete(SmoothRefreshLayout layout) {
         mRefreshLayout = layout;
+        mHasHook = true;
         layout.setOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
     }
 
@@ -214,7 +211,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
 
     @Override
     public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
-        if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)) {
+        if (mHasHook) {
             int duration = layout.getDurationToCloseHeader();
             if (duration > 0 && mCachedDuration <= 0)
                 mCachedDuration = duration;
@@ -260,8 +257,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     }
 
     private void resetLayoutHeaderCloseDuration(SmoothRefreshLayout layout) {
-        if (layout.equalsOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack)
-                && mCachedDuration > 0) {
+        if (mHasHook && mCachedDuration > 0) {
             layout.setDurationToCloseHeader(mCachedDuration);
         }
         mCachedDuration = -1;

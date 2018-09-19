@@ -72,7 +72,7 @@ public class TestNestedActivity extends AppCompatActivity {
                         }
                         mRefreshLayout.refreshComplete();
                     }
-                }, isRefresh ? 2000 : 10000);
+                }, isRefresh ? 2000 : 3000);
             }
 
             @Override
@@ -81,6 +81,7 @@ public class TestNestedActivity extends AppCompatActivity {
         });
         mRefreshLayout.getHeaderView().getView().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
+        mRefreshLayout.setEnableDynamicEnsureTargetView(true);
         mRefreshLayout.setLifecycleObserver(new QuickConfigAppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }

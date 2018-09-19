@@ -10,7 +10,6 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
 import android.widget.ScrollView;
@@ -24,29 +23,17 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
  *
  * @author dkzwm
  */
-public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeObserver
-        .OnScrollChangedListener, SmoothRefreshLayout.OnUIPositionChangedListener {
+public class QuickConfigAutoRefreshUtil implements ILifecycleObserver,
+        SmoothRefreshLayout.OnNestedScrollChangedListener,
+        SmoothRefreshLayout.OnUIPositionChangedListener {
     private SmoothRefreshLayout mRefreshLayout;
     private View mTargetView;
-    private ViewTreeObserver mViewTreeObserver;
-    private Runnable mDelayAddListenerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mViewTreeObserver != null) {
-                if (mViewTreeObserver.isAlive()) {
-                    mViewTreeObserver.addOnScrollChangedListener(QuickConfigAutoRefreshUtil.this);
-                } else {
-                    mTargetView.postDelayed(this, 50);
-                }
-            }
-        }
-    };
-    private ObjectAnimator mAnimator;
     private int mStatus;
     private boolean mNeedToTriggerRefresh = false;
     private boolean mNeedToTriggerLoadMore = false;
     private boolean mCachedActionAtOnce = false;
     private boolean mCachedAutoRefreshUseSmoothScroll = false;
+    private ObjectAnimator mAnimator;
 
     public QuickConfigAutoRefreshUtil(@NonNull View targetScrollableView) {
         mTargetView = targetScrollableView;
@@ -55,39 +42,15 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
         mRefreshLayout = layout;
-        mViewTreeObserver = mTargetView.getViewTreeObserver();
-        if (mViewTreeObserver.isAlive())
-            mViewTreeObserver.addOnScrollChangedListener(this);
-        else
-            mTargetView.postDelayed(mDelayAddListenerRunnable, 50);
         mRefreshLayout.addOnUIPositionChangedListener(this);
+        mRefreshLayout.addOnNestedScrollChangedListener(this);
     }
 
     @Override
     public void onDetached(SmoothRefreshLayout layout) {
         mRefreshLayout.removeOnUIPositionChangedListener(this);
-        mTargetView.removeCallbacks(mDelayAddListenerRunnable);
-        if (mViewTreeObserver.isAlive())
-            mViewTreeObserver.removeOnScrollChangedListener(this);
-        cancelAnimator();
+        mRefreshLayout.removeOnNestedScrollChangedListener(this);
         mRefreshLayout = null;
-    }
-
-    @Override
-    public void onScrollChanged() {
-        if (mRefreshLayout != null) {
-            if (mNeedToTriggerRefresh && !mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
-                mRefreshLayout.autoRefresh(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll);
-                mNeedToTriggerRefresh = false;
-                mCachedActionAtOnce = false;
-                mCachedAutoRefreshUseSmoothScroll = false;
-            } else if (mNeedToTriggerLoadMore && !mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
-                mRefreshLayout.autoLoadMore(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll);
-                mNeedToTriggerLoadMore = false;
-                mCachedActionAtOnce = false;
-                mCachedAutoRefreshUseSmoothScroll = false;
-            }
-        }
     }
 
     public void autoRefresh(boolean scrollToEdgeUseSmoothScroll,
@@ -209,6 +172,9 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
                         mNeedToTriggerLoadMore = false;
                     }
                 });
+                SRLog.d(getClass().getSimpleName(), "In some special cases the animation should " +
+                        "be interrupted but not actually interrupted, so you should call " +
+                        "`cancelAnimator` method when user finger touched views");
             } else {
                 cancelAnimator();
                 mTargetView.scrollTo(mTargetView.getScrollX(), toTop ? 0 : mTargetView.getHeight());
@@ -216,7 +182,6 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void horizontalScrollToEdge(final boolean toLeft, boolean useSmoothScroll) {
         if (mTargetView instanceof HorizontalScrollView) {
             HorizontalScrollView scrollView = (HorizontalScrollView) mTargetView;
@@ -266,6 +231,9 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
                         mNeedToTriggerLoadMore = false;
                     }
                 });
+                SRLog.d(getClass().getSimpleName(), "In some special cases the animation should " +
+                        "be interrupted but not actually interrupted, so you should call " +
+                        "`cancelAnimator` method when user finger touched views");
             } else {
                 cancelAnimator();
                 mTargetView.scrollTo(toLeft ? 0 : mTargetView.getHeight(), mTargetView.getScrollY());
@@ -273,14 +241,32 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver, ViewTreeO
         }
     }
 
-    private void cancelAnimator() {
-        if (mAnimator != null && mAnimator.isRunning())
+    public void cancelAnimator() {
+        if (mAnimator != null && mAnimator.isRunning()) {
             mAnimator.cancel();
-        mAnimator = null;
+            mAnimator = null;
+        }
     }
 
     @Override
     public void onChanged(byte status, IIndicator indicator) {
         mStatus = status;
+    }
+
+    @Override
+    public void onNestedScrollChanged() {
+        if (mRefreshLayout != null) {
+            if (mNeedToTriggerRefresh && !mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
+                mRefreshLayout.autoRefresh(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll);
+                mNeedToTriggerRefresh = false;
+                mCachedActionAtOnce = false;
+                mCachedAutoRefreshUseSmoothScroll = false;
+            } else if (mNeedToTriggerLoadMore && !mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
+                mRefreshLayout.autoLoadMore(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll);
+                mNeedToTriggerLoadMore = false;
+                mCachedActionAtOnce = false;
+                mCachedAutoRefreshUseSmoothScroll = false;
+            }
+        }
     }
 }

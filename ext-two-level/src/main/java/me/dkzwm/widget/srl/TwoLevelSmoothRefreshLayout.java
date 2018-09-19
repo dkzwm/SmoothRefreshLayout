@@ -405,7 +405,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 && isTwoLevelRefreshing()
                 && mTwoLevelIndicator.crossTwoLevelRefreshLine()) {
             mLoadingStartTime = SystemClock.uptimeMillis();
-            mNeedNotifyRefreshComplete = true;
             if (mTwoLevelRefreshView != null) {
                 mTwoLevelRefreshView.onTwoLevelRefreshBegin(this, mTwoLevelIndicator);
             }
@@ -417,22 +416,22 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void notifyUIRefreshComplete(boolean useScroll) {
+    protected void notifyUIRefreshComplete(boolean useScroll, boolean notifyViews) {
         if (mOnTwoLevelRefreshing) {
             mOnTwoLevelRefreshing = false;
             mTwoLevelIndicatorSetter.onTwoLevelRefreshComplete();
             if (mTwoLevelIndicator.crossTwoLevelCompletePos()) {
-                super.notifyUIRefreshComplete(false);
+                super.notifyUIRefreshComplete(false, notifyViews);
                 tryScrollBackToTop(mDurationToCloseTwoLevel);
                 return;
             }
         }
-        super.notifyUIRefreshComplete(true);
+        super.notifyUIRefreshComplete(true, notifyViews);
     }
 
     private boolean canPerformTwoLevelPullToRefresh() {
         return !isDisabledRefresh() && mTwoLevelRefreshView != null
-                && mEnabledTwoLevelRefresh && canPerformRefresh() && isMovingHeader();
+                && mEnabledTwoLevelRefresh && isMovingHeader();
     }
 
     private void delayForStay() {

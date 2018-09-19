@@ -15,7 +15,7 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
  *
  * @author dkzwm
  */
-public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
+public class  QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
         , SmoothRefreshLayout.OnHeaderEdgeDetectCallBack
         , SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private int mMinOffset;
