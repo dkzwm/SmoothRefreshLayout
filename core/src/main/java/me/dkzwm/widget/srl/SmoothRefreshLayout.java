@@ -2405,11 +2405,12 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             consumed[1] += parentConsumed[1];
             onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
-            if (!isMovingContent()) {
-                if (!(isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
-                        || (isLoadingMore() && isMovingFooter()))))
-                    if (isVerticalOrientation) consumed[1] = dy;
-                    else consumed[0] = dx;
+            if (!isMovingContent() && !(isEnabledPinRefreshViewWhileLoading())) {
+                if (isVerticalOrientation) consumed[1] = dy;
+                else consumed[0] = dx;
+            } else {
+                consumed[0] += parentConsumed[0];
+                consumed[1] += parentConsumed[1];
             }
         }
         if (sDebug)
@@ -4454,19 +4455,16 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     SmoothRefreshLayout.this.mMinOverScrollDuration);
             mDuration = Math.min(mDuration, SmoothRefreshLayout.this.mMaxOverScrollDuration);
             final int optimizedDistance = (int) Math.min(Math.pow(Math.abs(calculateVelocity()),
-                    .48f), mMaxDistance);
+                    .52f), mMaxDistance);
             final float maxViewDistance;
-            final int viewHeight;
             if (isMovingHeader) {
                 maxViewDistance = SmoothRefreshLayout.this.mIndicator
                         .getCanMoveTheMaxDistanceOfHeader();
-                viewHeight = SmoothRefreshLayout.this.getHeaderHeight();
             } else {
                 maxViewDistance = SmoothRefreshLayout.this.mIndicator
                         .getCanMoveTheMaxDistanceOfFooter();
-                viewHeight = SmoothRefreshLayout.this.getFooterHeight();
             }
-            int to = viewHeight > 0 ? Math.min(viewHeight, optimizedDistance) : optimizedDistance;
+            int to = optimizedDistance;
             if (maxViewDistance > 0 && to > maxViewDistance) {
                 to = Math.round(maxViewDistance);
             }
