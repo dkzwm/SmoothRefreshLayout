@@ -107,6 +107,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
     private static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
     private static final int FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW = 0x01 << 24;
+    private static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 25;
     private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
     private static final int[] LAYOUT_ATTRS = new int[]{
@@ -2108,6 +2109,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
+    /**
+     * The flag has been set to perform refresh when Fling.
+     * <p>是否已经开启了当{@link #setEnableOverScroll（boolean）}设置为true且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling
+     * 效果的功能,</p>
+     *
+     * @return Enabled
+     */
+    public boolean isEnabledPerformFreshWhenFling() {
+        return (mFlag & FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING) > 0;
+    }
+
+    /**
+     * If @param enable has been set to true. When the {@link #setEnableOverScroll(boolean)} has
+     * been set to true and the current offset is greater than the trigger refresh offset, the
+     * fresh can be performed without the Fling effect.
+     * <p>当{@link #setEnableOverScroll（boolean）}设置为true且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling效果</p>
+     *
+     * @param enable enable perform refresh when fling
+     */
+    public void setEnablePerformFreshWhenFling(boolean enable) {
+        if (enable) {
+            mFlag = mFlag | FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING;
+        } else {
+            mFlag = mFlag & ~FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING;
+        }
+    }
+
     @Nullable
     public IRefreshView<IIndicator> getFooterView() {
         //Use the static default creator to create the Footer view
@@ -2285,15 +2313,23 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
                 if (Math.abs(realVelocity) > mMinimumFlingVelocity * 2) {
-                    if ((!isNotYetInEdgeCannotMoveHeader() && realVelocity > 0)
-                            || (!isNotYetInEdgeCannotMoveFooter() && realVelocity < 0)) {
+                    if ((!isNotYetInEdgeCannotMoveHeader() && realVelocity > 0 && isMovingHeader())
+                            || (!isNotYetInEdgeCannotMoveFooter() && realVelocity < 0 && isMovingFooter())) {
                         if (isEnabledOverScroll()) {
                             boolean invert = realVelocity < 0;
                             realVelocity = (float) Math.pow(Math.abs(realVelocity), .65f);
                             mScrollChecker.tryToPreFling(invert ? -realVelocity : realVelocity);
                         }
                     } else {
-                        mScrollChecker.tryToPreFling(realVelocity);
+                        if (!isEnabledPerformFreshWhenFling()) {
+                            mScrollChecker.tryToPreFling(realVelocity);
+                        } else if (isMovingHeader()
+                                && mIndicator.getCurrentPos() < mIndicator.getOffsetToRefresh()) {
+                            mScrollChecker.tryToPreFling(realVelocity);
+                        } else if (isMovingFooter()
+                                && mIndicator.getCurrentPos() < mIndicator.getOffsetToLoadMore()) {
+                            mScrollChecker.tryToPreFling(realVelocity);
+                        }
                     }
                 }
                 return true;
@@ -3615,18 +3651,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             // reach fresh height while moving from top to bottom or reach load more height while
             // moving from bottom to top
             if (isHeaderInProcessing() && isMovingHeader() && !isDisabledPerformRefresh()) {
-                if (isEnabledPullToRefresh() && mIndicator.crossRefreshLineFromTopToBottom())
+                if (isEnabledPullToRefresh() && mIndicator.crossRefreshLineFromTopToBottom()) {
                     triggeredRefresh(true);
-                else if (!mIndicator.hasTouched()
+                } else if (!mIndicator.hasTouched()
                         && !(mScrollChecker.isPreFling() || mScrollChecker.isFling())
                         && mIndicator.isJustReturnedOffsetToRefresh()) {
                     triggeredRefresh(true);
                     mScrollChecker.destroy();
                 }
             } else if (isFooterInProcessing() && isMovingFooter() && !isDisabledPerformLoadMore()) {
-                if (isEnabledPullToRefresh() && mIndicator.crossRefreshLineFromBottomToTop())
+                if (isEnabledPullToRefresh() && mIndicator.crossRefreshLineFromBottomToTop()) {
                     triggeredLoadMore(true);
-                else if (!mIndicator.hasTouched()
+                } else if (!mIndicator.hasTouched()
                         && !(mScrollChecker.isPreFling() || mScrollChecker.isFling())
                         && mIndicator.isJustReturnedOffsetToLoadMore()) {
                     triggeredLoadMore(true);
