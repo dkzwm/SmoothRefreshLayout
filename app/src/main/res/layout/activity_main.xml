@@ -165,11 +165,9 @@
 
     <Button
         android:id="@+id/button_main_debug"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/LargeButtonStyle"
         android:layout_gravity="end"
         android:layout_marginRight="24dp"
         android:layout_marginTop="72dp"
-        android:text="@string/debug_on"
-        android:textSize="12sp"/>
+        android:text="@string/debug_on"/>
 </me.dkzwm.widget.srl.sample.widget.WaveSmoothRefreshLayout>

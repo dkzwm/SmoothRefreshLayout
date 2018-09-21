@@ -8,13 +8,8 @@
     android:orientation="vertical"
     app:sr_content="@+id/recyclerView_test_base_recyclerView_adapter">
 
-    <com.classic.common.MultipleStatusView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView_test_base_recyclerView_adapter"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView_test_base_recyclerView_adapter"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </com.classic.common.MultipleStatusView>
+        android:layout_height="match_parent"/>
 </me.dkzwm.widget.srl.SmoothRefreshLayout>

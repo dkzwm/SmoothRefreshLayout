@@ -2111,8 +2111,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     /**
      * The flag has been set to perform refresh when Fling.
-     * <p>是否已经开启了当{@link #setEnableOverScroll（boolean）}设置为true且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling
-     * 效果的功能,</p>
+     * <p>是否已经开启了当收回刷新视图的手势被触发且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling效果的功能,</p>
      *
      * @return Enabled
      */
@@ -2121,10 +2120,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
-     * If @param enable has been set to true. When the {@link #setEnableOverScroll(boolean)} has
-     * been set to true and the current offset is greater than the trigger refresh offset, the
-     * fresh can be performed without the Fling effect.
-     * <p>当{@link #setEnableOverScroll（boolean）}设置为true且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling效果</p>
+     * If @param enable has been set to true. When the gesture of retracting the refresh view is
+     * triggered and the current offset is greater than the trigger refresh offset, the fresh can
+     * be performed without the Fling effect.
+     * <p>当收回刷新视图的手势被触发且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling效果</p>
      *
      * @param enable enable perform refresh when fling
      */
