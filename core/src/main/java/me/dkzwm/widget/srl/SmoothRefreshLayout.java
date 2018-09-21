@@ -189,7 +189,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
-    private int mMinOverScrollDuration = 500;
+    private int mMaxOverScrollDuration = 350;
+    private int mMinOverScrollDuration = 150;
     private float[] mCachedPoint = null;
     private long mSendDownEventTime = 0;
     private float[] mSendDownPoint = {0, 0};
@@ -1395,8 +1396,18 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     /**
+     * Set the max duration for Cross-Boundary-Rebound(OverScroll).
+     * <p>设置越界回弹效果的最大持续时长（默认:`350`）</p>
+     *
+     * @param duration Duration
+     */
+    public void setMaxOverScrollDuration(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+        mMaxOverScrollDuration = duration;
+    }
+
+    /**
      * Set the min duration for Cross-Boundary-Rebound(OverScroll).
-     * <p>设置越界回弹效果的最小持续时长（默认:`500`）</p>
+     * <p>设置越界回弹效果的最小持续时长（默认:`150`）</p>
      *
      * @param duration Duration
      */
@@ -4272,15 +4283,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_FLING:
-                        mDuration = Math.max(SmoothRefreshLayout.this.mMinOverScrollDuration,
-                                mDuration / 2 * 3);
+                        mDuration = Math.max(500, mDuration / 2 * 3);
                         mMode = MODE_SPRING_BACK;
                         SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_PRE_FLING:
                         if (!SmoothRefreshLayout.this.isMovingContent()) {
-                            mDuration = Math.max(SmoothRefreshLayout.this.mMinOverScrollDuration,
-                                    mDuration / 2 * 3);
+                            mDuration = Math.max(500, mDuration / 2 * 3);
                             mMode = MODE_SPRING_BACK;
                         } else {
                             destroy();
@@ -4479,6 +4488,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         private int calculate(boolean isMovingHeader) {
             mDuration = Math.max(mScroller.getDuration() - mScroller.timePassed(),
                     SmoothRefreshLayout.this.mMinOverScrollDuration);
+            mDuration = Math.min(mDuration, SmoothRefreshLayout.this.mMaxOverScrollDuration);
             final int optimizedDistance = (int) Math.min(Math.pow(Math.abs(calculateVelocity()),
                     .52f), mMaxDistance);
             final float maxViewDistance;
