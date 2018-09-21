@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.ViewTreeObserver;
 import android.widget.GridView;
 
 import java.util.List;
@@ -58,18 +57,7 @@ public class WithGridViewActivity extends AppCompatActivity {
                             List<String> list = DataUtil.createList(mCount, 15);
                             mCount += 15;
                             mAdapter.appendData(list);
-                            mRefreshLayout.setDurationToCloseFooter(0);
-                            mGridView.getViewTreeObserver().addOnPreDrawListener(
-                                    new ViewTreeObserver.OnPreDrawListener() {
-                                        @Override
-                                        public boolean onPreDraw() {
-                                            mGridView.getViewTreeObserver()
-                                                    .removeOnPreDrawListener(this);
-                                            mRefreshLayout.refreshComplete();
-                                            mRefreshLayout.setDurationToCloseFooter(500);
-                                            return false;
-                                        }
-                                    });
+                            mRefreshLayout.refreshComplete(50);
                         }
                     }
                 }, 2000);

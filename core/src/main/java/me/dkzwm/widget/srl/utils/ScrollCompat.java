@@ -13,6 +13,7 @@ import android.view.ViewParent;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.Adapter;
+import android.widget.ListView;
 import android.widget.ScrollView;
 
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -145,12 +146,24 @@ public class ScrollCompat {
         if (view != null) {
             try {
                 if (view instanceof AbsListView) {
-                    final AbsListView listView = (AbsListView) view;
+                    final AbsListView absListView = (AbsListView) view;
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                        listView.scrollListBy((int) deltaY);
+                        absListView.scrollListBy((int) deltaY);
+                    } else if (absListView instanceof ListView) {
+                        //{@link android.support.v4.widget.ListViewCompat#scrollListBy(ListView, int)}
+                        final ListView listView = (ListView) absListView;
+                        final int firstPosition = listView.getFirstVisiblePosition();
+                        if (firstPosition == ListView.INVALID_POSITION) {
+                            return false;
+                        }
+                        final View firstView = listView.getChildAt(0);
+                        if (firstView == null) {
+                            return false;
+                        }
+                        final int newTop = (int) (firstView.getTop() - deltaY);
+                        listView.setSelectionFromTop(firstPosition, newTop);
                     } else {
-                        SRReflectUtil.compatOlderAbsListViewScrollListBy((AbsListView) view,
-                                (int) deltaY);
+                        SRReflectUtil.compatOlderAbsListViewScrollListBy(absListView, (int) deltaY);
                     }
                     return true;
                 } else if (view instanceof WebView
