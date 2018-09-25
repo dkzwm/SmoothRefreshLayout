@@ -70,7 +70,7 @@ public class GestureDetector  {
                     float vx = mVelocityTracker.getXVelocity(pointerId);
                     if (Math.abs(vx) >= mMinimumFlingVelocity
                             || Math.abs(vy) >= mMinimumFlingVelocity) {
-                        mGestureListener.onFling(vx, vy);
+                        mGestureListener.onFling(vx, vy,false);
                     }
                     mVelocityTracker.recycle();
                     mVelocityTracker = null;

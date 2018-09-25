@@ -2303,11 +2303,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     @Override
-    public boolean onFling(float vx, final float vy) {
+    public boolean onFling(float vx, final float vy, boolean nested) {
         if (sDebug) SRLog.d(TAG, "onFling() vx: %s, vy: %s", vx, vy);
         float realVelocity = isVerticalOrientation() ? vy : vx;
         if ((isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling()) || mPreventForAnotherDirection) {
-            return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
+            return nested && dispatchNestedPreFling(-vx, -vy);
         }
         if (!mIndicator.isInStartPosition()) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
@@ -2339,11 +2339,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     && (realVelocity <= 0 || !isDisabledRefresh())))) {
                 mScrollChecker.tryToFling(realVelocity);
             }
-            if (!mNestedScrollInProgress) {
+            if (!nested) {
                 tryToDispatchNestedFling((int) realVelocity);
             }
         }
-        return mNestedScrollInProgress && dispatchNestedPreFling(-vx, -vy);
+        return nested && dispatchNestedPreFling(-vx, -vy);
     }
 
     @Override
@@ -2441,9 +2441,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
             if (!isMovingContent() && !(isEnabledPinRefreshViewWhileLoading())) {
-                if (isVerticalOrientation) consumed[1] = dy;
-                else consumed[0] = dx;
-            } else {
+                if (isVerticalOrientation) parentConsumed[1] = dy;
+                else parentConsumed[0] = dx;
                 consumed[0] += parentConsumed[0];
                 consumed[1] += parentConsumed[1];
             }
@@ -2484,11 +2483,11 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        if (tryToFilterTouchEventInDispatchTouchEvent(null))
+            return;
         if (sDebug)
             SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
                     " dyUnconsumed: %s, type: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
-        if (tryToFilterTouchEventInDispatchTouchEvent(null))
-            return;
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow, type);
@@ -2620,7 +2619,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public boolean onNestedPreFling(@NonNull View target, float velocityX, float velocityY) {
         if (sDebug)
             SRLog.d(TAG, "onNestedPreFling() velocityX: %s, velocityY: %s", velocityX, velocityY);
-        return onFling(-velocityX, -velocityY);
+        return onFling(-velocityX, -velocityY, true);
     }
 
     @Override
@@ -4283,13 +4282,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_FLING:
-                        mDuration = Math.max(500, mDuration / 2 * 3);
+                        mDuration = Math.max(350, mDuration / 2 * 3);
                         mMode = MODE_SPRING_BACK;
                         SmoothRefreshLayout.this.onRelease();
                         break;
                     case MODE_PRE_FLING:
                         if (!SmoothRefreshLayout.this.isMovingContent()) {
-                            mDuration = Math.max(500, mDuration / 2 * 3);
+                            mDuration = Math.max(350, mDuration / 2 * 3);
                             mMode = MODE_SPRING_BACK;
                         } else {
                             destroy();
