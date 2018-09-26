@@ -202,12 +202,12 @@ public class ScrollCompat {
     }
 
     public static boolean isViewPager(ViewParent parent) {
-        return parent != null && parent instanceof ViewPager;
+        return parent instanceof ViewPager;
     }
 
     public static boolean isRecyclerView(View view) {
         try {
-            return view != null && view instanceof RecyclerView;
+            return view instanceof RecyclerView;
         } catch (NoClassDefFoundError ignored) {
             return false;
         }
@@ -216,18 +216,29 @@ public class ScrollCompat {
     public static void flingCompat(View view, int velocityY) {
         try {
             if (view instanceof ScrollView) {
-                ((ScrollView) view).fling(velocityY);
+                ScrollView scrollView = (ScrollView) view;
+                scrollView.smoothScrollBy(0, 0);
+                scrollView.fling(velocityY);
             } else if (view instanceof WebView) {
-                ((WebView) view).flingScroll(0, velocityY);
+                WebView webView = (WebView) view;
+                webView.flingScroll(0, velocityY);
             } else if (isRecyclerView(view)) {
-                ((RecyclerView) view).fling(0, velocityY);
+                RecyclerView recyclerView = (RecyclerView) view;
+                if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_SETTLING) {
+                    recyclerView.fling(0, velocityY);
+                }
             } else if (view instanceof NestedScrollView) {
-                ((NestedScrollView) view).fling(velocityY);
+                NestedScrollView scrollView = (NestedScrollView) view;
+                scrollView.smoothScrollBy(0, 0);
+                scrollView.fling(velocityY);
             } else if (view instanceof AbsListView) {
+                AbsListView listView = (AbsListView) view;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ((AbsListView) view).fling(velocityY);
+                    listView.smoothScrollBy(0, 0);
+                    listView.fling(velocityY);
                 } else {
-                    SRReflectUtil.compatOlderAbsListViewFling((AbsListView) view, velocityY);
+                    listView.smoothScrollBy(0, 0);
+                    SRReflectUtil.compatOlderAbsListViewFling(listView, velocityY);
                 }
             }
         } catch (Exception e) {

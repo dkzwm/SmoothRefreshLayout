@@ -1,6 +1,5 @@
 package me.dkzwm.widget.srl;
 
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -141,6 +140,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     protected boolean mIsLastOverScrollCanNotAbort = false;
     protected boolean mIsFingerInsideAnotherDirectionView = false;
     protected boolean mNestedScrollInProgress = false;
+    protected boolean mNestedFlingInProgress = false;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
     protected int mDurationToCloseHeader = 350;
@@ -181,7 +181,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private List<OnNestedScrollChangedListener> mNestedScrollChangedListeners;
     private GestureDetector mGestureDetector;
     private DelayToRefreshComplete mDelayToRefreshComplete;
-    private DelayToDispatchNestedFling mDelayToDispatchNestedFling;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
     private ViewTreeObserver mTargetViewTreeObserver;
@@ -2340,7 +2339,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mScrollChecker.tryToFling(realVelocity);
             }
             if (!nested) {
-                tryToDispatchNestedFling((int) realVelocity);
+                dispatchNestedFling((int) realVelocity);
             }
         }
         return nested && dispatchNestedPreFling(-vx, -vy);
@@ -2370,6 +2369,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
         // Dispatch up to the nested parent
         startNestedScroll(axes & getSupportScrollAxis(), type);
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+            mNestedFlingInProgress = true;
+        }
         mNestedScrollInProgress = true;
     }
 
@@ -2435,6 +2437,29 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         // Now let our nested parent consume the leftovers
         final int[] parentConsumed = mParentScrollConsumed;
+        parentConsumed[0] = 0;
+        parentConsumed[1] = 0;
+        if (type == ViewCompat.TYPE_NON_TOUCH && !mNestedFlingInProgress) {
+            //In the version of the support library 28.0.0, there is a problem with Fling. The
+            // `onStartNestedScroll` may not be triggered before the `onNestedPreScroll` is
+            // triggered, and the view obtained by `getNestedScrollingParentForType` is empty,
+            // that is, there is no way to pass the scrolling distance upward.
+            //在支持库28.0.0的版本中，Fling存在问题。触发`onNestedPreScroll`之前可能不会触发`onStartNestedScroll
+            // `，导致`getNestedScrollingParentForType`获取的视图为空，也就是说，无法向上传递滚动距离。
+            boolean handled = false;
+            final int childCount = getChildCount();
+            for (int i = 0; i < childCount; ++i) {
+                View view = getChildAt(i);
+                if (view.getVisibility() != View.GONE) {
+                    if (ViewCompat.isNestedScrollingEnabled(view)) {
+                        handled |= ViewCompat.startNestedScroll(view, getSupportScrollAxis(), type);
+                    }
+                }
+            }
+            if (handled && !mNestedFlingInProgress) {
+                mNestedFlingInProgress = startNestedScroll(getSupportScrollAxis(), type);
+            }
+        }
         if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null, type)) {
             consumed[0] += parentConsumed[0];
             consumed[1] += parentConsumed[1];
@@ -2467,7 +2492,13 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         if (sDebug) SRLog.d(TAG, "onStopNestedScroll() type: %s", type);
         mNestedScrollingParentHelper.onStopNestedScroll(target, type);
         mIndicatorSetter.onFingerUp();
-        mNestedScrollInProgress = false;
+        if (type == ViewCompat.TYPE_NON_TOUCH) {
+            mNestedFlingInProgress = false;
+            mNestedScrollInProgress = false;
+        } else {
+            if (!mNestedFlingInProgress)
+                mNestedScrollInProgress = false;
+        }
         mIsInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
         // Dispatch up our nested parent
@@ -2483,8 +2514,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
 
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
-        if (tryToFilterTouchEventInDispatchTouchEvent(null))
-            return;
         if (sDebug)
             SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
                     " dyUnconsumed: %s, type: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
@@ -2492,6 +2521,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow, type);
         if (type == ViewCompat.TYPE_TOUCH) {
+            if (tryToFilterTouchEventInDispatchTouchEvent(null))
+                return;
             final int dx = dxUnconsumed + mParentOffsetInWindow[0];
             final int dy = dyUnconsumed + mParentOffsetInWindow[1];
             final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
@@ -2619,6 +2650,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     public boolean onNestedPreFling(@NonNull View target, float velocityX, float velocityY) {
         if (sDebug)
             SRLog.d(TAG, "onNestedPreFling() velocityX: %s, velocityY: %s", velocityX, velocityY);
+        mNestedFlingInProgress = false;
         return onFling(-velocityX, -velocityY, true);
     }
 
@@ -2653,7 +2685,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
         tryToPerformScrollToBottomToLoadMore();
         tryToPerformScrollToTopToRefresh();
-        tryToRemoveDelayToDispatchNestedFling();
         notifyNestedScrollChanged();
         mScrollChecker.onScrollChanged();
     }
@@ -2732,7 +2763,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         mScrollChecker.destroy();
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
-        tryToRemoveDelayToDispatchNestedFling();
         if (sDebug) SRLog.d(TAG, "reset()");
     }
 
@@ -3719,7 +3749,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mScrollChecker.tryToFling(velocity);
             else
                 mScrollChecker.destroy();
-            tryToDispatchNestedFling(velocity);
+            dispatchNestedFling(velocity);
         }
     }
 
@@ -3855,14 +3885,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
         }
     }
 
-    protected void tryToRemoveDelayToDispatchNestedFling() {
-        if (mDelayToDispatchNestedFling != null && mDelayToDispatchNestedFling.mLayoutWeakRf != null) {
-            removeCallbacks(mDelayToDispatchNestedFling);
-            mDelayToDispatchNestedFling.mLayoutWeakRf.clear();
-            mDelayToDispatchNestedFling.mLayoutWeakRf = null;
-        }
-    }
-
     protected boolean canAutoLoadMore(View view) {
         if (mAutoLoadMoreCallBack != null)
             return mAutoLoadMoreCallBack.canAutoLoadMore(this, view);
@@ -3924,16 +3946,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
             ScrollCompat.flingCompat(mAutoFoundScrollTargetView, -velocity);
         } else
             ScrollCompat.flingCompat(mTargetView, -velocity);
-    }
-
-    protected void tryToDispatchNestedFling(int velocity) {
-        tryToRemoveDelayToDispatchNestedFling();
-        if (mDelayToDispatchNestedFling == null)
-            mDelayToDispatchNestedFling = new DelayToDispatchNestedFling();
-        mDelayToDispatchNestedFling.mLayoutWeakRf = new WeakReference<>(this);
-        mDelayToDispatchNestedFling.mVelocity = velocity;
-        postDelayed(mDelayToDispatchNestedFling, ValueAnimator.getFrameDelay());
-        dispatchNestedFling(velocity);
     }
 
     private void notifyUIPositionChanged() {
@@ -4195,20 +4207,6 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 if (SmoothRefreshLayout.sDebug)
                     SRLog.d(mLayoutWeakRf.get().TAG, "DelayToRefreshComplete: run()");
                 mLayoutWeakRf.get().performRefreshComplete(true, mNotifyViews);
-            }
-        }
-    }
-
-    private static class DelayToDispatchNestedFling implements Runnable {
-        private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
-        private int mVelocity;
-
-        @Override
-        public void run() {
-            if (mLayoutWeakRf.get() != null) {
-                if (SmoothRefreshLayout.sDebug)
-                    SRLog.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
-                mLayoutWeakRf.get().dispatchNestedFling(mVelocity);
             }
         }
     }

@@ -15,15 +15,17 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
  *
  * @author dkzwm
  */
-public class  QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
+public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
         , SmoothRefreshLayout.OnHeaderEdgeDetectCallBack
         , SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private int mMinOffset;
     private int mOffset = -1;
     private boolean mFullyExpanded;
+    private SmoothRefreshLayout mRefreshLayout;
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
+        mRefreshLayout = layout;
         CoordinatorLayout coordinatorLayout = findCoordinatorLayout(layout);
         if (coordinatorLayout == null)
             return;
@@ -39,6 +41,7 @@ public class  QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.
     public void onDetached(SmoothRefreshLayout layout) {
         layout.setOnFooterEdgeDetectCallBack(null);
         layout.setOnHeaderEdgeDetectCallBack(null);
+        mRefreshLayout = null;
         CoordinatorLayout coordinatorLayout = findCoordinatorLayout(layout);
         if (coordinatorLayout == null)
             return;
@@ -50,6 +53,8 @@ public class  QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        if (mRefreshLayout != null)
+            mRefreshLayout.onScrollChanged();
         mOffset = verticalOffset;
         mFullyExpanded = (appBarLayout.getHeight() - appBarLayout.getBottom()) == 0;
         mMinOffset = Math.min(mOffset, mMinOffset);
@@ -83,7 +88,7 @@ public class  QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.
                                                   @Nullable IRefreshView header) {
         View targetView = parent.getScrollTargetView();
         if (targetView == null)
-            throw new IllegalArgumentException("You must set target view first!");
+            targetView = child;
         return !mFullyExpanded || ScrollCompat.canChildScrollUp(targetView);
     }
 
@@ -93,7 +98,7 @@ public class  QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.
                                                   @Nullable IRefreshView footer) {
         View targetView = parent.getScrollTargetView();
         if (targetView == null)
-            throw new IllegalArgumentException("You must set target view first!");
+            targetView = child;
         return mMinOffset != mOffset || ScrollCompat.canChildScrollDown(targetView);
     }
 }

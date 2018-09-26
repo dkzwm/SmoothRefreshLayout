@@ -7,7 +7,7 @@
 > 修复`isEnabledNoSpringBackWhenNoMoreData`第二次不起作用的问题。   
 > 添加接口:`OnNestedScrollChangedListener`和对应的设置方法: `addOnNestedScrollChangedListener` 和 `removeOnNestedScrollChangedListener`。用以当本视图以及内部的自视图发生滚动时触发监听。    
 > 删除方法: `equalsOnHookHeaderRefreshCompleteCallback`  、`equalsOnHookFooterRefreshCompleteCallback` 、`setOverScrollInterpolator`。     
-> 扩展实现: `NestedScrollingChild2` 、`NestedScrollingParent2` 接口，完善Fling。    
+> 扩展实现: `NestedScrollingChild2` 、`NestedScrollingParent2` 接口，因而`Android Support Library`版本必须大于`26.1.0`，以完善Fling。    
 > 添加方法: `isEnabledPerformFreshWhenFling` 和 `setEnablePerformFreshWhenFling` , 默认情况下当正在拖动刷新视图时，如果是向收回刷新视图方向甩动并触发了惯性甩动（Fling），即使松手时的高度大于等于触发刷新高度仍然不会触发刷新，这个时候如果想触发刷新则需要打开本开关。    
 > 删除部分反射逻辑，应对Android P。    
 > 完善部分代码逻辑。    
