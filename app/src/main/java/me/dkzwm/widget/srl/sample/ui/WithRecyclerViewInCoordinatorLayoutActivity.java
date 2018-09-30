@@ -16,6 +16,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
+import me.dkzwm.widget.srl.utils.QuickConfigAppBarUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -49,6 +50,10 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = findViewById(R.id
                 .smoothRefreshLayout_with_recyclerView_in_coordinatorLayout);
+//        mRefreshLayout.setEnabled(false);
+//        List<String> list = DataUtil.createList(mCount, 60);
+//        mCount += 60;
+//        mAdapter.updateData(list);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {

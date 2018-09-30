@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:sr_content="@+id/scrollView_main_container">
 
-    <ScrollView
+    <me.dkzwm.widget.srl.sample.widget.CusomeScrollView
         android:id="@+id/scrollView_main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -153,7 +153,7 @@
                 style="@style/LargeButtonStyle"
                 android:text="@string/test_horizontal_scale_effect"/>
         </LinearLayout>
-    </ScrollView>
+    </me.dkzwm.widget.srl.sample.widget.CusomeScrollView>
 
     <ImageView
         android:id="@+id/imageView_main_bottom_icon"

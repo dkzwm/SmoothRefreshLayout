@@ -35,6 +35,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_TO_REFRESH;
     private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_MAX_MOVE_RATIO;
     private float mCanMoveTheMaxRatioOfFooterHeight = DEFAULT_MAX_MOVE_RATIO;
+    private float mOriginalOffset;
 
     @Override
     public boolean hasTouched() {
@@ -338,5 +339,11 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
                 }
             }
         }
+        mOriginalOffset = offset;
+    }
+
+    @Override
+    public float getOriginalOffset() {
+        return mOriginalOffset;
     }
 }

@@ -193,6 +193,7 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     private float[] mCachedPoint = null;
     private long mSendDownEventTime = 0;
     private float[] mSendDownPoint = {0, 0};
+    private float[] mCachedMovedPoint = new float[2];
 
     public SmoothRefreshLayout(Context context) {
         super(context);
@@ -748,6 +749,33 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
     }
 
     protected boolean dispatchTouchEventSuper(MotionEvent ev) {
+        final int index = ev.findPointerIndex(mTouchPointerId);
+        if (index < 0)
+            return super.dispatchTouchEvent(ev);
+        if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            mCachedMovedPoint[0] = ev.getX(index);
+            mCachedMovedPoint[1] = ev.getY(index);
+        }
+        if (isVerticalOrientation()) {
+            mCachedMovedPoint[0] = ev.getX(index);
+            if (mIndicator.isInStartPosition()) {
+                mCachedMovedPoint[1] += mIndicator.getOriginalOffset();
+            } else {
+                mCachedMovedPoint[1] += mIndicator.getOriginalOffset() < 0
+                        ? mIndicator.getLastPos() - mIndicator.getCurrentPos()
+                        : mIndicator.getCurrentPos() - mIndicator.getLastPos();
+            }
+        } else {
+            if (mIndicator.isInStartPosition()) {
+                mCachedMovedPoint[0] += mIndicator.getOriginalOffset();
+            } else {
+                mCachedMovedPoint[0] += mIndicator.getOriginalOffset() < 0
+                        ? mIndicator.getLastPos() - mIndicator.getCurrentPos()
+                        : mIndicator.getCurrentPos() - mIndicator.getLastPos();
+            }
+            mCachedMovedPoint[1] += ev.getY(index);
+        }
+        ev.setLocation(mCachedMovedPoint[0], mCachedMovedPoint[1]);
         return super.dispatchTouchEvent(ev);
     }
 
@@ -2992,6 +3020,8 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 mHasSendDownEvent = false;
                 mTouchPointerId = ev.getPointerId(0);
                 mIndicatorSetter.onFingerDown(ev.getX(), ev.getY());
+                mSendDownPoint[0] = ev.getX();
+                mSendDownPoint[1] = ev.getY();
                 mIsFingerInsideAnotherDirectionView = isDisabledWhenAnotherDirectionMove()
                         && (!isEnableCheckInsideAnotherDirectionView()
                         || isInsideAnotherDirectionView(ev.getRawX(), ev.getRawY()));
@@ -3049,10 +3079,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             && maxHeaderDistance > 0) {
                         if (current >= maxHeaderDistance) {
                             updateAnotherDirectionPos();
-                            return dispatchTouchEventSuper(ev);
+                            return true;
                         } else if (current + offset > maxHeaderDistance) {
                             moveHeaderPos(maxHeaderDistance - current);
-                            return true;
+                            return dispatchTouchEventSuper(ev);
                         }
                     }
                 } else {
@@ -3061,14 +3091,14 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                             && maxFooterDistance > 0) {
                         if (current >= maxFooterDistance) {
                             updateAnotherDirectionPos();
-                            return dispatchTouchEventSuper(ev);
+                            return true;
                         } else if (current - offset > maxFooterDistance) {
                             moveFooterPos(current - maxFooterDistance);
-                            return true;
+                            return dispatchTouchEventSuper(ev);
                         }
                     } else if (isDisabledLoadMoreWhenContentNotFull() && mIndicator
                             .isInStartPosition() && canNotChildScrollDown && canNotChildScrollUp) {
-                        return true;
+                        return dispatchTouchEventSuper(ev);
                     }
                 }
                 boolean canMoveUp = isMovingHeader() && mIndicator.hasLeftStartPosition();
@@ -3079,10 +3109,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                     if ((movingDown && !canHeaderMoveDown) || (!movingDown && !canFooterMoveUp)) {
                         if (isLoadingMore() && mIndicator.hasLeftStartPosition()) {
                             moveFooterPos(offset);
-                            return true;
+//                            return true;
                         } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
                             moveHeaderPos(offset);
-                            return true;
+//                            return true;
                         }
                         return dispatchTouchEventSuper(ev);
                     }
@@ -3091,31 +3121,31 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                         if (isDisabledRefresh())
                             return dispatchTouchEventSuper(ev);
                         moveHeaderPos(offset);
-                        return true;
+                        return dispatchTouchEventSuper(ev);
                     }
                     if (isDisabledLoadMore())
                         return dispatchTouchEventSuper(ev);
                     moveFooterPos(offset);
-                    return true;
+                    return dispatchTouchEventSuper(ev);
                 }
                 if (canMoveUp) {
                     if (isDisabledRefresh())
                         return dispatchTouchEventSuper(ev);
                     if ((!canHeaderMoveDown && movingDown)) {
-                        sendDownEvent(ev);
+//                        sendDownEvent(ev);
                         return dispatchTouchEventSuper(ev);
                     }
                     moveHeaderPos(offset);
-                    return true;
+                    return dispatchTouchEventSuper(ev);
                 }
                 if (isDisabledLoadMore())
                     return dispatchTouchEventSuper(ev);
                 if ((!canFooterMoveUp && !movingDown)) {
-                    sendDownEvent(ev);
+//                    sendDownEvent(ev);
                     return dispatchTouchEventSuper(ev);
                 }
                 moveFooterPos(offset);
-                return true;
+//                return dispatchTouchEventSuper(ev);
         }
         return dispatchTouchEventSuper(ev);
     }
@@ -3502,10 +3532,10 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
      */
     protected void updatePos(int change) {
         // once moved, cancel event will be sent to child
-        if (mIndicator.hasTouched() && !mNestedScrollInProgress
-                && mIndicator.hasMovedAfterPressedDown()) {
-            sendCancelEvent(null);
-        }
+//        if (mIndicator.hasTouched() && !mNestedScrollInProgress
+//                && mIndicator.hasMovedAfterPressedDown()) {
+//            sendCancelEvent(null);
+//        }
         final boolean isMovingHeader = isMovingHeader();
         final boolean isMovingFooter = isMovingFooter();
         // leave initiated position or just refresh complete
@@ -3530,9 +3560,9 @@ public class SmoothRefreshLayout extends ViewGroup implements OnGestureListener,
                 && mIndicator.hasJustBackToStartPosition()) {
             tryToNotifyReset();
             // recover event to children
-            if (mIndicator.hasTouched() && !mNestedScrollInProgress && mHasSendCancelEvent) {
-                sendDownEvent(null);
-            }
+//            if (mIndicator.hasTouched() && !mNestedScrollInProgress && mHasSendCancelEvent) {
+//                sendDownEvent(null);
+//            }
         }
         tryToPerformRefreshWhenMoved();
         if (sDebug)

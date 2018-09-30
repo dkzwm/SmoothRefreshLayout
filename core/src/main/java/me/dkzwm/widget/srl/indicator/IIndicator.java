@@ -31,6 +31,8 @@ public interface IIndicator {
 
     float getOffset();
 
+    float getOriginalOffset();
+
     int getLastPos();
 
     int getHeaderHeight();
