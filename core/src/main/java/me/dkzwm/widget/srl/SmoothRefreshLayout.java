@@ -758,7 +758,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 if (isMovingHeader())
                     mOffsetTotal -= mOffsetRemaining;
                 else if (isMovingFooter())
-                    mOffsetTotal += mTouchSlop * 2;
+                    mOffsetTotal += mOffsetRemaining;
             }
             if (!mIndicator.isInStartPosition() && mIndicator.getRawOffset() != 0) {
                 mOffsetConsumed += mIndicator.getRawOffset() < 0
