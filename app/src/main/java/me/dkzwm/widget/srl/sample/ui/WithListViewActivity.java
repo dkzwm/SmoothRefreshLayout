@@ -73,11 +73,13 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                             mCount += 20;
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.appendData(list);
-                            if (mCount > 50)
+                            if (mCount > 50) {
                                 mRefreshLayout.setEnableNoMoreData(true);
+                            } else {
+                                List<String> list = DataUtil.createList(mCount, 20);
+                                mCount += 20;
+                                mAdapter.appendData(list);
+                            }
                         }
                         mRefreshLayout.refreshComplete(1200);
                     }

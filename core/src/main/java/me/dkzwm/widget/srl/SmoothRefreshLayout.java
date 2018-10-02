@@ -2506,15 +2506,18 @@ public class SmoothRefreshLayout extends ViewGroup implements
     }
 
     @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int
+            dxUnconsumed, int dyUnconsumed) {
         onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, ViewCompat.TYPE_TOUCH);
     }
 
     @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int
+            dxUnconsumed, int dyUnconsumed, int type) {
         if (sDebug)
             SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
-                    " dyUnconsumed: %s, type: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
+                            " dyUnconsumed: %s, type: %s", dxConsumed, dyConsumed, dxUnconsumed,
+                    dyUnconsumed, type);
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow, type);
@@ -2627,7 +2630,8 @@ public class SmoothRefreshLayout extends ViewGroup implements
     }
 
     @Override
-    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, @Nullable int[] offsetInWindow, int type) {
+    public boolean dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int
+            dyUnconsumed, @Nullable int[] offsetInWindow, int type) {
         return mNestedScrollingChildHelper.dispatchNestedScroll(dxConsumed, dyConsumed,
                 dxUnconsumed, dyUnconsumed, offsetInWindow, type);
     }
@@ -2639,7 +2643,8 @@ public class SmoothRefreshLayout extends ViewGroup implements
     }
 
     @Override
-    public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed, @Nullable int[] offsetInWindow, int type) {
+    public boolean dispatchNestedPreScroll(int dx, int dy, @Nullable int[] consumed, @Nullable
+            int[] offsetInWindow, int type) {
         return mNestedScrollingChildHelper.dispatchNestedPreScroll(
                 dx, dy, consumed, offsetInWindow, type);
     }
@@ -3357,23 +3362,25 @@ public class SmoothRefreshLayout extends ViewGroup implements
     protected void onFingerUp() {
         if (sDebug) SRLog.d(TAG, "onFingerUp()");
         notifyFingerUp();
-        if (mMode == Constants.MODE_DEFAULT && !mScrollChecker.isPreFling()
-                && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE) {
-            if (isHeaderInProcessing() && !isDisabledPerformRefresh()
-                    && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
-                if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
-                    mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
-                            mDurationOfBackToHeaderHeight);
-                    return;
+        if (mMode == Constants.MODE_DEFAULT) {
+            if (isEnabledNoMoreData())
+                return;
+            if (!mScrollChecker.isPreFling() && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE)
+                if (isHeaderInProcessing() && !isDisabledPerformRefresh()
+                        && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
+                    if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
+                        mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
+                                mDurationOfBackToHeaderHeight);
+                        return;
+                    }
+                } else if (isFooterInProcessing() && !isDisabledPerformLoadMore()
+                        && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
+                    if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
+                        mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
+                                mDurationOfBackToFooterHeight);
+                        return;
+                    }
                 }
-            } else if (isFooterInProcessing() && !isDisabledPerformLoadMore()
-                    && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
-                if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
-                    mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
-                            mDurationOfBackToFooterHeight);
-                    return;
-                }
-            }
         }
         if (!mScrollChecker.isPreFling()) {
             onRelease();
@@ -3861,7 +3868,7 @@ public class SmoothRefreshLayout extends ViewGroup implements
             return;
         }
         mStatus = SR_STATUS_COMPLETE;
-        notifyUIRefreshComplete(true, notifyViews);
+        notifyUIRefreshComplete(!isEnabledNoMoreData(), notifyViews);
     }
 
     /**
