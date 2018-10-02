@@ -234,10 +234,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         sCreator = creator;
     }
 
-    public int getCurrentPos() {
-        return mIndicator.getCurrentPos();
-    }
-
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         sId++;
         createIndicator();
