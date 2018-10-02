@@ -193,6 +193,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private float[] mCachedPoint = null;
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
+    private int mOffsetRemaining = 0;
 
     public SmoothRefreshLayout(Context context) {
         super(context);
@@ -735,14 +736,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (!isEnabled() || mTargetView == null
+        if (!isEnabled() || mTargetView == null || ((isDisabledLoadMore() && isDisabledRefresh()))
                 || (isEnabledPinRefreshViewWhileLoading() && ((isRefreshing() && isMovingHeader())
-                || (isLoadingMore() && isMovingFooter())))
-                || mNestedScrollInProgress) {
+                || (isLoadingMore() && isMovingFooter()))) || mNestedScrollInProgress) {
             return super.dispatchTouchEvent(ev);
         }
-        if ((isDisabledLoadMore() && isDisabledRefresh()))
-            return super.dispatchTouchEvent(ev);
         return processDispatchTouchEvent(ev);
     }
 
@@ -753,7 +751,15 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
             mOffsetConsumed = 0;
             mOffsetTotal = 0;
+            mOffsetRemaining = mTouchSlop * 3;
         } else {
+            if (mOffsetRemaining > 0) {
+                mOffsetRemaining -= mTouchSlop;
+                if (isMovingHeader())
+                    mOffsetTotal -= mOffsetRemaining;
+                else if (isMovingFooter())
+                    mOffsetTotal += mTouchSlop * 2;
+            }
             if (!mIndicator.isInStartPosition() && mIndicator.getRawOffset() != 0) {
                 mOffsetConsumed += mIndicator.getRawOffset() < 0
                         ? mIndicator.getLastPos() - mIndicator.getCurrentPos()
@@ -3345,14 +3351,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             if (isEnabledNoMoreData())
                 return;
             if (!mScrollChecker.isPreFling() && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE) {
-                if (isHeaderInProcessing() && !isDisabledPerformRefresh()
+                if (isHeaderInProcessing() && !isDisabledPerformRefresh() && isMovingHeader()
                         && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
                     if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
                                 mDurationOfBackToHeaderHeight);
                         return;
                     }
-                } else if (isFooterInProcessing() && !isDisabledPerformLoadMore()
+                } else if (isFooterInProcessing() && !isDisabledPerformLoadMore() && isMovingFooter()
                         && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                     if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
@@ -3378,7 +3384,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 return;
             } else if (isEnabledKeepRefreshView()) {
                 if (isHeaderInProcessing() && mHeaderView != null) {
-                    if (isRefreshing() && mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
+                    if (isRefreshing() && isMovingHeader() && mIndicator.isAlreadyHere(mIndicator
+                            .getOffsetToKeepHeaderWhileLoading())) {
                         return;
                     } else if (isMovingHeader() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
@@ -3388,7 +3395,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         return;
                     }
                 } else if (isFooterInProcessing() && mFooterView != null) {
-                    if (isLoadingMore() && mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
+                    if (isLoadingMore() && isMovingFooter() && mIndicator.isAlreadyHere(mIndicator
+                            .getOffsetToKeepFooterWhileLoading())) {
                         return;
                     } else if (isMovingFooter() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
