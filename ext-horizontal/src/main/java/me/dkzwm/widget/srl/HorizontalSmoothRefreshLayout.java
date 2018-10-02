@@ -356,8 +356,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 mPreventForAnotherDirection = false;
             }
         } else {
-            mPreventForAnotherDirection = false;
-            mDealAnotherDirectionMove = true;
+            mPreventForAnotherDirection = Math.abs(offsetX) < mTouchSlop
+                    && Math.abs(offsetY) < mTouchSlop;
+            if (!mPreventForAnotherDirection)
+                mDealAnotherDirectionMove = true;
         }
     }
 

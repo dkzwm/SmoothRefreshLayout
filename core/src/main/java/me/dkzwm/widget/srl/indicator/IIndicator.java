@@ -31,7 +31,7 @@ public interface IIndicator {
 
     float getOffset();
 
-    float getOriginalOffset();
+    float getRawOffset();
 
     int getLastPos();
 
