@@ -19,6 +19,8 @@ public interface IIndicatorSetter {
 
     void onFingerDown(float x, float y);
 
+    void onFingerDown();
+
     void onFingerMove(float x, float y);
 
     void onFingerUp();

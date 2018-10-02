@@ -273,6 +273,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mNeedFilterRefreshEvent = false;
             final int action = ev.getAction() & MotionEvent.ACTION_MASK;
             if (action == MotionEvent.ACTION_DOWN && mDelayToBackToTopRunnable != null) {
+                mDurationToStayAtHint = 0;
                 removeCallbacks(mDelayToBackToTopRunnable);
             }
         }

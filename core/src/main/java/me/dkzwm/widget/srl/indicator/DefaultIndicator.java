@@ -114,6 +114,11 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
+    public void onFingerDown() {
+        mTouched = true;
+    }
+
+    @Override
     public void onFingerMove(float x, float y) {
         mMoved = true;
         float offsetY = (y - mLastMovePoint[1]);

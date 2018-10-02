@@ -140,7 +140,7 @@ public class SmoothRefreshLayout extends ViewGroup implements
     protected boolean mIsLastOverScrollCanNotAbort = false;
     protected boolean mIsFingerInsideAnotherDirectionView = false;
     protected boolean mNestedScrollInProgress = false;
-    protected boolean mNestedFlingInProgress = false;
+    protected int mLastNestedType = ViewCompat.TYPE_NON_TOUCH;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
     protected int mDurationToCloseHeader = 350;
@@ -2367,9 +2367,9 @@ public class SmoothRefreshLayout extends ViewGroup implements
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
         // Dispatch up to the nested parent
         startNestedScroll(axes & getSupportScrollAxis(), type);
-        if (type == ViewCompat.TYPE_NON_TOUCH) {
-            mNestedFlingInProgress = true;
-        }
+        if (type == ViewCompat.TYPE_TOUCH)
+            mIndicatorSetter.onFingerDown();
+        mLastNestedType = type;
         mNestedScrollInProgress = true;
     }
 
@@ -2437,7 +2437,7 @@ public class SmoothRefreshLayout extends ViewGroup implements
         final int[] parentConsumed = mParentScrollConsumed;
         parentConsumed[0] = 0;
         parentConsumed[1] = 0;
-        if (type == ViewCompat.TYPE_NON_TOUCH && !mNestedFlingInProgress) {
+        if (mLastNestedType != type && type == ViewCompat.TYPE_NON_TOUCH) {
             //In the version of the support library 28.0.0, there is a problem with Fling. The
             // `onStartNestedScroll` may not be triggered before the `onNestedPreScroll` is
             // triggered, and the view obtained by `getNestedScrollingParentForType` is empty,
@@ -2454,8 +2454,8 @@ public class SmoothRefreshLayout extends ViewGroup implements
                     }
                 }
             }
-            if (handled && !mNestedFlingInProgress) {
-                mNestedFlingInProgress = startNestedScroll(getSupportScrollAxis(), type);
+            if (handled && mLastNestedType != ViewCompat.TYPE_NON_TOUCH) {
+                onNestedScrollAccepted(this, this, getSupportScrollAxis(), type);
             }
         }
         if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null, type)) {
@@ -2463,6 +2463,7 @@ public class SmoothRefreshLayout extends ViewGroup implements
             consumed[1] += parentConsumed[1];
             onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
+            onNestedScrollChanged();
             if (!isMovingContent() && !(isEnabledPinRefreshViewWhileLoading())) {
                 if (isVerticalOrientation) parentConsumed[1] = dy;
                 else parentConsumed[0] = dx;
@@ -2489,20 +2490,16 @@ public class SmoothRefreshLayout extends ViewGroup implements
     public void onStopNestedScroll(@NonNull View target, int type) {
         if (sDebug) SRLog.d(TAG, "onStopNestedScroll() type: %s", type);
         mNestedScrollingParentHelper.onStopNestedScroll(target, type);
-        mIndicatorSetter.onFingerUp();
-        if (type == ViewCompat.TYPE_NON_TOUCH) {
-            mNestedFlingInProgress = false;
+        if (mLastNestedType == type)
             mNestedScrollInProgress = false;
-        } else {
-            if (!mNestedFlingInProgress)
-                mNestedScrollInProgress = false;
-        }
         mIsInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
         // Dispatch up our nested parent
         stopNestedScroll(type);
-        if (!isAutoRefresh() && type == ViewCompat.TYPE_TOUCH)
+        if (!isAutoRefresh() && type == ViewCompat.TYPE_TOUCH) {
+            mIndicatorSetter.onFingerUp();
             onFingerUp();
+        }
     }
 
     @Override
@@ -2653,7 +2650,6 @@ public class SmoothRefreshLayout extends ViewGroup implements
     public boolean onNestedPreFling(@NonNull View target, float velocityX, float velocityY) {
         if (sDebug)
             SRLog.d(TAG, "onNestedPreFling() velocityX: %s, velocityY: %s", velocityX, velocityY);
-        mNestedFlingInProgress = false;
         return onFling(-velocityX, -velocityY, true);
     }
 
