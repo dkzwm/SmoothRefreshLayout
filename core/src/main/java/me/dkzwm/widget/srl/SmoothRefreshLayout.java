@@ -3361,15 +3361,15 @@ public class SmoothRefreshLayout extends ViewGroup implements
         if (mMode == Constants.MODE_DEFAULT) {
             if (isEnabledNoMoreData())
                 return;
-            if (!mScrollChecker.isPreFling() && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE)
-                if (isHeaderInProcessing() && !isDisabledPerformRefresh()
+            if (!mScrollChecker.isPreFling() && isEnabledKeepRefreshView() && mStatus != SR_STATUS_COMPLETE) {
+                if (isHeaderInProcessing() && !isDisabledPerformRefresh() && isMovingHeader()
                         && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
                     if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
                                 mDurationOfBackToHeaderHeight);
                         return;
                     }
-                } else if (isFooterInProcessing() && !isDisabledPerformLoadMore()
+                } else if (isFooterInProcessing() && !isDisabledPerformLoadMore() && isMovingFooter()
                         && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                     if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
@@ -3377,6 +3377,7 @@ public class SmoothRefreshLayout extends ViewGroup implements
                         return;
                     }
                 }
+            }
         }
         if (!mScrollChecker.isPreFling()) {
             onRelease();
@@ -3394,7 +3395,8 @@ public class SmoothRefreshLayout extends ViewGroup implements
                 return;
             } else if (isEnabledKeepRefreshView()) {
                 if (isHeaderInProcessing() && mHeaderView != null) {
-                    if (isRefreshing() && mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
+                    if (isRefreshing() && isMovingHeader() && mIndicator.isAlreadyHere(mIndicator
+                            .getOffsetToKeepHeaderWhileLoading())) {
                         return;
                     } else if (isMovingHeader() && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepHeaderWhileLoading(),
@@ -3404,7 +3406,8 @@ public class SmoothRefreshLayout extends ViewGroup implements
                         return;
                     }
                 } else if (isFooterInProcessing() && mFooterView != null) {
-                    if (isLoadingMore() && mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
+                    if (isLoadingMore() && isMovingFooter() && mIndicator.isAlreadyHere(mIndicator
+                            .getOffsetToKeepFooterWhileLoading())) {
                         return;
                     } else if (isMovingFooter() && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
                         mScrollChecker.tryToScrollTo(mIndicator.getOffsetToKeepFooterWhileLoading(),
