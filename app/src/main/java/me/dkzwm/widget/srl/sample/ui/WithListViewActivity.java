@@ -68,22 +68,30 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                     @Override
                     public void run() {
                         if (isRefresh) {
-                            mCount = 0;
                             List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            mCount = list.size();
                             mAdapter.updateData(list);
                         } else {
                             if (mCount > 50) {
                                 mRefreshLayout.setEnableNoMoreData(true);
-                            } else {
-                                List<String> list = DataUtil.createList(mCount, 20);
-                                mCount += 20;
-                                mAdapter.appendData(list);
                             }
                         }
                         mRefreshLayout.refreshComplete(1200);
                     }
                 }, 5000);
+            }
+        });
+        mRefreshLayout.setOnStatusChangedListener(new SmoothRefreshLayout.OnStatusChangedListener() {
+            @Override
+            public void onStatusChanged(byte old, byte now) {
+                if (old == SmoothRefreshLayout.SR_STATUS_LOADING_MORE
+                        && now == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
+                    if (mCount < 50) {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
+                    }
+                }
             }
         });
         mRefreshLayout.setRatioToKeep(1);

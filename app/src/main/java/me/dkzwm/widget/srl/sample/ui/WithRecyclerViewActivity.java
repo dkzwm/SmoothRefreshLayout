@@ -59,14 +59,12 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        List<String> list = DataUtil.createList(mCount, 15);
                         if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 15);
-                            mCount += 15;
+                            mCount = list.size();
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 15);
-                            mCount += 15;
+                            mCount += list.size();
                             mAdapter.appendData(list);
                         }
                         mRefreshLayout.refreshComplete();

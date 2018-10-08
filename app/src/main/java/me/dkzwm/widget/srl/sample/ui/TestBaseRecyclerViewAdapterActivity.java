@@ -17,12 +17,10 @@ import java.util.List;
 
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.LoadMoreRecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
-import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/8/8.
@@ -54,9 +52,8 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mCount = 0;
                         List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += 20;
+                        mCount = list.size();
                         mAdapter.setNewData(list);
                         mRefreshLayout.refreshComplete();
                     }
@@ -71,7 +68,7 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += 20;
+                        mCount += list.size();
                         mAdapter.addData(list);
                         mAdapter.loadMoreComplete();
                         mRefreshLayout.refreshComplete();

@@ -62,15 +62,14 @@ public class NestedPageWithSrlFragment extends Fragment {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
                         if (isRefresh) {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount = 20;
+                            mCount = list.size();
                             mList.clear();
                             mList.addAll(list);
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            mCount += list.size();
                             mList.addAll(list);
                             mAdapter.appendData(list);
                         }

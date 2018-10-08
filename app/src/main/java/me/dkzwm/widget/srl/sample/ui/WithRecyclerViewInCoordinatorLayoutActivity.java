@@ -16,7 +16,6 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
-import me.dkzwm.widget.srl.utils.QuickConfigAppBarUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -58,14 +57,12 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
                         if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            mCount = list.size();
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            mCount += list.size();
                             mAdapter.appendData(list);
                         }
                         mRefreshLayout.refreshComplete();

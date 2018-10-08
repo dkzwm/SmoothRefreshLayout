@@ -60,14 +60,12 @@ public class TestNestedActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
                         if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            mCount = list.size();
                             mAdapter.updateData(list);
                         } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
+                            mCount += list.size();
                             mAdapter.appendData(list);
                         }
                         mRefreshLayout.refreshComplete();
