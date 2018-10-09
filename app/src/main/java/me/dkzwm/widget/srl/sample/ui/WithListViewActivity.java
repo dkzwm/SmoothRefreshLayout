@@ -81,7 +81,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                 }, 5000);
             }
         });
-        mRefreshLayout.setOnStatusChangedListener(new SmoothRefreshLayout.OnStatusChangedListener() {
+        mRefreshLayout.addOnStatusChangedListener(new SmoothRefreshLayout.OnStatusChangedListener() {
             @Override
             public void onStatusChanged(byte old, byte now) {
                 if (old == SmoothRefreshLayout.SR_STATUS_LOADING_MORE

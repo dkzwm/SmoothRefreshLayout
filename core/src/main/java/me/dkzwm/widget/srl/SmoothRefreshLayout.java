@@ -131,8 +131,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected boolean mAutomaticActionUseSmoothScroll = false;
     protected boolean mAutomaticActionTriggered = true;
     protected boolean mIsSpringBackCanNotBeInterrupted = false;
-    protected boolean mHasSendCancelEvent = false;
-    protected boolean mHasSendDownEvent = false;
     protected boolean mDealAnotherDirectionMove = false;
     protected boolean mPreventForAnotherDirection = false;
     protected boolean mIsInterceptTouchEventInOnceTouch = false;
@@ -180,7 +178,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private Interpolator mOverScrollInterpolator;
     private List<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private List<OnNestedScrollChangedListener> mNestedScrollChangedListeners;
-    private OnStatusChangedListener mStatusChangedListener;
+    private List<OnStatusChangedListener> mStatusChangedListeners;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
@@ -958,6 +956,32 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     /**
+     * Add a listener when status changed.
+     * <p>添加个状态改变监听</p>
+     *
+     * @param listener Listener that should be called when status changed.
+     */
+    public void addOnStatusChangedListener(OnStatusChangedListener listener) {
+        if (mStatusChangedListeners == null) {
+            mStatusChangedListeners = new ArrayList<>();
+            mStatusChangedListeners.add(listener);
+        } else if (!mStatusChangedListeners.contains(listener)) {
+            mStatusChangedListeners.add(listener);
+        }
+    }
+
+    /**
+     * remove the listener.
+     * <p>移除滚动变化监听器</p>
+     *
+     * @param listener Listener
+     */
+    public void removeOnStatusChangedListener(@NonNull OnStatusChangedListener listener) {
+        if (mStatusChangedListeners != null && !mStatusChangedListeners.isEmpty())
+            mStatusChangedListeners.remove(listener);
+    }
+
+    /**
      * Set a scrolling callback when loading more.
      * <p>设置当加载更多时滚动回调，可使用该属性对内部视图做滑动处理。例如内部视图是ListView，完成加载更多时，
      * 需要将加载出的数据显示出来，那么设置该回调，每次Footer回滚时拿到滚动的数值对ListView做向上滚动处理，将数据展示处理</p>
@@ -966,16 +990,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      */
     public void setOnLoadMoreScrollCallback(OnLoadMoreScrollCallback callback) {
         mLoadMoreScrollCallback = callback;
-    }
-
-    /**
-     * Set a listener when status changed.
-     * <p>设置个状态改变监听</p>
-     *
-     * @param listener Listener that should be called when status changed.
-     */
-    public void setOnStatusChangedListener(OnStatusChangedListener listener) {
-        mStatusChangedListener = listener;
     }
 
     /**
@@ -1261,8 +1275,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             SRLog.d(TAG, "autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll);
         final byte old = mStatus;
         mStatus = SR_STATUS_PREPARE;
-        if (mStatusChangedListener != null)
-            mStatusChangedListener.onStatusChanged(old, mStatus);
+        notifyStatusChanged(old, mStatus);
         if (mHeaderView != null)
             mHeaderView.onRefreshPrepare(this);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
@@ -1329,8 +1342,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             SRLog.d(TAG, "autoLoadMore(): action: %s, smoothScroll: %s", action, smoothScroll);
         final byte old = mStatus;
         mStatus = SR_STATUS_PREPARE;
-        if (mStatusChangedListener != null)
-            mStatusChangedListener.onStatusChanged(old, mStatus);
+        notifyStatusChanged(old, mStatus);
         if (mFooterView != null)
             mFooterView.onRefreshPrepare(this);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
@@ -2799,8 +2811,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mScrollChecker.updateInterpolator(mSpringInterpolator);
         final byte old = mStatus;
         mStatus = SR_STATUS_INIT;
-        if (mStatusChangedListener != null)
-            mStatusChangedListener.onStatusChanged(old, mStatus);
+        notifyStatusChanged(old, mStatus);
         mAutomaticActionTriggered = true;
         mScrollChecker.destroy();
         if (mDelayToRefreshComplete != null)
@@ -3058,7 +3069,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 break;
             case MotionEvent.ACTION_DOWN:
                 mIndicatorSetter.onFingerUp();
-                mHasSendDownEvent = false;
                 mTouchPointerId = ev.getPointerId(0);
                 mIndicatorSetter.onFingerDown(ev.getX(), ev.getY());
                 mIsFingerInsideAnotherDirectionView = isDisabledWhenAnotherDirectionMove()
@@ -3068,7 +3078,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
                 if (!isNeedFilterTouchEvent())
                     mScrollChecker.destroy();
-                mHasSendCancelEvent = false;
                 mPreventForAnotherDirection = false;
                 if (mScrollTargetView == null && isEnabledDynamicEnsureTargetView()) {
                     View view = ensureScrollTargetView(this, ev.getX(), ev.getY());
@@ -3332,29 +3341,25 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void sendCancelEvent(MotionEvent event) {
-        if (mHasSendCancelEvent || (event == null && mLastMoveEvent == null)) return;
+        if (event == null && mLastMoveEvent == null) return;
         if (sDebug) SRLog.d(TAG, "sendCancelEvent()");
         final MotionEvent last;
         if (event == null) last = mLastMoveEvent;
         else last = event;
         final MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), last.getMetaState());
-        mHasSendCancelEvent = true;
-        mHasSendDownEvent = false;
         dispatchTouchEventSuper(ev);
         ev.recycle();
     }
 
     protected void sendDownEvent(MotionEvent event) {
-        if (mHasSendDownEvent || (event == null && mLastMoveEvent == null)) return;
+        if (event == null && mLastMoveEvent == null) return;
         if (sDebug) SRLog.d(TAG, "sendDownEvent()");
         final MotionEvent last;
         if (event == null) last = mLastMoveEvent;
         else last = event;
         final MotionEvent ev = MotionEvent.obtain(last.getDownTime(), last.getEventTime(),
                 MotionEvent.ACTION_DOWN, last.getX(), last.getY(), last.getMetaState());
-        mHasSendCancelEvent = false;
-        mHasSendDownEvent = true;
         dispatchTouchEventSuper(ev);
         ev.recycle();
     }
@@ -3565,8 +3570,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 || (isFooterInProcessing() && isMovingFooter && change < 0)))) {
             final byte old = mStatus;
             mStatus = SR_STATUS_PREPARE;
-            if (mStatusChangedListener != null)
-                mStatusChangedListener.onStatusChanged(old, mStatus);
+            notifyStatusChanged(old, mStatus);
             if (isMovingHeader()) {
                 mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
                 if (mHeaderView != null)
@@ -3811,8 +3815,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 mFooterView.onReset(this);
             final byte old = mStatus;
             mStatus = SR_STATUS_INIT;
-            if (mStatusChangedListener != null)
-                mStatusChangedListener.onStatusChanged(old, mStatus);
+            notifyStatusChanged(old, mStatus);
             mViewStatus = SR_VIEW_STATUS_INIT;
             if (!mScrollChecker.isPreFling()) {
                 mScrollChecker.destroy();
@@ -3879,8 +3882,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
         final byte old = mStatus;
         mStatus = SR_STATUS_COMPLETE;
-        if (mStatusChangedListener != null)
-            mStatusChangedListener.onStatusChanged(old, mStatus);
+        notifyStatusChanged(old, mStatus);
         notifyUIRefreshComplete(!isEnabledNoMoreData(), notifyViews);
     }
 
@@ -3956,8 +3958,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (sDebug) SRLog.d(TAG, "triggeredRefresh()");
         final byte old = mStatus;
         mStatus = SR_STATUS_REFRESHING;
-        if (mStatusChangedListener != null)
-            mStatusChangedListener.onStatusChanged(old, mStatus);
+        notifyStatusChanged(old, mStatus);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mFlag &= ~(FLAG_AUTO_REFRESH | FLAG_ENABLE_NO_MORE_DATA);
         mIsSpringBackCanNotBeInterrupted = false;
@@ -3968,8 +3969,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (sDebug) SRLog.d(TAG, "triggeredLoadMore()");
         final byte old = mStatus;
         mStatus = SR_STATUS_LOADING_MORE;
-        if (mStatusChangedListener != null)
-            mStatusChangedListener.onStatusChanged(old, mStatus);
+        notifyStatusChanged(old, mStatus);
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
         mFlag &= ~FLAG_AUTO_REFRESH;
         mIsSpringBackCanNotBeInterrupted = false;
@@ -4024,6 +4024,15 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             final List<OnNestedScrollChangedListener> listeners = mNestedScrollChangedListeners;
             for (OnNestedScrollChangedListener listener : listeners) {
                 listener.onNestedScrollChanged();
+            }
+        }
+    }
+
+    private void notifyStatusChanged(byte old, byte now) {
+        if (mStatusChangedListeners != null && !mStatusChangedListeners.isEmpty()) {
+            final List<OnStatusChangedListener> listeners = mStatusChangedListeners;
+            for (OnStatusChangedListener listener : listeners) {
+                listener.onStatusChanged(old, now);
             }
         }
     }
