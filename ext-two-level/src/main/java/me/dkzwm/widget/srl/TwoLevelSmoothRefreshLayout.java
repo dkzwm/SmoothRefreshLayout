@@ -271,9 +271,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
         if (mAutoHintCanBeInterrupted) {
             mNeedFilterRefreshEvent = false;
+            mDurationToStayAtHint = 0;
             final int action = ev.getAction() & MotionEvent.ACTION_MASK;
             if (action == MotionEvent.ACTION_DOWN && mDelayToBackToTopRunnable != null) {
-                mDurationToStayAtHint = 0;
                 removeCallbacks(mDelayToBackToTopRunnable);
             }
         }
