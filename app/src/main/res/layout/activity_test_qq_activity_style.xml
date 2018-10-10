@@ -8,7 +8,7 @@
     android:orientation="vertical"
     app:sr_content="@+id/recyclerView_test_qq_activity_style">
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_test_qq_activity_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

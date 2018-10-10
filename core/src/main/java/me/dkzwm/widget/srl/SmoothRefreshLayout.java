@@ -2494,27 +2494,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         final int[] parentConsumed = mParentScrollConsumed;
         parentConsumed[0] = 0;
         parentConsumed[1] = 0;
-        if (mLastNestedType != type && type == ViewCompat.TYPE_NON_TOUCH) {
-            //In the version of the support library 28.0.0, there is a problem with Fling. The
-            // `onStartNestedScroll` may not be triggered before the `onNestedPreScroll` is
-            // triggered, and the view obtained by `getNestedScrollingParentForType` is empty,
-            // that is, there is no way to pass the scrolling distance upward.
-            //在支持库28.0.0的版本中，Fling存在问题。触发`onNestedPreScroll`之前可能不会触发`onStartNestedScroll
-            // `，导致`getNestedScrollingParentForType`获取的视图为空，也就是说，无法向上传递滚动距离。
-            boolean handled = false;
-            final int childCount = getChildCount();
-            for (int i = 0; i < childCount; ++i) {
-                View view = getChildAt(i);
-                if (view.getVisibility() != View.GONE) {
-                    if (ViewCompat.isNestedScrollingEnabled(view)) {
-                        handled |= ViewCompat.startNestedScroll(view, getSupportScrollAxis(), type);
-                    }
-                }
-            }
-            if (handled && mLastNestedType != ViewCompat.TYPE_NON_TOUCH) {
-                onNestedScrollAccepted(this, this, getSupportScrollAxis(), type);
-            }
-        }
         if (dispatchNestedPreScroll(dx - consumed[0], dy - consumed[1], parentConsumed, null, type)) {
             consumed[0] += parentConsumed[0];
             consumed[1] += parentConsumed[1];
@@ -2552,7 +2531,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mIsInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
         // Dispatch up our nested parent
-        stopNestedScroll(type);
+        mNestedScrollingChildHelper.stopNestedScroll(type);
         if (!isAutoRefresh() && type == ViewCompat.TYPE_TOUCH) {
             mIndicatorSetter.onFingerUp();
             onFingerUp();
@@ -2655,12 +2634,21 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     public void stopNestedScroll() {
-        mNestedScrollingChildHelper.stopNestedScroll();
+        stopNestedScroll(ViewCompat.TYPE_TOUCH);
     }
 
     @Override
     public void stopNestedScroll(int type) {
-        mNestedScrollingChildHelper.stopNestedScroll(type);
+        final View targetView;
+        if (mScrollTargetView != null)
+            targetView = mScrollTargetView;
+        else if (mAutoFoundScrollTargetView != null)
+            targetView = mAutoFoundScrollTargetView;
+        else targetView = mTargetView;
+        if (ViewCompat.isNestedScrollingEnabled(targetView))
+            ViewCompat.stopNestedScroll(targetView, type);
+        else
+            mNestedScrollingChildHelper.stopNestedScroll(type);
     }
 
     @Override
