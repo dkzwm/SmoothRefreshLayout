@@ -20,9 +20,9 @@
         android:id="@+id/textView_list_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="#333333"
-        android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
+        android:gravity="center"
+        android:textColor="#333333"
         android:textSize="15sp"/>
 
 </LinearLayout>

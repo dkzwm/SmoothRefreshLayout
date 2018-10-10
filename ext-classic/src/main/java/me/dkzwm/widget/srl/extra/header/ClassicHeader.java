@@ -1,10 +1,10 @@
 package me.dkzwm.widget.srl.extra.header;
 
 import android.content.Context;
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import androidx.annotation.StringRes;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.extra.AbsClassicRefreshView;

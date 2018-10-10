@@ -1,7 +1,6 @@
 package me.dkzwm.widget.srl.extra;
 
 import me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 
 /**

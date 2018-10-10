@@ -1,15 +1,16 @@
 package me.dkzwm.widget.srl.utils;
 
-import android.support.annotation.NonNull;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.AbsListView;
 import android.widget.ScrollView;
+
+import androidx.annotation.NonNull;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * Created by dkzwm on 2017/10/23.
@@ -63,11 +64,11 @@ public class HorizontalBoundaryUtil {
                 if (manager != null) {
                     if (manager instanceof LinearLayoutManager) {
                         LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                        if (linearManager.getOrientation() == LinearLayoutManager.VERTICAL)
+                        if (linearManager.getOrientation() == RecyclerView.VERTICAL)
                             return true;
                     } else if (manager instanceof StaggeredGridLayoutManager) {
                         StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                        if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.VERTICAL)
+                        if (gridLayoutManager.getOrientation() == RecyclerView.VERTICAL)
                             return true;
                     }
                 }

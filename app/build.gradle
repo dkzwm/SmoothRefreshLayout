@@ -29,6 +29,7 @@ dependencies {
     implementation rootProject.ext.libs.supportV13
     implementation rootProject.ext.libs.recyclerview
     implementation rootProject.ext.libs.design
+    implementation rootProject.ext.libs.viewpager
     implementation 'com.github.dkzwm:ViewPagerTransforms:1.3.3'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.34'
     implementation 'com.joooonho:selectableroundedimageview:1.0.1'

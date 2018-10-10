@@ -3,12 +3,12 @@ package me.dkzwm.widget.srl.sample.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.TwoLevelRefreshingListenerAdapter;
 import me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;

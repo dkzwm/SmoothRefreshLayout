@@ -1,7 +1,6 @@
 package me.dkzwm.widget.srl.sample.header;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.TwoLevelSmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;

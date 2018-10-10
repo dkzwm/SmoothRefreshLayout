@@ -3,14 +3,14 @@ package me.dkzwm.widget.srl;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.SystemClock;
-import android.support.annotation.FloatRange;
-import android.support.annotation.IntRange;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
 
+import androidx.annotation.FloatRange;
+import androidx.annotation.IntRange;
 import me.dkzwm.widget.srl.annotation.Action;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.ext.twolevel.R;

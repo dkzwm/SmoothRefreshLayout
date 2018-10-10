@@ -1,7 +1,6 @@
 package me.dkzwm.widget.srl.indicator;
 
-import android.support.annotation.NonNull;
-
+import androidx.annotation.NonNull;
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 
 /**

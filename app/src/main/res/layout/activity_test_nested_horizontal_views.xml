@@ -24,7 +24,7 @@
                 android:textColor="@android:color/white"
                 android:textSize="32sp"/>
 
-            <android.support.v4.view.ViewPager
+            <androidx.viewpager.widget.ViewPager
                 android:id="@+id/viewPager_test_nested_horizontal_views_pager"
                 android:layout_width="match_parent"
                 android:layout_height="168dp"/>

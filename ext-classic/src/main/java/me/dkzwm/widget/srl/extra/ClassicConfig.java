@@ -3,7 +3,6 @@ package me.dkzwm.widget.srl.extra;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -18,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 

@@ -1,15 +1,15 @@
 package me.dkzwm.widget.srl.sample.header;
 
 import android.content.Context;
-import android.support.annotation.AttrRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.annotation.AttrRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -90,7 +90,7 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
+    public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
 
     }
 

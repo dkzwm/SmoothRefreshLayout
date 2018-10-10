@@ -1,13 +1,6 @@
 package me.dkzwm.widget.srl.utils;
 
 import android.os.Build;
-import android.support.v4.view.ScrollingView;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.NestedScrollView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
 import android.view.ViewParent;
 import android.webkit.WebView;
@@ -16,6 +9,13 @@ import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
+import androidx.core.view.ScrollingView;
+import androidx.core.view.ViewCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 
 /**

@@ -1,6 +1,6 @@
 package me.dkzwm.widget.srl.extra;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by dkzwm on 2017/10/11.
