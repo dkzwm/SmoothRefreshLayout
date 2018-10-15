@@ -230,12 +230,12 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public boolean isOverOffsetToKeepHeaderWhileLoading() {
-        return mCurrentPos >= mOffsetToKeepHeader;
+        return mHeaderHeight >= 0 && mCurrentPos >= mOffsetToKeepHeader;
     }
 
     @Override
     public boolean isOverOffsetToKeepFooterWhileLoading() {
-        return mCurrentPos >= mOffsetToKeepFooter;
+        return mFooterHeight >= 0 && mCurrentPos >= mOffsetToKeepFooter;
     }
 
     @Override

@@ -53,8 +53,6 @@ public class QuickConfigAppBarUtil implements ILifecycleObserver, AppBarLayout.O
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        if (mRefreshLayout != null)
-            mRefreshLayout.onScrollChanged();
         mOffset = verticalOffset;
         mFullyExpanded = (appBarLayout.getHeight() - appBarLayout.getBottom()) == 0;
         mMinOffset = Math.min(mOffset, mMinOffset);
