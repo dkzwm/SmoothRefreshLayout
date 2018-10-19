@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //设置刷新回调
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -186,8 +186,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, TestHorizontalScaleEffectActivity.class));
                 break;
             case R.id.button_main_debug:
-                SmoothRefreshLayout.debug(!SmoothRefreshLayout.isDebug());
-                if (SmoothRefreshLayout.isDebug()) {
+                SmoothRefreshLayout.sDebug=!SmoothRefreshLayout.sDebug;
+                if (SmoothRefreshLayout.sDebug) {
                     mButtonDebug.setText(R.string.debug_off);
                 } else {
                     mButtonDebug.setText(R.string.debug_on);

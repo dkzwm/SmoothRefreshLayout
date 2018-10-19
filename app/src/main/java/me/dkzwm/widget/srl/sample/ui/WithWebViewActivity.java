@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
@@ -42,15 +43,10 @@ public class WithWebViewActivity extends AppCompatActivity {
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mWebView.loadUrl("https://github.com/dkzwm");
-            }
-
-            @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-
             }
         });
         mWebView = findViewById(R.id.webView_with_webView);
@@ -62,7 +58,7 @@ public class WithWebViewActivity extends AppCompatActivity {
         });
         mRefreshLayout.autoRefresh(false);
         mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(mWebView);
-        mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
+        mRefreshLayout.addLifecycleObserver(mAutoRefreshUtil);
     }
 
 
@@ -74,7 +70,7 @@ public class WithWebViewActivity extends AppCompatActivity {
                 return true;
             case Menu.FIRST:
                 mAutoRefreshUtil.autoRefresh(true, false, true);
-               return true;
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

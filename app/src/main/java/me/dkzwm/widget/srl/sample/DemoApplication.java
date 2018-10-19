@@ -1,7 +1,7 @@
 package me.dkzwm.widget.srl.sample;
 
 import android.app.Application;
-import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 
 import com.squareup.leakcanary.LeakCanary;
 

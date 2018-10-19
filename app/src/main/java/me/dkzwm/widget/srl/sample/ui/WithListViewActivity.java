@@ -59,22 +59,27 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
-                if (!isRefresh) {
-                    Toast.makeText(WithListViewActivity.this, R.string.has_been_triggered_to_load_more,
-                            Toast.LENGTH_SHORT).show();
-                }
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount = list.size();
-                            mAdapter.updateData(list);
-                        } else {
-                            if (mCount > 50) {
-                                mRefreshLayout.setEnableNoMoreData(true);
-                            }
+                        List<String> list = DataUtil.createList(mCount, 30);
+                        mCount = list.size();
+                        mAdapter.updateData(list);
+                        mRefreshLayout.refreshComplete(1200);
+                    }
+                }, 5000);
+            }
+
+            @Override
+            public void onLoadingMore() {
+                Toast.makeText(WithListViewActivity.this, R.string.has_been_triggered_to_load_more,
+                        Toast.LENGTH_SHORT).show();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mCount > 50) {
+                            mRefreshLayout.setEnableNoMoreData(true);
                         }
                         mRefreshLayout.refreshComplete(1200);
                     }
@@ -99,6 +104,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setMaxMoveRatioOfFooter(1);
         mRefreshLayout.setEnableNoSpringBackWhenNoMoreData(true);
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
+        mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_disable_refresh)
                 .setOnClickListener(this);

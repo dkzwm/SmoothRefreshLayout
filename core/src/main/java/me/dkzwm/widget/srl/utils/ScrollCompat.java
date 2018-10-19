@@ -241,6 +241,7 @@ public class ScrollCompat {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             //ignored
         }
     }
