@@ -126,9 +126,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected IIndicator mIndicator;
     protected IIndicatorSetter mIndicatorSetter;
     protected OnRefreshListener mRefreshListener;
-    protected byte mStatus = SR_STATUS_INIT;
-    protected byte mViewStatus = SR_VIEW_STATUS_INIT;
-    protected int mAutomaticAction = Constants.ACTION_NOTIFY;
     protected boolean mAutomaticActionUseSmoothScroll = false;
     protected boolean mAutomaticActionTriggered = true;
     protected boolean mIsSpringBackCanNotBeInterrupted = false;
@@ -138,29 +135,33 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected boolean mIsLastOverScrollCanNotAbort = false;
     protected boolean mIsFingerInsideAnotherDirectionView = false;
     protected boolean mNestedScrollInProgress = false;
-    protected int mLastNestedType = ViewCompat.TYPE_NON_TOUCH;
+    protected float mFlingBackFactor = 1.1f;
+    protected byte mStatus = SR_STATUS_INIT;
+    protected byte mViewStatus = SR_VIEW_STATUS_INIT;
     protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
+    protected int mAutomaticAction = Constants.ACTION_NOTIFY;
+    protected int mLastNestedType = ViewCompat.TYPE_NON_TOUCH;
     protected int mDurationToCloseHeader = 350;
     protected int mDurationToCloseFooter = 350;
     protected int mDurationOfBackToHeaderHeight = 200;
     protected int mDurationOfBackToFooterHeight = 200;
-    protected View mTargetView;
-    protected View mScrollTargetView;
-    protected View mAutoFoundScrollTargetView;
-    protected View mStickyHeaderView;
-    protected View mStickyFooterView;
-    protected LayoutInflater mInflater;
     protected int mContentResId = View.NO_ID;
     protected int mStickyHeaderResId = View.NO_ID;
     protected int mStickyFooterResId = View.NO_ID;
-    protected ScrollChecker mScrollChecker;
     protected int mTouchSlop;
     protected int mTouchPointerId;
     protected int mHeaderBackgroundColor = -1;
     protected int mFooterBackgroundColor = -2;
     protected int mMinimumFlingVelocity;
     protected int mMaximumFlingVelocity;
+    protected View mTargetView;
+    protected View mScrollTargetView;
+    protected View mAutoFoundScrollTargetView;
+    protected View mStickyHeaderView;
+    protected View mStickyFooterView;
+    protected LayoutInflater mInflater;
+    protected ScrollChecker mScrollChecker;
     protected VelocityTracker mVelocityTracker;
     protected Paint mBackgroundPaint;
     protected MotionEvent mLastMoveEvent;
@@ -172,7 +173,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected OnPerformAutoRefreshCallBack mAutoRefreshCallBack;
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
-    private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
     private Interpolator mSpringInterpolator;
     private Interpolator mSpringBackInterpolator;
     private Interpolator mOverScrollInterpolator;
@@ -186,11 +186,12 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
-    private int mMaxOverScrollDuration = 350;
-    private int mMinOverScrollDuration = 150;
     private float[] mCachedPoint = null;
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
+    private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
+    private int mMaxOverScrollDuration = 350;
+    private int mMinOverScrollDuration = 150;
     private int mOffsetRemaining = 0;
 
     public SmoothRefreshLayout(Context context) {
@@ -753,14 +754,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             mOffsetTotal = 0;
             mOffsetRemaining = mTouchSlop * 3;
         } else {
-            if (mOffsetRemaining > 0) {
-                mOffsetRemaining -= mTouchSlop;
-                if (isMovingHeader())
-                    mOffsetTotal -= mOffsetRemaining;
-                else if (isMovingFooter())
-                    mOffsetTotal += mOffsetRemaining;
-            }
             if (!mIndicator.isInStartPosition() && mIndicator.getRawOffset() != 0) {
+                if (mOffsetRemaining > 0) {
+                    mOffsetRemaining -= mTouchSlop;
+                    if (isMovingHeader())
+                        mOffsetTotal -= mOffsetRemaining;
+                    else if (isMovingFooter())
+                        mOffsetTotal += mOffsetRemaining;
+                }
                 mOffsetConsumed += mIndicator.getRawOffset() < 0
                         ? mIndicator.getLastPos() - mIndicator.getCurrentPos()
                         : mIndicator.getCurrentPos() - mIndicator.getLastPos();
@@ -2290,9 +2291,13 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     public void setSpringBackInterpolator(@NonNull Interpolator interpolator) {
         mSpringBackInterpolator = interpolator;
-        if (mScrollChecker.isSpringBack()) {
+        if (mScrollChecker.isFlingBack()) {
             mScrollChecker.updateInterpolator(interpolator);
         }
+    }
+
+    public void setFlingBackFactor(@FloatRange(from = 0f, to = Float.MAX_VALUE) float factor) {
+        mFlingBackFactor = factor;
     }
 
     @Override
@@ -3314,7 +3319,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (mMode == Constants.MODE_DEFAULT) {
             if ((isEnabledNoMoreData() && isMovingFooter() && isEnabledNoSpringBackWhenNoMoreData()))
                 return;
-            mAutomaticActionUseSmoothScroll = false;
             tryToPerformRefresh();
             if (mStatus == SR_STATUS_COMPLETE) {
                 notifyUIRefreshComplete(true, false);
@@ -4266,9 +4270,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         private static final byte MODE_NONE = -1;
         private static final byte MODE_PRE_FLING = 0;
         private static final byte MODE_FLING = 1;
-        private static final byte MODE_SPRING_BACK = 2;
+        private static final byte MODE_FLING_BACK = 2;
         private static final byte MODE_SCROLLING = 3;
         private final float mPhysical;
+        private final int mMaxDistance;
         int mLastY;
         int mLastStart;
         int mLastTo;
@@ -4278,14 +4283,13 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         long mStartTime;
         byte mMode = MODE_NONE;
         float mVelocity;
-        private int mMaxDistance;
-        private boolean mIsScrolling = false;
+        boolean mIsScrolling = false;
 
         ScrollChecker() {
             DisplayMetrics dm = getResources().getDisplayMetrics();
             mMaxDistance = (int) (dm.heightPixels / 8f);
             mInterpolator = mSpringInterpolator;
-            float ppi = getResources().getDisplayMetrics().density * 160.0f;
+            float ppi = getResources().getDisplayMetrics().density * 160f;
             mPhysical = SensorManager.GRAVITY_EARTH * 39.37f * ppi * 0.84f;
             mScroller = new OverScroller(getContext(), mInterpolator);
         }
@@ -4316,18 +4320,18 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             } else {
                 switch (mMode) {
                     case MODE_SCROLLING:
-                    case MODE_SPRING_BACK:
+                    case MODE_FLING_BACK:
                         destroy();
                         if (!isInStartPosition())
                             onRelease();
                         break;
                     case MODE_FLING:
-                        mMode = MODE_SPRING_BACK;
+                        mMode = MODE_FLING_BACK;
                         onRelease();
                         break;
                     case MODE_PRE_FLING:
                         if (!isMovingContent()) {
-                            mMode = MODE_SPRING_BACK;
+                            mMode = MODE_FLING_BACK;
                         } else {
                             destroy();
                         }
@@ -4338,7 +4342,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
 
         boolean isOverScrolling() {
-            return mMode == MODE_FLING || mMode == MODE_SPRING_BACK || mMode == MODE_PRE_FLING;
+            return mMode == MODE_FLING || mMode == MODE_FLING_BACK || mMode == MODE_PRE_FLING;
         }
 
         boolean isPreFling() {
@@ -4349,8 +4353,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             return mMode == MODE_FLING;
         }
 
-        boolean isSpringBack() {
-            return mMode == MODE_SPRING_BACK;
+        boolean isFlingBack() {
+            return mMode == MODE_FLING_BACK;
         }
 
         float getCurrVelocity() {
@@ -4387,22 +4391,22 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
 
         void tryToScrollTo(int to, int duration) {
-            if (mMode == MODE_SPRING_BACK) {
-                duration = Math.min(mMaxOverScrollDuration, 350);
+            final int currentPos = mIndicator.getCurrentPos();
+            if (to == IIndicator.START_POS && mMode == MODE_FLING_BACK) {
+                duration = (int) (1000f * Math.sqrt(2.0 * currentPos / 2000f) * mFlingBackFactor);
             } else {
                 destroy();
                 mMode = MODE_SCROLLING;
             }
-            if (to > mIndicator.getCurrentPos()) {
+            if (to > currentPos) {
                 updateInterpolator(mSpringInterpolator);
-            } else if (to < mIndicator.getCurrentPos()) {
+            } else if (to < currentPos) {
                 updateInterpolator(mSpringBackInterpolator);
             } else {
                 return;
             }
             if (SmoothRefreshLayout.sDebug)
-                SRLog.d(TAG, "ScrollChecker: tryToScrollTo(): " +
-                        "to:%s, duration:%s", to, duration);
+                SRLog.d(TAG, "ScrollChecker: tryToScrollTo(): to:%s, duration:%s", to, duration);
             scrollTo(to, duration);
         }
 
@@ -4419,10 +4423,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
                         float deceleration = (float) Math.log(0.25f * Math.abs(velocity) /
                                 (ViewConfiguration.getScrollFriction() * mPhysical));
-                        float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2.38f);
+                        float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2.35f);
                         int to = Math.min((int) ((ViewConfiguration.getScrollFriction() *
                                 mPhysical * Math.exp(deceleration)) * ratio), mMaxDistance);
-                        int duration = Math.min(Math.max((int) ((1000.0 * Math.exp(deceleration))
+                        int duration = Math.min(Math.max((int) ((1000f * Math.exp(deceleration))
                                 * ratio), mMinOverScrollDuration), mMaxOverScrollDuration);
                         updateInterpolator(mOverScrollInterpolator);
                         mMode = MODE_FLING;
@@ -4440,14 +4444,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         } else {
                             float deceleration = (float) Math.log(0.25f * Math.abs(velocity) /
                                     (ViewConfiguration.getScrollFriction() * mPhysical));
-                            float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2.38f);
+                            float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2.35f);
                             to = Math.min(Math.max((int) ((ViewConfiguration.getScrollFriction() *
                                             mPhysical * Math.exp(deceleration)) * ratio), mTouchSlop),
                                     mMaxDistance);
                             if (isEnabledNoMoreData())
                                 duration = mMaxOverScrollDuration;
                             else
-                                duration = Math.min(Math.max((int) ((1000.0 * Math.exp(deceleration))
+                                duration = Math.min(Math.max((int) ((1000f * Math.exp(deceleration))
                                         * ratio), mMinOverScrollDuration), mMaxOverScrollDuration);
                         }
                         updateInterpolator(mOverScrollInterpolator);
@@ -4467,7 +4471,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             if (!mScroller.isFinished()) {
                 switch (mMode) {
                     case MODE_SCROLLING:
-                    case MODE_SPRING_BACK:
+                    case MODE_FLING_BACK:
                         mLastStart = mIndicator.getCurrentPos();
                         int distance = mLastTo - mLastStart;
                         if (distance < 0)
@@ -4504,6 +4508,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 if (SmoothRefreshLayout.sDebug)
                     SRLog.d(TAG, "ScrollChecker: destroy()");
                 mMode = MODE_NONE;
+                mAutomaticActionUseSmoothScroll = false;
                 mIsScrolling = false;
                 mScroller.forceFinished(true);
                 mDuration = 0;
@@ -4512,7 +4517,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 removeCallbacks(this);
             }
         }
-
 
         private void scrollTo(int to, int duration) {
             if (SmoothRefreshLayout.sDebug)

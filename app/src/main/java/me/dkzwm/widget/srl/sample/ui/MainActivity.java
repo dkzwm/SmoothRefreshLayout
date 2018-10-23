@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, TestHorizontalScaleEffectActivity.class));
                 break;
             case R.id.button_main_debug:
-                SmoothRefreshLayout.sDebug=!SmoothRefreshLayout.sDebug;
+                SmoothRefreshLayout.sDebug = !SmoothRefreshLayout.sDebug;
                 if (SmoothRefreshLayout.sDebug) {
                     mButtonDebug.setText(R.string.debug_off);
                 } else {
