@@ -7,6 +7,7 @@ package me.dkzwm.widget.srl;
  */
 public abstract class TwoLevelRefreshingListenerAdapter implements TwoLevelSmoothRefreshLayout.OnRefreshListener {
     @Override
-    public void onRefreshComplete(boolean isSuccessful) {
+    public void onLoadingMore() {
+
     }
 }

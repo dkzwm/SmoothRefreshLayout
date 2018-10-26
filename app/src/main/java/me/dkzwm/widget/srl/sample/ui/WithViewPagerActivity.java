@@ -15,6 +15,7 @@ import com.ToxicBakery.viewpager.transforms.DrawerTransformer;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
@@ -49,9 +50,9 @@ public class WithViewPagerActivity extends AppCompatActivity {
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -61,11 +62,6 @@ public class WithViewPagerActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 }, 4000);
-            }
-
-            @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-
             }
         });
         mViewPager = findViewById(R.id.viewPager_with_viewPager);

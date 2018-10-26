@@ -31,6 +31,8 @@ public interface IIndicator {
 
     float getOffset();
 
+    float getRawOffset();
+
     int getLastPos();
 
     int getHeaderHeight();
@@ -47,17 +49,15 @@ public interface IIndicator {
 
     boolean isJustReturnedOffsetToLoadMore();
 
-    boolean hasMovedAfterPressedDown();
-
     boolean isInStartPosition();
-
-    boolean crossRefreshLineFromTopToBottom();
-
-    boolean crossRefreshLineFromBottomToTop();
 
     boolean isOverOffsetToKeepHeaderWhileLoading();
 
+    boolean isOverOffsetToRefresh();
+
     boolean isOverOffsetToKeepFooterWhileLoading();
+
+    boolean isOverOffsetToLoadMore();
 
     int getOffsetToKeepHeaderWhileLoading();
 
@@ -78,6 +78,8 @@ public interface IIndicator {
     float getCurrentPercentOfRefreshOffset();
 
     float getCurrentPercentOfLoadMoreOffset();
+
+    void checkConfig();
 
     /**
      * Created by dkzwm on 2017/10/24.

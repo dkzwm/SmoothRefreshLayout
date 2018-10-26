@@ -35,7 +35,7 @@ public class TestMaterialStyleActivity extends AppCompatActivity {
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mCount++;
                 mHandler.postDelayed(new Runnable() {
                     @Override

@@ -35,7 +35,7 @@ public class ScrollCompat {
                 return absListView.getChildCount() > 0
                         && (absListView.getLastVisiblePosition() < absListView.getAdapter().getCount() - 1)
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
-                        > absListView.getHeight() - absListView.getPaddingBottom();
+                        > absListView.getHeight() - absListView.getListPaddingBottom();
             } else if (view instanceof ScrollView) {
                 final ScrollView scrollView = (ScrollView) view;
                 return scrollView.getChildCount() != 0
@@ -132,7 +132,7 @@ public class ScrollCompat {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0
-                        || absListView.getChildAt(0).getTop() < absListView.getPaddingTop());
+                        || absListView.getChildAt(0).getTop() < absListView.getListPaddingTop());
             } else {
                 return ViewCompat.canScrollVertically(view, -1)
                         || view.getScrollY() > 0;
@@ -224,9 +224,8 @@ public class ScrollCompat {
                 webView.flingScroll(0, velocityY);
             } else if (isRecyclerView(view)) {
                 RecyclerView recyclerView = (RecyclerView) view;
-                if (recyclerView.getScrollState() != RecyclerView.SCROLL_STATE_SETTLING) {
-                    recyclerView.fling(0, velocityY);
-                }
+                recyclerView.stopScroll();
+                recyclerView.fling(0, velocityY);
             } else if (view instanceof NestedScrollView) {
                 NestedScrollView scrollView = (NestedScrollView) view;
                 scrollView.smoothScrollBy(0, 0);
@@ -242,6 +241,7 @@ public class ScrollCompat {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             //ignored
         }
     }

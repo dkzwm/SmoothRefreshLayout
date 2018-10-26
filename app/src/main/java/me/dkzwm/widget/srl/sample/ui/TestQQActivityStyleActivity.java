@@ -72,25 +72,30 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.updateData(list);
-                        } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.appendData(list);
-                        }
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount = list.size();
+                        mAdapter.updateData(list);
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
             }
 
+            @Override
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 2000);
+            }
         });
         mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout
                 .OnUIPositionChangedListener() {

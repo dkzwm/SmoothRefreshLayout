@@ -145,7 +145,6 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         final int offsetToLoadMore = indicator.getOffsetToLoadMore();
         final int currentPos = indicator.getCurrentPos();
         final int lastPos = indicator.getLastPos();
-
         if (frame.isEnabledNoMoreData()) {
             if (currentPos > lastPos && !mNoMoreDataChangedView) {
                 mTitleTextView.setVisibility(VISIBLE);

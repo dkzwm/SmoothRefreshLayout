@@ -52,7 +52,7 @@ public class NestedPageFragment extends Fragment {
 
     public void updateData() {
         List<String> list = DataUtil.createList(0, 20);
-        mCount = 20;
+        mCount = list.size();
         mList.clear();
         mList.addAll(list);
         if (mAdapter != null)
@@ -61,7 +61,7 @@ public class NestedPageFragment extends Fragment {
 
     public void appendData() {
         List<String> list = DataUtil.createList(mCount, 20);
-        mCount += 20;
+        mCount += list.size();
         mList.addAll(list);
         if (mAdapter != null)
             mAdapter.appendData(list);

@@ -65,34 +65,32 @@ public class TestHorizontalRecyclerViewActivity extends AppCompatActivity {
         mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
-                if (!isRefresh) {
-                    Toast.makeText(TestHorizontalRecyclerViewActivity.this,
-                            R.string.has_been_triggered_to_load_more,
-                            Toast.LENGTH_SHORT).show();
-                }
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.updateData(list);
-                        } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.appendData(list);
-                        }
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount = list.size();
+                        mAdapter.updateData(list);
                         mRefreshLayout.refreshComplete();
                     }
                 }, 3000);
             }
 
             @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-                Toast.makeText(TestHorizontalRecyclerViewActivity.this, R.string.sr_refresh_complete,
+            public void onLoadingMore() {
+                Toast.makeText(TestHorizontalRecyclerViewActivity.this,
+                        R.string.has_been_triggered_to_load_more,
                         Toast.LENGTH_SHORT).show();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 3000);
             }
         });
         mRefreshLayout.setDurationToClose(800);

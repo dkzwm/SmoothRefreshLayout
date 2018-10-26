@@ -59,31 +59,44 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
-                if (!isRefresh) {
-                    Toast.makeText(WithListViewActivity.this, R.string.has_been_triggered_to_load_more,
-                            Toast.LENGTH_SHORT).show();
-                }
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.updateData(list);
-                        } else {
-                            if (mCount > 50) {
-                                mRefreshLayout.setEnableNoMoreData(true);
-                            } else {
-                                List<String> list = DataUtil.createList(mCount, 20);
-                                mCount += 20;
-                                mAdapter.appendData(list);
-                            }
+                        List<String> list = DataUtil.createList(mCount, 30);
+                        mCount = list.size();
+                        mAdapter.updateData(list);
+                        mRefreshLayout.refreshComplete(1200);
+                    }
+                }, 5000);
+            }
+
+            @Override
+            public void onLoadingMore() {
+                Toast.makeText(WithListViewActivity.this, R.string.has_been_triggered_to_load_more,
+                        Toast.LENGTH_SHORT).show();
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mCount > 50) {
+                            mRefreshLayout.setEnableNoMoreData(true);
                         }
                         mRefreshLayout.refreshComplete(1200);
                     }
                 }, 5000);
+            }
+        });
+        mRefreshLayout.addOnStatusChangedListener(new SmoothRefreshLayout.OnStatusChangedListener() {
+            @Override
+            public void onStatusChanged(byte old, byte now) {
+                if (old == SmoothRefreshLayout.SR_STATUS_LOADING_MORE
+                        && now == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
+                    if (mCount < 50) {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
+                    }
+                }
             }
         });
         mRefreshLayout.setRatioToKeep(1);
@@ -91,6 +104,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setMaxMoveRatioOfFooter(1);
         mRefreshLayout.setEnableNoSpringBackWhenNoMoreData(true);
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
+        mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_disable_refresh)
                 .setOnClickListener(this);

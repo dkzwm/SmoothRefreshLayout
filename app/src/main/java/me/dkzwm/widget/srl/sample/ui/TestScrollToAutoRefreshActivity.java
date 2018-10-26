@@ -49,20 +49,26 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.updateData(list);
-                        } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.appendData(list);
-                        }
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount = list.size();
+                        mAdapter.updateData(list);
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
@@ -72,7 +78,7 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
         mRefreshLayout.setSpringInterpolator(new OvershootInterpolator(3));
         mRefreshLayout.autoRefresh(false);
         mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(recyclerView);
-        mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
+        mRefreshLayout.addLifecycleObserver(mAutoRefreshUtil);
         findViewById(R.id.button_test_scroll_to_auto_refresh_left).setOnClickListener(this);
         findViewById(R.id.button_test_scroll_to_auto_refresh_right).setOnClickListener(this);
     }

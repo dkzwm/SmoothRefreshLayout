@@ -56,33 +56,35 @@ public class TestNestedActivity extends AppCompatActivity {
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            mCount = 0;
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.updateData(list);
-                        } else {
-                            List<String> list = DataUtil.createList(mCount, 20);
-                            mCount += 20;
-                            mAdapter.appendData(list);
-                        }
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount = list.size();
+                        mAdapter.updateData(list);
                         mRefreshLayout.refreshComplete();
                     }
-                }, isRefresh ? 2000 : 3000);
+                }, 2000);
             }
 
             @Override
-            public void onRefreshComplete(boolean isSuccessful) {
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 3000);
             }
         });
         mRefreshLayout.getHeaderView().getView().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
         mRefreshLayout.setEnableDynamicEnsureTargetView(true);
-        mRefreshLayout.setLifecycleObserver(new QuickConfigAppBarUtil());
+        mRefreshLayout.addLifecycleObserver(new QuickConfigAppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }
 

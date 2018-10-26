@@ -17,6 +17,8 @@ public interface IIndicatorSetter {
 
     void setHeaderHeight(int height);
 
+    void onFingerDown();
+
     void onFingerDown(float x, float y);
 
     void onFingerDown();
