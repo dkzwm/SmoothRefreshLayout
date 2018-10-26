@@ -4394,9 +4394,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             final int currentPos = mIndicator.getCurrentPos();
             if (to == IIndicator.START_POS && $Mode == MODE_FLING_BACK) {
                 if (currentPos > $MaxDistance) {
-                    duration = (int) (1000f * Math.sqrt(2.0 * $MaxDistance / 2000f) * mFlingBackFactor);
+                    duration = Math.max((int) (1000f * Math.sqrt(2.0 * $MaxDistance / 2000f) *
+                            mFlingBackFactor), mMinOverScrollDuration);
                 } else {
-                    duration = (int) (1000f * Math.sqrt(2.0 * currentPos / 2000f) * mFlingBackFactor);
+                    duration = Math.max((int) (1000f * Math.sqrt(2.0 * currentPos / 2000f) *
+                            mFlingBackFactor), mMinOverScrollDuration);
                 }
             } else {
                 destroy();
