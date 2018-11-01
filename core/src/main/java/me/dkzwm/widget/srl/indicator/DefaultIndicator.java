@@ -1,4 +1,5 @@
 package me.dkzwm.widget.srl.indicator;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import me.dkzwm.widget.srl.annotation.MovingStatus;
@@ -24,10 +25,10 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     protected int mStatus = Constants.MOVING_CONTENT;
     protected float mResistanceHeader = DEFAULT_RESISTANCE;
     protected float mResistanceFooter = DEFAULT_RESISTANCE;
-    private int mOffsetToRefresh = 1;
-    private int mOffsetToKeepHeader = 1;
-    private int mOffsetToLoadMore = 1;
-    private int mOffsetToKeepFooter = 1;
+    private int mOffsetToRefresh = 0;
+    private int mOffsetToKeepHeader = 0;
+    private int mOffsetToLoadMore = 0;
+    private int mOffsetToKeepFooter = 0;
     private float mOffsetRatioToKeepHeaderWhileLoading = DEFAULT_RATIO_TO_KEEP;
     private float mOffsetRatioToKeepFooterWhileLoading = DEFAULT_RATIO_TO_KEEP;
     private float mRatioOfHeaderHeightToRefresh = DEFAULT_RATIO_TO_REFRESH;
@@ -75,10 +76,8 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public void setRatioToRefresh(float ratio) {
-        mRatioOfHeaderHeightToRefresh = ratio;
-        mRatioOfFooterHeightToLoadMore = ratio;
-        mOffsetToRefresh = (int) (mHeaderHeight * ratio);
-        mOffsetToLoadMore = (int) (mFooterHeight * ratio);
+        setRatioOfHeaderToRefresh(ratio);
+        setRatioOfFooterToRefresh(ratio);
     }
 
     @Override
@@ -194,7 +193,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public boolean hasJustBackToStartPosition() {
-        return mLastPos != START_POS && isInStartPosition();
+        return mLastPos != START_POS && mCurrentPos == START_POS;
     }
 
     @Override
@@ -208,33 +207,23 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public boolean hasMovedAfterPressedDown() {
-        return mCurrentPos != mPressedPos;
-    }
-
-    @Override
-    public boolean isInStartPosition() {
-        return mCurrentPos == START_POS;
-    }
-
-    @Override
-    public boolean crossRefreshLineFromTopToBottom() {
-        return mLastPos < mOffsetToRefresh && mCurrentPos >= mOffsetToRefresh;
-    }
-
-    @Override
-    public boolean crossRefreshLineFromBottomToTop() {
-        return mLastPos < mOffsetToLoadMore && mCurrentPos >= mOffsetToLoadMore;
-    }
-
-    @Override
     public boolean isOverOffsetToKeepHeaderWhileLoading() {
-        return mCurrentPos >= mOffsetToKeepHeader;
+        return mHeaderHeight >= 0 && mCurrentPos >= mOffsetToKeepHeader;
+    }
+
+    @Override
+    public boolean isOverOffsetToRefresh() {
+        return mCurrentPos >= mOffsetToRefresh;
     }
 
     @Override
     public boolean isOverOffsetToKeepFooterWhileLoading() {
-        return mCurrentPos >= mOffsetToKeepFooter;
+        return mFooterHeight >= 0 && mCurrentPos >= mOffsetToKeepFooter;
+    }
+
+    @Override
+    public boolean isOverOffsetToLoadMore() {
+        return mCurrentPos >= mOffsetToLoadMore;
     }
 
     @Override
@@ -275,6 +264,18 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
+    public void checkConfig() {
+        if (mCanMoveTheMaxRatioOfHeaderHeight > 0 && mCanMoveTheMaxRatioOfHeaderHeight <
+                mRatioOfHeaderHeightToRefresh)
+            Log.w(getClass().getSimpleName(), "If the max can move ratio of header less than " +
+                    "the triggered refresh ratio of header, refresh will be never trigger!");
+        if (mCanMoveTheMaxRatioOfFooterHeight > 0 && mCanMoveTheMaxRatioOfFooterHeight <
+                mRatioOfFooterHeightToLoadMore)
+            Log.w(getClass().getSimpleName(), "If the max can move ratio of footer less than " +
+                    "the triggered load more ratio of footer, load more will be never trigger!");
+    }
+
+    @Override
     public void setOffsetCalculator(IOffsetCalculator calculator) {
         mOffsetCalculator = calculator;
     }
@@ -287,19 +288,11 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public void setMaxMoveRatioOfHeader(float ratio) {
-        if (mCanMoveTheMaxRatioOfHeaderHeight > 0
-                && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh)
-            throw new RuntimeException("If mCanMoveTheMaxRatioOfHeaderHeight less than " +
-                    "RatioOfHeaderHeightToRefresh, refresh will be never trigger!");
         mCanMoveTheMaxRatioOfHeaderHeight = ratio;
     }
 
     @Override
     public void setMaxMoveRatioOfFooter(float ratio) {
-        if (mCanMoveTheMaxRatioOfFooterHeight > 0
-                && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore)
-            throw new RuntimeException("If MaxRatioOfFooterWhenFingerMoves less than " +
-                    "RatioOfFooterHeightToLoadMore, load more will be never trigger!");
         mCanMoveTheMaxRatioOfFooterHeight = ratio;
     }
 

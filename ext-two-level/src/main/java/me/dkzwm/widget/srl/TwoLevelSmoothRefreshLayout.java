@@ -410,7 +410,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 mTwoLevelRefreshView.onTwoLevelRefreshBegin(this, mTwoLevelIndicator);
             }
             if (mRefreshListener != null && mRefreshListener instanceof OnRefreshListener)
-                ((OnRefreshListener) mRefreshListener).onTwoLevelRefreshBegin();
+                ((OnRefreshListener) mRefreshListener).onTwoLevelRefreshing();
             return;
         }
         super.performRefresh(notify);
@@ -444,7 +444,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     public interface OnRefreshListener extends SmoothRefreshLayout.OnRefreshListener {
-        void onTwoLevelRefreshBegin();
+        void onTwoLevelRefreshing();
     }
 
     private static class DelayToBackToTop implements Runnable {

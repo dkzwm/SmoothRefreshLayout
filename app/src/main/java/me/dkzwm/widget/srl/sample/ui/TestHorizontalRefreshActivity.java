@@ -50,7 +50,7 @@ public class TestHorizontalRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

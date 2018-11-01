@@ -10,8 +10,9 @@
 > 扩展实现: `NestedScrollingChild2` 、`NestedScrollingParent2` 接口，因而`Android Support Library`版本必须大于`26.1.0`，以完善Fling。    
 > 添加方法: `isEnabledPerformFreshWhenFling` 和 `setEnablePerformFreshWhenFling` , 默认情况下当正在拖动刷新视图时，如果是向收回刷新视图方向甩动并触发了惯性甩动（Fling），即使松手时的高度大于等于触发刷新高度仍然不会触发刷新，这个时候如果想触发刷新则需要打开本开关。    
 > 删除部分反射逻辑，应对Android P。    
+> 综合考虑性能和逻辑复杂度后删除了通过`ViewTreeObserver`来监听滚动逻辑，改用重载`computeScroll`方法，理论上效率会轻微降低，但复杂度会降低不少。    
 > 完善部分代码逻辑。    
-> 迁移厂库，有JitPack迁移到JCenter。    
+> 迁移厂库，由JitPack迁移到JCenter。    
 > 修复部分代码逻辑错误。   
 ## 1.6.4.3
 > 修复`MODE_SCALE` 模式下的拉伸BUG。    

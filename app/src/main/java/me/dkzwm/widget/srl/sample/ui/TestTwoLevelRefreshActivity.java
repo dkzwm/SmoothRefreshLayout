@@ -54,7 +54,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
         mRefreshLayout.setRatioOfHeaderToTwoLevel(.25f);
         mRefreshLayout.setOnRefreshListener(new TwoLevelRefreshingListenerAdapter() {
             @Override
-            public void onTwoLevelRefreshBegin() {
+            public void onTwoLevelRefreshing() {
                 mRefreshLayout.setEnableInterceptEventWhileLoading(true);
                 mTwoLevelCount++;
                 mHandler.postDelayed(new Runnable() {
@@ -68,7 +68,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mCount++;
                 mHandler.postDelayed(new Runnable() {
                     @Override
@@ -79,10 +79,14 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                     }
                 }, 1000);
             }
-
+        });
+        mRefreshLayout.addOnStatusChangedListener(new TwoLevelSmoothRefreshLayout
+                .OnStatusChangedListener() {
             @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-                mRefreshLayout.setEnableInterceptEventWhileLoading(false);
+            public void onStatusChanged(byte old, byte now) {
+                if (now == TwoLevelSmoothRefreshLayout.SR_STATUS_COMPLETE) {
+                    mRefreshLayout.setEnableInterceptEventWhileLoading(false);
+                }
             }
         });
         mRefreshLayout.autoTwoLevelRefreshHint(false, 2000, true);

@@ -42,7 +42,7 @@ public class WithTextViewActivity extends AppCompatActivity {
         mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mCount++;
                 mHandler.postDelayed(new Runnable() {
                     @Override

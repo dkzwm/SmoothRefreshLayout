@@ -54,7 +54,7 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -84,7 +84,7 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mInnerRefreshLayout.setFooterView(footer);
         mInnerRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mInnerRefreshLayout.setDurationToClose(0);
                 mInnerRefreshLayout.refreshComplete();
                 mRefreshLayout.setDurationToClose(0);

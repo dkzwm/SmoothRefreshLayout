@@ -58,21 +58,29 @@ public class NestedPageWithSrlFragment extends Fragment {
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         List<String> list = DataUtil.createList(mCount, 20);
-                        if (isRefresh) {
-                            mCount = list.size();
-                            mList.clear();
-                            mList.addAll(list);
-                            mAdapter.updateData(list);
-                        } else {
-                            mCount += list.size();
-                            mList.addAll(list);
-                            mAdapter.appendData(list);
-                        }
+                        mCount = list.size();
+                        mList.clear();
+                        mList.addAll(list);
+                        mAdapter.updateData(list);
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 2000);
+            }
+
+            @Override
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mList.addAll(list);
+                        mAdapter.appendData(list);
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);

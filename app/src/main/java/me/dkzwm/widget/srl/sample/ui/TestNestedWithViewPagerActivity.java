@@ -58,20 +58,13 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
         mRefreshLayout.materialStyle();
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (isRefresh) {
-                            for (int i = 0; i < mFragments.size(); i++) {
-                                NestedPageFragment fragment = mFragments.get(i);
-                                fragment.updateData();
-                            }
-                        } else {
-                            for (int i = 0; i < mFragments.size(); i++) {
-                                NestedPageFragment fragment = mFragments.get(i);
-                                fragment.appendData();
-                            }
+                        for (int i = 0; i < mFragments.size(); i++) {
+                            NestedPageFragment fragment = mFragments.get(i);
+                            fragment.updateData();
                         }
                         mRefreshLayout.refreshComplete();
                     }
@@ -79,12 +72,22 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onRefreshComplete(boolean isSuccessful) {
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < mFragments.size(); i++) {
+                            NestedPageFragment fragment = mFragments.get(i);
+                            fragment.appendData();
+                        }
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 2000);
             }
         });
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setEnableDynamicEnsureTargetView(true);
-        mRefreshLayout.setLifecycleObserver(new QuickConfigAppBarUtil());
+        mRefreshLayout.addLifecycleObserver(new QuickConfigAppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }
 

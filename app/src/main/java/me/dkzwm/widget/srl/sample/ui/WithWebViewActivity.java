@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -42,15 +43,10 @@ public class WithWebViewActivity extends AppCompatActivity {
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
+        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
-            public void onRefreshBegin(boolean isRefresh) {
+            public void onRefreshing() {
                 mWebView.loadUrl("https://github.com/dkzwm");
-            }
-
-            @Override
-            public void onRefreshComplete(boolean isSuccessful) {
-
             }
         });
         mWebView = findViewById(R.id.webView_with_webView);
@@ -62,7 +58,7 @@ public class WithWebViewActivity extends AppCompatActivity {
         });
         mRefreshLayout.autoRefresh(false);
         mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(mWebView);
-        mRefreshLayout.setLifecycleObserver(mAutoRefreshUtil);
+        mRefreshLayout.addLifecycleObserver(mAutoRefreshUtil);
     }
 
 

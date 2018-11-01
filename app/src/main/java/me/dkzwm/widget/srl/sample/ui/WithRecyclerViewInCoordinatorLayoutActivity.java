@@ -53,27 +53,32 @@ public class WithRecyclerViewInCoordinatorLayoutActivity extends AppCompatActivi
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefreshBegin(final boolean isRefresh) {
+            public void onRefreshing() {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         List<String> list = DataUtil.createList(mCount, 20);
-                        if (isRefresh) {
-                            mCount = list.size();
-                            mAdapter.updateData(list);
-                        } else {
-                            mCount += list.size();
-                            mAdapter.appendData(list);
-                        }
+                        mCount = list.size();
+                        mAdapter.updateData(list);
                         mRefreshLayout.refreshComplete();
                     }
                 }, 2000);
             }
 
             @Override
-            public void onRefreshComplete(boolean isSuccessful) {
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<String> list = DataUtil.createList(mCount, 20);
+                        mCount += list.size();
+                        mAdapter.appendData(list);
+                        mRefreshLayout.refreshComplete();
+                    }
+                }, 2000);
             }
         });
+        mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
     }
 
