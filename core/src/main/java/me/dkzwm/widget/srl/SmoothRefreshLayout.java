@@ -745,7 +745,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         return processDispatchTouchEvent(ev);
     }
 
-    protected boolean dispatchTouchEventSuper(MotionEvent ev) {
+    protected final boolean dispatchTouchEventSuper(MotionEvent ev) {
         final int index = ev.findPointerIndex(mTouchPointerId);
         if (index < 0)
             return super.dispatchTouchEvent(ev);
@@ -754,7 +754,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             mOffsetTotal = 0;
             mOffsetRemaining = mTouchSlop * 3;
         } else {
-            if (!mIndicator.isInStartPosition() && mIndicator.getRawOffset() != 0) {
+            if (!mIndicator.isAlreadyHere(IIndicator.START_POS) && mIndicator.getRawOffset() != 0) {
                 if (mOffsetRemaining > 0) {
                     mOffsetRemaining -= mTouchSlop;
                     if (isMovingHeader())
@@ -779,7 +779,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     @Override
     protected void onDraw(Canvas canvas) {
         if (mMode == Constants.MODE_DEFAULT) {
-            if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isInStartPosition()) {
+            if (mBackgroundPaint != null && !isEnabledPinContentView() && !mIndicator.isAlreadyHere(IIndicator.START_POS)) {
                 if (!isDisabledRefresh() && isMovingHeader() && mHeaderBackgroundColor != -1) {
                     mBackgroundPaint.setColor(mHeaderBackgroundColor);
                     drawHeaderBackground(canvas);
@@ -1117,7 +1117,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @return Is
      */
     public boolean isInStartPosition() {
-        return mIndicator.isInStartPosition();
+        return mIndicator.isAlreadyHere(IIndicator.START_POS);
     }
 
     /**
@@ -2361,7 +2361,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         float realVelocity = isVerticalOrientation() ? vy : vx;
         final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
         final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
-        if (!mIndicator.isInStartPosition()) {
+        if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
                 if (Math.abs(realVelocity) > mMinimumFlingVelocity * 2) {
                     if ((canNotChildScrollUp && realVelocity > 0 && isMovingHeader())
@@ -2455,7 +2455,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 if (distance > 0 && !isDisabledRefresh() && canNotChildScrollUp
                         && !(isEnabledPinRefreshViewWhileLoading() && isRefreshing()
                         && mIndicator.isOverOffsetToKeepHeaderWhileLoading())) {
-                    if (!mIndicator.isInStartPosition() && isMovingHeader()) {
+                    if (!mIndicator.isAlreadyHere(IIndicator.START_POS) && isMovingHeader()) {
                         mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                                 mIndicator.getLastMovePoint()[1] - dy);
                         moveHeaderPos(mIndicator.getOffset());
@@ -2473,7 +2473,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 if (distance < 0 && !isDisabledLoadMore() && canNotChildScrollDown
                         && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
                         && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
-                    if (!mIndicator.isInStartPosition() && isMovingFooter()) {
+                    if (!mIndicator.isAlreadyHere(IIndicator.START_POS) && isMovingFooter()) {
                         mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
                                 mIndicator.getLastMovePoint()[1] - dy);
                         moveFooterPos(mIndicator.getOffset());
@@ -2575,7 +2575,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 moveHeaderPos(mIndicator.getOffset());
             } else if (distance > 0 && !isDisabledLoadMore() && canNotChildScrollDown
                     && !(isDisabledLoadMoreWhenContentNotFull() && canNotChildScrollUp
-                    && mIndicator.isInStartPosition())
+                    && mIndicator.isAlreadyHere(IIndicator.START_POS))
                     && !(isEnabledPinRefreshViewWhileLoading() && isLoadingMore()
                     && mIndicator.isOverOffsetToKeepFooterWhileLoading())) {
                 mIndicatorSetter.onFingerMove(mIndicator.getLastMovePoint()[0] - dx,
@@ -2770,7 +2770,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected void reset() {
         if (isRefreshing() || isLoadingMore())
             notifyUIRefreshComplete(false, true);
-        if (!mIndicator.isInStartPosition())
+        if (!mIndicator.isAlreadyHere(IIndicator.START_POS))
             mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
         mScrollChecker.updateInterpolator(mSpringInterpolator);
         final byte old = mStatus;
@@ -2955,7 +2955,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 mDealAnotherDirectionMove = false;
                 if (isNeedFilterTouchEvent()) {
                     mIsInterceptTouchEventInOnceTouch = false;
-                    if (mIsLastOverScrollCanNotAbort && mIndicator.isInStartPosition())
+                    if (mIsLastOverScrollCanNotAbort && mIndicator.isAlreadyHere(IIndicator.START_POS))
                         mScrollChecker.destroy();
                     mIsLastOverScrollCanNotAbort = false;
                 } else {
@@ -3059,8 +3059,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     mScrollChecker.tryToScrollTo(IIndicator.START_POS, 0);
                     return dispatchTouchEventSuper(ev);
                 }
-                if (!movingDown && isDisabledLoadMoreWhenContentNotFull() && mIndicator
-                        .isInStartPosition() && canNotChildScrollDown && canNotChildScrollUp) {
+                if (!movingDown && isDisabledLoadMoreWhenContentNotFull()
+                        && mIndicator.isAlreadyHere(IIndicator.START_POS)
+                        && canNotChildScrollDown && canNotChildScrollUp) {
                     return dispatchTouchEventSuper(ev);
                 }
                 boolean canMoveUp = isMovingHeader() && mIndicator.hasLeftStartPosition();
@@ -3113,7 +3114,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected boolean tryToFilterTouchEventInDispatchTouchEvent(MotionEvent ev) {
         if (mIsInterceptTouchEventInOnceTouch) {
-            if ((!isAutoRefresh() && mIndicator.isInStartPosition() && !mScrollChecker.$IsScrolling)
+            if ((!isAutoRefresh() && mIndicator.isAlreadyHere(IIndicator.START_POS) && !mScrollChecker.$IsScrolling)
                     || (isAutoRefresh() && (isRefreshing() || isLoadingMore()))) {
                 mScrollChecker.destroy();
                 if (ev != null) makeNewTouchDownEvent(ev);
@@ -3122,7 +3123,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             return true;
         }
         if (mIsLastOverScrollCanNotAbort) {
-            if (mIndicator.isInStartPosition() && !mScrollChecker.isOverScrolling()) {
+            if (mIndicator.isAlreadyHere(IIndicator.START_POS) && !mScrollChecker.isOverScrolling()) {
                 if (ev != null) makeNewTouchDownEvent(ev);
                 mIsLastOverScrollCanNotAbort = false;
             }
@@ -3133,7 +3134,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 mIsSpringBackCanNotBeInterrupted = false;
                 return false;
             }
-            if (mIndicator.isInStartPosition() && !mScrollChecker.$IsScrolling) {
+            if (mIndicator.isAlreadyHere(IIndicator.START_POS) && !mScrollChecker.$IsScrolling) {
                 if (ev != null) makeNewTouchDownEvent(ev);
                 mIsSpringBackCanNotBeInterrupted = false;
             }
@@ -3542,7 +3543,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         notifyUIPositionChanged();
         boolean needRequestLayout = change != 0 && offsetChild(change, isMovingHeader,
                 isMovingFooter);
-        if (needRequestLayout || mIndicator.isInStartPosition()) {
+        if (needRequestLayout || mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             requestLayout();
         } else {
             invalidate();
@@ -3743,7 +3744,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     private void tryToDispatchNestedFling() {
-        if (mScrollChecker.isPreFling() && mIndicator.isInStartPosition()) {
+        if (mScrollChecker.isPreFling() && mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             final int velocity = (int) (mScrollChecker.getCurrVelocity() + 0.5f);
             mIndicatorSetter.setMovingStatus(Constants.MOVING_CONTENT);
             if (isEnabledOverScroll() && !(isDisabledLoadMoreWhenContentNotFull()
@@ -3758,7 +3759,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected boolean tryToNotifyReset() {
         if ((mStatus == SR_STATUS_COMPLETE || mStatus == SR_STATUS_PREPARE)
-                && mIndicator.isInStartPosition()) {
+                && mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             if (sDebug) SRLog.d(TAG, "tryToNotifyReset()");
             if (mHeaderView != null)
                 mHeaderView.onReset(this);
@@ -3944,7 +3945,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void tryToResetMovingStatus() {
-        if (mIndicator.isInStartPosition() && !isMovingContent()) {
+        if (mIndicator.isAlreadyHere(IIndicator.START_POS) && !isMovingContent()) {
             mIndicatorSetter.setMovingStatus(Constants.MOVING_CONTENT);
             notifyUIPositionChanged();
         }

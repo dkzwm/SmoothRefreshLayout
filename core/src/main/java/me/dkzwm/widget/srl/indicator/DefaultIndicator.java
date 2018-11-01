@@ -1,6 +1,7 @@
 package me.dkzwm.widget.srl.indicator;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 import me.dkzwm.widget.srl.config.Constants;
@@ -193,7 +194,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public boolean hasJustBackToStartPosition() {
-        return mLastPos != START_POS && isInStartPosition();
+        return mLastPos != START_POS && mCurrentPos == START_POS;
     }
 
     @Override
@@ -207,19 +208,13 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public boolean isInStartPosition() {
-        return mCurrentPos == START_POS;
-    }
-
-
-    @Override
     public boolean isOverOffsetToKeepHeaderWhileLoading() {
         return mHeaderHeight >= 0 && mCurrentPos >= mOffsetToKeepHeader;
     }
 
     @Override
     public boolean isOverOffsetToRefresh() {
-        return mCurrentPos>=mOffsetToRefresh;
+        return mCurrentPos >= mOffsetToRefresh;
     }
 
     @Override
@@ -229,7 +224,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public boolean isOverOffsetToLoadMore() {
-        return mCurrentPos>=mOffsetToLoadMore;
+        return mCurrentPos >= mOffsetToLoadMore;
     }
 
     @Override
@@ -273,11 +268,11 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     public void checkConfig() {
         if (mCanMoveTheMaxRatioOfHeaderHeight > 0 && mCanMoveTheMaxRatioOfHeaderHeight <
                 mRatioOfHeaderHeightToRefresh)
-            throw new RuntimeException("If the max can move ratio of header less than " +
+            Log.w(getClass().getSimpleName(), "If the max can move ratio of header less than " +
                     "the triggered refresh ratio of header, refresh will be never trigger!");
         if (mCanMoveTheMaxRatioOfFooterHeight > 0 && mCanMoveTheMaxRatioOfFooterHeight <
                 mRatioOfFooterHeightToLoadMore)
-            throw new RuntimeException("If the max can move ratio of footer less than " +
+            Log.w(getClass().getSimpleName(), "If the max can move ratio of footer less than " +
                     "the triggered load more ratio of footer, load more will be never trigger!");
     }
 

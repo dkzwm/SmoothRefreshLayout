@@ -49,8 +49,6 @@ public interface IIndicator {
 
     boolean isJustReturnedOffsetToLoadMore();
 
-    boolean isInStartPosition();
-
     boolean isOverOffsetToKeepHeaderWhileLoading();
 
     boolean isOverOffsetToRefresh();

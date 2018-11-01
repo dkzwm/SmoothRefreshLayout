@@ -30,8 +30,8 @@ ext {
             buildToolsVersion: "28.0.3",
             minSdkVersion    : 11,
             targetSdkVersion : 28,
-            versionCode      : 54,
-            versionName      : "1.6.5-beta-3"
+            versionCode      : 55,
+            versionName      : "1.6.5-beta-4"
     ]
     libs = [
             recyclerview: "com.android.support:recyclerview-v7:28.0.0",
