@@ -104,11 +104,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public void onFingerDown() {
-        mTouched = true;
-    }
-
-    @Override
     public void onFingerDown(float x, float y) {
         mTouched = true;
         mPressedPos = mCurrentPos;
