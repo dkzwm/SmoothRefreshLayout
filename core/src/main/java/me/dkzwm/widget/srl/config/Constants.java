@@ -16,4 +16,11 @@ public interface Constants {
     int MOVING_CONTENT = 0;
     int MOVING_FOOTER = 1;
     int MOVING_HEADER = 2;
+
+    byte SCROLLER_MODE_NONE = -1;
+    byte SCROLLER_MODE_PRE_FLING = 0;
+    byte SCROLLER_MODE_FLING = 1;
+    byte SCROLLER_MODE_FLING_BACK = 2;
+    byte SCROLLER_MODE_SPRING = 3;
+    byte SCROLLER_MODE_SPRING_BACK = 4;
 }

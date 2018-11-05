@@ -17,7 +17,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     protected int mHeaderHeight = -1;
     protected int mFooterHeight = -1;
     protected int mPressedPos = 0;
-    protected int mRefreshCompleteY = 0;
     protected float mOffset;
     protected boolean mTouched = false;
     protected boolean mMoved = false;
@@ -70,11 +69,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public void onRefreshComplete() {
-        mRefreshCompleteY = mCurrentPos;
-    }
-
-    @Override
     public void setRatioToRefresh(float ratio) {
         setRatioOfHeaderToRefresh(ratio);
         setRatioOfFooterToRefresh(ratio);
@@ -103,11 +97,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public void onFingerDown() {
-        mTouched = true;
-    }
-
-    @Override
     public void onFingerDown(float x, float y) {
         mTouched = true;
         mPressedPos = mCurrentPos;
@@ -115,6 +104,11 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
         mLastMovePoint[1] = y;
         mFingerDownPoint[0] = x;
         mFingerDownPoint[1] = y;
+    }
+
+    @Override
+    public void onFingerDown() {
+        mTouched = true;
     }
 
     @Override

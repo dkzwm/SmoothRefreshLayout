@@ -1,5 +1,7 @@
 package me.dkzwm.widget.srl.indicator;
 
+import android.util.Log;
+
 /**
  * Created by dkzwm on 2017/6/12.
  *
@@ -10,7 +12,6 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
         , ITwoLevelIndicatorSetter {
     private int mOffsetToHintTwoLevelRefresh = 0;
     private int mOffsetToTwoLevelRefresh = 0;
-    private int mTwoLevelRefreshCompleteY;
     private float mOffsetRatioToKeepTwoLevelHeaderWhileLoading = 1f;
     private float mRatioOfHeaderHeightToHintTwoLevelRefresh = 1.5f;
     private float mRatioOfHeaderHeightToTwoLevelRefresh = 2.0f;
@@ -25,16 +26,6 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
     }
 
     @Override
-    public boolean crossTwoLevelCompletePos() {
-        return mCurrentPos >= mTwoLevelRefreshCompleteY;
-    }
-
-    @Override
-    public void onTwoLevelRefreshComplete() {
-        mTwoLevelRefreshCompleteY = mCurrentPos;
-    }
-
-    @Override
     public void setRatioOfHeaderToHintTwoLevel(float ratio) {
         mRatioOfHeaderHeightToHintTwoLevelRefresh = ratio;
         mOffsetToHintTwoLevelRefresh = (int) (mHeaderHeight * ratio);
@@ -42,13 +33,18 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
 
     @Override
     public void setRatioOfHeaderToTwoLevel(float ratio) {
-        if (mRatioOfHeaderHeightToHintTwoLevelRefresh >= mRatioOfHeaderHeightToTwoLevelRefresh) {
-            throw new RuntimeException("If RatioOfHeaderHeightToTwoLevelRefresh less than " +
-                    "RatioOfHeaderHeightToHintTwoLevelRefresh, Two level refresh will never be " +
-                    "trigger!");
-        }
         mRatioOfHeaderHeightToTwoLevelRefresh = ratio;
         mOffsetToTwoLevelRefresh = (int) (mHeaderHeight * ratio);
+    }
+
+    @Override
+    public void checkConfig() {
+        super.checkConfig();
+        if (mRatioOfHeaderHeightToHintTwoLevelRefresh >= mRatioOfHeaderHeightToTwoLevelRefresh) {
+            Log.w(getClass().getSimpleName(), "If the height ratio of the Two-Level refresh is " +
+                    "less than the height ratio of the triggered Two-Level hint, the Two-Level " +
+                    "refresh will never be triggered!");
+        }
     }
 
     @Override

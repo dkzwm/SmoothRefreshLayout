@@ -31,8 +31,6 @@ public interface IIndicatorSetter {
 
     void setRatioToRefresh(float ratio);
 
-    void onRefreshComplete();
-
     void setResistanceOfFooter(float resistance);
 
     void setResistance(float resistance);

@@ -24,6 +24,7 @@ import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.animation.ViscousFluidInterpolator;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.PixelUtl;
@@ -282,7 +283,12 @@ public class WaveHeader extends View implements IRefreshView {
         }
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE) {
             if (offsetToKeepHeader > 0 && mCurrentPosY > offsetToKeepHeader) {
-                layout.setSpringBackInterpolator(sBounceInterpolator);
+                byte mode = layout.getScrollMode();
+                if (mode == Constants.SCROLLER_MODE_SPRING_BACK) {
+                    layout.setSpringBackInterpolator(sBounceInterpolator);
+                } else if (mode==Constants.SCROLLER_MODE_FLING_BACK){
+                    layout.setSpringBackInterpolator(sSpringBackInterpolator);
+                }
             }
             float x = lastMovePoint[0];
             float percent;

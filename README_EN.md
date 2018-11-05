@@ -1,6 +1,6 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.6.5--beta--2-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+[![Release](https://img.shields.io/badge/JCenter-1.6.5--beta--3-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-689%20%7C%2069%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -81,12 +81,12 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 ##### The latest version (JCenter)
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.6.5-beta-2'
-    implementation 'me.dkzwm.widget.srl:ext-utils:1.6.5-beta-2'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5-beta-2'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5-beta-2'
-    implementation 'me.dkzwm.widget.srl:ext-classic:1.6.5-beta-2'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5-beta-2'
+    implementation 'me.dkzwm.widget.srl:core:1.6.5-beta-3'
+    implementation 'me.dkzwm.widget.srl:ext-utils:1.6.5-beta-3'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5-beta-3'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5-beta-3'
+    implementation 'me.dkzwm.widget.srl:ext-classic:1.6.5-beta-3'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5-beta-3'
 }
 ```
 #### The old version (JitPack), have multi state feature.
