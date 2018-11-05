@@ -6,7 +6,6 @@ package me.dkzwm.widget.srl.indicator;
  * @author dkzwm
  */
 public interface ITwoLevelIndicator extends IIndicator {
-    boolean crossTwoLevelCompletePos();
 
     int getOffsetToKeepTwoLevelHeader();
 

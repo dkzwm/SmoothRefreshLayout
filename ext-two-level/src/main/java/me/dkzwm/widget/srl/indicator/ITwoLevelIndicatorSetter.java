@@ -6,8 +6,6 @@ package me.dkzwm.widget.srl.indicator;
  * @author dkzwm
  */
 public interface ITwoLevelIndicatorSetter extends IIndicator {
-    void onTwoLevelRefreshComplete();
-
     void setRatioOfHeaderToHintTwoLevel(float ratio);
 
     void setRatioOfHeaderToTwoLevel(float ratio);

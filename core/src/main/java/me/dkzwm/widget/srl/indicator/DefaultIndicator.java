@@ -18,7 +18,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     protected int mHeaderHeight = -1;
     protected int mFooterHeight = -1;
     protected int mPressedPos = 0;
-    protected int mRefreshCompleteY = 0;
     protected float mOffset;
     protected boolean mTouched = false;
     protected boolean mMoved = false;
@@ -68,11 +67,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     public void onFingerUp() {
         mTouched = false;
         mMoved = false;
-    }
-
-    @Override
-    public void onRefreshComplete() {
-        mRefreshCompleteY = mCurrentPos;
     }
 
     @Override
