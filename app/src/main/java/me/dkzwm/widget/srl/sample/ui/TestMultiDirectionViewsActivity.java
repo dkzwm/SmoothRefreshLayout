@@ -85,6 +85,11 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mInnerRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
             @Override
             public void onRefreshing() {
+
+            }
+
+            @Override
+            public void onLoadingMore() {
                 mInnerRefreshLayout.setDurationToClose(0);
                 mInnerRefreshLayout.refreshComplete();
                 mRefreshLayout.setDurationToClose(0);

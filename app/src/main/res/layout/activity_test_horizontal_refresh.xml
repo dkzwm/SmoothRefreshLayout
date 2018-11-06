@@ -12,7 +12,7 @@
     app:sr_stickyHeader="@+id/textView_test_horizontal_refresh_sticky_header">
 
     <HorizontalScrollView
-        android:id="@id/horizontalScrollView_test_horizontal_refresh"
+        android:id="@+id/horizontalScrollView_test_horizontal_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -72,7 +72,7 @@
     </HorizontalScrollView>
 
     <TextView
-        android:id="@id/textView_test_horizontal_refresh_sticky_header"
+        android:id="@+id/textView_test_horizontal_refresh_sticky_header"
         android:layout_width="42dp"
         android:layout_height="match_parent"
         android:background="@android:color/holo_orange_dark"

@@ -6,13 +6,24 @@
 > 添加接口:`OnPerformAutoRefreshCallBack` 和对应的设置方法:`setOnPerformAutoRefreshCallBack`。    
 > 修复`isEnabledNoSpringBackWhenNoMoreData`第二次不起作用的问题。   
 > 添加接口:`OnNestedScrollChangedListener`和对应的设置方法: `addOnNestedScrollChangedListener` 和 `removeOnNestedScrollChangedListener`。用以当本视图以及内部的自视图发生滚动时触发监听。    
+> 添加接口: `OnStatusChangedListener`用以监听状态改变。    
+> 添加方法: `addOnStatusChangedListener` 和 `removeOnStatusChangedListener`，用以监听状态改变。    
 > 删除方法: `equalsOnHookHeaderRefreshCompleteCallback`  、`equalsOnHookFooterRefreshCompleteCallback` 、`setOverScrollInterpolator`。     
 > 扩展实现: `NestedScrollingChild2` 、`NestedScrollingParent2` 接口，因而`Android Support Library`版本必须大于`26.1.0`，以完善Fling。    
 > 添加方法: `isEnabledPerformFreshWhenFling` 和 `setEnablePerformFreshWhenFling` , 默认情况下当正在拖动刷新视图时，如果是向收回刷新视图方向甩动并触发了惯性甩动（Fling），即使松手时的高度大于等于触发刷新高度仍然不会触发刷新，这个时候如果想触发刷新则需要打开本开关。    
 > 删除部分反射逻辑，应对Android P。    
 > 综合考虑性能和逻辑复杂度后删除了通过`ViewTreeObserver`来监听滚动逻辑，改用重载`computeScroll`方法，理论上效率会轻微降低，但复杂度会降低不少。    
+> 添加方法: `isEnabledOldTouchHandling` 和 `setEnableOldTouchHandling` 方法，至此版本开始，支持2种触摸处理方式，一种为老版本的拦截处理（触摸事件只且当刷新视图收回后才由内容视图向下传递），一种为新版本的透传处理（触摸事件将从触发到终止均向下传递，传递时剔除消耗部分，特殊场景下做差值处理）。老版本的处理逻辑由于是拦截传递，必然导致视觉上的割裂感，主要体现在拉出刷新视图再收回视图情况下，当刷新视图回到顶部后缓慢滑动会导致内容视图触发按下效果。新版本由于是差值透传所以不会产生这个问题。使用者可按需进行切换调整。默认使用新版本的处理逻辑。    
+> 修改实现: 考虑到越界回弹是iOS和macOS特有，实现上参考iOS的越界回弹效果，重新实现了越界回弹的逻辑，尽量接近iOS和macOS上的效果。    
+> 添加方法: `setSpringBackInterpolator` , 设置回滚时的滚动插值器，`setSpringInterpolator` , 意思为设置滑出时的滚动插值器。    
+> 添加方法: `getScrollMode`, 用以获取当前滚动的模式，有6个模式，`SCROLLER_MODE_NONE` 未滚动、`SCROLLER_MODE_PRE_FLING` 缩回或者拉出刷新视图手势下的滚动模式、`SCROLLER_MODE_CALC_FLING` 内容视图滚动中计算加速度模式 、`SCROLLER_MODE_FLING` 越界回弹弹出滚动模式、`SCROLLER_MODE_FLING_BACK`越界回弹缩回滚动模式、`SCROLLER_MODE_SPRING` 主动弹出滚动模式、`SCROLLER_MODE_SPRING_BACK`释放缩回滚动模式。    
+> 修改方法: `setLifecycleObserver` 为 `addLifecycleObserver`。    
+> 添加方法: `removeLifecycleObserver` 。    
+> 添加方法: `getIndicator`。    
+> 删除方法: `isInStartPosition`。    
 > 完善部分代码逻辑。    
-> 迁移厂库，由JitPack迁移到JCenter。    
+> 调整越界回弹弹出的最小时间值为`100`。    
+> 迁移仓库，由JitPack迁移到JCenter。    
 > 修复部分代码逻辑错误。   
 ## 1.6.4.3
 > 修复`MODE_SCALE` 模式下的拉伸BUG。    

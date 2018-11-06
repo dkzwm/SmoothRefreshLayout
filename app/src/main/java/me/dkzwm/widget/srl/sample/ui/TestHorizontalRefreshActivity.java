@@ -60,6 +60,18 @@ public class TestHorizontalRefreshActivity extends AppCompatActivity {
                     }
                 }, 4000);
             }
+
+            @Override
+            public void onLoadingMore() {
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRefreshLayout.refreshComplete();
+                        Toast.makeText(TestHorizontalRefreshActivity.this,
+                                R.string.sr_refresh_complete, Toast.LENGTH_SHORT).show();
+                    }
+                }, 4000);
+            }
         });
         mRefreshLayout.setRatioToKeep(1);
         mRefreshLayout.setRatioToRefresh(1);
