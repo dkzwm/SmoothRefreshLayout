@@ -20,7 +20,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     protected int mPressedPos = 0;
     protected float mOffset;
     protected boolean mTouched = false;
-    protected boolean mMoved = false;
     @MovingStatus
     protected int mStatus = Constants.MOVING_CONTENT;
     protected float mResistanceHeader = DEFAULT_RESISTANCE;
@@ -44,7 +43,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public boolean hasMoved() {
-        return mMoved;
+        return mCurrentPos != mPressedPos;
     }
 
     @Override
@@ -66,7 +65,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     @Override
     public void onFingerUp() {
         mTouched = false;
-        mMoved = false;
+        mPressedPos = 0;
     }
 
     @Override
@@ -114,7 +113,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public void onFingerMove(float x, float y) {
-        mMoved = true;
         float offsetY = (y - mLastMovePoint[1]);
         processOnMove(offsetY);
         mLastMovePoint[0] = x;

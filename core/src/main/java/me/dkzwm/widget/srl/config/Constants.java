@@ -19,8 +19,9 @@ public interface Constants {
 
     byte SCROLLER_MODE_NONE = -1;
     byte SCROLLER_MODE_PRE_FLING = 0;
-    byte SCROLLER_MODE_FLING = 1;
-    byte SCROLLER_MODE_FLING_BACK = 2;
-    byte SCROLLER_MODE_SPRING = 3;
-    byte SCROLLER_MODE_SPRING_BACK = 4;
+    byte SCROLLER_MODE_CALC_FLING = 1;
+    byte SCROLLER_MODE_FLING = 2;
+    byte SCROLLER_MODE_FLING_BACK = 3;
+    byte SCROLLER_MODE_SPRING = 4;
+    byte SCROLLER_MODE_SPRING_BACK = 5;
 }

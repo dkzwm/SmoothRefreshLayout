@@ -101,7 +101,7 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
                 .OnUIPositionChangedListener() {
             @Override
             public void onChanged(byte status, IIndicator indicator) {
-                if (mRefreshLayout.isInStartPosition()) {
+                if (mRefreshLayout.getIndicator().isAlreadyHere(IIndicator.START_POS)) {
                     mRadioGroup.setEnabled(true);
                     mRadioButtonNormal.setEnabled(true);
                     mRadioButtonActivity.setEnabled(true);

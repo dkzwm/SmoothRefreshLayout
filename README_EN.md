@@ -131,7 +131,7 @@ SmoothRefreshLayout refreshLayout = (SmoothRefreshLayout)findViewById(R.id.smoot
 refreshLayout.setHeaderView(new ClassicHeader(this));
 refreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
 	@Override
-	public void onRefreshBegin(boolean isRefresh) {
+	public void onRefreshing() {
 		mHandler.postDelayed(new Runnable() {
 			@Override
 			public void run() {
@@ -357,6 +357,7 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_footerBackgroundColor|color|Set the background color of the height of the Footer view|
  |sr_mode|enum|Set current mode (Default:`MODE_DEFAULT` as refresh layout)|
  |sr_stickyHeader|reference|Specifies the resource ID of the sticky header|
+ |sr_stickyFooter|reference|Specifies the resource ID of the sticky footer|
 
  ##### TwoLevelSmoothRefreshLayout
  |Name|Format|Desc|
@@ -379,8 +380,8 @@ public interface IRefreshView<T extends IIndicator> {
  |setMode|int|Set current mode|
  |setDisableWhenAnotherDirectionMove|boolean|Set whether to filter another direction moves（Default: `false`）|
  |setEnableNextPtrAtOnce|boolean|Set whether user can perform next PTR at once|
- |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `300`）|
- |setMinOverScrollDuration|int|Set the min duration for Cross-Boundary-Rebound(OverScroll)（Default: `150`）|
+ |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `350`）|
+ |setMinOverScrollDuration|int|Set the min duration for Cross-Boundary-Rebound(OverScroll)（Default: `100`）|
  |setResistance|float|The resistance while you are moving（Default: `1.65f`）|
  |setResistanceOfFooter|float|The resistance while you are moving Footer（Default: `1.65f`）|
  |setResistanceOfHeader|float|The resistance while you are moving Header（Default: `1.65f`）|
@@ -422,15 +423,17 @@ public interface IRefreshView<T extends IIndicator> {
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
  |setEnableSmoothRollbackWhenCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
  |setDisableLoadMoreWhenContentNotFull|boolean|Load more will be disabled when the content is not full|
+ |setEnableDynamicEnsureTargetView|boolean|Dynamic search the target view|
+ |setEnableOldTouchHandling|boolean|Enabled the old touch handling logic|
+ |setLoadMoreScrollTargetView|View|Set Footer refresh scroll target view|
  
  #### SmoothRefreshLayout callbacks
  |Name|Params|Desc|
  |:---:|:---:|:---:|
  |setOnRefreshListener|T extends OnRefreshListener|Set the listener to be notified when a refresh is triggered|
- |setOnStateChangedListener|OnStateChangedListener|Set the listener to be notified when the State changed|
- |setChangeStateAnimatorCreator|IChangeStateAnimatorCreator|Set the change State animator creator|
+ |addLifecycleObserver|ILifecycleObserver|Add a lifecycle callback|
+ |addOnStatusChangedListener|OnStatusChangedListener|Set the listener to be notified when the Status changed|
  |addOnUIPositionChangedListener|OnUIPositionChangedListener|Add a listener to listen the views position change event|
- |removeOnUIPositionChangedListener|OnUIPositionChangedListener|Remove the listener to listen the views position change event|
  |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Set a scrolling callback when loading more|
  |setOnPerformAutoRefreshCallBack|OnPerformAutoRefreshCallBack|Set a callback to make sure you need to customize the specified trigger the auto refresh rule|
  |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|Set a callback to make sure you need to customize the specified trigger the auto load more rule| |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Header| |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Footer|
@@ -441,7 +444,6 @@ public interface IRefreshView<T extends IIndicator> {
  #### SmoothRefreshLayout others
  |Name|Params|Desc|
  |:---:|:---:|:---:|
- |debug（static）|boolean|Debug|
  |setDefaultCreator（static）|IRefreshViewCreator|Set the static refresh view creator|
  |refreshComplete|None|Refresh complete|
  |refreshComplete|boolean|Refresh complete, parameter: whether the refresh was completed successfully|
@@ -454,7 +456,6 @@ public interface IRefreshView<T extends IIndicator> {
  |autoLoadMore|None|Auto trigger Footer refresh|
  |autoLoadMore|boolean|Auto trigger Footer refresh, parameter: trigger immediately|
  |autoLoadMore|boolean,boolean|Auto trigger Footer refresh, parameter1: trigger immediately, parameter2: whether use scroll|
- |setLoadMoreScrollTargetView|View|Set Footer refresh scroll target view|
 
  #### TwoLevelSmoothRefreshLayout methods
  |Name|Params|Desc|

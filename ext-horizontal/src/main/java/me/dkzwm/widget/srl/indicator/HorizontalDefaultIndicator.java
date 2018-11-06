@@ -7,7 +7,6 @@ package me.dkzwm.widget.srl.indicator;
 public class HorizontalDefaultIndicator extends DefaultIndicator {
     @Override
     public void onFingerMove(float x, float y) {
-        mMoved = true;
         float offset = (x - mLastMovePoint[0]);
         processOnMove(offset);
         mLastMovePoint[0] = x;

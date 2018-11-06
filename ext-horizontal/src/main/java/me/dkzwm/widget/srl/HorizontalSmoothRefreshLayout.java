@@ -60,33 +60,33 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
         if (isDisabledRefresh())
             return;
-        int height = mHeaderView.getCustomHeight();
+        int size = mHeaderView.getCustomHeight();
         if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mHeaderView.getStyle() == IRefreshView.STYLE_PIN
                 || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
                 || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
-            if (height <= 0) {
-                if (height == LayoutParams.MATCH_PARENT) lp.height = LayoutParams.MATCH_PARENT;
-            } else lp.width = height;
+            if (size <= 0) {
+                if (size == LayoutParams.MATCH_PARENT) lp.height = LayoutParams.MATCH_PARENT;
+            } else lp.width = size;
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             mIndicatorSetter.setHeaderHeight(child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
         } else {
-            if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
+            if (size <= 0 && size != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If header view type is " +
                         "STYLE_SCALE or STYLE_FOLLOW_SCALE, you must set a accurate height");
             } else {
-                if (height == LayoutParams.MATCH_PARENT) {
+                if (size == LayoutParams.MATCH_PARENT) {
                     int specSize = MeasureSpec.getSize(heightMeasureSpec);
-                    height = Math.max(0, specSize - (getPaddingLeft() + getPaddingRight()
+                    size = Math.max(0, specSize - (getPaddingLeft() + getPaddingRight()
                             + lp.leftMargin + lp.rightMargin));
-                    mIndicatorSetter.setHeaderHeight(height);
+                    mIndicatorSetter.setHeaderHeight(size);
                 } else {
-                    mIndicatorSetter.setHeaderHeight(height + lp.leftMargin + lp.rightMargin);
+                    mIndicatorSetter.setHeaderHeight(size + lp.leftMargin + lp.rightMargin);
                 }
             }
             if (mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
                 if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
-                    lp.width = height;
+                    lp.width = size;
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     return;
                 }
@@ -113,33 +113,33 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
         if (isDisabledLoadMore())
             return;
-        int height = mFooterView.getCustomHeight();
+        int size = mFooterView.getCustomHeight();
         if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mFooterView.getStyle() == IRefreshView.STYLE_PIN
                 || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
                 || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_PIN) {
-            if (height <= 0) {
-                if (height == LayoutParams.MATCH_PARENT) lp.width = LayoutParams.MATCH_PARENT;
-            } else lp.width = height;
+            if (size <= 0) {
+                if (size == LayoutParams.MATCH_PARENT) lp.width = LayoutParams.MATCH_PARENT;
+            } else lp.width = size;
             measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
             mIndicatorSetter.setFooterHeight(child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
         } else {
-            if (height <= 0 && height != LayoutParams.MATCH_PARENT) {
+            if (size <= 0 && size != LayoutParams.MATCH_PARENT) {
                 throw new IllegalArgumentException("If footer view type is " +
                         "STYLE_SCALE or STYLE_FOLLOW_SCALE, you must set a accurate height");
             } else {
-                if (height == LayoutParams.MATCH_PARENT) {
+                if (size == LayoutParams.MATCH_PARENT) {
                     int specSize = MeasureSpec.getSize(heightMeasureSpec);
-                    height = Math.max(0, specSize - (getPaddingLeft() + getPaddingRight()
+                    size = Math.max(0, specSize - (getPaddingLeft() + getPaddingRight()
                             + lp.leftMargin + lp.rightMargin));
-                    mIndicatorSetter.setFooterHeight(height);
+                    mIndicatorSetter.setFooterHeight(size);
                 } else {
-                    mIndicatorSetter.setFooterHeight(height + lp.leftMargin + lp.rightMargin);
+                    mIndicatorSetter.setFooterHeight(size + lp.leftMargin + lp.rightMargin);
                 }
             }
             if (mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE) {
                 if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
-                    lp.width = height;
+                    lp.width = size;
                     measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
                     return;
                 }
@@ -476,9 +476,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mFooterView.onPureScrollPositionChanged(this, mStatus, mIndicator);
             }
             if (!isEnabledPinContentView()) {
-                if (!isMovingHeader && mStickyHeaderView != null)
+                if (isMovingHeader && mStickyHeaderView != null)
                     ViewCompat.offsetLeftAndRight(mStickyHeaderView, change);
-                if (!isMovingFooter && mStickyFooterView != null)
+                if (isMovingFooter && mStickyFooterView != null)
                     ViewCompat.offsetLeftAndRight(mStickyFooterView, change);
                 if (mScrollTargetView != null && isMovingFooter) {
                     mScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
