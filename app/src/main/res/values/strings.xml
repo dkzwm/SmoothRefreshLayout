@@ -81,4 +81,5 @@
     <string name="sticky_footer">Sticky footer view</string>
     <string name="test_nested_with_viewpager">Test nested with viewPager in one
         refreshLayout</string>
+    <string name="second_floor">Second floor</string>
 </resources>

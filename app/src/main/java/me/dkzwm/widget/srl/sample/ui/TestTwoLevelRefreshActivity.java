@@ -60,9 +60,8 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRefreshLayout.refreshComplete();
-                        String times = getString(R.string.number_of_two_level_refresh) + mTwoLevelCount;
-                        mTextView.setText(times);
+                        startActivity(new Intent(getApplicationContext(),SecondFloorActivity.class));
+                        mRefreshLayout.refreshComplete(200);
                     }
                 }, 2000);
             }

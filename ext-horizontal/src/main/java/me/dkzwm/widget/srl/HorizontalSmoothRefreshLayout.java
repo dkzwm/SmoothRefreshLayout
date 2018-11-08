@@ -390,15 +390,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void addFreshViewLayoutParams(View view) {
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-            view.setLayoutParams(lp);
-        }
-    }
-
-    @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
     }
