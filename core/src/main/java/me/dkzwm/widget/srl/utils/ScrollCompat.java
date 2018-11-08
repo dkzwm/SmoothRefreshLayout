@@ -217,26 +217,21 @@ public class ScrollCompat {
         try {
             if (view instanceof ScrollView) {
                 ScrollView scrollView = (ScrollView) view;
-                scrollView.smoothScrollBy(0, 0);
                 scrollView.fling(velocityY);
             } else if (view instanceof WebView) {
                 WebView webView = (WebView) view;
                 webView.flingScroll(0, velocityY);
             } else if (isRecyclerView(view)) {
                 RecyclerView recyclerView = (RecyclerView) view;
-                recyclerView.stopScroll();
                 recyclerView.fling(0, velocityY);
             } else if (view instanceof NestedScrollView) {
                 NestedScrollView scrollView = (NestedScrollView) view;
-                scrollView.smoothScrollBy(0, 0);
                 scrollView.fling(velocityY);
             } else if (view instanceof AbsListView) {
                 AbsListView listView = (AbsListView) view;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    listView.smoothScrollBy(0, 0);
                     listView.fling(velocityY);
                 } else {
-                    listView.smoothScrollBy(0, 0);
                     SRReflectUtil.compatOlderAbsListViewFling(listView, velocityY);
                 }
             }

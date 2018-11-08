@@ -2,9 +2,11 @@ package me.dkzwm.widget.srl;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -55,6 +57,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         init(context, attrs, defStyleAttr, 0);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs, defStyleAttr, defStyleRes);
@@ -426,7 +429,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     protected void notifyUIRefreshComplete(boolean useScroll, boolean notifyViews) {
         if ((mSubFlag & FLAG_TRIGGER_TWO_LEVEL_REFRESH) > 0) {
-            mSubFlag = mSubFlag & ~FLAG_DISABLE_TWO_LEVEL_REFRESH;
+            mSubFlag = mSubFlag & ~FLAG_TRIGGER_TWO_LEVEL_REFRESH;
             super.notifyUIRefreshComplete(false, notifyViews);
             tryScrollBackToTop(mDurationToCloseTwoLevel);
             return;

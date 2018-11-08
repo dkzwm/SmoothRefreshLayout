@@ -78,7 +78,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if (mCount > 50) {
+                        if (mCount >= 50) {
                             mRefreshLayout.setEnableNoMoreData(true);
                         }
                         mRefreshLayout.refreshComplete(1200);

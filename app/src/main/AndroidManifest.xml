@@ -108,6 +108,10 @@
         <activity
             android:name="me.dkzwm.widget.srl.sample.ui.TestHorizontalScaleEffectActivity"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name="me.dkzwm.widget.srl.sample.ui.SecondFloorActivity"
+            android:theme="@style/NoAnimTheme"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

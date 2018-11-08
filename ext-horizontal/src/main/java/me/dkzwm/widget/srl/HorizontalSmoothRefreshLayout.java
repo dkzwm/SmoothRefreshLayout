@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
@@ -39,7 +40,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public HorizontalSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -387,15 +388,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     @Override
     public void setOnHeaderEdgeDetectCallBack(OnHeaderEdgeDetectCallBack callback) {
         super.setOnHeaderEdgeDetectCallBack(callback);
-    }
-
-    @Override
-    protected void addFreshViewLayoutParams(View view) {
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp == null) {
-            lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-            view.setLayoutParams(lp);
-        }
     }
 
     @Override
