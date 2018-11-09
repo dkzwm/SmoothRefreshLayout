@@ -25,7 +25,7 @@ public class ViscousFluidInterpolator implements Interpolator {
     /**
      * Controls the viscous fluid effect (how much of it).
      */
-    private static final float VISCOUS_FLUID_SCALE = 4f;
+    private static final float VISCOUS_FLUID_SCALE = 3f;
 
     private static final float VISCOUS_FLUID_NORMALIZE;
     private static final float VISCOUS_FLUID_OFFSET;
