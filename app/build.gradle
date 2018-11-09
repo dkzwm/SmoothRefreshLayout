@@ -22,9 +22,9 @@ dependencies {
     api project(':core')
     api project(':ext-two-level')
     api project(':ext-horizontal')
-    api project(':ext-classic')
+    api project(':ext-classics')
     api project(':ext-material')
-    api project(':ext-utils')
+    api project(':ext-util')
     implementation rootProject.ext.libs.appcompatV7
     implementation rootProject.ext.libs.supportV13
     implementation rootProject.ext.libs.recyclerview

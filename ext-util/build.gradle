@@ -26,6 +26,7 @@ android {
 dependencies {
     compileOnly project(':core')
     compileOnly rootProject.ext.libs.recyclerview
+    compileOnly rootProject.ext.libs.design
 }
 
 
@@ -57,11 +58,11 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'SmoothRefreshLayout-ClassicKit'
+                name 'SmoothRefreshLayout-Utils'
                 groupId rootProject.ext.bintray['groupId']
                 url rootProject.ext.bintray['siteUrl']
-                artifactId 'ext-classic'
-                description 'Classic style view kit for SmoothRefreshLayout'
+                artifactId 'ext-util'
+                description 'Utils for SmoothRefreshLayout'
                 licenses {
                     license {
                         name rootProject.ext.bintray['licenseName']
@@ -95,8 +96,8 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = 'maven'
-        name = 'ext-classic'
-        desc = 'Classic style view kit for SmoothRefreshLayout'
+        name = 'ext-util'
+        desc = 'Utils for SmoothRefreshLayout'
         websiteUrl = rootProject.ext.bintray['siteUrl']
         vcsUrl = rootProject.ext.bintray['gitUrl']
         licenses = rootProject.ext.allLicenses

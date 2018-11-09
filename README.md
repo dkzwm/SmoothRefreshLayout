@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.6.5--beta--3-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-689%20%7C%2069%20KB-e91e63.svg)
+[![Release](https://img.shields.io/badge/JCenter-1.6.5-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-713%20%7C%2073%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -80,12 +80,14 @@
 #### Gradle
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.6.5-beta-3'
-    implementation 'me.dkzwm.widget.srl:ext-utils:1.6.5-beta-3'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5-beta-3'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5-beta-3'
-    implementation 'me.dkzwm.widget.srl:ext-classic:1.6.5-beta-3'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5-beta-3'
+    implementation 'me.dkzwm.widget.srl:core:1.6.5'
+	//由于误操作删除了原有的仓库，请注意新名字少了个's'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5'
+	//由于误操作删除了原有的仓库，请注意新名字多了个's'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5'
 }
 ```
 #### 在Xml中配置

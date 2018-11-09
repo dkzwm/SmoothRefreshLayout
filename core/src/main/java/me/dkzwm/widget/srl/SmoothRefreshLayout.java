@@ -106,7 +106,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    public static boolean sDebug = true;
+    public static boolean sDebug = false;
     private static int sId = 0;
     private static IRefreshViewCreator sCreator;
     protected final String TAG = "SmoothRefreshLayout-" + sId++;
