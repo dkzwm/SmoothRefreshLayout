@@ -47,7 +47,7 @@ public class TestScaleEffectActivity extends AppCompatActivity {
                 return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
             }
         };
-        refreshLayout.setSpringInterpolator(interpolator);
+        refreshLayout.setSpringBackInterpolator(interpolator);
     }
 
     @Override

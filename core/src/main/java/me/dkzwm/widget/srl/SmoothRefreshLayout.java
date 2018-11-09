@@ -3567,9 +3567,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
         int to = mIndicator.getCurrentPos() + Math.round(delta);
         // over top
-        if ((mMode == Constants.MODE_DEFAULT || mScrollChecker.isPreFling()
-                || (mMode == Constants.MODE_SCALE && mIndicator.hasTouched()))
-                && to < IIndicator.START_POS) {
+        if (!mScrollChecker.$IsScrolling && to < IIndicator.START_POS) {
             to = IIndicator.START_POS;
             if (sDebug) SRLog.d(TAG, "movePos(): over top");
         }
@@ -4422,20 +4420,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     case Constants.SCROLLER_MODE_SPRING:
                     case Constants.SCROLLER_MODE_FLING_BACK:
                     case Constants.SCROLLER_MODE_SPRING_BACK:
+                    case Constants.SCROLLER_MODE_PRE_FLING:
                         stop();
                         if (!mIndicator.isAlreadyHere(IIndicator.START_POS))
                             onRelease();
                         break;
                     case Constants.SCROLLER_MODE_FLING:
+                        stop();
                         $Mode = Constants.SCROLLER_MODE_FLING_BACK;
-                        onRelease();
-                        break;
-                    case Constants.SCROLLER_MODE_PRE_FLING:
-                        if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
-                            $Mode = Constants.SCROLLER_MODE_FLING_BACK;
-                        } else {
-                            stop();
-                        }
                         onRelease();
                         break;
                 }
@@ -4544,9 +4536,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         final float velocity = Math.abs(getCurrVelocity());
                         stop();
                         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
-                        if (isEnabledNoMoreData() && getFooterHeight() > 0 && velocity >
-                                getFooterHeight() * 10) {
-                            startBounce(getFooterHeight(), mMaxOverScrollDuration);
+                        if (isEnabledNoMoreData() && getFooterHeight() > 0) {
+                            final int[] result = calculate(velocity);
+                            startBounce(Math.min(result[0] * 3, getFooterHeight())
+                                    , Math.min(Math.max(result[1] * 2, mMinOverScrollDuration),
+                                            mMaxOverScrollDuration));
                         } else {
                             final int[] result = calculate(velocity);
                             startBounce(result[0], result[1]);
@@ -4561,26 +4555,26 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         int[] calculate(float velocity) {
             if ($CachedPair == null)
                 $CachedPair = new int[2];
-            float deceleration = (float) Math.log(Math.abs(velocity / 3.2f) /
+            float deceleration = (float) Math.log(Math.abs(velocity / 4.5f) /
                     (ViewConfiguration.getScrollFriction() * $Physical));
             float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2f);
             $CachedPair[0] = Math.max(Math.min((int) ((ViewConfiguration.getScrollFriction() *
                     $Physical * Math.exp(deceleration)) * ratio), $MaxDistance), mTouchSlop);
-            $CachedPair[1] = Math.min(Math.max((int) (1000f * Math.pow(Math.exp
-                            (deceleration), .1f) * ratio * mFlingBackFactor)
+            $CachedPair[1] = Math.min(Math.max((int) (1000f * ratio)
                     , mMinOverScrollDuration), mMaxOverScrollDuration);
             return $CachedPair;
         }
 
         void startBounce(int to, int duration) {
-            int totalTimes = (int) Math.ceil((duration * 60f / 1000));
-            $CalcFactor = (float) Math.pow(0.26, 1f / totalTimes);
+            final int totalTimes = (int) Math.floor((duration * 60f / 1000));
+            final float factor = (float) Math.pow(0.26, 1f / totalTimes);
             float sumPer = 1;
             float last = 1;
             for (int i = 1; i < totalTimes; i++) {
-                last = last * $CalcFactor;
+                last = last * factor;
                 sumPer += last;
             }
+            $CalcFactor = factor;
             $LastCalcPart = 1;
             $CalcPart = to / sumPer;
             $LastTo = to;
