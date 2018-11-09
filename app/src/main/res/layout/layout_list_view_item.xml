@@ -10,6 +10,7 @@
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="12dp"
         android:scaleType="centerCrop"
         android:src="@mipmap/ic_launcher"
         app:sriv_border_color="#008fea"
@@ -20,8 +21,8 @@
         android:id="@+id/textView_list_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_marginLeft="12dp"
-        android:gravity="center"
         android:textColor="#333333"
         android:textSize="15sp"/>
 

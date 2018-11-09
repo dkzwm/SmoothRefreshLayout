@@ -332,9 +332,9 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_resistance|float|The resistance while you are moving（Default: `1.65f`）|
  |sr_resistanceOfFooter|float|The resistance while you are moving Footer（Default: `1.65f`）|
  |sr_resistanceOfHeader|float|The resistance while you are moving Header（Default: `1.65f`）|
- |sr_ratioToRefresh|float|Trigger refresh of the height ratio（Default: `1.1f`）|
- |sr_ratioOfHeaderToRefresh|float|Trigger refresh of the Header height ratio（Default: `1.1f`）|
- |sr_ratioOfFooterToRefresh|float|Trigger refresh of the Footer height ratio（Default: `1.1f`）|
+ |sr_ratioToRefresh|float|Trigger refresh of the height ratio（Default: `1f`）|
+ |sr_ratioOfHeaderToRefresh|float|Trigger refresh of the Header height ratio（Default: `1f`）|
+ |sr_ratioOfFooterToRefresh|float|Trigger refresh of the Footer height ratio（Default: `1f`）|
  |sr_ratioToKeep|float|The offset of keep view in refreshing occupies the height ratio of the refresh view（Default: `1f`）|
  |sr_ratioToKeepHeader|float|The offset of keep Header in refreshing occupies the height ratio of the Header（Default: `1f`）|
  |sr_ratioToKeepFooter|float|The offset of keep Footer in refreshing occupies the height ratio of the Footer（Default: `1f`）|

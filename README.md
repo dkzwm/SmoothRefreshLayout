@@ -259,9 +259,9 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_resistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
 |sr_resistanceOfFooter|float|移动Footer视图时候的移动阻尼（默认:`1.65f`）|
 |sr_resistanceOfHeader|float|移动Header视图时候的移动阻尼（默认:`1.65f`）|
-|sr_ratioToRefresh|float|触发刷新时位置占刷新视图的高度比（默认:`1.1f`）|
-|sr_ratioOfHeaderToRefresh|float|触发刷新时位置占Header视图的高度比（默认:`1.1f`）|
-|sr_ratioOfFooterToRefresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1.1f`）|
+|sr_ratioToRefresh|float|触发刷新时位置占刷新视图的高度比（默认:`1f`）|
+|sr_ratioOfHeaderToRefresh|float|触发刷新时位置占Header视图的高度比（默认:`1f`）|
+|sr_ratioOfFooterToRefresh|float|触发加载更多时位置占Footer视图的高度比（默认:`1f`）|
 |sr_ratioToKeep|float|刷新中保持视图位置占刷新视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
 |sr_ratioToKeepHeader|float|刷新中保持视图位置占Header视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|
 |sr_ratioToKeepFooter|float|刷新中保持视图位置占Footer视图的高度比（默认:`1f`）,该属性的值必须小于等于触发刷新高度比才会有效果|

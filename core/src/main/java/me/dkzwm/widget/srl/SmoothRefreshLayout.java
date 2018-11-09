@@ -2407,8 +2407,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
                 if (Math.abs(realVelocity) > mMinimumFlingVelocity * 2) {
-                    if ((canNotChildScrollUp && realVelocity > 0 && isMovingHeader())
-                            || (canNotChildScrollDown && realVelocity < 0 && isMovingFooter())) {
+                    if ((realVelocity > 0 && isMovingHeader())
+                            || (realVelocity < 0 && isMovingFooter())) {
                         if (isEnabledOverScroll()) {
                             if (isDisabledLoadMoreWhenContentNotFull()
                                     && canNotChildScrollDown && canNotChildScrollUp) {
@@ -2926,9 +2926,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @see ViewGroup source code
      */
     private boolean isTransformedTouchPointInView(float x, float y, View group, View child) {
-        if (child.getVisibility() != VISIBLE || child.getAnimation() != null) {
+        if (child.getVisibility() != VISIBLE || child.getAnimation() != null)
             return false;
-        }
         if (mCachedPoint == null)
             mCachedPoint = new float[2];
         mCachedPoint[0] = x;
@@ -2936,8 +2935,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mCachedPoint[0] += group.getScrollX() - child.getLeft();
         mCachedPoint[1] += group.getScrollY() - child.getTop();
         final boolean isInView = mCachedPoint[0] >= 0 && mCachedPoint[1] >= 0
-                && mCachedPoint[0] < (child.getWidth())
-                && mCachedPoint[1] < ((child.getHeight()));
+                && mCachedPoint[0] < child.getWidth()
+                && mCachedPoint[1] < child.getHeight();
         if (isInView) {
             mCachedPoint[0] = mCachedPoint[0] - x;
             mCachedPoint[1] = mCachedPoint[1] - y;
@@ -3091,11 +3090,17 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 final float offsetY = ev.getY(index) - pressDownPoint[1];
                 if (!mDealAnotherDirectionMove)
                     tryToDealAnotherDirectionMove(offsetX, offsetY);
-                if (mPreventForAnotherDirection)
-                    return super.dispatchTouchEvent(ev);
-                mIndicatorSetter.onFingerMove(ev.getX(index), ev.getY(index));
                 final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
                 final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
+                if (mPreventForAnotherDirection) {
+                    if (mDealAnotherDirectionMove && isMovingHeader() && !canNotChildScrollUp)
+                        mPreventForAnotherDirection = false;
+                    else if (mDealAnotherDirectionMove && isMovingFooter() && !canNotChildScrollDown)
+                        mPreventForAnotherDirection = false;
+                    else
+                        return super.dispatchTouchEvent(ev);
+                }
+                mIndicatorSetter.onFingerMove(ev.getX(index), ev.getY(index));
                 final float offset = mIndicator.getOffset();
                 boolean movingDown = offset > 0;
                 if (isMovingFooter() && isFooterInProcessing() && mStatus == SR_STATUS_COMPLETE
@@ -4486,10 +4491,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             int curPos = mIndicator.getCurrentPos();
             if (to == IIndicator.START_POS && $Mode == Constants.SCROLLER_MODE_FLING_BACK) {
                 if (curPos > $MaxDistance) {
-                    duration = Math.max((int) (1000f * Math.sqrt(2.4f * $MaxDistance / 2000f) *
+                    duration = Math.max((int) (1000f * Math.sqrt(2f * $MaxDistance / 2000f) *
                             mFlingBackFactor), mMinFlingBackDuration);
                 } else {
-                    duration = Math.max((int) (1000f * Math.sqrt(2.4f * curPos / 2000f) *
+                    duration = Math.max((int) (1000f * Math.sqrt(2f * curPos / 2000f) *
                             mFlingBackFactor), mMinFlingBackDuration);
                 }
             } else {
@@ -4559,7 +4564,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     (ViewConfiguration.getScrollFriction() * $Physical));
             float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2f);
             $CachedPair[0] = Math.max(Math.min((int) ((ViewConfiguration.getScrollFriction() *
-                    $Physical * Math.exp(deceleration)) * ratio), $MaxDistance), mTouchSlop);
+                    $Physical * Math.exp(deceleration)) * ratio) - 12, $MaxDistance), mTouchSlop);
             $CachedPair[1] = Math.min(Math.max((int) (1000f * ratio)
                     , mMinOverScrollDuration), mMaxOverScrollDuration);
             return $CachedPair;

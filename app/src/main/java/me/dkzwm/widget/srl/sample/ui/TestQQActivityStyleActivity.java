@@ -165,14 +165,14 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setEnableFooterDrawerStyle(true);
         mRefreshLayout.setDisablePerformRefresh(true);
         mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.setDurationToCloseHeader(1000);
+        mRefreshLayout.setDurationToCloseHeader(300);
         mRefreshLayout.setRatioOfHeaderToRefresh(.22f);
         mRefreshLayout.setMaxMoveRatioOfHeader(.55f);
         mRefreshLayout.requestLayout();
     }
 
     private void setNormalStyle() {
-        mRefreshLayout.setDurationToCloseHeader(500);
+        mRefreshLayout.setDurationToCloseHeader(300);
         mRefreshLayout.setHeaderView(mClassicHeader);
         mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableHeaderDrawerStyle(false);

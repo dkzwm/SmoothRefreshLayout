@@ -10,7 +10,8 @@
 
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -52,6 +53,7 @@
                 android:text="Four"
                 android:textColor="@android:color/white"
                 android:textSize="32sp"/>
+
             <TextView
                 android:layout_width="120dp"
                 android:layout_height="match_parent"

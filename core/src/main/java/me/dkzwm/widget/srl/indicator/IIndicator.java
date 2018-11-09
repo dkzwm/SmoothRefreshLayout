@@ -9,7 +9,7 @@ import me.dkzwm.widget.srl.annotation.MovingStatus;
  * @author dkzwm
  */
 public interface IIndicator {
-    float DEFAULT_RATIO_TO_REFRESH = 1.1f;
+    float DEFAULT_RATIO_TO_REFRESH = 1f;
     float DEFAULT_MAX_MOVE_RATIO = 0f;
     float DEFAULT_RATIO_TO_KEEP = 1;
     float DEFAULT_RESISTANCE = 1.65f;
