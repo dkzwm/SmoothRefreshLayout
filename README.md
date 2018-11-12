@@ -89,7 +89,7 @@ dependencies {
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5'
     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5'
 	
-	//androidX版本
+    //androidX版本
     implementation 'me.dkzwm.widget.srl:core:1.6.5.androidx'
     implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.androidx'
     implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.androidx'
