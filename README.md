@@ -81,13 +81,21 @@
 ```
 dependencies {
     implementation 'me.dkzwm.widget.srl:core:1.6.5'
-	//由于误操作删除了原有的仓库，请注意新名字少了个's'
+    //由于误操作删除了原有的仓库，请注意新名字少了个's'
     implementation 'me.dkzwm.widget.srl:ext-util:1.6.5'
     implementation 'me.dkzwm.widget.srl:ext-material:1.6.5'
     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5'
-	//由于误操作删除了原有的仓库，请注意新名字多了个's'
+    //由于误操作删除了原有的仓库，请注意新名字多了个's'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5'
     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5'
+	
+	//androidX版本
+    implementation 'me.dkzwm.widget.srl:core:1.6.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.androidx'
 }
 ```
 #### 在Xml中配置
