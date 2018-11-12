@@ -1,12 +1,11 @@
 package me.dkzwm.widget.srl;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
+import androidx.annotation.RequiresApi;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;

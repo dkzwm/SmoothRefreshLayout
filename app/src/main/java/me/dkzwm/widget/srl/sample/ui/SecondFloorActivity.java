@@ -1,10 +1,10 @@
 package me.dkzwm.widget.srl.sample.ui;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.sample.R;
 
 public class SecondFloorActivity extends AppCompatActivity {
