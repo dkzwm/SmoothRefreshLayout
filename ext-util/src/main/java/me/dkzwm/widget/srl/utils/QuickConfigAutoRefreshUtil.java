@@ -3,12 +3,12 @@ package me.dkzwm.widget.srl.utils;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.HorizontalScrollView;
@@ -172,7 +172,7 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver,
                         mNeedToTriggerLoadMore = false;
                     }
                 });
-                SRLog.d(getClass().getSimpleName(), "In some special cases the animation should " +
+                Log.w(getClass().getSimpleName(), "In some special cases the animation should " +
                         "be interrupted but not actually interrupted, so you should call " +
                         "`cancelAnimator` method when user finger touched views");
             } else {
@@ -231,7 +231,7 @@ public class QuickConfigAutoRefreshUtil implements ILifecycleObserver,
                         mNeedToTriggerLoadMore = false;
                     }
                 });
-                SRLog.d(getClass().getSimpleName(), "In some special cases the animation should " +
+                Log.w(getClass().getSimpleName(), "In some special cases the animation should " +
                         "be interrupted but not actually interrupted, so you should call " +
                         "`cancelAnimator` method when user finger touched views");
             } else {

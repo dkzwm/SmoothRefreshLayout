@@ -8,6 +8,7 @@ import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,7 +22,6 @@ import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicatorSetter;
-import me.dkzwm.widget.srl.utils.SRLog;
 
 /**
  * Support Two-Level refresh feature;<br/>
@@ -236,9 +236,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT) {
             return;
         }
-        if (sDebug) {
-            SRLog.d(TAG, "autoTwoLevelRefreshHint(): smoothScroll:", smoothScroll);
-        }
+        if (sDebug)
+            Log.d(TAG, String.format("autoTwoLevelRefreshHint(): smoothScroll:", smoothScroll));
         mStatus = SR_STATUS_PREPARE;
         mNeedFilterRefreshEvent = true;
         mDurationToStayAtHint = stayDuration;
@@ -464,9 +463,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         @Override
         public void run() {
             if (mLayoutWeakRf.get() != null) {
-                if (SmoothRefreshLayout.sDebug) {
-                    SRLog.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
-                }
+                if (SmoothRefreshLayout.sDebug)
+                    Log.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
                 TwoLevelSmoothRefreshLayout layout = mLayoutWeakRf.get();
                 layout.mScrollChecker.scrollTo(IIndicator.START_POS,
                         layout.mDurationToCloseHeader);
