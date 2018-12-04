@@ -25,6 +25,7 @@ android {
 
 dependencies {
     compileOnly rootProject.ext.libs.recyclerview
+    compileOnly rootProject.ext.libs.design
 }
 
 

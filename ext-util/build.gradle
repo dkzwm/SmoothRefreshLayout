@@ -25,6 +25,7 @@ android {
 
 dependencies {
     compileOnly project(':core')
+    compileOnly project(':ext-horizontal')
     compileOnly rootProject.ext.libs.recyclerview
     compileOnly rootProject.ext.libs.design
 }

@@ -19,7 +19,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ViewPagerAdapter;
 import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageFragment;
-import me.dkzwm.widget.srl.utils.QuickConfigAppBarUtil;
+import me.dkzwm.widget.srl.utils.AppBarUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -87,7 +87,7 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
         });
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setEnableDynamicEnsureTargetView(true);
-        mRefreshLayout.addLifecycleObserver(new QuickConfigAppBarUtil());
+        mRefreshLayout.addLifecycleObserver(new AppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }
 

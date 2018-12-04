@@ -19,7 +19,6 @@ import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
 import me.dkzwm.widget.srl.utils.PixelUtl;
-import me.dkzwm.widget.srl.utils.QuickConfigAppBarUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -83,8 +82,6 @@ public class TestNestedActivity extends AppCompatActivity {
         });
         mRefreshLayout.getHeaderView().getView().setPadding(0, PixelUtl.dp2px(this, 80),
                 0, PixelUtl.dp2px(this, 10));
-        mRefreshLayout.setEnableDynamicEnsureTargetView(true);
-        mRefreshLayout.addLifecycleObserver(new QuickConfigAppBarUtil());
         mRefreshLayout.autoRefresh(false);
     }
 

@@ -48,6 +48,7 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
+import me.dkzwm.widget.srl.utils.AppBarUtil;
 import me.dkzwm.widget.srl.utils.BoundaryUtil;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
@@ -104,7 +105,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
     };
-    public static boolean sDebug = false;
+    public static boolean sDebug = true;
     private static int sId = 0;
     private static IRefreshViewCreator sCreator;
     protected final String TAG = "SmoothRefreshLayout-" + sId++;
@@ -155,6 +156,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected View mStickyFooterView;
     protected ScrollChecker mScrollChecker;
     protected VelocityTracker mVelocityTracker;
+    protected AppBarUtil mAppBarUtil;
     protected Paint mBackgroundPaint;
     protected MotionEvent mLastMoveEvent;
     protected OnHeaderEdgeDetectCallBack mInEdgeCanMoveHeaderCallBack;
@@ -170,7 +172,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private ArrayList<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private ArrayList<OnNestedScrollChangedListener> mNestedScrollChangedListeners;
     private ArrayList<OnStatusChangedListener> mStatusChangedListeners;
-    private ArrayList<ILifecycleObserver> mLifecycleObservers;
+    private ArrayList<ILifecycleObserver> mLifecycleObservers = new ArrayList<>(1);
     private DelayToDispatchNestedFling mDelayToDispatchNestedFling;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
@@ -183,7 +185,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private float[] mCachedPoint = null;
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
-    private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
+    private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL | FLAG_ENABLE_OLD_TOUCH_HANDLING;
     private int mMaxOverScrollDuration = 350;
     private int mMinOverScrollDuration = 100;
     private int mOffsetRemaining = 0;
@@ -320,6 +322,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mSpringBackInterpolator = mSpringInterpolator;
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
+        mAppBarUtil = new AppBarUtil();
+        mLifecycleObservers.add(mAppBarUtil);
         setNestedScrollingEnabled(true);
     }
 
@@ -352,7 +356,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     protected void onDetachedFromWindow() {
-        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
+        if (!mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) {
                 observer.onDetached(this);
@@ -365,7 +369,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
+        if (!mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) {
                 observer.onAttached(this);
@@ -827,10 +831,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     public void addLifecycleObserver(@NonNull ILifecycleObserver observer) {
-        if (mLifecycleObservers == null) {
-            mLifecycleObservers = new ArrayList<>();
-            mLifecycleObservers.add(observer);
-        } else if (!mLifecycleObservers.contains(observer)) {
+        if (!mLifecycleObservers.contains(observer)) {
             mLifecycleObservers.add(observer);
         }
     }
@@ -1019,6 +1020,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      */
     public void setOnHeaderEdgeDetectCallBack(OnHeaderEdgeDetectCallBack callback) {
         mInEdgeCanMoveHeaderCallBack = callback;
+        if (callback != null && mAppBarUtil != null && callback != mAppBarUtil) {
+            mAppBarUtil.onDetached(this);
+            mLifecycleObservers.remove(mAppBarUtil);
+            mAppBarUtil = null;
+        }
     }
 
     /**
@@ -1031,6 +1037,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      */
     public void setOnFooterEdgeDetectCallBack(OnFooterEdgeDetectCallBack callback) {
         mInEdgeCanMoveFooterCallBack = callback;
+        if (callback != null && mAppBarUtil != null && callback != mAppBarUtil) {
+            mAppBarUtil.onDetached(this);
+            mLifecycleObservers.remove(mAppBarUtil);
+            mAppBarUtil = null;
+        }
     }
 
     /**
@@ -1233,8 +1244,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * Perform auto refresh at once.
      * <p>自动刷新并立即触发刷新回调</p>
      */
-    public void autoRefresh() {
-        autoRefresh(Constants.ACTION_NOTIFY, true);
+    public boolean autoRefresh() {
+        return autoRefresh(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1244,8 +1255,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param atOnce Auto refresh at once
      */
     @Deprecated
-    public void autoRefresh(boolean atOnce) {
-        autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
+    public boolean autoRefresh(boolean atOnce) {
+        return autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1257,8 +1268,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     @Deprecated
-    public void autoRefresh(boolean atOnce, boolean smoothScroll) {
-        autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
+    public boolean autoRefresh(boolean atOnce, boolean smoothScroll) {
+        return autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
     }
 
     /**
@@ -1275,9 +1286,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      *                     {@link Constants#ACTION_AT_ONCE},{@link Constants#ACTION_NOTHING}
      * @param smoothScroll Auto refresh use smooth scrolling
      */
-    public void autoRefresh(@Action int action, boolean smoothScroll) {
+    public boolean autoRefresh(@Action int action, boolean smoothScroll) {
         if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
-            return;
+            return false;
         if (sDebug)
             Log.d(TAG, String.format("autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll));
         final byte old = mStatus;
@@ -1294,14 +1305,15 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         } else {
             scrollToTriggeredAutomatic(true);
         }
+        return true;
     }
 
     /**
      * Perform auto load more at once.
      * <p>自动加载更多，并立即触发刷新回调</p>
      */
-    public void autoLoadMore() {
-        autoLoadMore(Constants.ACTION_NOTIFY, true);
+    public boolean autoLoadMore() {
+        return autoLoadMore(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1311,8 +1323,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param atOnce Auto load more at once
      */
     @Deprecated
-    public void autoLoadMore(boolean atOnce) {
-        autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
+    public boolean autoLoadMore(boolean atOnce) {
+        return autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1324,8 +1336,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param smoothScroll Auto load more use smooth scrolling
      */
     @Deprecated
-    public void autoLoadMore(boolean atOnce, boolean smoothScroll) {
-        autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY,
+    public boolean autoLoadMore(boolean atOnce, boolean smoothScroll) {
+        return autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY,
                 smoothScroll);
     }
 
@@ -1342,9 +1354,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      *                     {@link Constants#ACTION_AT_ONCE},{@link Constants#ACTION_NOTHING}
      * @param smoothScroll Auto load more use smooth scrolling
      */
-    public void autoLoadMore(@Action int action, boolean smoothScroll) {
+    public boolean autoLoadMore(@Action int action, boolean smoothScroll) {
         if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
-            return;
+            return false;
         if (sDebug)
             Log.d(TAG, String.format("autoLoadMore(): action: %s, smoothScroll: %s", action, smoothScroll));
         final byte old = mStatus;
@@ -1360,6 +1372,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         } else {
             scrollToTriggeredAutomatic(false);
         }
+        return true;
     }
 
     /**
@@ -3852,6 +3865,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     private void tryToDispatchNestedFling() {
         if (mScrollChecker.isPreFling() && mIndicator.isAlreadyHere(IIndicator.START_POS)) {
+            if (sDebug) Log.d(TAG, "tryToDispatchNestedFling()");
             final int velocity = (int) (mScrollChecker.getCurrVelocity() + 0.5f);
             mIndicatorSetter.setMovingStatus(Constants.MOVING_CONTENT);
             if (isEnabledOverScroll() && !(isDisabledLoadMoreWhenContentNotFull()
@@ -4437,16 +4451,17 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
                 tryToDispatchNestedFling();
             } else {
-                stop();
                 switch ($Mode) {
                     case Constants.SCROLLER_MODE_SPRING:
                     case Constants.SCROLLER_MODE_FLING_BACK:
                     case Constants.SCROLLER_MODE_SPRING_BACK:
                     case Constants.SCROLLER_MODE_PRE_FLING:
+                        stop();
                         if (!mIndicator.isAlreadyHere(IIndicator.START_POS))
                             onRelease();
                         break;
                     case Constants.SCROLLER_MODE_FLING:
+                        stop();
                         if (isMovingFooter() && isEnabledNoMoreData()
                                 && isEnabledNoSpringBackWhenNoMoreData())
                             return;

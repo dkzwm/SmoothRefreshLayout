@@ -16,7 +16,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.utils.PixelUtl;
-import me.dkzwm.widget.srl.utils.QuickConfigAutoRefreshUtil;
+import me.dkzwm.widget.srl.utils.AutoRefreshUtil;
 
 /**
  * Created by dkzwm on 2017/6/1.
@@ -27,7 +27,7 @@ public class WithWebViewActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private WebView mWebView;
     private Handler mHandler = new Handler();
-    private QuickConfigAutoRefreshUtil mAutoRefreshUtil;
+    private AutoRefreshUtil mAutoRefreshUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class WithWebViewActivity extends AppCompatActivity {
             }
         });
         mRefreshLayout.autoRefresh(false);
-        mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(mWebView);
+        mAutoRefreshUtil = new AutoRefreshUtil(mWebView);
         mRefreshLayout.addLifecycleObserver(mAutoRefreshUtil);
     }
 
@@ -69,7 +69,7 @@ public class WithWebViewActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                mAutoRefreshUtil.autoRefresh(true, false, true);
+                mAutoRefreshUtil.autoRefresh(false, true);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
-        mRefreshLayout.setEnableOldTouchHandling(true);
+        mRefreshLayout.setEnableOldTouchHandling(false);
         mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
         mRefreshLayout.getDefaultHeader().setWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
         mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
