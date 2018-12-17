@@ -146,7 +146,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected int mTouchSlop;
     protected int mTouchPointerId;
     protected int mHeaderBackgroundColor = -1;
-    protected int mFooterBackgroundColor = -2;
+    protected int mFooterBackgroundColor = -1;
     protected int mMinimumFlingVelocity;
     protected int mMaximumFlingVelocity;
     protected View mTargetView;
@@ -172,7 +172,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private ArrayList<OnUIPositionChangedListener> mUIPositionChangedListeners;
     private ArrayList<OnNestedScrollChangedListener> mNestedScrollChangedListeners;
     private ArrayList<OnStatusChangedListener> mStatusChangedListeners;
-    private ArrayList<ILifecycleObserver> mLifecycleObservers = new ArrayList<>(1);
+    private ArrayList<ILifecycleObserver> mLifecycleObservers;
     private DelayToDispatchNestedFling mDelayToDispatchNestedFling;
     private DelayToRefreshComplete mDelayToRefreshComplete;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
@@ -182,7 +182,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private boolean mNeedFilterScrollEvent = false;
     private boolean mHasSendCancelEvent = false;
     private boolean mHasSendDownEvent = false;
-    private float[] mCachedPoint = null;
+    private float[] mCachedPoint = new float[2];
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
     private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL | FLAG_ENABLE_OLD_TOUCH_HANDLING;
@@ -323,7 +323,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mAppBarUtil = new AppBarUtil();
-        mLifecycleObservers.add(mAppBarUtil);
         setNestedScrollingEnabled(true);
     }
 
@@ -356,24 +355,41 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     protected void onDetachedFromWindow() {
-        if (!mLifecycleObservers.isEmpty()) {
+        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) {
                 observer.onDetached(this);
             }
         }
+        if (mAppBarUtil != null && mAppBarUtil.hasFound()) {
+            if (mInEdgeCanMoveHeaderCallBack == mAppBarUtil)
+                mInEdgeCanMoveHeaderCallBack = null;
+            if (mInEdgeCanMoveFooterCallBack == mAppBarUtil)
+                mInEdgeCanMoveFooterCallBack = null;
+            mAppBarUtil.onDetached(this);
+        }
+        reset();
+        if (mHeaderRefreshCompleteHook != null)
+            mHeaderRefreshCompleteHook.mLayout = null;
+        if (mFooterRefreshCompleteHook != null)
+            mFooterRefreshCompleteHook.mLayout = null;
+        mTargetView = null;
+        if (sDebug) Log.d(TAG, "onDetachedFromWindow()");
         super.onDetachedFromWindow();
-        destroy();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!mLifecycleObservers.isEmpty()) {
+        if (sDebug) Log.d(TAG, "onAttachedToWindow()");
+        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) {
                 observer.onAttached(this);
             }
+        }
+        if (mAppBarUtil != null) {
+            mAppBarUtil.onAttached(this);
         }
     }
 
@@ -831,7 +847,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     public void addLifecycleObserver(@NonNull ILifecycleObserver observer) {
-        if (!mLifecycleObservers.contains(observer)) {
+        if (mLifecycleObservers == null) {
+            mLifecycleObservers = new ArrayList<>();
+            mLifecycleObservers.add(observer);
+        } else if (!mLifecycleObservers.contains(observer)) {
             mLifecycleObservers.add(observer);
         }
     }
@@ -1022,7 +1041,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mInEdgeCanMoveHeaderCallBack = callback;
         if (callback != null && mAppBarUtil != null && callback != mAppBarUtil) {
             mAppBarUtil.onDetached(this);
-            mLifecycleObservers.remove(mAppBarUtil);
             mAppBarUtil = null;
         }
     }
@@ -1039,7 +1057,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mInEdgeCanMoveFooterCallBack = callback;
         if (callback != null && mAppBarUtil != null && callback != mAppBarUtil) {
             mAppBarUtil.onDetached(this);
-            mLifecycleObservers.remove(mAppBarUtil);
             mAppBarUtil = null;
         }
     }
@@ -2825,15 +2842,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mViewsZAxisNeedReset = false;
     }
 
-    protected void destroy() {
-        reset();
-        if (mHeaderRefreshCompleteHook != null)
-            mHeaderRefreshCompleteHook.mLayout = null;
-        if (mFooterRefreshCompleteHook != null)
-            mFooterRefreshCompleteHook.mLayout = null;
-        if (sDebug) Log.d(TAG, "destroy()");
-    }
-
     protected void reset() {
         if (isRefreshing() || isLoadingMore())
             notifyUIRefreshComplete(false, true);
@@ -2889,11 +2897,20 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private void ensureTargetView() {
         if (mTargetView == null) {
             final int count = getChildCount();
+            final boolean ensure = isEnabledDynamicEnsureTargetView()
+                    || mAppBarUtil != null && mAppBarUtil.hasFound();
             if (mContentResId != View.NO_ID) {
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (mContentResId == child.getId()) {
                         mTargetView = child;
+                        if (ensure && child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
+                            View view = ensureScrollTargetView(child, true, 0, 0);
+                            if (view != null && view != child) {
+                                mAutoFoundScrollTargetView = view;
+                                break;
+                            }
+                        }
                         break;
                     } else if (child instanceof ViewGroup) {
                         final View view = foundViewInViewGroupById((ViewGroup) child, mContentResId);
@@ -2909,9 +2926,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     View child = getChildAt(i);
                     View topTempView = null;
                     if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
-                        if (isEnabledDynamicEnsureTargetView()) {
-                            View view = ensureScrollTargetView(child, getLeft() + getWidth() / 2,
-                                    getTop() + getHeight() / 2);
+                        if (ensure) {
+                            View view = ensureScrollTargetView(child, true, 0, 0);
                             topTempView = child;
                             if (view != null) {
                                 mTargetView = child;
@@ -2922,11 +2938,18 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                             }
                         } else {
                             mTargetView = child;
+                            break;
                         }
                     }
                     if (mTargetView == null)
                         mTargetView = topTempView;
                 }
+            }
+            if (mAppBarUtil != null && mAppBarUtil.hasFound()) {
+                if (mInEdgeCanMoveHeaderCallBack == null)
+                    mInEdgeCanMoveHeaderCallBack = mAppBarUtil;
+                if (mInEdgeCanMoveFooterCallBack == null)
+                    mInEdgeCanMoveFooterCallBack = mAppBarUtil;
             }
         }
         if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
@@ -2946,8 +2969,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private boolean isTransformedTouchPointInView(float x, float y, View group, View child) {
         if (child.getVisibility() != VISIBLE || child.getAnimation() != null)
             return false;
-        if (mCachedPoint == null)
-            mCachedPoint = new float[2];
         mCachedPoint[0] = x;
         mCachedPoint[1] = y;
         mCachedPoint[0] += group.getScrollX() - child.getLeft();
@@ -2962,7 +2983,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         return isInView;
     }
 
-    protected View ensureScrollTargetView(View target, float x, float y) {
+    protected View ensureScrollTargetView(View target, boolean noTransform, float x, float y) {
         if (target instanceof IRefreshView || target.getVisibility() != VISIBLE
                 || target.getAnimation() != null)
             return null;
@@ -2973,9 +2994,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             final int count = group.getChildCount();
             for (int i = count - 1; i >= 0; i--) {
                 View child = group.getChildAt(i);
-                if (isTransformedTouchPointInView(x, y, group, child)) {
-                    View view = ensureScrollTargetView(child, x + mCachedPoint[0], y +
-                            mCachedPoint[1]);
+                if (noTransform || isTransformedTouchPointInView(x, y, group, child)) {
+                    View view = ensureScrollTargetView(child, noTransform,
+                            x + mCachedPoint[0], y + mCachedPoint[1]);
                     if (view != null)
                         return view;
                 }
@@ -3080,13 +3101,12 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 mHasSendDownEvent = false;
                 mPreventForAnotherDirection = false;
                 if (mScrollTargetView == null && isEnabledDynamicEnsureTargetView()) {
-                    View view = ensureScrollTargetView(this, ev.getX(), ev.getY());
+                    View view = ensureScrollTargetView(this, false, ev.getX(), ev.getY());
                     if (view != null && mTargetView != view && mAutoFoundScrollTargetView != view) {
                         mAutoFoundScrollTargetView = view;
                     }
-                } else {
+                } else if (mAppBarUtil == null || !mAppBarUtil.hasFound())
                     mAutoFoundScrollTargetView = null;
-                }
                 removeCallbacks(mDelayToDispatchNestedFling);
                 dispatchTouchEventSuper(ev);
                 return true;

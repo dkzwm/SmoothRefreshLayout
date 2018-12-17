@@ -429,7 +429,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if ((mSubFlag & FLAG_TRIGGER_TWO_LEVEL_REFRESH) > 0) {
             mSubFlag = mSubFlag & ~FLAG_TRIGGER_TWO_LEVEL_REFRESH;
             super.notifyUIRefreshComplete(false, notifyViews);
-            tryScrollBackToTop(mDurationToCloseTwoLevel);
+            float percent = mTwoLevelIndicator.getCurrentPercentOfTwoLevelRefreshOffset();
+            percent = percent > 1 || percent <= 0 ? 1 : percent;
+            tryScrollBackToTop(Math.round(mDurationToCloseTwoLevel * percent));
             return;
         }
         super.notifyUIRefreshComplete(true, notifyViews);

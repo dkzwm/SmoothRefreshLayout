@@ -20,6 +20,7 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
         , SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private boolean mFullyExpanded;
     private boolean mFullCollapsed;
+    private boolean mFound = false;
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
@@ -28,11 +29,10 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
             if (appBarLayout == null)
                 return;
             appBarLayout.addOnOffsetChangedListener(this);
-            layout.setEnableDynamicEnsureTargetView(true);
-            layout.setOnHeaderEdgeDetectCallBack(this);
-            layout.setOnFooterEdgeDetectCallBack(this);
+            mFound = true;
         } catch (Exception e) {
             //ignored
+            mFound = false;
         }
     }
 
@@ -43,11 +43,10 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
             if (appBarLayout == null)
                 return;
             appBarLayout.removeOnOffsetChangedListener(this);
-            layout.setOnHeaderEdgeDetectCallBack(null);
-            layout.setOnFooterEdgeDetectCallBack(null);
         } catch (Exception e) {
             //ignored
         }
+        mFound = false;
     }
 
     @Override
@@ -94,5 +93,9 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
         if (targetView == null)
             targetView = child;
         return !mFullCollapsed || ScrollCompat.canChildScrollDown(targetView);
+    }
+
+    public boolean hasFound() {
+        return mFound;
     }
 }

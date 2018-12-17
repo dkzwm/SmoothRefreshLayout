@@ -17,4 +17,5 @@ public interface ITwoLevelIndicator extends IIndicator {
 
     boolean crossTwoLevelHintLine();
 
+    float getCurrentPercentOfTwoLevelRefreshOffset();
 }
