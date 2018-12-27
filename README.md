@@ -13,7 +13,7 @@
 ## 特性:
  - 理论上支持所有的视图,且可根据具体需求高效适配.
  - 支持多点触摸.
- - 支持嵌套滑动,完整实现了NestedScrollingChild，NestedScrollingParent 接口,玩转CoordinatorLayout.
+ - 支持嵌套滑动,完整实现了NestedScrollingChild2，NestedScrollingParent2 接口,玩转CoordinatorLayout.
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
  - 支持越界回弹.
@@ -25,23 +25,38 @@
  - 支持作为可拉伸内部视图布局使用（类小米设置页效果）.
  - 丰富的回调接口和调试信息,可利用现有API实现丰富的效果.
 
+## 引入
+添加如下依赖到你的 build.gradle 文件:
+```
+dependencies {
+    implementation 'me.dkzwm.widget.srl:core:1.6.5.1'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.1'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.1'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.1'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.1'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.1'
+	
+    //androidX版本
+    implementation 'me.dkzwm.widget.srl:core:1.6.5.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.1.androidx'
+}
+```
+
 ## 演示程序
 下载 [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 ## 更新日志
 #### 老版本升级务必查看
  [更新日志](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/ext/UPDATE.md) 
 ## 快照
-- 测试拉伸收缩效果（1.6.2版本添加）    
+- 测试拉伸收缩效果 
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
 
-- 测试横向拉伸收缩效果（1.6.2版本添加）    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_scale_effect.gif)
-
-- 测试横向刷新（1.5.0版本添加）    
+- 测试横向刷新
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
-
-- 测试横向RecyclerView刷新（1.5.0版本添加）    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
 
 - 测试多方向布局下的刷新    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
@@ -55,17 +70,8 @@
 - 测试2级刷新    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
  
-- 包含ListView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
-
-- 包含GridView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_gridView.gif)
-
 - 包含RecyclerView    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView.gif)
-
-- 包含ViewPager    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
 
 - CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
@@ -77,27 +83,6 @@
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
 
 ## 使用   
-#### Gradle
-```
-dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.6.5'
-    //由于误操作删除了原有的仓库，请注意新名字少了个's'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5'
-    //由于误操作删除了原有的仓库，请注意新名字多了个's'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5'
-	
-    //androidX版本
-    implementation 'me.dkzwm.widget.srl:core:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.androidx'
-}
-```
 #### 在Xml中配置
 ```
 <?xml version="1.0" encoding="utf-8"?>

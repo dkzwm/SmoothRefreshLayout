@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,7 +16,6 @@ import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.utils.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.utils.HorizontalScrollCompat;
-import me.dkzwm.widget.srl.utils.SRLog;
 
 /**
  * Created by dkzwm on 2017/10/20.
@@ -180,7 +180,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             right = left + child.getMeasuredWidth();
             child.layout(left, top, right, bottom);
         }
-        if (sDebug) SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): content: %s %s %s %s", left, top, right, bottom));
         return right;
     }
 
@@ -190,7 +191,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) {
-                SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
+                Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", 0, 0, 0, 0));
             }
             return;
         }
@@ -231,9 +232,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         right = left + child.getMeasuredWidth();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
-        if (sDebug) {
-            SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
-        }
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", left, top, right, bottom));
     }
 
     @Override
@@ -241,9 +241,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore()
                 || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
-            if (sDebug) {
-                SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
-            }
+            if (sDebug) Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", 0, 0, 0, 0));
             return;
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -282,9 +280,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         right = left + child.getMeasuredWidth();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
-        if (sDebug) {
-            SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
-        }
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", left, top, right, bottom));
     }
 
     @Override
@@ -300,7 +297,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         }
         right = left + mStickyHeaderView.getMeasuredWidth();
         mStickyHeaderView.layout(left, top, right, bottom);
-        if (sDebug) SRLog.d(TAG, "onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom));
     }
 
     @Override
@@ -312,7 +310,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         final int right = contentRight - lp.bottomMargin;
         final int left = right - mStickyFooterView.getMeasuredWidth();
         mStickyFooterView.layout(left, top, right, bottom);
-        if (sDebug) SRLog.d(TAG, "onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom));
     }
 
     @Override
@@ -547,7 +546,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void dispatchNestedFling(int velocity) {
-        if (sDebug) SRLog.d(TAG, "dispatchNestedFling() : %s", velocity);
+        if (sDebug) Log.d(TAG, String.format("dispatchNestedFling() : %s", velocity));
         if (mScrollTargetView != null)
             HorizontalScrollCompat.flingCompat(mScrollTargetView, -velocity);
         else if (mAutoFoundScrollTargetView != null) {

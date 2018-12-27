@@ -11,7 +11,7 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
@@ -30,8 +30,8 @@ ext {
             buildToolsVersion: "28.0.3",
             minSdkVersion    : 11,
             targetSdkVersion : 28,
-            versionCode      : 55,
-            versionName      : "1.6.5.androidx"
+            versionCode      : 56,
+            versionName      : "1.6.5.1.androidx"
     ]
     libs = [
             recyclerview: "androidx.recyclerview:recyclerview:1.0.0",

@@ -12,7 +12,6 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -41,7 +40,6 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent2;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
-import me.dkzwm.widget.srl.animation.ViscousFluidInterpolator;
 import me.dkzwm.widget.srl.annotation.Action;
 import me.dkzwm.widget.srl.annotation.Mode;
 import me.dkzwm.widget.srl.config.Constants;
@@ -49,8 +47,8 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
+import me.dkzwm.widget.srl.utils.AppBarUtil;
 import me.dkzwm.widget.srl.utils.BoundaryUtil;
-import me.dkzwm.widget.srl.utils.SRLog;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 
@@ -73,8 +71,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     public static final byte SR_VIEW_STATUS_INIT = 21;
     public static final byte SR_VIEW_STATUS_HEADER_IN_PROCESSING = 22;
     public static final byte SR_VIEW_STATUS_FOOTER_IN_PROCESSING = 23;
-    protected static final Interpolator sSpringInterpolator = new ViscousFluidInterpolator();
-    protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator(1.2f);
+    protected static final Interpolator sSpringInterpolator = new Interpolator() {
+        public float getInterpolation(float input) {
+            --input;
+            return input * input * input * input * input + 1.0F;
+        }
+    };
+    protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator();
+    protected static final Interpolator sSpringBackInterpolator = new DecelerateInterpolator(.92f);
     private static final byte FLAG_AUTO_REFRESH = 0x01;
     private static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
     private static final byte FLAG_ENABLE_OVER_SCROLL = 0x01 << 3;
@@ -140,14 +144,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected int mDurationToCloseFooter = 350;
     protected int mDurationOfBackToHeaderHeight = 200;
     protected int mDurationOfBackToFooterHeight = 200;
-    protected int mMinFlingBackDuration = 200;
+    protected int mMinFlingBackDuration = 300;
     protected int mContentResId = View.NO_ID;
     protected int mStickyHeaderResId = View.NO_ID;
     protected int mStickyFooterResId = View.NO_ID;
     protected int mTouchSlop;
     protected int mTouchPointerId;
     protected int mHeaderBackgroundColor = -1;
-    protected int mFooterBackgroundColor = -2;
+    protected int mFooterBackgroundColor = -1;
     protected int mMinimumFlingVelocity;
     protected int mMaximumFlingVelocity;
     protected View mTargetView;
@@ -155,9 +159,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected View mAutoFoundScrollTargetView;
     protected View mStickyHeaderView;
     protected View mStickyFooterView;
-    protected LayoutInflater mInflater;
     protected ScrollChecker mScrollChecker;
     protected VelocityTracker mVelocityTracker;
+    protected AppBarUtil mAppBarUtil;
     protected Paint mBackgroundPaint;
     protected MotionEvent mLastMoveEvent;
     protected OnHeaderEdgeDetectCallBack mInEdgeCanMoveHeaderCallBack;
@@ -183,10 +187,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private boolean mNeedFilterScrollEvent = false;
     private boolean mHasSendCancelEvent = false;
     private boolean mHasSendDownEvent = false;
-    private float[] mCachedPoint = null;
+    private float[] mCachedPoint = new float[2];
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
-    private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL;
+    private int mFlag = FLAG_DISABLE_LOAD_MORE | FLAG_ENABLE_COMPAT_SYNC_SCROLL | FLAG_ENABLE_OLD_TOUCH_HANDLING;
     private int mMaxOverScrollDuration = 350;
     private int mMinOverScrollDuration = 100;
     private int mOffsetRemaining = 0;
@@ -229,85 +233,87 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (mIndicator == null || mIndicatorSetter == null)
             throw new IllegalArgumentException("You must create a IIndicator, current indicator is null");
         setWillNotDraw(false);
-        mInflater = LayoutInflater.from(context);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout,
                 defStyleAttr, defStyleRes);
         if (arr != null) {
-            mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content, mContentResId);
-            float resistance = arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistance, IIndicator.DEFAULT_RESISTANCE);
-            mIndicatorSetter.setResistance(resistance);
-            mIndicatorSetter.setResistanceOfHeader(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistanceOfHeader, resistance));
-            mIndicatorSetter.setResistanceOfFooter(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_resistanceOfFooter, resistance));
-            mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_backToKeepDuration, mDurationOfBackToHeaderHeight);
-            mDurationOfBackToFooterHeight = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_backToKeepDuration, mDurationOfBackToFooterHeight);
-            mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_backToKeepHeaderDuration, mDurationOfBackToHeaderHeight);
-            mDurationOfBackToFooterHeight = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_backToKeepFooterDuration, mDurationOfBackToFooterHeight);
-            mDurationToCloseHeader = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_closeDuration, mDurationToCloseHeader);
-            mDurationToCloseFooter = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_closeDuration, mDurationToCloseFooter);
-            mDurationToCloseHeader = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_closeHeaderDuration, mDurationToCloseHeader);
-            mDurationToCloseFooter = arr.getInt(R.styleable
-                    .SmoothRefreshLayout_sr_closeFooterDuration, mDurationToCloseFooter);
-            float ratio = arr.getFloat(R.styleable.
-                    SmoothRefreshLayout_sr_ratioToRefresh, IIndicator.DEFAULT_RATIO_TO_REFRESH);
-            mIndicatorSetter.setRatioToRefresh(ratio);
-            mIndicatorSetter.setRatioOfHeaderToRefresh(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_ratioOfHeaderToRefresh, ratio));
-            mIndicatorSetter.setRatioOfFooterToRefresh(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_ratioOfFooterToRefresh, ratio));
-            ratio = arr.getFloat(R.styleable.
-                    SmoothRefreshLayout_sr_ratioToKeep, IIndicator.DEFAULT_RATIO_TO_REFRESH);
-            mIndicatorSetter.setRatioToKeepHeader(ratio);
-            mIndicatorSetter.setRatioToKeepFooter(ratio);
-            mIndicatorSetter.setRatioToKeepHeader(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_ratioToKeepHeader, ratio));
-            mIndicatorSetter.setRatioToKeepFooter(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_ratioToKeepFooter, ratio));
-            ratio = arr.getFloat(R.styleable.
-                    SmoothRefreshLayout_sr_maxMoveRatio, IIndicator.DEFAULT_MAX_MOVE_RATIO);
-            mIndicatorSetter.setMaxMoveRatio(ratio);
-            mIndicatorSetter.setMaxMoveRatioOfHeader(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_maxMoveRatioOfHeader, ratio));
-            mIndicatorSetter.setMaxMoveRatioOfFooter(arr.getFloat(R.styleable
-                    .SmoothRefreshLayout_sr_maxMoveRatioOfFooter, ratio));
-            setEnableKeepRefreshView(arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enableKeep, true));
-            setEnablePinContentView(arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enablePinContent, false));
-            setEnableOverScroll(arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enableOverScroll, true));
-            setEnablePullToRefresh(arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enablePullToRefresh, false));
-            setDisableRefresh(!arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enableRefresh,
-                    true));
-            setDisableLoadMore(!arr.getBoolean(R.styleable
-                    .SmoothRefreshLayout_sr_enableLoadMore, false));
-            mStickyHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyHeader,
-                    NO_ID);
-            mStickyFooterResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyFooter,
-                    NO_ID);
-            mHeaderBackgroundColor = arr.getColor(R.styleable
-                    .SmoothRefreshLayout_sr_headerBackgroundColor, -1);
-            mFooterBackgroundColor = arr.getColor(R.styleable
-                    .SmoothRefreshLayout_sr_footerBackgroundColor, -1);
-            if (mHeaderBackgroundColor != -1 || mFooterBackgroundColor != -1)
-                preparePaint();
-            @Mode
-            int mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, Constants.MODE_DEFAULT);
-            mMode = mode;
-            arr.recycle();
-            arr = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS, defStyleAttr, defStyleRes);
-            setEnabled(arr.getBoolean(0, true));
-            arr.recycle();
+            try {
+                mContentResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_content, mContentResId);
+                float resistance = arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_resistance, IIndicator.DEFAULT_RESISTANCE);
+                mIndicatorSetter.setResistance(resistance);
+                mIndicatorSetter.setResistanceOfHeader(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_resistanceOfHeader, resistance));
+                mIndicatorSetter.setResistanceOfFooter(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_resistanceOfFooter, resistance));
+                mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_backToKeepDuration, mDurationOfBackToHeaderHeight);
+                mDurationOfBackToFooterHeight = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_backToKeepDuration, mDurationOfBackToFooterHeight);
+                mDurationOfBackToHeaderHeight = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_backToKeepHeaderDuration, mDurationOfBackToHeaderHeight);
+                mDurationOfBackToFooterHeight = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_backToKeepFooterDuration, mDurationOfBackToFooterHeight);
+                mDurationToCloseHeader = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_closeDuration, mDurationToCloseHeader);
+                mDurationToCloseFooter = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_closeDuration, mDurationToCloseFooter);
+                mDurationToCloseHeader = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_closeHeaderDuration, mDurationToCloseHeader);
+                mDurationToCloseFooter = arr.getInt(R.styleable
+                        .SmoothRefreshLayout_sr_closeFooterDuration, mDurationToCloseFooter);
+                float ratio = arr.getFloat(R.styleable.
+                        SmoothRefreshLayout_sr_ratioToRefresh, IIndicator.DEFAULT_RATIO_TO_REFRESH);
+                mIndicatorSetter.setRatioToRefresh(ratio);
+                mIndicatorSetter.setRatioOfHeaderToRefresh(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_ratioOfHeaderToRefresh, ratio));
+                mIndicatorSetter.setRatioOfFooterToRefresh(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_ratioOfFooterToRefresh, ratio));
+                ratio = arr.getFloat(R.styleable.
+                        SmoothRefreshLayout_sr_ratioToKeep, IIndicator.DEFAULT_RATIO_TO_REFRESH);
+                mIndicatorSetter.setRatioToKeepHeader(ratio);
+                mIndicatorSetter.setRatioToKeepFooter(ratio);
+                mIndicatorSetter.setRatioToKeepHeader(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_ratioToKeepHeader, ratio));
+                mIndicatorSetter.setRatioToKeepFooter(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_ratioToKeepFooter, ratio));
+                ratio = arr.getFloat(R.styleable.
+                        SmoothRefreshLayout_sr_maxMoveRatio, IIndicator.DEFAULT_MAX_MOVE_RATIO);
+                mIndicatorSetter.setMaxMoveRatio(ratio);
+                mIndicatorSetter.setMaxMoveRatioOfHeader(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_maxMoveRatioOfHeader, ratio));
+                mIndicatorSetter.setMaxMoveRatioOfFooter(arr.getFloat(R.styleable
+                        .SmoothRefreshLayout_sr_maxMoveRatioOfFooter, ratio));
+                setEnableKeepRefreshView(arr.getBoolean(R.styleable
+                        .SmoothRefreshLayout_sr_enableKeep, true));
+                setEnablePinContentView(arr.getBoolean(R.styleable
+                        .SmoothRefreshLayout_sr_enablePinContent, false));
+                setEnableOverScroll(arr.getBoolean(R.styleable
+                        .SmoothRefreshLayout_sr_enableOverScroll, true));
+                setEnablePullToRefresh(arr.getBoolean(R.styleable
+                        .SmoothRefreshLayout_sr_enablePullToRefresh, false));
+                setDisableRefresh(!arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enableRefresh,
+                        true));
+                setDisableLoadMore(!arr.getBoolean(R.styleable
+                        .SmoothRefreshLayout_sr_enableLoadMore, false));
+                mStickyHeaderResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyHeader,
+                        NO_ID);
+                mStickyFooterResId = arr.getResourceId(R.styleable.SmoothRefreshLayout_sr_stickyFooter,
+                        NO_ID);
+                mHeaderBackgroundColor = arr.getColor(R.styleable
+                        .SmoothRefreshLayout_sr_headerBackgroundColor, -1);
+                mFooterBackgroundColor = arr.getColor(R.styleable
+                        .SmoothRefreshLayout_sr_footerBackgroundColor, -1);
+                if (mHeaderBackgroundColor != -1 || mFooterBackgroundColor != -1)
+                    preparePaint();
+                @Mode
+                int mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, Constants.MODE_DEFAULT);
+                mMode = mode;
+                arr.recycle();
+                arr = context.obtainStyledAttributes(attrs, LAYOUT_ATTRS, defStyleAttr, defStyleRes);
+                setEnabled(arr.getBoolean(0, true));
+            } finally {
+                arr.recycle();
+            }
         } else {
             setEnablePullToRefresh(true);
             setEnableKeepRefreshView(true);
@@ -318,9 +324,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mMinimumFlingVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
         mScrollChecker = new ScrollChecker();
         mSpringInterpolator = sSpringInterpolator;
-        mSpringBackInterpolator = mSpringInterpolator;
+        mSpringBackInterpolator = sSpringBackInterpolator;
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
+        mAppBarUtil = new AppBarUtil();
         setNestedScrollingEnabled(true);
     }
 
@@ -359,18 +366,34 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 observer.onDetached(this);
             }
         }
+        if (mAppBarUtil != null && mAppBarUtil.hasFound()) {
+            if (mInEdgeCanMoveHeaderCallBack == mAppBarUtil)
+                mInEdgeCanMoveHeaderCallBack = null;
+            if (mInEdgeCanMoveFooterCallBack == mAppBarUtil)
+                mInEdgeCanMoveFooterCallBack = null;
+            mAppBarUtil.onDetached(this);
+        }
+        reset();
+        if (mHeaderRefreshCompleteHook != null)
+            mHeaderRefreshCompleteHook.mLayout = null;
+        if (mFooterRefreshCompleteHook != null)
+            mFooterRefreshCompleteHook.mLayout = null;
+        if (sDebug) Log.d(TAG, "onDetachedFromWindow()");
         super.onDetachedFromWindow();
-        destroy();
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        if (sDebug) Log.d(TAG, "onAttachedToWindow()");
         if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) {
                 observer.onAttached(this);
             }
+        }
+        if (mAppBarUtil != null) {
+            mAppBarUtil.onAttached(this);
         }
     }
 
@@ -574,7 +597,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             bottom = top + child.getMeasuredHeight();
             child.layout(left, top, right, bottom);
         }
-        if (sDebug) SRLog.d(TAG, "onLayout(): content: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): content: %s %s %s %s", left, top, right, bottom));
         return bottom + lp.bottomMargin;
     }
 
@@ -582,7 +606,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh()
                 || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
-            if (sDebug) SRLog.d(TAG, "onLayout(): header: %s %s %s %s", 0, 0, 0, 0);
+            if (sDebug) Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", 0, 0, 0, 0));
             return;
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -622,14 +646,15 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             top = top + child.getMeasuredHeight();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
-        if (sDebug) SRLog.d(TAG, "onLayout(): header: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", left, top, right, bottom));
     }
 
     protected void layoutFooterView(View child, int offsetFooter, boolean pin, int contentBottom) {
         if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore()
                 || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
-            if (sDebug) SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", 0, 0, 0, 0);
+            if (sDebug) Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", 0, 0, 0, 0));
             return;
         }
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -668,7 +693,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             top = top - child.getMeasuredHeight();
         bottom = top + child.getMeasuredHeight();
         child.layout(left, top, right, bottom);
-        if (sDebug) SRLog.d(TAG, "onLayout(): footer: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", left, top, right, bottom));
     }
 
     protected void layoutStickyHeader(boolean pin, int offsetHeader) {
@@ -683,7 +709,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
         final int bottom = top + mStickyHeaderView.getMeasuredHeight();
         mStickyHeaderView.layout(left, top, right, bottom);
-        if (sDebug) SRLog.d(TAG, "onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom));
     }
 
     protected void layoutStickyFooter(int contentBottom, int offsetFooterY) {
@@ -694,7 +721,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         final int bottom = contentBottom - lp.bottomMargin;
         final int top = bottom - mStickyFooterView.getMeasuredHeight();
         mStickyFooterView.layout(left, top, right, bottom);
-        if (sDebug) SRLog.d(TAG, "onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom));
     }
 
     @SuppressLint({"RtlHardcpded", "RtlHardcoded"})
@@ -731,8 +759,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
         child.layout(childLeft, childTop, childLeft + width, childTop + height);
         if (sDebug)
-            SRLog.d(TAG, "onLayout(): child: %s %s %s %s", childLeft, childTop, childLeft
-                    + width, childTop + height);
+            Log.d(TAG, String.format("onLayout(): child: %s %s %s %s", childLeft, childTop, childLeft
+                    + width, childTop + height));
     }
 
     @Override
@@ -1015,6 +1043,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      */
     public void setOnHeaderEdgeDetectCallBack(OnHeaderEdgeDetectCallBack callback) {
         mInEdgeCanMoveHeaderCallBack = callback;
+        if (callback != null && mAppBarUtil != null && callback != mAppBarUtil) {
+            mAppBarUtil.onDetached(this);
+            mAppBarUtil = null;
+        }
     }
 
     /**
@@ -1027,6 +1059,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      */
     public void setOnFooterEdgeDetectCallBack(OnFooterEdgeDetectCallBack callback) {
         mInEdgeCanMoveFooterCallBack = callback;
+        if (callback != null && mAppBarUtil != null && callback != mAppBarUtil) {
+            mAppBarUtil.onDetached(this);
+            mAppBarUtil = null;
+        }
     }
 
     /**
@@ -1164,7 +1200,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      */
     final public void refreshComplete(boolean isSuccessful, long delayDurationToChangeState) {
         if (sDebug)
-            SRLog.d(TAG, "refreshComplete(): isSuccessful: %s", isSuccessful);
+            Log.d(TAG, String.format("refreshComplete(): isSuccessful: %s", isSuccessful));
         mIsLastRefreshSuccessful = isSuccessful;
         if (!isRefreshing() && !isLoadingMore())
             return;
@@ -1229,8 +1265,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * Perform auto refresh at once.
      * <p>自动刷新并立即触发刷新回调</p>
      */
-    public void autoRefresh() {
-        autoRefresh(Constants.ACTION_NOTIFY, true);
+    public boolean autoRefresh() {
+        return autoRefresh(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1240,8 +1276,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param atOnce Auto refresh at once
      */
     @Deprecated
-    public void autoRefresh(boolean atOnce) {
-        autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
+    public boolean autoRefresh(boolean atOnce) {
+        return autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1253,8 +1289,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     @Deprecated
-    public void autoRefresh(boolean atOnce, boolean smoothScroll) {
-        autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
+    public boolean autoRefresh(boolean atOnce, boolean smoothScroll) {
+        return autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
     }
 
     /**
@@ -1271,11 +1307,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      *                     {@link Constants#ACTION_AT_ONCE},{@link Constants#ACTION_NOTHING}
      * @param smoothScroll Auto refresh use smooth scrolling
      */
-    public void autoRefresh(@Action int action, boolean smoothScroll) {
+    public boolean autoRefresh(@Action int action, boolean smoothScroll) {
         if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
-            return;
+            return false;
         if (sDebug)
-            SRLog.d(TAG, "autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll);
+            Log.d(TAG, String.format("autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll));
         final byte old = mStatus;
         mStatus = SR_STATUS_PREPARE;
         notifyStatusChanged(old, mStatus);
@@ -1290,14 +1326,15 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         } else {
             scrollToTriggeredAutomatic(true);
         }
+        return true;
     }
 
     /**
      * Perform auto load more at once.
      * <p>自动加载更多，并立即触发刷新回调</p>
      */
-    public void autoLoadMore() {
-        autoLoadMore(Constants.ACTION_NOTIFY, true);
+    public boolean autoLoadMore() {
+        return autoLoadMore(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1307,8 +1344,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param atOnce Auto load more at once
      */
     @Deprecated
-    public void autoLoadMore(boolean atOnce) {
-        autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
+    public boolean autoLoadMore(boolean atOnce) {
+        return autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1320,8 +1357,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param smoothScroll Auto load more use smooth scrolling
      */
     @Deprecated
-    public void autoLoadMore(boolean atOnce, boolean smoothScroll) {
-        autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY,
+    public boolean autoLoadMore(boolean atOnce, boolean smoothScroll) {
+        return autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY,
                 smoothScroll);
     }
 
@@ -1338,11 +1375,11 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      *                     {@link Constants#ACTION_AT_ONCE},{@link Constants#ACTION_NOTHING}
      * @param smoothScroll Auto load more use smooth scrolling
      */
-    public void autoLoadMore(@Action int action, boolean smoothScroll) {
+    public boolean autoLoadMore(@Action int action, boolean smoothScroll) {
         if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
-            return;
+            return false;
         if (sDebug)
-            SRLog.d(TAG, "autoLoadMore(): action: %s, smoothScroll: %s", action, smoothScroll);
+            Log.d(TAG, String.format("autoLoadMore(): action: %s, smoothScroll: %s", action, smoothScroll));
         final byte old = mStatus;
         mStatus = SR_STATUS_PREPARE;
         notifyStatusChanged(old, mStatus);
@@ -1356,6 +1393,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         } else {
             scrollToTriggeredAutomatic(false);
         }
+        return true;
     }
 
     /**
@@ -2284,9 +2322,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             removeView(mTargetView);
         mContentResId = View.NO_ID;
         ViewGroup.LayoutParams lp = content.getLayoutParams();
-        if (lp == null) {
+        if (lp == null)
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        }
         mTargetView = content;
         mViewsZAxisNeedReset = true;
         addView(content, lp);
@@ -2297,9 +2334,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * <p>重置Scroller的插值器</p>
      */
     public void resetScrollerInterpolator() {
-        if (mSpringInterpolator != sSpringInterpolator) {
+        if (mSpringInterpolator != sSpringInterpolator)
             setSpringInterpolator(sSpringInterpolator);
-        }
+        if (mSpringBackInterpolator != sSpringBackInterpolator)
+            setSpringBackInterpolator(sSpringBackInterpolator);
     }
 
     /**
@@ -2395,7 +2433,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected boolean onFling(float vx, final float vy, boolean nested) {
-        if (sDebug) SRLog.d(TAG, "onFling() vx: %s, vy: %s", vx, vy);
+        if (sDebug) Log.d(TAG, String.format("onFling() velocityX: %s, velocityY: %s, nested: %s",
+                vx, vy, nested));
         if ((isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling()))
             return true;
         if (mPreventForAnotherDirection) {
@@ -2406,7 +2445,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
         if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             if (!isEnabledPinRefreshViewWhileLoading()) {
-                if (Math.abs(realVelocity) > mMinimumFlingVelocity * 2) {
+                if (Math.abs(realVelocity) > 1200) {
                     if ((realVelocity > 0 && isMovingHeader())
                             || (realVelocity < 0 && isMovingFooter())) {
                         if (isEnabledOverScroll()) {
@@ -2419,14 +2458,16 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                             mScrollChecker.startPreFling(invert ? -realVelocity : realVelocity);
                         }
                     } else {
-                        if (!isEnabledPerformFreshWhenFling()) {
-                            mScrollChecker.startPreFling(realVelocity);
-                        } else if (isMovingHeader()
-                                && mIndicator.getCurrentPos() < mIndicator.getOffsetToRefresh()) {
-                            mScrollChecker.startPreFling(realVelocity);
-                        } else if (isMovingFooter()
-                                && mIndicator.getCurrentPos() < mIndicator.getOffsetToLoadMore()) {
-                            mScrollChecker.startPreFling(realVelocity);
+                        if (mScrollChecker.getFinalY(realVelocity) > mIndicator.getCurrentPos()) {
+                            if (!isEnabledPerformFreshWhenFling()) {
+                                mScrollChecker.startPreFling(realVelocity);
+                            } else if (isMovingHeader() && (isDisabledPerformRefresh()
+                                    || mIndicator.getCurrentPos() < mIndicator.getOffsetToRefresh())) {
+                                mScrollChecker.startPreFling(realVelocity);
+                            } else if (isMovingFooter() && (isDisabledPerformLoadMore()
+                                    || mIndicator.getCurrentPos() < mIndicator.getOffsetToLoadMore())) {
+                                mScrollChecker.startPreFling(realVelocity);
+                            }
                         }
                     }
                 }
@@ -2462,7 +2503,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
-        if (sDebug) SRLog.d(TAG, "onStartNestedScroll(): axes: %s, type: %s", axes, type);
+        if (sDebug)
+            Log.d(TAG, String.format("onStartNestedScroll(): axes: %s, type: %s", axes, type));
         return isEnabled() && isNestedScrollingEnabled() && mTargetView != null
                 && (axes & getSupportScrollAxis()) != 0;
     }
@@ -2474,7 +2516,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
-        if (sDebug) SRLog.d(TAG, "onNestedScrollAccepted(): axes: %s, type: %s", axes, type);
+        if (sDebug)
+            Log.d(TAG, String.format("onNestedScrollAccepted(): axes: %s, type: %s", axes, type));
         // Reset the counter of how much leftover scroll needs to be consumed.
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
         // Dispatch up to the nested parent
@@ -2565,8 +2608,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             }
         }
         if (sDebug)
-            SRLog.d(TAG, "onNestedPreScroll(): dx: %s, dy: %s, consumed: %s, type: %s",
-                    dx, dy, Arrays.toString(consumed), type);
+            Log.d(TAG, String.format("onNestedPreScroll(): dx: %s, dy: %s, consumed: %s, type: %s",
+                    dx, dy, Arrays.toString(consumed), type));
     }
 
     @Override
@@ -2581,7 +2624,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     public void onStopNestedScroll(@NonNull View target, int type) {
-        if (sDebug) SRLog.d(TAG, "onStopNestedScroll() type: %s", type);
+        if (sDebug) Log.d(TAG, String.format("onStopNestedScroll() type: %s", type));
         mNestedScrollingParentHelper.onStopNestedScroll(target, type);
         if (mLastNestedType == type)
             mNestedScrollInProgress = false;
@@ -2603,8 +2646,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
         if (sDebug)
-            SRLog.d(TAG, "onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
-                    " dyUnconsumed: %s, type: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type);
+            Log.d(TAG, String.format("onNestedScroll(): dxConsumed: %s, dyConsumed: %s, dxUnconsumed: %s" +
+                    " dyUnconsumed: %s, type: %s", dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type));
         // Dispatch up to the nested parent first
         dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed,
                 mParentOffsetInWindow, type);
@@ -2672,7 +2715,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         else if (mAutoFoundScrollTargetView != null)
             targetView = mAutoFoundScrollTargetView;
         else targetView = mTargetView;
-        if (ViewCompat.isNestedScrollingEnabled(targetView))
+        if (targetView != null)
             ViewCompat.stopNestedScroll(targetView, type);
         else
             mNestedScrollingChildHelper.stopNestedScroll(type);
@@ -2715,8 +2758,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     @Override
     public boolean onNestedPreFling(@NonNull View target, float velocityX, float velocityY) {
-        if (sDebug)
-            SRLog.d(TAG, "onNestedPreFling() velocityX: %s, velocityY: %s", velocityX, velocityY);
         return onFling(-velocityX, -velocityY, true);
     }
 
@@ -2807,15 +2848,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mViewsZAxisNeedReset = false;
     }
 
-    protected void destroy() {
-        reset();
-        if (mHeaderRefreshCompleteHook != null)
-            mHeaderRefreshCompleteHook.mLayout = null;
-        if (mFooterRefreshCompleteHook != null)
-            mFooterRefreshCompleteHook.mLayout = null;
-        if (sDebug) SRLog.d(TAG, "destroy()");
-    }
-
     protected void reset() {
         if (isRefreshing() || isLoadingMore())
             notifyUIRefreshComplete(false, true);
@@ -2829,12 +2861,12 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mScrollChecker.stop();
         if (mDelayToRefreshComplete != null)
             removeCallbacks(mDelayToRefreshComplete);
-        if (sDebug) SRLog.d(TAG, "reset()");
+        if (sDebug) Log.d(TAG, "reset()");
     }
 
     protected void tryToPerformAutoRefresh() {
         if (!mAutomaticActionTriggered) {
-            if (sDebug) SRLog.d(TAG, "tryToPerformAutoRefresh()");
+            if (sDebug) Log.d(TAG, "tryToPerformAutoRefresh()");
             if (isHeaderInProcessing()) {
                 if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0)
                     return;
@@ -2871,17 +2903,30 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private void ensureTargetView() {
         if (mTargetView == null) {
             final int count = getChildCount();
+            final boolean ensure = isEnabledDynamicEnsureTargetView()
+                    || mAppBarUtil != null && mAppBarUtil.hasFound();
             if (mContentResId != View.NO_ID) {
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (mContentResId == child.getId()) {
                         mTargetView = child;
+                        if (ensure && child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
+                            View view = ensureScrollTargetView(child, true, 0, 0);
+                            if (view != null && view != child) {
+                                mAutoFoundScrollTargetView = view;
+                                break;
+                            }
+                        }
                         break;
                     } else if (child instanceof ViewGroup) {
                         final View view = foundViewInViewGroupById((ViewGroup) child, mContentResId);
                         if (view != null) {
-                            mTargetView = child;
-                            mScrollTargetView = view;
+                            if (isScrollingView(view)) {
+                                mTargetView = child;
+                                mScrollTargetView = view;
+                            } else {
+                                mTargetView = child;
+                            }
                             break;
                         }
                     }
@@ -2889,12 +2934,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             } else {
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
-                    View topTempView = null;
                     if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
-                        if (isEnabledDynamicEnsureTargetView()) {
-                            View view = ensureScrollTargetView(child, getLeft() + getWidth() / 2,
-                                    getTop() + getHeight() / 2);
-                            topTempView = child;
+                        if (ensure) {
+                            View view = ensureScrollTargetView(child, true, 0, 0);
                             if (view != null) {
                                 mTargetView = child;
                                 if (view != child) {
@@ -2904,11 +2946,16 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                             }
                         } else {
                             mTargetView = child;
+                            break;
                         }
                     }
-                    if (mTargetView == null)
-                        mTargetView = topTempView;
                 }
+            }
+            if (mAppBarUtil != null && mAppBarUtil.hasFound()) {
+                if (mInEdgeCanMoveHeaderCallBack == null)
+                    mInEdgeCanMoveHeaderCallBack = mAppBarUtil;
+                if (mInEdgeCanMoveFooterCallBack == null)
+                    mInEdgeCanMoveFooterCallBack = mAppBarUtil;
             }
         }
         if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
@@ -2928,8 +2975,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     private boolean isTransformedTouchPointInView(float x, float y, View group, View child) {
         if (child.getVisibility() != VISIBLE || child.getAnimation() != null)
             return false;
-        if (mCachedPoint == null)
-            mCachedPoint = new float[2];
         mCachedPoint[0] = x;
         mCachedPoint[1] = y;
         mCachedPoint[0] += group.getScrollX() - child.getLeft();
@@ -2944,7 +2989,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         return isInView;
     }
 
-    protected View ensureScrollTargetView(View target, float x, float y) {
+    protected View ensureScrollTargetView(View target, boolean noTransform, float x, float y) {
         if (target instanceof IRefreshView || target.getVisibility() != VISIBLE
                 || target.getAnimation() != null)
             return null;
@@ -2955,9 +3000,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             final int count = group.getChildCount();
             for (int i = count - 1; i >= 0; i--) {
                 View child = group.getChildAt(i);
-                if (isTransformedTouchPointInView(x, y, group, child)) {
-                    View view = ensureScrollTargetView(child, x + mCachedPoint[0], y +
-                            mCachedPoint[1]);
+                if (noTransform || isTransformedTouchPointInView(x, y, group, child)) {
+                    View view = ensureScrollTargetView(child, noTransform,
+                            x + mCachedPoint[0], y + mCachedPoint[1]);
                     if (view != null)
                         return view;
                 }
@@ -2972,7 +3017,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected boolean processDispatchTouchEvent(MotionEvent ev) {
         final int action = ev.getAction() & MotionEvent.ACTION_MASK;
-        if (sDebug) SRLog.d(TAG, "processDispatchTouchEvent(): action: %s", action);
+        if (sDebug) Log.d(TAG, String.format("processDispatchTouchEvent(): action: %s", action));
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
         }
@@ -3062,13 +3107,12 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 mHasSendDownEvent = false;
                 mPreventForAnotherDirection = false;
                 if (mScrollTargetView == null && isEnabledDynamicEnsureTargetView()) {
-                    View view = ensureScrollTargetView(this, ev.getX(), ev.getY());
+                    View view = ensureScrollTargetView(this, false, ev.getX(), ev.getY());
                     if (view != null && mTargetView != view && mAutoFoundScrollTargetView != view) {
                         mAutoFoundScrollTargetView = view;
                     }
-                } else {
+                } else if (mAppBarUtil == null || !mAppBarUtil.hasFound())
                     mAutoFoundScrollTargetView = null;
-                }
                 removeCallbacks(mDelayToDispatchNestedFling);
                 dispatchTouchEventSuper(ev);
                 return true;
@@ -3223,7 +3267,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     private void scrollToTriggeredAutomatic(boolean isRefresh) {
-        if (sDebug) SRLog.d(TAG, "scrollToTriggeredAutomatic()");
+        if (sDebug) Log.d(TAG, "scrollToTriggeredAutomatic()");
         switch (mAutomaticAction) {
             case Constants.ACTION_NOTHING:
                 if (isRefresh)
@@ -3328,7 +3372,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void makeNewTouchDownEvent(MotionEvent ev) {
-        if (sDebug) SRLog.d(TAG, "makeNewTouchDownEvent()");
+        if (sDebug) Log.d(TAG, "makeNewTouchDownEvent()");
         sendCancelEvent(ev);
         sendDownEvent(ev);
         mIndicatorSetter.onFingerUp();
@@ -3337,7 +3381,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected void sendCancelEvent(MotionEvent event) {
         if (mHasSendCancelEvent || (event == null && mLastMoveEvent == null)) return;
-        if (sDebug) SRLog.d(TAG, "sendCancelEvent()");
+        if (sDebug) Log.d(TAG, "sendCancelEvent()");
         final MotionEvent last;
         if (event == null) last = mLastMoveEvent;
         else last = event;
@@ -3351,7 +3395,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected void sendDownEvent(MotionEvent event) {
         if (mHasSendDownEvent || (event == null && mLastMoveEvent == null)) return;
-        if (sDebug) SRLog.d(TAG, "sendDownEvent()");
+        if (sDebug) Log.d(TAG, "sendDownEvent()");
         final MotionEvent last;
         if (event == null) last = mLastMoveEvent;
         else last = event;
@@ -3372,7 +3416,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void onFingerUp() {
-        if (sDebug) SRLog.d(TAG, "onFingerUp()");
+        if (sDebug) Log.d(TAG, "onFingerUp()");
         notifyFingerUp();
         if (mMode == Constants.MODE_DEFAULT) {
             if (isEnabledNoMoreData())
@@ -3401,10 +3445,12 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void onRelease() {
-        if (sDebug) SRLog.d(TAG, "onRelease()");
+        if (sDebug) Log.d(TAG, "onRelease()");
         if (mMode == Constants.MODE_DEFAULT) {
-            if ((isEnabledNoMoreData() && isMovingFooter() && isEnabledNoSpringBackWhenNoMoreData()))
+            if ((isEnabledNoMoreData() && isMovingFooter() && isEnabledNoSpringBackWhenNoMoreData())) {
+                mScrollChecker.stop();
                 return;
+            }
             tryToPerformRefresh();
             if (mStatus == SR_STATUS_COMPLETE) {
                 notifyUIRefreshComplete(true, false);
@@ -3440,13 +3486,23 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected void tryScrollBackToTopByPercentDuration() {
         //Use the current percentage duration of the current position to scroll back to the top
-        float percent;
-        if (isMovingHeader()) {
-            percent = mIndicator.getCurrentPercentOfRefreshOffset();
+        if (mScrollChecker.isFlingBack()) {
+            final int curPos = mIndicator.getCurrentPos();
+            int duration;
+            if (curPos > mScrollChecker.$MaxDistance) {
+                duration = Math.max((int) (1000f * Math.sqrt(2f * mScrollChecker.$MaxDistance /
+                        2000f) * mFlingBackFactor), mMinFlingBackDuration);
+            } else {
+                duration = Math.max((int) (1000f * Math.sqrt(3f * curPos / 2000f) *
+                        mFlingBackFactor), mMinFlingBackDuration);
+            }
+            tryScrollBackToTop(duration);
+        } else if (isMovingHeader()) {
+            float percent = mIndicator.getCurrentPercentOfRefreshOffset();
             percent = percent > 1 || percent <= 0 ? 1 : percent;
             tryScrollBackToTop(Math.round(mDurationToCloseHeader * percent));
         } else if (isMovingFooter()) {
-            percent = mIndicator.getCurrentPercentOfLoadMoreOffset();
+            float percent = mIndicator.getCurrentPercentOfLoadMoreOffset();
             percent = percent > 1 || percent <= 0 ? 1 : percent;
             tryScrollBackToTop(Math.round(mDurationToCloseFooter * percent));
         } else {
@@ -3455,7 +3511,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void tryScrollBackToTop(int duration) {
-        if (sDebug) SRLog.d(TAG, "tryScrollBackToTop(): duration: %s", duration);
+        if (sDebug) Log.d(TAG, String.format("tryScrollBackToTop(): duration: %s", duration));
         if (mIndicator.hasLeftStartPosition() && (!mIndicator.hasTouched() || !mIndicator.hasMoved())) {
             mScrollChecker.scrollTo(IIndicator.START_POS, duration);
             return;
@@ -3487,7 +3543,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void moveHeaderPos(float delta) {
-        if (sDebug) SRLog.d(TAG, "moveHeaderPos(): delta: %s", delta);
+        if (sDebug) Log.d(TAG, String.format("moveHeaderPos(): delta: %s", delta));
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
         final int current = mIndicator.getCurrentPos();
@@ -3511,7 +3567,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void moveFooterPos(float delta) {
-        if (sDebug) SRLog.d(TAG, "moveFooterPos(): delta: %s", delta);
+        if (sDebug) Log.d(TAG, String.format("moveFooterPos(): delta: %s", delta));
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         if (delta < 0) {
             final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
@@ -3540,7 +3596,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     || isEnabledSmoothRollbackWhenCompleted())
                     && mStatus == SR_STATUS_COMPLETE) {
                 if (sDebug)
-                    SRLog.d(TAG, "moveFooterPos(): compatible scroll delta: %s", delta);
+                    Log.d(TAG, String.format("moveFooterPos(): compatible scroll delta: %s", delta));
                 mNeedFilterScrollEvent = true;
                 if (mScrollTargetView != null)
                     compatLoadMoreScroll(mScrollTargetView, delta);
@@ -3563,7 +3619,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     protected void movePos(float delta) {
         if (delta == 0f) {
-            if (sDebug) SRLog.d(TAG, "movePos(): delta is zero");
+            if (sDebug) Log.d(TAG, "movePos(): delta is zero");
             mIndicatorSetter.setCurrentPos(mIndicator.getCurrentPos());
             return;
         }
@@ -3574,7 +3630,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         // over top
         if (!mScrollChecker.$IsScrolling && to < IIndicator.START_POS) {
             to = IIndicator.START_POS;
-            if (sDebug) SRLog.d(TAG, "movePos(): over top");
+            if (sDebug) Log.d(TAG, "movePos(): over top");
         }
         mIndicatorSetter.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
@@ -3630,8 +3686,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         }
         tryToPerformRefreshWhenMoved();
         if (sDebug)
-            SRLog.d(TAG, "updatePos(): change: %s, current: %s last: %s",
-                    change, mIndicator.getCurrentPos(), mIndicator.getLastPos());
+            Log.d(TAG, String.format("updatePos(): change: %s, current: %s last: %s",
+                    change, mIndicator.getCurrentPos(), mIndicator.getLastPos()));
         notifyUIPositionChanged();
         boolean needRequestLayout = change != 0 && offsetChild(change, isMovingHeader,
                 isMovingFooter);
@@ -3775,7 +3831,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             if (isHeaderInProcessing() && isMovingHeader() && !isDisabledPerformRefresh()) {
                 if (isEnabledPullToRefresh() && mIndicator.isOverOffsetToRefresh()) {
                     triggeredRefresh(true);
-                } else if (!mIndicator.hasTouched()
+                } else if (isEnabledPerformFreshWhenFling() && !mIndicator.hasTouched()
                         && !(mScrollChecker.isPreFling() || mScrollChecker.isFling())
                         && mIndicator.isJustReturnedOffsetToRefresh()) {
                     triggeredRefresh(true);
@@ -3784,7 +3840,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             } else if (isFooterInProcessing() && isMovingFooter() && !isDisabledPerformLoadMore()) {
                 if (isEnabledPullToRefresh() && mIndicator.isOverOffsetToLoadMore()) {
                     triggeredLoadMore(true);
-                } else if (!mIndicator.hasTouched()
+                } else if (isEnabledPerformFreshWhenFling() && !mIndicator.hasTouched()
                         && !(mScrollChecker.isPreFling() || mScrollChecker.isFling())
                         && mIndicator.isJustReturnedOffsetToLoadMore()) {
                     triggeredLoadMore(true);
@@ -3837,6 +3893,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     private void tryToDispatchNestedFling() {
         if (mScrollChecker.isPreFling() && mIndicator.isAlreadyHere(IIndicator.START_POS)) {
+            if (sDebug) Log.d(TAG, "tryToDispatchNestedFling()");
             final int velocity = (int) (mScrollChecker.getCurrVelocity() + 0.5f);
             mIndicatorSetter.setMovingStatus(Constants.MOVING_CONTENT);
             if (isEnabledOverScroll() && !(isDisabledLoadMoreWhenContentNotFull()
@@ -3852,7 +3909,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected boolean tryToNotifyReset() {
         if ((mStatus == SR_STATUS_COMPLETE || mStatus == SR_STATUS_PREPARE)
                 && mIndicator.isAlreadyHere(IIndicator.START_POS)) {
-            if (sDebug) SRLog.d(TAG, "tryToNotifyReset()");
+            if (sDebug) Log.d(TAG, "tryToNotifyReset()");
             if (mHeaderView != null)
                 mHeaderView.onReset(this);
             if (mFooterView != null)
@@ -3937,7 +3994,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (mStatus != SR_STATUS_PREPARE || isMovingContent()) {
             return;
         }
-        if (sDebug) SRLog.d(TAG, "tryToPerformRefresh()");
+        if (sDebug) Log.d(TAG, "tryToPerformRefresh()");
         final boolean isEnabledKeep = isEnabledKeepRefreshView();
         if (isHeaderInProcessing() && !isDisabledPerformRefresh() && mHeaderView != null) {
             if ((isEnabledKeep && mIndicator.isAlreadyHere(mIndicator.getOffsetToRefresh())
@@ -3959,7 +4016,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 && (mStatus == SR_STATUS_INIT || mStatus == SR_STATUS_PREPARE)) {
             if ((isEnabledAutoLoadMore() && !isDisabledPerformLoadMore())
                     || (isEnabledAutoRefresh() && !isDisabledPerformRefresh())) {
-                if (sDebug) SRLog.d(TAG, "tryScrollToPerformAutoRefresh()");
+                if (sDebug) Log.d(TAG, "tryScrollToPerformAutoRefresh()");
                 if (mScrollTargetView != null) {
                     if (isEnabledAutoLoadMore() && canAutoLoadMore(mScrollTargetView)) {
                         if (!isDisabledLoadMoreWhenContentNotFull()
@@ -4006,7 +4063,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void triggeredRefresh(boolean notify) {
-        if (sDebug) SRLog.d(TAG, "triggeredRefresh()");
+        if (sDebug) Log.d(TAG, "triggeredRefresh()");
         final byte old = mStatus;
         mStatus = SR_STATUS_REFRESHING;
         notifyStatusChanged(old, mStatus);
@@ -4017,7 +4074,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void triggeredLoadMore(boolean notify) {
-        if (sDebug) SRLog.d(TAG, "triggeredLoadMore()");
+        if (sDebug) Log.d(TAG, "triggeredLoadMore()");
         final byte old = mStatus;
         mStatus = SR_STATUS_LOADING_MORE;
         notifyStatusChanged(old, mStatus);
@@ -4037,7 +4094,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     protected void performRefresh(boolean notify) {
         //loading start milliseconds since boot
         mLoadingStartTime = SystemClock.uptimeMillis();
-        if (sDebug) SRLog.d(TAG, "onRefreshBegin systemTime: %s", mLoadingStartTime);
+        if (sDebug) Log.d(TAG, String.format("onRefreshBegin systemTime: %s", mLoadingStartTime));
         if (isRefreshing()) {
             if (mHeaderView != null)
                 mHeaderView.onRefreshBegin(this, mIndicator);
@@ -4054,7 +4111,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void dispatchNestedFling(int velocity) {
-        if (sDebug) SRLog.d(TAG, "dispatchNestedFling() : %s", velocity);
+        if (sDebug) Log.d(TAG, String.format("dispatchNestedFling() : velocity: %s", velocity));
         if (mScrollTargetView != null)
             ScrollCompat.flingCompat(mScrollTargetView, -velocity);
         else if (mAutoFoundScrollTargetView != null)
@@ -4317,14 +4374,14 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
         public void onHookComplete() {
             if (mLayout != null) {
-                if (sDebug) SRLog.d(mLayout.TAG, "RefreshCompleteHook: onHookComplete()");
+                if (sDebug) Log.d(mLayout.TAG, "RefreshCompleteHook: onHookComplete()");
                 mLayout.performRefreshComplete(false, mNotifyViews);
             }
         }
 
         private void doHook() {
             if (mCallBack != null) {
-                if (sDebug) SRLog.d(mLayout.TAG, "RefreshCompleteHook: doHook()");
+                if (sDebug) Log.d(mLayout.TAG, "RefreshCompleteHook: doHook()");
                 mCallBack.onHook(this);
             }
         }
@@ -4340,7 +4397,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         @Override
         public void run() {
             if (mLayoutWeakRf.get() != null) {
-                if (sDebug) SRLog.d(mLayoutWeakRf.get().TAG, "DelayToRefreshComplete: run()");
+                if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToRefreshComplete: run()");
                 mLayoutWeakRf.get().performRefreshComplete(true, mNotifyViews);
             }
         }
@@ -4356,7 +4413,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         @Override
         public void run() {
             if (mLayoutWeakRf.get() != null) {
-                if (sDebug) SRLog.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
+                if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
                 mLayoutWeakRf.get().dispatchNestedFling(mVelocity);
             }
         }
@@ -4381,7 +4438,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
         ScrollChecker() {
             DisplayMetrics dm = getResources().getDisplayMetrics();
-            $MaxDistance = (int) (dm.heightPixels / 7f);
+            $MaxDistance = (int) (dm.heightPixels / 8f);
             $Interpolator = mSpringInterpolator;
             $Physical = SensorManager.GRAVITY_EARTH * 39.37f * dm.density * 160f * 0.84f;
             $Scroller = new Scroller(getContext(), $Interpolator);
@@ -4405,9 +4462,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     curY = $LastTo;
             }
             int deltaY = curY - $LastY;
-            if (sDebug) SRLog.d(TAG, "ScrollChecker: run(): finished: %s, mode: %s, start: %s, " +
-                            "to: %s, curPos: %s, curY:%s, last: %s, delta: %s", finished, $Mode,
-                    $LastStart, $LastTo, mIndicator.getCurrentPos(), curY, $LastY, deltaY);
+            if (sDebug)
+                Log.d(TAG, String.format("ScrollChecker: run(): finished: %s, mode: %s, start: %s, " +
+                                "to: %s, curPos: %s, curY:%s, last: %s, delta: %s", finished, $Mode,
+                        $LastStart, $LastTo, mIndicator.getCurrentPos(), curY, $LastY, deltaY));
             if (!finished) {
                 $LastY = curY;
                 if (isMovingHeader()) {
@@ -4425,15 +4483,20 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     case Constants.SCROLLER_MODE_SPRING:
                     case Constants.SCROLLER_MODE_FLING_BACK:
                     case Constants.SCROLLER_MODE_SPRING_BACK:
-                    case Constants.SCROLLER_MODE_PRE_FLING:
                         stop();
                         if (!mIndicator.isAlreadyHere(IIndicator.START_POS))
                             onRelease();
                         break;
+                    case Constants.SCROLLER_MODE_PRE_FLING:
                     case Constants.SCROLLER_MODE_FLING:
                         stop();
                         $Mode = Constants.SCROLLER_MODE_FLING_BACK;
-                        onRelease();
+                        if (isEnabledPerformFreshWhenFling() || isRefreshing() || isLoadingMore()
+                                || (isEnabledAutoLoadMore() && isMovingFooter())
+                                || (isEnabledAutoRefresh() && isMovingHeader()))
+                            onRelease();
+                        else
+                            tryScrollBackToTopByPercentDuration();
                         break;
                 }
             }
@@ -4453,6 +4516,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             return $Mode == Constants.SCROLLER_MODE_FLING;
         }
 
+        boolean isFlingBack() {
+            return $Mode == Constants.SCROLLER_MODE_FLING_BACK;
+        }
+
         float getCurrVelocity() {
             float v;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
@@ -4462,8 +4529,19 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 final float percent = $Scroller.getCurrY() / (float) $Scroller.getFinalY();
                 v = $Velocity * (1 - $Interpolator.getInterpolation(percent));
             }
-            if (sDebug) SRLog.d(TAG, "ScrollChecker: getCurrVelocity(): v: %s", v);
+            if (sDebug) Log.d(TAG, String.format("ScrollChecker: getCurrVelocity(): v: %s", v));
             return v;
+        }
+
+        int getFinalY(float v) {
+            stop();
+            $Scroller.fling(0, 0, 0, (int) v, Integer.MIN_VALUE, Integer.MAX_VALUE,
+                    Integer.MIN_VALUE, Integer.MAX_VALUE);
+            final int y = Math.abs($Scroller.getFinalY());
+            if (sDebug) Log.d(TAG, String.format("ScrollChecker: getFinalY(): v: %s, finalY: %s, " +
+                    "currentY: %s", v, y, mIndicator.getCurrentPos()));
+            $Scroller.forceFinished(true);
+            return y;
         }
 
         void startPreFling(float v) {
@@ -4473,7 +4551,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             $Velocity = v;
             $Scroller.fling(0, 0, 0, (int) v, Integer.MIN_VALUE, Integer.MAX_VALUE,
                     Integer.MIN_VALUE, Integer.MAX_VALUE);
-            if (sDebug) SRLog.d(TAG, "ScrollChecker: startPreFling(): v: %s", v);
+            if (sDebug) Log.d(TAG, String.format("ScrollChecker: startPreFling(): v: %s", v));
             run();
         }
 
@@ -4484,48 +4562,41 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             $Velocity = v;
             $Scroller.fling(0, 0, 0, (int) v, Integer.MIN_VALUE, Integer.MAX_VALUE,
                     Integer.MIN_VALUE, Integer.MAX_VALUE);
-            if (sDebug) SRLog.d(TAG, "ScrollChecker: startFling(): v: %s", v);
+            if (sDebug) Log.d(TAG, String.format("ScrollChecker: startFling(): v: %s", v));
         }
 
         void scrollTo(int to, int duration) {
-            int curPos = mIndicator.getCurrentPos();
-            if (to == IIndicator.START_POS && $Mode == Constants.SCROLLER_MODE_FLING_BACK) {
-                if (curPos > $MaxDistance) {
-                    duration = Math.max((int) (1000f * Math.sqrt(2f * $MaxDistance / 2000f) *
-                            mFlingBackFactor), mMinFlingBackDuration);
-                } else {
-                    duration = Math.max((int) (1000f * Math.sqrt(2f * curPos / 2000f) *
-                            mFlingBackFactor), mMinFlingBackDuration);
-                }
-            } else {
+            final int curPos = mIndicator.getCurrentPos();
+            if (to > curPos) {
                 stop();
-            }
-            $LastStart = curPos;
-            $LastTo = to;
-            if (to > $LastStart) {
                 setInterpolator(mSpringInterpolator);
                 $Mode = Constants.SCROLLER_MODE_SPRING;
-            } else if (to < $LastStart) {
-                setInterpolator(mSpringBackInterpolator);
-                if ($Mode != Constants.SCROLLER_MODE_FLING_BACK)
+            } else if (to < curPos) {
+                if (!mScrollChecker.isFlingBack()) {
+                    stop();
                     $Mode = Constants.SCROLLER_MODE_SPRING_BACK;
+                }
+                setInterpolator(mSpringBackInterpolator);
             } else {
                 $Mode = Constants.SCROLLER_MODE_NONE;
                 return;
             }
-            if (sDebug) SRLog.d(TAG, "ScrollChecker: scrollTo(): to:%s, duration:%s", to, duration);
+            $LastStart = curPos;
+            $LastTo = to;
+            if (sDebug) Log.d(TAG, String.format("ScrollChecker: scrollTo(): to:%s, duration:%s",
+                    to, duration));
             int distance = $LastTo - $LastStart;
             $LastY = 0;
             $Duration = duration;
             $IsScrolling = true;
             $Scroller.startScroll(0, 0, 0, distance, duration);
             removeCallbacks(this);
-            run();
+            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
 
         void computeScrollOffset() {
             if ($Scroller.computeScrollOffset()) {
-                if (sDebug) SRLog.d(TAG, "ScrollChecker: computeScrollOffset()");
+                if (sDebug) Log.d(TAG, "ScrollChecker: computeScrollOffset()");
                 if ($Mode == Constants.SCROLLER_MODE_CALC_FLING) {
                     $LastY = $Scroller.getCurrY();
                     if ($Velocity > 0 && mIndicator.isAlreadyHere(IIndicator.START_POS)
@@ -4533,7 +4604,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         final float velocity = Math.abs(getCurrVelocity());
                         stop();
                         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
-                        final int[] result = calculate(velocity);
+                        final int[] result = computeScroll(velocity);
                         startBounce(result[0], result[1]);
                         return;
                     } else if ($Velocity < 0 && mIndicator.isAlreadyHere(IIndicator.START_POS)
@@ -4542,12 +4613,12 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         stop();
                         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
                         if (isEnabledNoMoreData() && getFooterHeight() > 0) {
-                            final int[] result = calculate(velocity);
+                            final int[] result = computeScroll(velocity);
                             startBounce(Math.min(result[0] * 3, getFooterHeight())
                                     , Math.min(Math.max(result[1] * 2, mMinOverScrollDuration),
                                             mMaxOverScrollDuration));
                         } else {
-                            final int[] result = calculate(velocity);
+                            final int[] result = computeScroll(velocity);
                             startBounce(result[0], result[1]);
                         }
                         return;
@@ -4557,14 +4628,16 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             }
         }
 
-        int[] calculate(float velocity) {
+        int[] computeScroll(float velocity) {
+            //Multiply by a given empirical value
+            velocity = velocity * .65f;
             if ($CachedPair == null)
                 $CachedPair = new int[2];
             float deceleration = (float) Math.log(Math.abs(velocity / 4.5f) /
                     (ViewConfiguration.getScrollFriction() * $Physical));
             float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2f);
             $CachedPair[0] = Math.max(Math.min((int) ((ViewConfiguration.getScrollFriction() *
-                    $Physical * Math.exp(deceleration)) * ratio) - 12, $MaxDistance), mTouchSlop);
+                    $Physical * Math.exp(deceleration)) * ratio), $MaxDistance), mTouchSlop);
             $CachedPair[1] = Math.min(Math.max((int) (1000f * ratio)
                     , mMinOverScrollDuration), mMaxOverScrollDuration);
             return $CachedPair;
@@ -4592,8 +4665,9 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         void setInterpolator(Interpolator interpolator) {
             if ($Interpolator == interpolator)
                 return;
-            if (sDebug) SRLog.d(TAG, "ScrollChecker: updateInterpolator(): interpolator: %s",
-                    interpolator.getClass().getSimpleName());
+            if (sDebug)
+                Log.d(TAG, String.format("ScrollChecker: updateInterpolator(): interpolator: %s",
+                        interpolator.getClass().getSimpleName()));
             $Interpolator = interpolator;
             if (!$Scroller.isFinished()) {
                 switch ($Mode) {
@@ -4621,7 +4695,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         break;
                     default:
                         if (sDebug)
-                            SRLog.d(TAG, "SCROLLER_MODE_FLING does not use Scroller, so we " +
+                            Log.d(TAG, "SCROLLER_MODE_FLING does not use Scroller, so we " +
                                     "ignored it.");
                         break;
                 }
@@ -4632,7 +4706,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
         void stop() {
             if ($Mode != Constants.SCROLLER_MODE_NONE) {
-                if (sDebug) SRLog.d(TAG, "ScrollChecker: stop()");
+                if (sDebug) Log.d(TAG, "ScrollChecker: stop()");
                 $Mode = Constants.SCROLLER_MODE_NONE;
                 mAutomaticActionUseSmoothScroll = false;
                 $IsScrolling = false;

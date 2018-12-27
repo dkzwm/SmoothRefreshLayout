@@ -18,7 +18,7 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
-import me.dkzwm.widget.srl.utils.QuickConfigAutoRefreshUtil;
+import me.dkzwm.widget.srl.utils.AutoRefreshUtil;
 
 /**
  * Created by dkzwm on 2017/12/23.
@@ -27,7 +27,7 @@ import me.dkzwm.widget.srl.utils.QuickConfigAutoRefreshUtil;
  */
 public class TestScrollToAutoRefreshActivity extends AppCompatActivity implements View.OnClickListener {
     private MaterialSmoothRefreshLayout mRefreshLayout;
-    private QuickConfigAutoRefreshUtil mAutoRefreshUtil;
+    private AutoRefreshUtil mAutoRefreshUtil;
     private RecyclerViewAdapter mAdapter;
     private Handler mHandler = new Handler();
     private int mCount = 0;
@@ -77,7 +77,7 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.setSpringInterpolator(new OvershootInterpolator(3));
         mRefreshLayout.autoRefresh(false);
-        mAutoRefreshUtil = new QuickConfigAutoRefreshUtil(recyclerView);
+        mAutoRefreshUtil = new AutoRefreshUtil(recyclerView);
         mRefreshLayout.addLifecycleObserver(mAutoRefreshUtil);
         findViewById(R.id.button_test_scroll_to_auto_refresh_left).setOnClickListener(this);
         findViewById(R.id.button_test_scroll_to_auto_refresh_right).setOnClickListener(this);
@@ -110,10 +110,10 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.button_test_scroll_to_auto_refresh_left:
-                mAutoRefreshUtil.autoRefresh(false, false, true);
+                mAutoRefreshUtil.autoRefresh(false, true);
                 break;
             case R.id.button_test_scroll_to_auto_refresh_right:
-                mAutoRefreshUtil.autoLoadMore(false, false, true);
+                mAutoRefreshUtil.autoLoadMore(false, true);
                 break;
         }
     }

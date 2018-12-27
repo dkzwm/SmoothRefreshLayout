@@ -61,7 +61,6 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
                 }, 2000);
             }
         });
-        mRefreshLayout.setEnablePerformFreshWhenFling(true);
         mRefreshLayout.autoRefresh(false);
     }
 

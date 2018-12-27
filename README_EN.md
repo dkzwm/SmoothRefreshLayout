@@ -14,9 +14,9 @@ Thank him for providing such a great open source library ！
 ## Features:
  - Can support all Views, according to the specific needs to adaptation.
  - Support Multi-Touch.
- - Support Nested-Scroll feature, implemented the NestedScrollingChild, NestedScrollingParent interface.
+ - Support Nested-Scroll feature, implemented the NestedScrollingChild2, NestedScrollingParent2 interface.
  - Extends the ViewGroup, has excellent performance,support similar FameLayout feature（Gravity、Margin).
- - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）.
+ - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）、Scroll to top to Auto-Refresh.
  - Support Cross boundary rebound(OverScroll).
  - Support Horizontal refresh.
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
@@ -25,23 +25,39 @@ Thank him for providing such a great open source library ！
  - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
  - Support synchronous Fling gestures.
  - Support Scale effect, PS:XiaoMi phone settings page effects.    
+ - Support Hrizontal Scale effect.    
  - Many callback interface and debugging information.
+ 
+ ## Installation
+ Add the following dependency to your build.gradle file:
+ ```
+ dependencies {
+     implementation 'me.dkzwm.widget.srl:core:1.6.5.1'
+     implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.1'
+     implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.1'
+     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.1'
+     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.1'
+     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.1'
+    
+     //androidX version
+     implementation 'me.dkzwm.widget.srl:core:1.6.5.1.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.1.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.1.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.1.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.1.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.1.androidx'
+ }
+ ```
 
 ## Demo
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
 ## Snapshots
-- Test Scale effect（Added since version 1.6.2）      
+- Test Scale effect    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
 
-- Test Horizontal Scale effect（Added since version 1.6.2）   
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_scale_effect.gif)
-
-- Test Horizontal Refresh（Added since version 1.5.0）    
+- Test Horizontal Refresh    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
-
-- Test Horizontal RecyclerView Refresh（Added since version 1.5.0）    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_recyclerView.gif)
 
 - Test Multi Direction Views    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
@@ -54,18 +70,9 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 
 - Test Two-Level Refresh    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
- 
-- With ListView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_listView.gif)
-
-- With GridView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_gridView.gif)
 
 - With RecyclerView    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView.gif)
-
-- With ViewPager    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_viewPager.gif)
 
 - With CoordinatorLayout    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
@@ -77,26 +84,6 @@ Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
 
 ## How to use   
-#### Gradle
-```
-dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5'
-    
-    //androidX version
-    implementation 'me.dkzwm.widget.srl:core:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.5.androidx'
-}
-```
-
 #### Use Xml to config
 ```
 <?xml version="1.0" encoding="utf-8"?>

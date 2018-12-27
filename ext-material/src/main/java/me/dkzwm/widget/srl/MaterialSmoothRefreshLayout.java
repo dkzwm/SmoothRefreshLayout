@@ -34,8 +34,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
             mLastMovingStatus = movingStatus;
         }
     };
-    protected MaterialHeader mMaterialHeader;
-    protected MaterialFooter mMaterialFooter;
 
     public MaterialSmoothRefreshLayout(Context context) {
         super(context);
@@ -59,14 +57,14 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     private void init(Context context) {
-        mMaterialHeader = new MaterialHeader(context);
-        mMaterialHeader.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
+        MaterialHeader header = new MaterialHeader(context);
+        header.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});
-        mMaterialHeader.setPadding(0, PixelUtl.dp2px(context, 25), 0,
+        header.setPadding(0, PixelUtl.dp2px(context, 25), 0,
                 PixelUtl.dp2px(context, 20));
-        setHeaderView(mMaterialHeader);
-        mMaterialFooter = new MaterialFooter(context);
-        setFooterView(mMaterialFooter);
+        setHeaderView(header);
+        MaterialFooter footer = new MaterialFooter(context);
+        setFooterView(footer);
     }
 
     /**
@@ -82,7 +80,7 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setEnableKeepRefreshView(true);
         setEnablePinRefreshViewWhileLoading(true);
         setEnableNextPtrAtOnce(true);
-        if (mHeaderView != null && mHeaderView instanceof MaterialHeader)
+        if (mHeaderView instanceof MaterialHeader)
             ((MaterialHeader) mHeaderView).doHookUIRefreshComplete(this);
         if (!isDisabledLoadMore()) {
             removeOnUIPositionChangedListener(mOnUIPositionChangedListener);

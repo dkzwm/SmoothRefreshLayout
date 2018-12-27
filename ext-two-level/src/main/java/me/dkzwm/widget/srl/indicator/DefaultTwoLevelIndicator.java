@@ -77,4 +77,8 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator implements ITwoLe
         return mCurrentPos >= mOffsetToHintTwoLevelRefresh;
     }
 
+    @Override
+    public float getCurrentPercentOfTwoLevelRefreshOffset() {
+        return mHeaderHeight <= 0 ? 0 : mCurrentPos * 1f / mOffsetToTwoLevelRefresh;
+    }
 }

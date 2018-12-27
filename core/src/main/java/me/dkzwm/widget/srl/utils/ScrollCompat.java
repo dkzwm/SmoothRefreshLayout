@@ -240,4 +240,27 @@ public class ScrollCompat {
             //ignored
         }
     }
+
+    public static void stopFling(View view) {
+        try {
+            if (view instanceof ScrollView) {
+                ScrollView scrollView = (ScrollView) view;
+                scrollView.smoothScrollBy(0, 0);
+            } else if (view instanceof WebView) {
+                WebView webView = (WebView) view;
+                webView.flingScroll(0, 0);
+            } else if (isRecyclerView(view)) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                recyclerView.stopScroll();
+            } else if (view instanceof NestedScrollView) {
+                NestedScrollView scrollView = (NestedScrollView) view;
+                scrollView.smoothScrollBy(0, 0);
+            } else if (view instanceof AbsListView) {
+                AbsListView listView = (AbsListView) view;
+                listView.smoothScrollBy(0, 0);
+            }
+        } catch (Exception e) {
+            //ignored
+        }
+    }
 }

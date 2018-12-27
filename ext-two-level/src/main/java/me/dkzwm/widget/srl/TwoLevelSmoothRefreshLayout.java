@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -21,7 +22,6 @@ import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicatorSetter;
-import me.dkzwm.widget.srl.utils.SRLog;
 
 /**
  * Support Two-Level refresh feature;<br/>
@@ -185,8 +185,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * <p>
      * 自动触发二级刷新提示并滚动到触发提示位置后回滚回起始位置
      */
-    public void autoTwoLevelRefreshHint() {
-        autoTwoLevelRefreshHint(true, 0, true);
+    public boolean autoTwoLevelRefreshHint() {
+        return autoTwoLevelRefreshHint(true, 0, true);
     }
 
     /**
@@ -194,8 +194,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * <p>
      * 自动触发二级刷新提示并是否滚动到触发提示位置, `smoothScroll`是否滚动到触发位置
      */
-    public void autoTwoLevelRefreshHint(boolean smoothScroll) {
-        autoTwoLevelRefreshHint(smoothScroll, 0, true);
+    public boolean autoTwoLevelRefreshHint(boolean smoothScroll) {
+        return autoTwoLevelRefreshHint(smoothScroll, 0, true);
     }
 
     /**
@@ -203,8 +203,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * <p>
      * 自动触发二级刷新提示并滚动到触发提示位置, `stayDuration`停留多长时间
      */
-    public void autoTwoLevelRefreshHint(@IntRange(from = 0, to = Integer.MAX_VALUE) int stayDuration) {
-        autoTwoLevelRefreshHint(true, stayDuration, true);
+    public boolean autoTwoLevelRefreshHint(@IntRange(from = 0, to = Integer.MAX_VALUE) int stayDuration) {
+        return autoTwoLevelRefreshHint(true, stayDuration, true);
     }
 
     /**
@@ -216,8 +216,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param smoothScroll Auto Two-Level refresh hint use smooth scrolling
      * @param stayDuration The header moved to the position of the hint, and then how long to stay.
      */
-    public void autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration) {
-        autoTwoLevelRefreshHint(smoothScroll, stayDuration, true);
+    public boolean autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration) {
+        return autoTwoLevelRefreshHint(smoothScroll, stayDuration, true);
     }
 
     /**
@@ -231,14 +231,13 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param stayDuration     The header moved to the position of the hint, and then how long to stay.
      * @param canBeInterrupted The Two-Level refresh hint can be interrupted by touch handling.
      */
-    public void autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration,
-                                        boolean canBeInterrupted) {
+    public boolean autoTwoLevelRefreshHint(boolean smoothScroll, int stayDuration,
+                                           boolean canBeInterrupted) {
         if (mStatus != SR_STATUS_INIT && mMode != Constants.MODE_DEFAULT) {
-            return;
+            return false;
         }
-        if (sDebug) {
-            SRLog.d(TAG, "autoTwoLevelRefreshHint(): smoothScroll:", smoothScroll);
-        }
+        if (sDebug)
+            Log.d(TAG, String.format("autoTwoLevelRefreshHint(): smoothScroll:", smoothScroll));
         mStatus = SR_STATUS_PREPARE;
         mNeedFilterRefreshEvent = true;
         mDurationToStayAtHint = stayDuration;
@@ -256,24 +255,23 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mScrollChecker.scrollTo(offsetToRefreshHint, mAutomaticActionUseSmoothScroll
                     ? mDurationToCloseHeader : 0);
         }
+        return true;
     }
 
     @Override
-    public void autoRefresh(@Action int action, boolean smoothScroll) {
+    public boolean autoRefresh(@Action int action, boolean smoothScroll) {
         if (mNeedFilterRefreshEvent) {
-            throw new IllegalArgumentException("Unsupported operation , " +
-                    "Auto Two-Level refresh hint is in process !!");
+            return false;
         }
-        super.autoRefresh(action, smoothScroll);
+        return super.autoRefresh(action, smoothScroll);
     }
 
     @Override
-    public void autoLoadMore(@Action int action, boolean smoothScroll) {
+    public boolean autoLoadMore(@Action int action, boolean smoothScroll) {
         if (mNeedFilterRefreshEvent) {
-            throw new IllegalArgumentException("Unsupported operation , " +
-                    "Auto Two-Level refresh hint is in process !!");
+            return false;
         }
-        super.autoLoadMore(action, smoothScroll);
+        return super.autoLoadMore(action, smoothScroll);
     }
 
     @Override
@@ -431,7 +429,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         if ((mSubFlag & FLAG_TRIGGER_TWO_LEVEL_REFRESH) > 0) {
             mSubFlag = mSubFlag & ~FLAG_TRIGGER_TWO_LEVEL_REFRESH;
             super.notifyUIRefreshComplete(false, notifyViews);
-            tryScrollBackToTop(mDurationToCloseTwoLevel);
+            float percent = mTwoLevelIndicator.getCurrentPercentOfTwoLevelRefreshOffset();
+            percent = percent > 1 || percent <= 0 ? 1 : percent;
+            tryScrollBackToTop(Math.round(mDurationToCloseTwoLevel * percent));
             return;
         }
         super.notifyUIRefreshComplete(true, notifyViews);
@@ -464,9 +464,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         @Override
         public void run() {
             if (mLayoutWeakRf.get() != null) {
-                if (SmoothRefreshLayout.sDebug) {
-                    SRLog.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
-                }
+                if (SmoothRefreshLayout.sDebug)
+                    Log.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
                 TwoLevelSmoothRefreshLayout layout = mLayoutWeakRf.get();
                 layout.mScrollChecker.scrollTo(IIndicator.START_POS,
                         layout.mDurationToCloseHeader);
