@@ -1,5 +1,10 @@
 # 更新日志
-## 1.6.5（dev）
+## 1.6.5.1
+> 删除 `ViscousFluidInterpolator`。    
+> 整合`ext-util`包的`QuickConfigAppBarUtil`到 `core`包中，并重命名为AppBarUtil，内置自动适配逻辑以适应越来越流行的嵌套特性。    
+> 重命名类: `ext-util`包中的 `QuickConfigAutoRefreshUtil`为 `AutoRefreshUtil`。    
+> 默认插值器修改。   
+## 1.6.5
 > 删除状态布局功能。    
 > 添加方法:`setEnableDynamicEnsureTargetView` 方法即动态搜索布局功能，开启后理论上不需要手动指定边界判断视图就能适配某些特殊场景，例如：ViewPager共用一个刷新控件。    
 > 修改接口:`IRefreshViewCreator` 的方法返回参数，避免漏设刷新视图。    

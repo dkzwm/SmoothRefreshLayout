@@ -19,11 +19,11 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
 import me.dkzwm.widget.srl.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.animation.ViscousFluidInterpolator;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -36,7 +36,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  */
 public class WaveHeader extends View implements IRefreshView {
     private static final Interpolator sBounceInterpolator = new BounceInterpolator();
-    private static final Interpolator sSpringBackInterpolator = new ViscousFluidInterpolator();
+    private static final Interpolator sSpringBackInterpolator =new DecelerateInterpolator();
     protected Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -233,7 +233,6 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        layout.setSpringInterpolator(sSpringBackInterpolator);
         layout.setSpringBackInterpolator(sSpringBackInterpolator);
         mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         reset();
@@ -242,7 +241,6 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
-        layout.setSpringInterpolator(sSpringBackInterpolator);
         layout.setSpringBackInterpolator(sSpringBackInterpolator);
         mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         reset();
@@ -265,7 +263,7 @@ public class WaveHeader extends View implements IRefreshView {
         } else {
             mText = getContext().getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_failed);
         }
-        layout.resetScrollerInterpolator();
+        layout.setSpringBackInterpolator(sSpringBackInterpolator);
         invalidate();
     }
 
@@ -286,7 +284,7 @@ public class WaveHeader extends View implements IRefreshView {
                 byte mode = layout.getScrollMode();
                 if (mode == Constants.SCROLLER_MODE_SPRING_BACK) {
                     layout.setSpringBackInterpolator(sBounceInterpolator);
-                } else if (mode==Constants.SCROLLER_MODE_FLING_BACK){
+                } else if (mode == Constants.SCROLLER_MODE_FLING_BACK) {
                     layout.setSpringBackInterpolator(sSpringBackInterpolator);
                 }
             }
