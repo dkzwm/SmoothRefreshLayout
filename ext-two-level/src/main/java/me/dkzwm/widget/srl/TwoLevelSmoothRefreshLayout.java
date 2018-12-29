@@ -67,13 +67,16 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable
                 .TwoLevelSmoothRefreshLayout, defStyleAttr, defStyleRes);
         if (arr != null) {
-            setDisableTwoLevelRefresh(!arr.getBoolean(R.styleable
-                    .TwoLevelSmoothRefreshLayout_sr_enableTwoLevelRefresh, false));
-            mDurationOfBackToTwoLevel = arr.getInt(R.styleable
-                    .TwoLevelSmoothRefreshLayout_sr_backToKeep2Duration, mDurationOfBackToTwoLevel);
-            mDurationToCloseTwoLevel = arr.getInt(R.styleable
-                    .TwoLevelSmoothRefreshLayout_sr_closeHeader2Duration, mDurationToCloseTwoLevel);
-            arr.recycle();
+            try {
+                setDisableTwoLevelRefresh(!arr.getBoolean(R.styleable
+                        .TwoLevelSmoothRefreshLayout_sr_enableTwoLevelRefresh, false));
+                mDurationOfBackToTwoLevel = arr.getInt(R.styleable
+                        .TwoLevelSmoothRefreshLayout_sr_backToKeep2Duration, mDurationOfBackToTwoLevel);
+                mDurationToCloseTwoLevel = arr.getInt(R.styleable
+                        .TwoLevelSmoothRefreshLayout_sr_closeHeader2Duration, mDurationToCloseTwoLevel);
+            } finally {
+                arr.recycle();
+            }
         }
     }
 
