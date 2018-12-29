@@ -166,20 +166,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int top = getPaddingTop() + lp.topMargin;
         final int bottom = top + child.getMeasuredHeight();
-        int left, right;
-        if (isMovingHeader()) {
-            left = getPaddingLeft() + lp.leftMargin + (pin ? 0 : offsetHeader);
-            right = left + child.getMeasuredWidth();
-            child.layout(left, top, right, bottom);
-        } else if (isMovingFooter()) {
-            left = getPaddingLeft() + lp.leftMargin - (pin ? 0 : offsetFooter);
-            right = left + child.getMeasuredWidth();
-            child.layout(left, top, right, bottom);
-        } else {
-            left = getPaddingLeft() + lp.leftMargin;
-            right = left + child.getMeasuredWidth();
-            child.layout(left, top, right, bottom);
-        }
+        final int left = getPaddingLeft() + lp.leftMargin;
+        final int right = left + child.getMeasuredWidth();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(TAG, String.format("onLayout(): content: %s %s %s %s", left, top, right, bottom));
         return right;
@@ -413,16 +402,19 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 final int type = mHeaderView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
+                        mHeaderView.getView().setTranslationX(mIndicator.getCurrentPos());
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
                         break;
                     case IRefreshView.STYLE_PIN:
+                        mHeaderView.getView().setTranslationX(0);
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
-                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
+                            mHeaderView.getView().setTranslationX(mIndicator.getCurrentPos());
+                        else
+                            mHeaderView.getView().setTranslationX(mIndicator.getHeaderHeight());
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
@@ -441,16 +433,19 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 final int type = mFooterView.getStyle();
                 switch (type) {
                     case IRefreshView.STYLE_DEFAULT:
-                        ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
+                        mFooterView.getView().setTranslationX(-mIndicator.getCurrentPos());
                         break;
                     case IRefreshView.STYLE_SCALE:
                         needRequestLayout = true;
                         break;
                     case IRefreshView.STYLE_PIN:
+                        mFooterView.getView().setTranslationX(0);
                         break;
                     case IRefreshView.STYLE_FOLLOW_PIN:
                         if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
-                            ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
+                            mFooterView.getView().setTranslationX(-mIndicator.getCurrentPos());
+                        else
+                            mFooterView.getView().setTranslationX(-mIndicator.getFooterHeight());
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
@@ -467,16 +462,18 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             }
             if (!isEnabledPinContentView()) {
                 if (isMovingHeader && mStickyHeaderView != null)
-                    ViewCompat.offsetLeftAndRight(mStickyHeaderView, change);
+                    mStickyHeaderView.setTranslationX(mIndicator.getCurrentPos());
                 if (isMovingFooter && mStickyFooterView != null)
-                    ViewCompat.offsetLeftAndRight(mStickyFooterView, change);
+                    mStickyFooterView.setTranslationX(-mIndicator.getCurrentPos());
                 if (mScrollTargetView != null && isMovingFooter) {
                     mScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
                     mAutoFoundScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
-                } else {
-                    if (mTargetView != null)
-                        ViewCompat.offsetLeftAndRight(mTargetView, change);
+                } else if (mTargetView != null) {
+                    if (isMovingHeader)
+                        mTargetView.setTranslationX(mIndicator.getCurrentPos());
+                    else if (isMovingFooter)
+                        mTargetView.setTranslationX(-mIndicator.getCurrentPos());
                 }
             }
         } else {
