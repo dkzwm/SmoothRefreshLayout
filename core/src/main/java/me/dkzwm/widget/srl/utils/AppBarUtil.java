@@ -20,13 +20,7 @@ public class AppBarUtil implements ILifecycleObserver, SmoothRefreshLayout.OnHea
     private boolean mFullyExpanded;
     private boolean mFullCollapsed;
     private boolean mFound = false;
-    private AppBarLayout.OnOffsetChangedListener mListener = new AppBarLayout.OnOffsetChangedListener() {
-        @Override
-        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-            mFullyExpanded = verticalOffset >= 0;
-            mFullCollapsed = appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
-        }
-    };
+    private AppBarLayout.OnOffsetChangedListener mListener;
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
@@ -34,6 +28,15 @@ public class AppBarUtil implements ILifecycleObserver, SmoothRefreshLayout.OnHea
             AppBarLayout appBarLayout = findAppBarLayout(layout);
             if (appBarLayout == null)
                 return;
+            if (mListener == null) {
+                mListener = new AppBarLayout.OnOffsetChangedListener() {
+                    @Override
+                    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                        mFullyExpanded = verticalOffset >= 0;
+                        mFullCollapsed = appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
+                    }
+                };
+            }
             appBarLayout.addOnOffsetChangedListener(mListener);
             mFound = true;
         } catch (Exception e) {
@@ -48,7 +51,8 @@ public class AppBarUtil implements ILifecycleObserver, SmoothRefreshLayout.OnHea
             AppBarLayout appBarLayout = findAppBarLayout(layout);
             if (appBarLayout == null)
                 return;
-            appBarLayout.removeOnOffsetChangedListener(mListener);
+            if (mListener != null)
+                appBarLayout.removeOnOffsetChangedListener(mListener);
         } catch (Exception e) {
             //ignored
         }
