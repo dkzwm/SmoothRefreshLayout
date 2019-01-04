@@ -15,12 +15,18 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
  *
  * @author dkzwm
  */
-public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
-        , SmoothRefreshLayout.OnHeaderEdgeDetectCallBack
+public class AppBarUtil implements ILifecycleObserver, SmoothRefreshLayout.OnHeaderEdgeDetectCallBack
         , SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private boolean mFullyExpanded;
     private boolean mFullCollapsed;
     private boolean mFound = false;
+    private AppBarLayout.OnOffsetChangedListener mListener = new AppBarLayout.OnOffsetChangedListener() {
+        @Override
+        public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+            mFullyExpanded = verticalOffset >= 0;
+            mFullCollapsed = appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
+        }
+    };
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
@@ -28,7 +34,7 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
             AppBarLayout appBarLayout = findAppBarLayout(layout);
             if (appBarLayout == null)
                 return;
-            appBarLayout.addOnOffsetChangedListener(this);
+            appBarLayout.addOnOffsetChangedListener(mListener);
             mFound = true;
         } catch (Exception e) {
             //ignored
@@ -42,17 +48,11 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
             AppBarLayout appBarLayout = findAppBarLayout(layout);
             if (appBarLayout == null)
                 return;
-            appBarLayout.removeOnOffsetChangedListener(this);
+            appBarLayout.removeOnOffsetChangedListener(mListener);
         } catch (Exception e) {
             //ignored
         }
         mFound = false;
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        mFullyExpanded = verticalOffset >= 0;
-        mFullCollapsed = appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
     }
 
     private AppBarLayout findAppBarLayout(ViewGroup group) {

@@ -15,8 +15,8 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.sample.R;
-import me.dkzwm.widget.srl.utils.PixelUtl;
 import me.dkzwm.widget.srl.utils.AutoRefreshUtil;
+import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**
  * Created by dkzwm on 2017/6/1.

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
@@ -37,26 +38,24 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public MaterialSmoothRefreshLayout(Context context) {
         super(context);
-        init(context);
     }
 
     public MaterialSmoothRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public MaterialSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public MaterialSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
     }
 
-    private void init(Context context) {
+    @Override
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super.init(context, attrs, defStyleAttr, defStyleRes);
         MaterialHeader header = new MaterialHeader(context);
         header.setColorSchemeColors(new int[]{Color.RED, Color.BLUE, Color
                 .GREEN, Color.BLACK});

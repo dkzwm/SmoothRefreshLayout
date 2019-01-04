@@ -15,8 +15,9 @@ import android.widget.HorizontalScrollView;
  *
  * @author dkzwm
  */
-
 public class BoundaryUtil {
+    private static final int[] sPoint = new int[2];
+
     private BoundaryUtil() {
     }
 
@@ -30,10 +31,9 @@ public class BoundaryUtil {
     }
 
     public static boolean isInsideView(float rawX, float rawY, @NonNull View view) {
-        int[] point = new int[2];
-        view.getLocationOnScreen(point);
-        return rawX > point[0] && rawX < point[0] + view.getWidth()
-                && rawY > point[1] && rawY < point[1] + view.getHeight();
+        view.getLocationOnScreen(sPoint);
+        return rawX > sPoint[0] && rawX < sPoint[0] + view.getWidth()
+                && rawY > sPoint[1] && rawY < sPoint[1] + view.getHeight();
     }
 
     private static boolean isInsideViewGroup(float rawX, float rawY,

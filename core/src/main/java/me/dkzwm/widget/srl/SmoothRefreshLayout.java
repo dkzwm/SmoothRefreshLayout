@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.CallSuper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IdRes;
@@ -37,6 +38,7 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -229,7 +231,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         sCreator = creator;
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    @CallSuper
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         sId++;
         createIndicator();
         if (mIndicator == null || mIndicatorSetter == null)
@@ -346,13 +349,34 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    @CallSuper
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (params == null)
             params = generateDefaultLayoutParams();
         else if (!checkLayoutParams(params))
             params = generateLayoutParams(params);
+        if (child instanceof IRefreshView) {
+            IRefreshView<IIndicator> view = (IRefreshView<IIndicator>) child;
+            switch (view.getType()) {
+                case IRefreshView.TYPE_HEADER:
+                    if (mHeaderView != null)
+                        throw new IllegalArgumentException("Unsupported operation , " +
+                                "HeaderView only can be add once !!");
+                    mHeaderView = view;
+                    break;
+                case IRefreshView.TYPE_FOOTER:
+                    if (mFooterView != null)
+                        throw new IllegalArgumentException("Unsupported operation , " +
+                                "FooterView only can be add once !!");
+                    mFooterView = view;
+                    LayoutParams lp = (LayoutParams) params;
+                    lp.topMargin = 30;
+                    lp.bottomMargin = 50;
+                    break;
+            }
+        }
         super.addView(child, index, params);
-        ensureFreshView(child);
     }
 
     @Override
@@ -548,48 +572,30 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         mIndicator.checkConfig();
         final int parentRight = r - l - getPaddingRight();
         final int parentBottom = b - t - getPaddingBottom();
-        int offsetHeaderY = 0;
-        int offsetFooterY = 0;
-        if (isMovingHeader() && mHeaderView != null &&
-                (mHeaderView.getStyle() == IRefreshView.STYLE_SCALE
-                        || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
-                        || mHeaderView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE))
-            offsetHeaderY = mIndicator.getCurrentPos();
-        else if (isMovingFooter() && mFooterView != null &&
-                (mFooterView.getStyle() == IRefreshView.STYLE_SCALE
-                        || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_CENTER
-                        || mFooterView.getStyle() == IRefreshView.STYLE_FOLLOW_SCALE))
-            offsetFooterY = mIndicator.getCurrentPos();
         int contentBottom = 0;
-        boolean pin = mMode == Constants.MODE_SCALE
-                || ((mScrollTargetView != null || mAutoFoundScrollTargetView != null) && !isMovingHeader())
-                || isEnabledPinContentView();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
             if (mHeaderView != null && child == mHeaderView.getView()) {
-                layoutHeaderView(child, offsetHeaderY);
+                layoutHeaderView(child);
             } else if (mTargetView != null && child == mTargetView) {
-                contentBottom = layoutContentView(child, pin, offsetHeaderY, offsetFooterY);
+                contentBottom = layoutContentView(child);
             } else if ((mFooterView == null || mFooterView.getView() != child)
                     && (mStickyFooterView == null || mStickyFooterView != child)
                     && (mStickyHeaderView == null || mStickyHeaderView != child)) {
                 layoutOtherView(child, parentRight, parentBottom);
             }
         }
-        if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
-            layoutFooterView(mFooterView.getView(), offsetFooterY, pin, contentBottom);
-        }
-        if (mStickyHeaderView != null && mStickyHeaderView.getVisibility() != GONE) {
-            layoutStickyHeader(pin, offsetHeaderY);
-        }
-        if (mStickyFooterView != null && mStickyFooterView.getVisibility() != GONE) {
-            layoutStickyFooter(contentBottom, offsetFooterY);
-        }
+        if (mFooterView != null && mFooterView.getView().getVisibility() != GONE)
+            layoutFooterView(mFooterView.getView(), contentBottom);
+        if (mStickyHeaderView != null && mStickyHeaderView.getVisibility() != GONE)
+            layoutStickyHeaderView();
+        if (mStickyFooterView != null && mStickyFooterView.getVisibility() != GONE)
+            layoutStickyFooterView(contentBottom);
         tryToPerformAutoRefresh();
     }
 
-    protected int layoutContentView(View child, boolean pin, int offsetHeader, int offsetFooter) {
+    protected int layoutContentView(View child) {
         final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
         final int right = left + child.getMeasuredWidth();
@@ -601,7 +607,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         return bottom + lp.bottomMargin;
     }
 
-    protected void layoutHeaderView(View child, int offsetHeader) {
+    protected void layoutHeaderView(View child) {
         if (mMode != Constants.MODE_DEFAULT || isDisabledRefresh()
                 || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
@@ -613,29 +619,45 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         int left, right, top = 0, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
-                int offset = offsetHeader - child.getMeasuredHeight();
-                top = getPaddingTop() + offset - lp.bottomMargin;
+                if (isMovingHeader())
+                    child.setTranslationY(mIndicator.getCurrentPos());
+                else
+                    child.setTranslationY(0);
+                top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
                 break;
-            case IRefreshView.STYLE_PIN:
             case IRefreshView.STYLE_SCALE:
+            case IRefreshView.STYLE_PIN:
+                child.setTranslationY(0);
                 top = getPaddingTop() + lp.topMargin;
                 break;
-            case IRefreshView.STYLE_FOLLOW_PIN:
             case IRefreshView.STYLE_FOLLOW_SCALE:
-                if (offsetHeader <= mIndicator.getHeaderHeight()) {
-                    top = getPaddingTop() + offsetHeader - child.getMeasuredHeight() - lp
-                            .bottomMargin;
+                child.setTranslationY(0);
+                if (isMovingHeader() && mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                    top = getPaddingTop() - child.getMeasuredHeight() + mIndicator.getCurrentPos()
+                            - lp.bottomMargin;
                 } else {
                     top = getPaddingTop() + lp.topMargin;
                 }
                 break;
+            case IRefreshView.STYLE_FOLLOW_PIN:
+                if (isMovingHeader() && mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
+                    child.setTranslationY(mIndicator.getCurrentPos());
+                else
+                    child.setTranslationY(0);
+                top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
+                break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
-                if (offsetHeader <= mIndicator.getHeaderHeight()) {
-                    top = getPaddingTop() + offsetHeader - child.getMeasuredHeight() - lp
-                            .bottomMargin;
+                child.setTranslationY(0);
+                if (isMovingHeader()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                        top = getPaddingTop() + mIndicator.getCurrentPos() - child.getMeasuredHeight() - lp
+                                .bottomMargin;
+                    } else {
+                        top = getPaddingTop() + lp.topMargin + (mIndicator.getCurrentPos() - mIndicator
+                                .getHeaderHeight()) / 2;
+                    }
                 } else {
-                    top = getPaddingTop() + lp.topMargin + (offsetHeader - mIndicator
-                            .getHeaderHeight()) / 2;
+                    top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
                 }
                 break;
         }
@@ -649,7 +671,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutFooterView(View child, int offsetFooter, boolean pin, int contentBottom) {
+    protected void layoutFooterView(View child, int contentBottom) {
         if (mMode != Constants.MODE_DEFAULT || isDisabledLoadMore()
                 || child.getMeasuredHeight() == 0) {
             child.layout(0, 0, 0, 0);
@@ -661,30 +683,49 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         int left, right, top = 0, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
+                if (isMovingFooter())
+                    child.setTranslationY(-mIndicator.getCurrentPos());
+                else
+                    child.setTranslationY(0);
+                top = lp.topMargin + contentBottom;
+                break;
             case IRefreshView.STYLE_SCALE:
-                top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0);
+                child.setTranslationY(0);
+                top = lp.topMargin + contentBottom - (isMovingFooter() ? mIndicator.getCurrentPos() : 0);
                 break;
             case IRefreshView.STYLE_PIN:
-                top = getMeasuredHeight() - child.getMeasuredHeight() - lp.bottomMargin
-                        - getPaddingBottom();
+                child.setTranslationY(0);
+                top = contentBottom - lp.bottomMargin - child.getMeasuredHeight();
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
+                if (isMovingFooter() && mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
+                    child.setTranslationY(-mIndicator.getCurrentPos());
+                else
+                    child.setTranslationY(0);
+                top = lp.topMargin + contentBottom;
+                break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
-                if (offsetFooter <= mIndicator.getFooterHeight()) {
-                    top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0);
+                child.setTranslationY(0);
+                if (isMovingFooter()) {
+                    top = lp.topMargin + contentBottom - mIndicator.getCurrentPos();
                 } else {
-                    top = getMeasuredHeight() - child.getMeasuredHeight() - lp.bottomMargin
-                            - getPaddingBottom();
+                    top = lp.topMargin + contentBottom;
                 }
                 break;
-            case IRefreshView.STYLE_FOLLOW_CENTER:
-                if (offsetFooter <= mIndicator.getFooterHeight()) {
-                    top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0);
+            case IRefreshView.STYLE_FOLLOW_CENTER: {
+                child.setTranslationY(0);
+                if (isMovingFooter()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                        top = lp.topMargin + contentBottom - mIndicator.getCurrentPos();
+                    } else {
+                        top = lp.topMargin + contentBottom - mIndicator.getCurrentPos()
+                                + (mIndicator.getCurrentPos() - mIndicator.getFooterHeight()) / 2;
+                    }
                 } else {
-                    top = lp.topMargin + contentBottom - (pin ? offsetFooter : 0)
-                            + (offsetFooter - mIndicator.getFooterHeight()) / 2;
+                    top = lp.topMargin + contentBottom;
                 }
                 break;
+            }
         }
         left = getPaddingLeft() + lp.leftMargin;
         right = left + child.getMeasuredWidth();
@@ -696,29 +737,23 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutStickyHeader(boolean pin, int offsetHeader) {
+    protected void layoutStickyHeaderView() {
         final LayoutParams lp = (LayoutParams) mStickyHeaderView.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
         final int right = left + mStickyHeaderView.getMeasuredWidth();
-        final int top;
-        if (isMovingHeader()) {
-            top = getPaddingTop() + lp.topMargin + (pin ? 0 : offsetHeader);
-        } else {
-            top = getPaddingTop() + lp.topMargin;
-        }
+        final int top = getPaddingTop() + lp.topMargin;
         final int bottom = top + mStickyHeaderView.getMeasuredHeight();
         mStickyHeaderView.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(TAG, String.format("onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutStickyFooter(int contentBottom, int offsetFooterY) {
-        if (!isMovingFooter()) contentBottom = getMeasuredHeight();
+    protected void layoutStickyFooterView(int contentBottom) {
         final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
         final int right = left + mStickyFooterView.getMeasuredWidth();
-        final int bottom = contentBottom - lp.bottomMargin;
-        final int top = bottom - mStickyFooterView.getMeasuredHeight();
+        final int top = contentBottom + lp.topMargin;
+        final int bottom = top + mStickyFooterView.getMeasuredHeight();
         mStickyFooterView.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(TAG, String.format("onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom));
@@ -1307,7 +1342,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     public boolean autoRefresh(@Action int action, boolean smoothScroll) {
-        if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
+        if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT || isDisabledPerformRefresh())
             return false;
         if (sDebug)
             Log.d(TAG, String.format("autoRefresh(): action: %s, smoothScroll: %s", action, smoothScroll));
@@ -1375,7 +1410,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
      * @param smoothScroll Auto load more use smooth scrolling
      */
     public boolean autoLoadMore(@Action int action, boolean smoothScroll) {
-        if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT)
+        if (mStatus != SR_STATUS_INIT || mMode != Constants.MODE_DEFAULT || isDisabledPerformLoadMore())
             return false;
         if (sDebug)
             Log.d(TAG, String.format("autoLoadMore(): action: %s, smoothScroll: %s", action, smoothScroll));
@@ -2837,7 +2872,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             final int viewCount = mCachedViews.size();
             if (viewCount > 0) {
                 for (int i = viewCount - 1; i >= 0; i--) {
-                    mCachedViews.get(i).bringToFront();
+                    bringChildToFront(mCachedViews.get(i));
                 }
             }
             mCachedViews.clear();
@@ -2872,27 +2907,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 if (mFooterView == null || mIndicator.getFooterHeight() <= 0)
                     return;
                 scrollToTriggeredAutomatic(false);
-            }
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void ensureFreshView(View child) {
-        if (child instanceof IRefreshView) {
-            IRefreshView<IIndicator> view = (IRefreshView<IIndicator>) child;
-            switch (view.getType()) {
-                case IRefreshView.TYPE_HEADER:
-                    if (mHeaderView != null)
-                        throw new IllegalArgumentException("Unsupported operation , " +
-                                "HeaderView only can be add once !!");
-                    mHeaderView = view;
-                    break;
-                case IRefreshView.TYPE_FOOTER:
-                    if (mFooterView != null)
-                        throw new IllegalArgumentException("Unsupported operation , " +
-                                "FooterView only can be add once !!");
-                    mFooterView = view;
-                    break;
             }
         }
     }
@@ -3788,38 +3802,36 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         mTargetView.setTranslationY(-mIndicator.getCurrentPos());
                 }
             }
-        } else {
-            if (mTargetView != null) {
-                if (isMovingHeader) {
-                    if (ScrollCompat.canScaleInternal(mTargetView)) {
-                        View view = ((ViewGroup) mTargetView).getChildAt(0);
-                        view.setPivotY(0);
-                        view.setScaleY(calculateScale());
+        } else if (mTargetView != null) {
+            if (isMovingHeader) {
+                if (ScrollCompat.canScaleInternal(mTargetView)) {
+                    View view = ((ViewGroup) mTargetView).getChildAt(0);
+                    view.setPivotY(0);
+                    view.setScaleY(calculateScale());
+                } else {
+                    mTargetView.setPivotY(0);
+                    mTargetView.setScaleY(calculateScale());
+                }
+            } else if (isMovingFooter) {
+                final View targetView;
+                if (mScrollTargetView != null) {
+                    targetView = mScrollTargetView;
+                } else if (mAutoFoundScrollTargetView != null) {
+                    if (ScrollCompat.isViewPager(mAutoFoundScrollTargetView.getParent())) {
+                        targetView = (View) mAutoFoundScrollTargetView.getParent();
                     } else {
-                        mTargetView.setPivotY(0);
-                        mTargetView.setScaleY(calculateScale());
+                        targetView = mAutoFoundScrollTargetView;
                     }
-                } else if (isMovingFooter) {
-                    final View targetView;
-                    if (mScrollTargetView != null) {
-                        targetView = mScrollTargetView;
-                    } else if (mAutoFoundScrollTargetView != null) {
-                        if (ScrollCompat.isViewPager(mAutoFoundScrollTargetView.getParent())) {
-                            targetView = (View) mAutoFoundScrollTargetView.getParent();
-                        } else {
-                            targetView = mAutoFoundScrollTargetView;
-                        }
-                    } else {
-                        targetView = mTargetView;
-                    }
-                    if (ScrollCompat.canScaleInternal(targetView)) {
-                        View view = ((ViewGroup) targetView).getChildAt(0);
-                        view.setPivotY(view.getHeight());
-                        view.setScaleY(calculateScale());
-                    } else {
-                        targetView.setPivotY(getHeight());
-                        targetView.setScaleY(calculateScale());
-                    }
+                } else {
+                    targetView = mTargetView;
+                }
+                if (ScrollCompat.canScaleInternal(targetView)) {
+                    View view = ((ViewGroup) targetView).getChildAt(0);
+                    view.setPivotY(view.getHeight());
+                    view.setScaleY(calculateScale());
+                } else {
+                    targetView.setPivotY(getHeight());
+                    targetView.setScaleY(calculateScale());
                 }
             }
         }
@@ -3939,8 +3951,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                 resetViewScale(mTargetView);
                 if (mScrollTargetView != null) {
                     resetViewScale(mScrollTargetView);
-                    mScrollTargetView.setTranslationY(0);
-                    mScrollTargetView.setTranslationX(0);
                 } else if (mAutoFoundScrollTargetView != null) {
                     final View targetView;
                     if (ScrollCompat.isViewPager(mAutoFoundScrollTargetView.getParent())) {
@@ -3949,8 +3959,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         targetView = mAutoFoundScrollTargetView;
                     }
                     resetViewScale(targetView);
-                    targetView.setTranslationY(0);
-                    targetView.setTranslationX(0);
                 }
             }
             if (!mIndicator.hasTouched())
@@ -3963,16 +3971,13 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void resetViewScale(View targetView) {
-        targetView.setPivotX(0);
-        targetView.setPivotY(0);
-        targetView.setScaleX(1);
-        targetView.setScaleY(1);
-        if (isVerticalOrientation() && ScrollCompat.canScaleInternal(targetView)) {
+        if (ScrollCompat.canScaleInternal(targetView)) {
             View view = ((ViewGroup) targetView).getChildAt(0);
-            view.setPivotX(0);
             view.setPivotY(0);
-            view.setScaleX(1);
             view.setScaleY(1);
+        } else {
+            targetView.setPivotY(0);
+            targetView.setScaleY(1);
         }
     }
 

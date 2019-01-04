@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.SystemClock;
+import android.support.annotation.CallSuper;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.RequiresApi;
@@ -11,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.lang.ref.WeakReference;
 
@@ -44,26 +46,23 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public TwoLevelSmoothRefreshLayout(Context context) {
         super(context);
-        init(context, null, 0, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context, attrs, 0, 0);
     }
 
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs, defStyleAttr, 0);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public TwoLevelSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super.init(context, attrs, defStyleAttr, defStyleRes);
         TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable
                 .TwoLevelSmoothRefreshLayout, defStyleAttr, defStyleRes);
         if (arr != null) {
@@ -87,6 +86,15 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mIndicatorSetter = indicator;
         mTwoLevelIndicator = indicator;
         mTwoLevelIndicatorSetter = indicator;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    @CallSuper
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        super.addView(child, index, params);
+        if (child instanceof TwoLevelRefreshView)
+            mTwoLevelRefreshView = (TwoLevelRefreshView<ITwoLevelIndicator>) child;
     }
 
     /**
@@ -306,14 +314,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         }
         if (mNeedFilterRefreshEvent)
             super.tryToPerformAutoRefresh();
-    }
-
-    @Override
-    protected void ensureFreshView(View child) {
-        super.ensureFreshView(child);
-        if (child instanceof TwoLevelRefreshView) {
-            mTwoLevelRefreshView = (TwoLevelRefreshView<ITwoLevelIndicator>) child;
-        }
     }
 
     @Override

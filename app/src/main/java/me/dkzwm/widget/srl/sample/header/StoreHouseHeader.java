@@ -315,18 +315,14 @@ public class StoreHouseHeader extends View implements IRefreshView {
         mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
         if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
             mOffsetY = getTopOffset();
-            mDropHeight = getBottomOffset();
         } else {
             if (mStyle == STYLE_FOLLOW_SCALE && indicator.getCurrentPos() <= getCustomHeight()) {
                 mOffsetY = getTopOffset();
-                mDropHeight = getBottomOffset();
             } else {
-                float percent = Math.min(1, indicator.getCurrentPos() * 1f / getCustomHeight());
-                mOffsetY = (int) (getTopOffset() * percent) + (indicator.getCurrentPos()
-                        - getCustomHeight()) / 2;
-                mDropHeight = (int) (getBottomOffset() * percent);
+                mOffsetY = (int) (getTopOffset() + (getHeight() - getCustomHeight()) / 2f);
             }
         }
+        mDropHeight = getBottomOffset();
     }
 
     private class AniController implements Runnable {

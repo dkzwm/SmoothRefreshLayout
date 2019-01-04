@@ -20,7 +20,7 @@ public class HorizontalBoundaryUtil {
     private HorizontalBoundaryUtil() {
     }
 
-    public static boolean isFingerInsideVerticalView(float rawX, float rawY, @NonNull View view) {
+    public static boolean isInsideVerticalView(float rawX, float rawY, @NonNull View view) {
         boolean isHorizontalView = isVerticalView(view);
         if (isHorizontalView) {
             return BoundaryUtil.isInsideView(rawX, rawY, view);

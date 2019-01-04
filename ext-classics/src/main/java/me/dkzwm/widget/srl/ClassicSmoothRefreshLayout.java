@@ -17,26 +17,24 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public ClassicSmoothRefreshLayout(Context context) {
         super(context);
-        init(context);
     }
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
     }
 
-    private void init(Context context) {
+    @Override
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super.init(context, attrs, defStyleAttr, defStyleRes);
         mClassicHeader = new ClassicHeader(context);
         setHeaderView(mClassicHeader);
         mClassicFooter = new ClassicFooter(context);
