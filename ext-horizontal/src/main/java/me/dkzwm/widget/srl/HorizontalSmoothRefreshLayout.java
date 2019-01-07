@@ -311,8 +311,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
         final int top = getPaddingTop() + lp.topMargin;
         final int bottom = top + mStickyFooterView.getMeasuredHeight();
-        final int left = contentRight - lp.topMargin;
-        final int right = left + mStickyFooterView.getMeasuredWidth();
+        final int right = contentRight - lp.rightMargin;
+        final int left = right - mStickyFooterView.getMeasuredWidth();
         mStickyFooterView.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(TAG, String.format("onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom));

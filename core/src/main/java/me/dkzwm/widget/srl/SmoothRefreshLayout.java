@@ -38,7 +38,6 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -752,8 +751,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
         final int right = left + mStickyFooterView.getMeasuredWidth();
-        final int top = contentBottom + lp.topMargin;
-        final int bottom = top + mStickyFooterView.getMeasuredHeight();
+        final int bottom = contentBottom - lp.bottomMargin;
+        final int top = bottom - mStickyFooterView.getMeasuredHeight();
         mStickyFooterView.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(TAG, String.format("onLayout(): stickyFooter: %s %s %s %s", left, top, right, bottom));
