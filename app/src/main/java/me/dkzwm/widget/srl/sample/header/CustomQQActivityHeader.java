@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -33,12 +32,14 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
         this(context, attrs, 0);
     }
 
-    public CustomQQActivityHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public CustomQQActivityHeader(
+            @NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        View header = LayoutInflater.from(context).inflate(R.layout.layout_custom_qq_activity_header, this);
+        View header =
+                LayoutInflater.from(context)
+                        .inflate(R.layout.layout_custom_qq_activity_header, this);
         mTextViewTitle = (TextView) header.findViewById(R.id.textView_qq_activity_header_title);
     }
-
 
     @Override
     public int getType() {
@@ -80,22 +81,17 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
     }
 
     @Override
-    public void onRefreshPrepare(SmoothRefreshLayout layout) {
-
-    }
+    public void onRefreshPrepare(SmoothRefreshLayout layout) {}
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
-
-    }
+    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {}
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
-
-    }
+    public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {}
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         final int mOffsetToRefresh = indicator.getOffsetToRefresh();
         final int currentPos = indicator.getCurrentPos();
 
@@ -108,7 +104,6 @@ public class CustomQQActivityHeader extends FrameLayout implements IRefreshView 
     }
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-
-    }
+    public void onPureScrollPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {}
 }

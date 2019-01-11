@@ -4,12 +4,10 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
-
 import java.util.Random;
 
 /**
- * Created by srain on 11/6/14.
- * Modify by dkzwm on 6/6/17
+ * Created by srain on 11/6/14. Modify by dkzwm on 6/6/17
  *
  * @author srain;dkzwm
  */
@@ -23,12 +21,8 @@ public class StoreHouseBarItemAnimation extends Animation {
     protected float mToAlpha = 0.4f;
     protected float mTranslationX;
 
-
-    public StoreHouseBarItemAnimation(int index,
-                                      float[] start,
-                                      float[] end,
-                                      int color,
-                                      int lineWidth) {
+    public StoreHouseBarItemAnimation(
+            int index, float[] start, float[] end, int color, int lineWidth) {
         mIndex = index;
 
         mMiddlePoint[0] = (start[0] + end[0]) / 2;

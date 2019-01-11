@@ -11,9 +11,13 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
+}
+
+plugins {
+    id "com.diffplug.gradle.spotless" version "3.16.0"
 }
 
 allprojects {
@@ -21,6 +25,27 @@ allprojects {
         jcenter()
         maven { url 'https://jitpack.io' }
         google()
+    }
+}
+
+subprojects {
+    if (it.name != 'app') {
+        apply plugin: 'com.diffplug.gradle.spotless'
+        spotless {
+            java {
+                target '**/*.java'
+                googleJavaFormat('1.7').aosp()
+                licenseHeaderFile project.rootProject.file('spotless/copyright.java')
+            }
+        }
+    } else {
+        apply plugin: 'com.diffplug.gradle.spotless'
+        spotless {
+            java {
+                target '**/*.java'
+                googleJavaFormat('1.7').aosp()
+            }
+        }
     }
 }
 
@@ -35,29 +60,21 @@ ext {
     ]
     libs = [
             recyclerview: "com.android.support:recyclerview-v7:28.0.0",
-            design: "com.android.support:design:28.0.0",
-            appcompatV7: "com.android.support:appcompat-v7:28.0.0",
-            supportV13: "com.android.support:support-v13:28.0.0"
-//            recyclerview: "com.android.support:recyclerview-v7:27.1.1",
-//            design: "com.android.support:design:27.1.1",
-//            appcompatV7: "com.android.support:appcompat-v7:27.1.1",
-//            supportV13: "com.android.support:support-v13:27.1.1"
+            design      : "com.android.support:design:28.0.0",
+            appcompatV7 : "com.android.support:appcompat-v7:28.0.0",
+            supportV13  : "com.android.support:support-v13:28.0.0"
     ]
-    bintray=[
-            siteUrl : 'https://github.com/dkzwm/SmoothRefreshLayout',
-            gitUrl :'https://github.com/dkzwm/SmoothRefreshLayout.git',
-            groupId :"me.dkzwm.widget.srl",
-            libVersion : android.versionName,
-            developerId : "dkzwm",
+    bintray = [
+            siteUrl       : 'https://github.com/dkzwm/SmoothRefreshLayout',
+            gitUrl        : 'https://github.com/dkzwm/SmoothRefreshLayout.git',
+            groupId       : "me.dkzwm.widget.srl",
+            libVersion    : android.versionName,
+            developerId   : "dkzwm",
             developerName : "Zhang Weiming",
-            developerEmail : "aidkzwm@gmail.com",
-            licenseName : "MIT License",
-            licenseUrl :"https://opensource.org/licenses/MIT",
+            developerEmail: "aidkzwm@gmail.com",
+            licenseName   : "MIT License",
+            licenseUrl    : "https://opensource.org/licenses/MIT",
     ]
-    allLicenses =['MIT']
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    allLicenses = ['MIT']
 }
 

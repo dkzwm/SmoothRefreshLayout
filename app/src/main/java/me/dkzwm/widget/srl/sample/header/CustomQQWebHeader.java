@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -29,11 +28,11 @@ public class CustomQQWebHeader extends FrameLayout implements IRefreshView {
         this(context, attrs, 0);
     }
 
-    public CustomQQWebHeader(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public CustomQQWebHeader(
+            @NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         LayoutInflater.from(context).inflate(R.layout.layout_custom_qq_web_header, this);
     }
-
 
     @Override
     public int getType() {
@@ -57,37 +56,25 @@ public class CustomQQWebHeader extends FrameLayout implements IRefreshView {
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-
-    }
+    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {}
 
     @Override
-    public void onReset(SmoothRefreshLayout layout) {
-
-    }
+    public void onReset(SmoothRefreshLayout layout) {}
 
     @Override
-    public void onRefreshPrepare(SmoothRefreshLayout layout) {
-
-    }
+    public void onRefreshPrepare(SmoothRefreshLayout layout) {}
 
     @Override
-    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
-
-    }
+    public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {}
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout,boolean isSuccessful) {
-
-    }
+    public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {}
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-
-    }
+    public void onRefreshPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {}
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
-
-    }
+    public void onPureScrollPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {}
 }

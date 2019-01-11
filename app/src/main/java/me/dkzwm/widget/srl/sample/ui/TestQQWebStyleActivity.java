@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.header.CustomQQWebHeader;
@@ -43,7 +42,6 @@ public class TestQQWebStyleActivity extends AppCompatActivity {
         mWebView = findViewById(R.id.webView_with_webView);
         mWebView.loadUrl("https://github.com/dkzwm");
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

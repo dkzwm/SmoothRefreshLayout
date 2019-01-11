@@ -10,10 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
@@ -26,8 +24,8 @@ import me.dkzwm.widget.srl.sample.ui.fragment.NestedPageFragment;
  * @author dkzwm
  */
 public class TestNestedWithViewPagerActivity extends AppCompatActivity {
-    private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
-            Color.BLUE, Color.RED, Color.BLACK};
+    private static final int[] sColors =
+            new int[] {Color.WHITE, Color.GREEN, Color.YELLOW, Color.BLUE, Color.RED, Color.BLACK};
     private MaterialSmoothRefreshLayout mRefreshLayout;
     private Handler mHandler = new Handler();
     private List<NestedPageFragment> mFragments;
@@ -39,12 +37,13 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
         ViewPager viewPager = findViewById(R.id.viewPager_test_nested_with_viewPager);
         mFragments = new ArrayList<>();
         for (int sColor : sColors) {
@@ -55,35 +54,40 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_nested_with_viewPager);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new SmoothRefreshLayout.OnRefreshListener() {
                     @Override
-                    public void run() {
-                        for (int i = 0; i < mFragments.size(); i++) {
-                            NestedPageFragment fragment = mFragments.get(i);
-                            fragment.updateData();
-                        }
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (int i = 0; i < mFragments.size(); i++) {
+                                            NestedPageFragment fragment = mFragments.get(i);
+                                            fragment.updateData();
+                                        }
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
 
-            @Override
-            public void onLoadingMore() {
-                mHandler.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        for (int i = 0; i < mFragments.size(); i++) {
-                            NestedPageFragment fragment = mFragments.get(i);
-                            fragment.appendData();
-                        }
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadingMore() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (int i = 0; i < mFragments.size(); i++) {
+                                            NestedPageFragment fragment = mFragments.get(i);
+                                            fragment.appendData();
+                                        }
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.autoRefresh(false);
     }

@@ -1,17 +1,38 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.indicator;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 import me.dkzwm.widget.srl.config.Constants;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class DefaultIndicator implements IIndicator, IIndicatorSetter {
-    protected final float[] mLastMovePoint = new float[]{0f, 0f};
-    protected final float[] mFingerDownPoint = new float[]{0f, 0f};
+    protected final float[] mLastMovePoint = new float[] {0f, 0f};
+    protected final float[] mFingerDownPoint = new float[] {0f, 0f};
     protected IOffsetCalculator mOffsetCalculator;
     protected int mCurrentPos = 0;
     protected int mLastPos = 0;
@@ -20,8 +41,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     protected int mPressedPos = 0;
     protected float mOffset;
     protected boolean mTouched = false;
-    @MovingStatus
-    protected int mStatus = Constants.MOVING_CONTENT;
+    @MovingStatus protected int mStatus = Constants.MOVING_CONTENT;
     protected float mResistanceHeader = DEFAULT_RESISTANCE;
     protected float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 0;
@@ -191,12 +211,16 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public boolean isJustReturnedOffsetToRefresh() {
-        return mLastPos > mOffsetToRefresh && mLastPos > mCurrentPos && mCurrentPos <= mOffsetToRefresh;
+        return mLastPos > mOffsetToRefresh
+                && mLastPos > mCurrentPos
+                && mCurrentPos <= mOffsetToRefresh;
     }
 
     @Override
     public boolean isJustReturnedOffsetToLoadMore() {
-        return mLastPos > mOffsetToLoadMore && mLastPos > mCurrentPos && mCurrentPos <= mOffsetToLoadMore;
+        return mLastPos > mOffsetToLoadMore
+                && mLastPos > mCurrentPos
+                && mCurrentPos <= mOffsetToLoadMore;
     }
 
     @Override
@@ -258,14 +282,18 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public void checkConfig() {
-        if (mCanMoveTheMaxRatioOfHeaderHeight > 0 && mCanMoveTheMaxRatioOfHeaderHeight <
-                mRatioOfHeaderHeightToRefresh)
-            Log.w(getClass().getSimpleName(), "If the max can move ratio of header less than " +
-                    "the triggered refresh ratio of header, refresh will be never trigger!");
-        if (mCanMoveTheMaxRatioOfFooterHeight > 0 && mCanMoveTheMaxRatioOfFooterHeight <
-                mRatioOfFooterHeightToLoadMore)
-            Log.w(getClass().getSimpleName(), "If the max can move ratio of footer less than " +
-                    "the triggered load more ratio of footer, load more will be never trigger!");
+        if (mCanMoveTheMaxRatioOfHeaderHeight > 0
+                && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh)
+            Log.w(
+                    getClass().getSimpleName(),
+                    "If the max can move ratio of header less than "
+                            + "the triggered refresh ratio of header, refresh will be never trigger!");
+        if (mCanMoveTheMaxRatioOfFooterHeight > 0
+                && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore)
+            Log.w(
+                    getClass().getSimpleName(),
+                    "If the max can move ratio of footer less than "
+                            + "the triggered load more ratio of footer, load more will be never trigger!");
     }
 
     @Override

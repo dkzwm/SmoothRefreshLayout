@@ -9,12 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
-
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
-
 import java.util.List;
-
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
@@ -27,7 +24,6 @@ import me.dkzwm.widget.srl.sample.utils.DataUtil;
  *
  * @author dkzwm
  */
-
 public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
@@ -46,36 +42,43 @@ public class TestBaseRecyclerViewAdapterActivity extends AppCompatActivity {
         ClassicHeader classicHeader = new ClassicHeader(this);
         classicHeader.setLastUpdateTimeKey("header_last_update_time");
         mRefreshLayout.setHeaderView(classicHeader);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount = list.size();
-                        mAdapter.setNewData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount = list.size();
+                                        mAdapter.setNewData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mAdapter = new LoadMoreRecyclerViewAdapter(this);
-        mAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                mHandler.postDelayed(new Runnable() {
+        mAdapter.setOnLoadMoreListener(
+                new BaseQuickAdapter.RequestLoadMoreListener() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += list.size();
-                        mAdapter.addData(list);
-                        mAdapter.loadMoreComplete();
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadMoreRequested() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount += list.size();
+                                        mAdapter.addData(list);
+                                        mAdapter.loadMoreComplete();
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        }, mRecyclerView);
+                },
+                mRecyclerView);
         mRefreshLayout.autoRefresh(true);
         mRecyclerView = findViewById(R.id.recyclerView_test_base_recyclerView_adapter);
         mRecyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);

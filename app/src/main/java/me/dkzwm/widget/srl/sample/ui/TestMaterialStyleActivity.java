@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.sample.R;
@@ -33,23 +32,26 @@ public class TestMaterialStyleActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.textView_test_refresh_desc);
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_refresh);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mCount++;
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mRefreshLayout.refreshComplete();
-                        String times = getString(R.string.number_of_refresh) + mCount;
-                        mTextView.setText(times);
+                    public void onRefreshing() {
+                        mCount++;
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRefreshLayout.refreshComplete();
+                                        String times =
+                                                getString(R.string.number_of_refresh) + mCount;
+                                        mTextView.setText(times);
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.autoRefresh(false);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

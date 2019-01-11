@@ -12,9 +12,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
 import java.util.List;
-
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
@@ -30,9 +28,8 @@ import me.dkzwm.widget.srl.sample.utils.DataUtil;
  *
  * @author dkzwm
  */
-
-public class TestQQActivityStyleActivity extends AppCompatActivity implements RadioGroup
-        .OnCheckedChangeListener {
+public class TestQQActivityStyleActivity extends AppCompatActivity
+        implements RadioGroup.OnCheckedChangeListener {
     private SmoothRefreshLayout mRefreshLayout;
     private RecyclerView mRecyclerView;
     private RecyclerViewAdapter mAdapter;
@@ -70,51 +67,55 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount = list.size();
-                        mAdapter.updateData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount = list.size();
+                                        mAdapter.updateData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
 
-            @Override
-            public void onLoadingMore() {
-                mHandler.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += list.size();
-                        mAdapter.appendData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadingMore() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount += list.size();
+                                        mAdapter.appendData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
-        mRefreshLayout.addOnUIPositionChangedListener(new SmoothRefreshLayout
-                .OnUIPositionChangedListener() {
-            @Override
-            public void onChanged(byte status, IIndicator indicator) {
-                if (mRefreshLayout.getIndicator().isAlreadyHere(IIndicator.START_POS)) {
-                    mRadioGroup.setEnabled(true);
-                    mRadioButtonNormal.setEnabled(true);
-                    mRadioButtonActivity.setEnabled(true);
-                } else {
-                    mRadioGroup.setEnabled(false);
-                    mRadioButtonNormal.setEnabled(false);
-                    mRadioButtonActivity.setEnabled(false);
-                }
-            }
-        });
+                });
+        mRefreshLayout.addOnUIPositionChangedListener(
+                new SmoothRefreshLayout.OnUIPositionChangedListener() {
+                    @Override
+                    public void onChanged(byte status, IIndicator indicator) {
+                        if (mRefreshLayout.getIndicator().isAlreadyHere(IIndicator.START_POS)) {
+                            mRadioGroup.setEnabled(true);
+                            mRadioButtonNormal.setEnabled(true);
+                            mRadioButtonActivity.setEnabled(true);
+                        } else {
+                            mRadioGroup.setEnabled(false);
+                            mRadioButtonNormal.setEnabled(false);
+                            mRadioButtonActivity.setEnabled(false);
+                        }
+                    }
+                });
         mRefreshLayout.autoRefresh(false);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,13 +152,13 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         }
     }
 
-
     private void setActivityStyle() {
         if (mQQActivityHeader == null) {
             mQQActivityHeader = new CustomQQActivityHeader(this);
         }
-        SmoothRefreshLayout.LayoutParams layoutParams = new SmoothRefreshLayout.LayoutParams
-                (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        SmoothRefreshLayout.LayoutParams layoutParams =
+                new SmoothRefreshLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         mQQActivityHeader.setLayoutParams(layoutParams);
         mRefreshLayout.setHeaderView(mQQActivityHeader);
         mRefreshLayout.setFooterView(mClassicFooter);
@@ -183,6 +184,4 @@ public class TestQQActivityStyleActivity extends AppCompatActivity implements Ra
         mRefreshLayout.setRatioOfHeaderToRefresh(IIndicator.DEFAULT_RATIO_TO_REFRESH);
         mRefreshLayout.requestLayout();
     }
-
-
 }

@@ -1,32 +1,47 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.extra.header;
 
 import android.content.Context;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.extra.AbsClassicRefreshView;
 import me.dkzwm.widget.srl.extra.ClassicConfig;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T> {
-    @StringRes
-    private int mPullDownToRefreshRes = R.string.sr_pull_down_to_refresh;
-    @StringRes
-    private int mPullDownRes = R.string.sr_pull_down;
-    @StringRes
-    private int mRefreshingRes = R.string.sr_refreshing;
-    @StringRes
-    private int mRefreshSuccessfulRes = R.string.sr_refresh_complete;
-    @StringRes
-    private int mRefreshFailRes = R.string.sr_refresh_failed;
-    @StringRes
-    private int mReleaseToRefreshRes = R.string.sr_release_to_refresh;
+    @StringRes private int mPullDownToRefreshRes = R.string.sr_pull_down_to_refresh;
+    @StringRes private int mPullDownRes = R.string.sr_pull_down;
+    @StringRes private int mRefreshingRes = R.string.sr_refreshing;
+    @StringRes private int mRefreshSuccessfulRes = R.string.sr_refresh_complete;
+    @StringRes private int mRefreshFailRes = R.string.sr_refresh_failed;
+    @StringRes private int mReleaseToRefreshRes = R.string.sr_release_to_refresh;
 
     public ClassicHeader(Context context) {
         this(context, null);
@@ -74,8 +89,7 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
         mShouldShowLastUpdate = true;
         tryUpdateLastUpdateTime();
-        if (!TextUtils.isEmpty(mLastUpdateTimeKey))
-            mLastUpdateTimeUpdater.start();
+        if (!TextUtils.isEmpty(mLastUpdateTimeKey)) mLastUpdateTimeUpdater.start();
         mProgressBar.setVisibility(INVISIBLE);
         mArrowImageView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
@@ -106,8 +120,7 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
             mTitleTextView.setText(mRefreshSuccessfulRes);
             mLastUpdateTime = System.currentTimeMillis();
             ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
-        } else
-            mTitleTextView.setText(mRefreshFailRes);
+        } else mTitleTextView.setText(mRefreshFailRes);
     }
 
     @Override

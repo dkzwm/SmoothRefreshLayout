@@ -3,7 +3,6 @@ package me.dkzwm.widget.srl.sample.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
 import java.util.List;
 
 /**
@@ -11,7 +10,6 @@ import java.util.List;
  *
  * @author dkzwm
  */
-
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private List<? extends Fragment> mViewPagerFragments;
 
@@ -25,11 +23,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         return mViewPagerFragments.get(position);
     }
 
-
     @Override
     public int getCount() {
         return mViewPagerFragments.size();
     }
-
-
 }

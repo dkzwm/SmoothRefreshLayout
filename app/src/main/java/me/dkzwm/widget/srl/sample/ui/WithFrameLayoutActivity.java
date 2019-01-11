@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
@@ -35,19 +34,26 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(R.string.with_frameLayout);
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_frameLayout);
         mTextView = findViewById(R.id.textView_with_frameLayout_desc);
-        mTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(WithFrameLayoutActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
-            }
-        });
-        mTextView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                Toast.makeText(WithFrameLayoutActivity.this, "LongClicked", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        });
+        mTextView.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(WithFrameLayoutActivity.this, "Clicked", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+        mTextView.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        Toast.makeText(
+                                        WithFrameLayoutActivity.this,
+                                        "LongClicked",
+                                        Toast.LENGTH_SHORT)
+                                .show();
+                        return true;
+                    }
+                });
         WaveTextRefreshView refreshView = new WaveTextRefreshView(this);
         refreshView.setIncrementalY(.5f);
         mRefreshLayout.setHeaderView(refreshView);
@@ -59,23 +65,26 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
         mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mCount++;
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mRefreshLayout.refreshComplete();
-                        String times = getString(R.string.number_of_refresh) + mCount;
-                        mTextView.setText(times);
+                    public void onRefreshing() {
+                        mCount++;
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRefreshLayout.refreshComplete();
+                                        String times =
+                                                getString(R.string.number_of_refresh) + mCount;
+                                        mTextView.setText(times);
+                                    }
+                                },
+                                8000);
                     }
-                }, 8000);
-            }
-        });
+                });
         mRefreshLayout.autoRefresh(true);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

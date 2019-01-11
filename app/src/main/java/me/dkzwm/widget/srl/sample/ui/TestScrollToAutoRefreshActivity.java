@@ -10,9 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
-
 import java.util.List;
-
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.sample.R;
@@ -25,7 +23,8 @@ import me.dkzwm.widget.srl.utils.AutoRefreshUtil;
  *
  * @author dkzwm
  */
-public class TestScrollToAutoRefreshActivity extends AppCompatActivity implements View.OnClickListener {
+public class TestScrollToAutoRefreshActivity extends AppCompatActivity
+        implements View.OnClickListener {
     private MaterialSmoothRefreshLayout mRefreshLayout;
     private AutoRefreshUtil mAutoRefreshUtil;
     private RecyclerViewAdapter mAdapter;
@@ -47,33 +46,38 @@ public class TestScrollToAutoRefreshActivity extends AppCompatActivity implement
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_scroll_to_auto_refresh);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount = list.size();
-                        mAdapter.updateData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount = list.size();
+                                        mAdapter.updateData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
 
-            @Override
-            public void onLoadingMore() {
-                mHandler.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += list.size();
-                        mAdapter.appendData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadingMore() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount += list.size();
+                                        mAdapter.appendData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.setSpringInterpolator(new OvershootInterpolator(3));
         mRefreshLayout.autoRefresh(false);

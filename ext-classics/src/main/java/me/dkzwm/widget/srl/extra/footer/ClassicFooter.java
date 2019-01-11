@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.extra.footer;
 
 import android.content.Context;
@@ -7,32 +31,22 @@ import android.graphics.Matrix;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.extra.AbsClassicRefreshView;
 import me.dkzwm.widget.srl.extra.ClassicConfig;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T> {
     private boolean mNoMoreDataChangedView = false;
-    @StringRes
-    private int mPullUpToLoadRes = R.string.sr_pull_up_to_load;
-    @StringRes
-    private int mPullUpRes = R.string.sr_pull_up;
-    @StringRes
-    private int mLoadingRes = R.string.sr_loading;
-    @StringRes
-    private int mLoadSuccessfulRes = R.string.sr_load_complete;
-    @StringRes
-    private int mLoadFailRes = R.string.sr_load_failed;
-    @StringRes
-    private int mReleaseToLoadRes = R.string.sr_release_to_load;
-    @StringRes
-    private int mNoMoreDataRes = R.string.sr_no_more_data;
+    @StringRes private int mPullUpToLoadRes = R.string.sr_pull_up_to_load;
+    @StringRes private int mPullUpRes = R.string.sr_pull_up;
+    @StringRes private int mLoadingRes = R.string.sr_loading;
+    @StringRes private int mLoadSuccessfulRes = R.string.sr_load_complete;
+    @StringRes private int mLoadFailRes = R.string.sr_load_failed;
+    @StringRes private int mReleaseToLoadRes = R.string.sr_release_to_load;
+    @StringRes private int mNoMoreDataRes = R.string.sr_no_more_data;
 
     public ClassicFooter(Context context) {
         this(context, null);
@@ -44,13 +58,14 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
 
     public ClassicFooter(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sr_classic_arrow_icon);
+        Bitmap bitmap =
+                BitmapFactory.decodeResource(getResources(), R.drawable.sr_classic_arrow_icon);
         Matrix matrix = new Matrix();
         matrix.postRotate(180);
-        Bitmap dstBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-                matrix, true);
-        if (!bitmap.isRecycled())
-            bitmap.recycle();
+        Bitmap dstBitmap =
+                Bitmap.createBitmap(
+                        bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+        if (!bitmap.isRecycled()) bitmap.recycle();
         mArrowImageView.setImageBitmap(dstBitmap);
     }
 
@@ -98,8 +113,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         mShouldShowLastUpdate = true;
         mNoMoreDataChangedView = false;
         tryUpdateLastUpdateTime();
-        if (TextUtils.isEmpty(mLastUpdateTimeKey))
-            mLastUpdateTimeUpdater.start();
+        if (TextUtils.isEmpty(mLastUpdateTimeKey)) mLastUpdateTimeUpdater.start();
         mProgressBar.setVisibility(INVISIBLE);
         mArrowImageView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);

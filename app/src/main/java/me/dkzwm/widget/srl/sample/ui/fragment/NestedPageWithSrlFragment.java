@@ -10,10 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.sample.R;
@@ -25,7 +23,6 @@ import me.dkzwm.widget.srl.sample.utils.DataUtil;
  *
  * @author dkzwm
  */
-
 public class NestedPageWithSrlFragment extends Fragment {
     private int mColor;
     private int mCount;
@@ -42,8 +39,10 @@ public class NestedPageWithSrlFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nested_page_with_srl, container, false);
         RecyclerView recyclerView = view.findViewById(R.id.recyclerView_nested_page_with_srl);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -56,36 +55,41 @@ public class NestedPageWithSrlFragment extends Fragment {
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableNextPtrAtOnce(false);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount = list.size();
-                        mList.clear();
-                        mList.addAll(list);
-                        mAdapter.updateData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount = list.size();
+                                        mList.clear();
+                                        mList.addAll(list);
+                                        mAdapter.updateData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
 
-            @Override
-            public void onLoadingMore() {
-                mHandler.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += list.size();
-                        mList.addAll(list);
-                        mAdapter.appendData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadingMore() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount += list.size();
+                                        mList.addAll(list);
+                                        mAdapter.appendData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.setBackgroundColor(mColor);
         mRefreshLayout.autoRefresh(true);
         return view;

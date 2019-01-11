@@ -10,9 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-
 import java.util.List;
-
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
@@ -39,12 +37,13 @@ public class TestNestedActivity extends AppCompatActivity {
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
         mRecyclerView = findViewById(R.id.recyclerView_test_nested);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setHasFixedSize(true);
@@ -53,35 +52,42 @@ public class TestNestedActivity extends AppCompatActivity {
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_nested);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setOnRefreshListener(new SmoothRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new SmoothRefreshLayout.OnRefreshListener() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount = list.size();
-                        mAdapter.updateData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount = list.size();
+                                        mAdapter.updateData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
 
-            @Override
-            public void onLoadingMore() {
-                mHandler.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 20);
-                        mCount += list.size();
-                        mAdapter.appendData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadingMore() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 20);
+                                        mCount += list.size();
+                                        mAdapter.appendData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                3000);
                     }
-                }, 3000);
-            }
-        });
-        mRefreshLayout.getHeaderView().getView().setPadding(0, PixelUtl.dp2px(this, 80),
-                0, PixelUtl.dp2px(this, 10));
+                });
+        mRefreshLayout
+                .getHeaderView()
+                .getView()
+                .setPadding(0, PixelUtl.dp2px(this, 80), 0, PixelUtl.dp2px(this, 10));
         mRefreshLayout.autoRefresh(false);
     }
 

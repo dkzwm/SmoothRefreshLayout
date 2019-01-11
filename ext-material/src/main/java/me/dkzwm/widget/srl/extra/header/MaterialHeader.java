@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.extra.header;
 
 import android.animation.Animator;
@@ -12,15 +36,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.drawable.MaterialProgressDrawable;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class MaterialHeader<T extends IIndicator> extends View implements IRefreshView<T> {
     protected MaterialProgressDrawable mDrawable;
     protected float mScale = 1f;
@@ -28,25 +49,26 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     private ValueAnimator mAnimator;
     private SmoothRefreshLayout mRefreshLayout;
     private boolean mHasHook = false;
-    private SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack mHookUIRefreshCompleteCallBack
-            = new SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack() {
-        @Override
-        public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
-            if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
-                mAnimator.setDuration(200);
-                mAnimator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mAnimator.removeListener(this);
+    private SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack mHookUIRefreshCompleteCallBack =
+            new SmoothRefreshLayout.OnHookUIRefreshCompleteCallBack() {
+                @Override
+                public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
+                    if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
+                        mAnimator.setDuration(200);
+                        mAnimator.addListener(
+                                new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        mAnimator.removeListener(this);
+                                        hook.onHookComplete();
+                                    }
+                                });
+                        mAnimator.start();
+                    } else {
                         hook.onHookComplete();
                     }
-                });
-                mAnimator.start();
-            } else {
-                hook.onHookComplete();
-            }
-        }
-    };
+                }
+            };
 
     public MaterialHeader(Context context) {
         this(context, null);
@@ -64,14 +86,15 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
         mAnimator = ValueAnimator.ofFloat(1, 0);
         mAnimator.setRepeatCount(0);
         mAnimator.setRepeatMode(ValueAnimator.RESTART);
-        mAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mScale = (float) animation.getAnimatedValue();
-                mDrawable.setAlpha((int) (255 * mScale));
-                invalidate();
-            }
-        });
+        mAnimator.addUpdateListener(
+                new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        mScale = (float) animation.getAnimatedValue();
+                        mDrawable.setAlpha((int) (255 * mScale));
+                        invalidate();
+                    }
+                });
     }
 
     @Override
@@ -79,10 +102,12 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
         super.onAttachedToWindow();
         if (mHasHook) {
             if (mRefreshLayout != null)
-                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
+                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(
+                        mHookUIRefreshCompleteCallBack);
             else if (getParent() instanceof SmoothRefreshLayout) {
                 mRefreshLayout = (SmoothRefreshLayout) getParent();
-                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(mHookUIRefreshCompleteCallBack);
+                mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(
+                        mHookUIRefreshCompleteCallBack);
             }
         }
     }
@@ -139,8 +164,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (mRefreshLayout == null)
-            return;
+        if (mRefreshLayout == null) return;
         final int saveCount = canvas.save();
         if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
             int l = getPaddingLeft() + (getMeasuredWidth() - mDrawable.getIntrinsicWidth()) / 2;
@@ -183,8 +207,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {
-    }
+    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {}
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
@@ -203,8 +226,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, T indicator) {
         int duration = layout.getDurationToCloseHeader();
-        if (duration > 0)
-            mCachedDuration = duration;
+        if (duration > 0) mCachedDuration = duration;
         mDrawable.setAlpha(255);
         mDrawable.start();
         invalidate();
@@ -214,8 +236,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
         if (mHasHook) {
             int duration = layout.getDurationToCloseHeader();
-            if (duration > 0 && mCachedDuration <= 0)
-                mCachedDuration = duration;
+            if (duration > 0 && mCachedDuration <= 0) mCachedDuration = duration;
             layout.setDurationToCloseHeader(0);
         } else {
             long duration = layout.getDurationToCloseHeader();
@@ -265,7 +286,6 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     }
 
     private void cancelAnimator() {
-        if (mAnimator.isRunning())
-            mAnimator.cancel();
+        if (mAnimator.isRunning()) mAnimator.cancel();
     }
 }

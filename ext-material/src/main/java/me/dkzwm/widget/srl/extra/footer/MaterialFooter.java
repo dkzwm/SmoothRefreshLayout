@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.extra.footer;
 
 import android.content.Context;
@@ -11,19 +35,16 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.View;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class MaterialFooter<T extends IIndicator> extends View implements IRefreshView<T> {
     protected int mStyle = STYLE_DEFAULT;
     protected int mDefaultHeightInDP = 64;
-    private int[] mColors = new int[]{Color.RED, Color.BLUE, Color.GREEN, Color.BLACK};
+    private int[] mColors = new int[] {Color.RED, Color.BLUE, Color.GREEN, Color.BLACK};
     private Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private RectF mProgressBounds = new RectF();
     private float mProgress = 0f;
@@ -62,7 +83,8 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        mProgressBounds.set(w / 2 - mCircleRadius - mBarWidth,
+        mProgressBounds.set(
+                w / 2 - mCircleRadius - mBarWidth,
                 h / 2 - mCircleRadius - mBarWidth,
                 w / 2 + mCircleRadius + mBarWidth,
                 h / 2 + mCircleRadius + mBarWidth);
@@ -71,8 +93,7 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (!mMustInvalidate)
-            mColorIndex = 0;
+        if (!mMustInvalidate) mColorIndex = 0;
         if (mIsSpinning) {
             long deltaTime;
             if (mLastDrawProgressTime <= 0) {
@@ -89,8 +110,8 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
                 mGrowingTime = mGrowingTime % barSpinCycleTime;
                 mFromFront = !mFromFront;
             }
-            float distance = (float) Math.cos((mGrowingTime / barSpinCycleTime + 1)
-                    * Math.PI) / 2 + 0.5f;
+            float distance =
+                    (float) Math.cos((mGrowingTime / barSpinCycleTime + 1) * Math.PI) / 2 + 0.5f;
             int barMaxLength = 270;
             float destLength = (barMaxLength - barLength);
             float barExtraLength;
@@ -107,8 +128,8 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
             }
             mLastDrawProgressTime = SystemClock.uptimeMillis();
             if (mBarExtraLength < destLength / 2 && barExtraLength < destLength / 2) {
-                if ((barExtraLength > mBarExtraLength && !mGrowing) ||
-                        (barExtraLength < mBarExtraLength && mGrowing)) {
+                if ((barExtraLength > mBarExtraLength && !mGrowing)
+                        || (barExtraLength < mBarExtraLength && mGrowing)) {
                     mBarPaint.setColor(mColors[mColorIndex % mColors.length]);
                     mColorIndex++;
                 }
@@ -122,17 +143,14 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
         } else {
             canvas.drawArc(mProgressBounds, 270, mProgress * 360, false, mBarPaint);
         }
-        if (mMustInvalidate)
-            ViewCompat.postInvalidateOnAnimation(this);
+        if (mMustInvalidate) ViewCompat.postInvalidateOnAnimation(this);
     }
 
     public void setProgressBarWidth(int width) {
         mBarWidth = width;
         mBarPaint.setStrokeWidth(mBarWidth);
-        if (mStyle == STYLE_SCALE)
-            requestLayout();
-        else
-            invalidate();
+        if (mStyle == STYLE_SCALE) requestLayout();
+        else invalidate();
     }
 
     public void setProgressBarColors(@NonNull int[] colors) {
@@ -142,10 +160,8 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
 
     public void setProgressBarRadius(int radius) {
         mCircleRadius = radius;
-        if (mStyle == STYLE_SCALE)
-            requestLayout();
-        else
-            invalidate();
+        if (mStyle == STYLE_SCALE) requestLayout();
+        else invalidate();
     }
 
     @Override
@@ -185,8 +201,7 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {
-    }
+    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {}
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, T indicator) {

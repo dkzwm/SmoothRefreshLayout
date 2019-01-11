@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 
@@ -32,7 +31,6 @@ public class TestOverScrollActivity extends AppCompatActivity {
         refreshLayout.getHeaderView().getView().setVisibility(View.GONE);
         refreshLayout.getFooterView().getView().setVisibility(View.GONE);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
