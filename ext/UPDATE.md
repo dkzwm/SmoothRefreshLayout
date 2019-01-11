@@ -1,8 +1,9 @@
 # 更新日志
-## 1.6.5.1
+## 1.6.6
 > 删除 `ViscousFluidInterpolator`。    
 > 整合`ext-util`包的`QuickConfigAppBarUtil`到 `core`包中，并重命名为AppBarUtil，内置自动适配逻辑以适应越来越流行的嵌套特性。    
 > 重命名类: `ext-util`包中的 `QuickConfigAutoRefreshUtil`为 `AutoRefreshUtil`。    
+> 优化布局逻辑，提高效率。    
 > 默认插值器修改。   
 ## 1.6.5
 > 删除状态布局功能。    
