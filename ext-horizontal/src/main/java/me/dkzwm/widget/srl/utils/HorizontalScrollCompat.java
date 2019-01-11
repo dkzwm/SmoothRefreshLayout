@@ -1,10 +1,33 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.utils;
 
 import android.os.Build;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.HorizontalScrollView;
-
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,26 +39,18 @@ import androidx.viewpager.widget.ViewPager;
  *
  * @author dkzwm
  */
-
 public class HorizontalScrollCompat {
-    private HorizontalScrollCompat() {
-
-    }
-
     public static boolean canChildScrollLeft(View view) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return ViewCompat.canScrollHorizontally(view, -1);
-        else
-            return view.canScrollHorizontally(-1);
+        else return view.canScrollHorizontally(-1);
     }
 
     public static boolean canChildScrollRight(View view) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return ViewCompat.canScrollHorizontally(view, 1);
-        else
-            return view.canScrollHorizontally(1);
+        else return view.canScrollHorizontally(1);
     }
-
 
     public static boolean scrollCompat(View view, float deltaY) {
         if (view != null) {
@@ -47,7 +62,7 @@ public class HorizontalScrollCompat {
                     return true;
                 }
             } catch (Exception e) {
-                //ignored
+                // ignored
             }
         }
         return false;
@@ -64,15 +79,16 @@ public class HorizontalScrollCompat {
     }
 
     public static boolean canScaleInternal(View view) {
-        return view instanceof HorizontalScrollView && ((HorizontalScrollView) view).getChildCount() > 0;
+        return view instanceof HorizontalScrollView
+                && ((HorizontalScrollView) view).getChildCount() > 0;
     }
 
     public static boolean isScrollingView(View view) {
-        boolean isScrollingView = view instanceof HorizontalScrollView
-                || view instanceof WebView
-                || view instanceof ViewPager;
-        if (isScrollingView)
-            return true;
+        boolean isScrollingView =
+                view instanceof HorizontalScrollView
+                        || view instanceof WebView
+                        || view instanceof ViewPager;
+        if (isScrollingView) return true;
         else if (ScrollCompat.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
@@ -81,8 +97,10 @@ public class HorizontalScrollCompat {
                     LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
                     return linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL;
                 } else if (manager instanceof StaggeredGridLayoutManager) {
-                    StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL;
+                    StaggeredGridLayoutManager gridLayoutManager =
+                            (StaggeredGridLayoutManager) manager;
+                    return gridLayoutManager.getOrientation()
+                            == StaggeredGridLayoutManager.HORIZONTAL;
                 }
             }
         }
@@ -93,13 +111,11 @@ public class HorizontalScrollCompat {
         if (ScrollCompat.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if (manager == null)
-                return false;
+            if (manager == null) return false;
             int lastVisiblePosition = 0;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                if (linearManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
-                    return false;
+                if (linearManager.getOrientation() != LinearLayoutManager.HORIZONTAL) return false;
                 lastVisiblePosition = linearManager.findLastVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
@@ -115,7 +131,9 @@ public class HorizontalScrollCompat {
                 }
             }
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
-            return adapter != null && adapter.getItemCount() > 0 && lastVisiblePosition >= 0
+            return adapter != null
+                    && adapter.getItemCount() > 0
+                    && lastVisiblePosition >= 0
                     && lastVisiblePosition >= adapter.getItemCount() - 1;
         }
         return false;
@@ -125,17 +143,15 @@ public class HorizontalScrollCompat {
         if (ScrollCompat.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if (manager == null)
-                return false;
+            if (manager == null) return false;
             int firstVisiblePosition = -1;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                if (linearManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
-                    return false;
+                if (linearManager.getOrientation() != LinearLayoutManager.HORIZONTAL) return false;
                 firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
+                if (gridLayoutManager.getOrientation() != StaggeredGridLayoutManager.HORIZONTAL)
                     return false;
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
@@ -152,5 +168,4 @@ public class HorizontalScrollCompat {
         }
         return false;
     }
-
 }

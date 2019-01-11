@@ -7,15 +7,12 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.ToxicBakery.viewpager.transforms.DrawerTransformer;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import com.ToxicBakery.viewpager.transforms.DrawerTransformer;
+import java.util.ArrayList;
+import java.util.List;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
@@ -28,10 +25,9 @@ import me.dkzwm.widget.srl.sample.ui.fragment.PageFragment;
  *
  * @author dkzwm
  */
-
 public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
-    private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
-            Color.BLUE, Color.RED, Color.BLACK};
+    private static final int[] sColors =
+            new int[] {Color.WHITE, Color.GREEN, Color.YELLOW, Color.BLUE, Color.RED, Color.BLACK};
     private SmoothRefreshLayout mRefreshLayout;
     private ViewPager mViewPager;
     private ViewPagerAdapter mAdapter;
@@ -49,20 +45,26 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mViewPager.setCurrentItem(0, true);
-                        mRefreshLayout.refreshComplete();
-                        Toast.makeText(TestNestedHorizontalViewsActivity.this,
-                                R.string.sr_refresh_complete, Toast.LENGTH_SHORT).show();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mViewPager.setCurrentItem(0, true);
+                                        mRefreshLayout.refreshComplete();
+                                        Toast.makeText(
+                                                        TestNestedHorizontalViewsActivity.this,
+                                                        R.string.sr_refresh_complete,
+                                                        Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                },
+                                4000);
                     }
-                }, 4000);
-            }
-        });
+                });
         mViewPager = findViewById(R.id.viewPager_test_nested_horizontal_views_pager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < sColors.length; i++) {
@@ -74,7 +76,6 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
         mRefreshLayout.autoRefresh(false);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -98,10 +99,13 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(Menu.NONE, Menu.FIRST, Menu.NONE, R.string.disable_check_finger_inside_horizontal_view);
+        menu.add(
+                Menu.NONE,
+                Menu.FIRST,
+                Menu.NONE,
+                R.string.disable_check_finger_inside_horizontal_view);
         return super.onCreateOptionsMenu(menu);
     }
-
 
     @Override
     public void onBackPressed() {

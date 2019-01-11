@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
@@ -39,31 +38,34 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.textView_test_refresh_desc);
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_refresh);
         mStoreHouseHeader = new StoreHouseHeader(this);
-        mStoreHouseHeader.initPathWithString("RELEASE TO REFRESH", PixelUtl.dp2px(this, 18),
-                PixelUtl.dp2px(this, 24));
+        mStoreHouseHeader.initPathWithString(
+                "RELEASE TO REFRESH", PixelUtl.dp2px(this, 18), PixelUtl.dp2px(this, 24));
         mStoreHouseHeader.setTextColor(Color.WHITE);
         mStoreHouseHeader.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(mStoreHouseHeader);
         mRefreshLayout.setRatioToKeepHeader(1);
         mRefreshLayout.setRatioOfHeaderToRefresh(1);
         mRefreshLayout.setDisableLoadMore(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mCount++;
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mRefreshLayout.refreshComplete();
-                        String times = getString(R.string.number_of_refresh) + mCount;
-                        mTextView.setText(times);
+                    public void onRefreshing() {
+                        mCount++;
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRefreshLayout.refreshComplete();
+                                        String times =
+                                                getString(R.string.number_of_refresh) + mCount;
+                                        mTextView.setText(times);
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.autoRefresh(false);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -107,7 +109,8 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         menu.add(Menu.NONE, Menu.FIRST + 2, Menu.NONE, R.string.change_style_to_style_pin);
         menu.add(Menu.NONE, Menu.FIRST + 3, Menu.NONE, R.string.change_style_to_style_follow_scale);
         menu.add(Menu.NONE, Menu.FIRST + 4, Menu.NONE, R.string.change_style_to_style_follow_pin);
-        menu.add(Menu.NONE, Menu.FIRST + 5, Menu.NONE, R.string.change_style_to_style_follow_center);
+        menu.add(
+                Menu.NONE, Menu.FIRST + 5, Menu.NONE, R.string.change_style_to_style_follow_center);
         return super.onCreateOptionsMenu(menu);
     }
 

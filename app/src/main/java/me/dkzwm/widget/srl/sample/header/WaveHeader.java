@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +35,7 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  */
 public class WaveHeader extends View implements IRefreshView {
     private static final Interpolator sBounceInterpolator = new BounceInterpolator();
-    private static final Interpolator sSpringBackInterpolator =new DecelerateInterpolator();
+    private static final Interpolator sSpringBackInterpolator = new DecelerateInterpolator();
     protected Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -44,10 +43,9 @@ public class WaveHeader extends View implements IRefreshView {
     protected Path mPath = new Path();
     protected String mText;
     protected byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
-    protected float[] mLastPoint = new float[]{0, 0};
+    protected float[] mLastPoint = new float[] {0, 0};
     protected int mDefaultHeight;
-    @RefreshViewStyle
-    protected int mStyle = STYLE_PIN;
+    @RefreshViewStyle protected int mStyle = STYLE_PIN;
     protected float mMaxY = 0;
     protected float mProgress = 0f;
     protected int mCurrentPosY = 0;
@@ -58,7 +56,6 @@ public class WaveHeader extends View implements IRefreshView {
     private long mLastDrawProgressTime = 0;
     private int mBarWidth = 4;
     private int mDip2;
-
 
     public WaveHeader(Context context) {
         this(context, null);
@@ -71,9 +68,9 @@ public class WaveHeader extends View implements IRefreshView {
     public WaveHeader(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
-            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
-            @RefreshViewStyle
-            int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
+            final TypedArray arr =
+                    context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
+            @RefreshViewStyle int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
             mStyle = style;
             arr.recycle();
         }
@@ -162,8 +159,7 @@ public class WaveHeader extends View implements IRefreshView {
         if (mStatus == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
             drawProgress(canvas);
         } else {
-            if (mStatus == SmoothRefreshLayout.SR_STATUS_COMPLETE
-                    && !TextUtils.isEmpty(mText)) {
+            if (mStatus == SmoothRefreshLayout.SR_STATUS_COMPLETE && !TextUtils.isEmpty(mText)) {
                 drawText(canvas);
             }
         }
@@ -187,8 +183,8 @@ public class WaveHeader extends View implements IRefreshView {
             mGrowingTime -= barSpinCycleTime;
             mFromFront = !mFromFront;
         }
-        float distance = (float) Math.cos((mGrowingTime / barSpinCycleTime + 1)
-                * Math.PI) / 2 + 0.5f;
+        float distance =
+                (float) Math.cos((mGrowingTime / barSpinCycleTime + 1) * Math.PI) / 2 + 0.5f;
         int barMaxLength = 270;
         float destLength = (barMaxLength - barLength);
 
@@ -215,8 +211,8 @@ public class WaveHeader extends View implements IRefreshView {
     private void drawText(Canvas canvas) {
         canvas.save();
         canvas.restore();
-        float textCenterY = mCurrentPosY + ((mTextPaint.descent() + mTextPaint.ascent()) / 2)
-                - mDip2 * 5;
+        float textCenterY =
+                mCurrentPosY + ((mTextPaint.descent() + mTextPaint.ascent()) / 2) - mDip2 * 5;
         canvas.drawText(mText, getWidth() / 2, textCenterY, mTextPaint);
         canvas.save();
     }
@@ -228,8 +224,7 @@ public class WaveHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-    }
+    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {}
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
@@ -259,16 +254,22 @@ public class WaveHeader extends View implements IRefreshView {
     public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
         mStatus = SmoothRefreshLayout.SR_STATUS_COMPLETE;
         if (layout.isRefreshSuccessful()) {
-            mText = getContext().getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_complete);
+            mText =
+                    getContext()
+                            .getString(
+                                    me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_complete);
         } else {
-            mText = getContext().getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_failed);
+            mText =
+                    getContext()
+                            .getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_failed);
         }
         layout.setSpringBackInterpolator(sSpringBackInterpolator);
         invalidate();
     }
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         mCurrentPosY = indicator.getCurrentPos();
         mMaxY = Math.max(mCurrentPosY, mMaxY);
         final int width = getWidth();
@@ -293,8 +294,8 @@ public class WaveHeader extends View implements IRefreshView {
             if (!layout.isAutoRefresh()) {
                 if (mMaxY > offsetToKeepHeader) {
                     if (mCurrentPosY > offsetToKeepHeader) {
-                        percent = (mCurrentPosY - offsetToKeepHeader)
-                                / (mMaxY - offsetToKeepHeader);
+                        percent =
+                                (mCurrentPosY - offsetToKeepHeader) / (mMaxY - offsetToKeepHeader);
                     } else {
                         percent = 0;
                     }
@@ -326,12 +327,12 @@ public class WaveHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onPureScrollPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         final int width = getWidth();
         if (indicator.hasTouched()) {
-            mLastPoint = new float[]{indicator.getLastMovePoint()[0], mCurrentPosY};
-        } else
-            mLastPoint[0] = width / 2;
+            mLastPoint = new float[] {indicator.getLastMovePoint()[0], mCurrentPosY};
+        } else mLastPoint[0] = width / 2;
         mLastPoint[1] = mCurrentPosY;
         invalidate();
     }
@@ -339,7 +340,8 @@ public class WaveHeader extends View implements IRefreshView {
     private void updateProgressBounds() {
         final int width = getWidth();
         mProgressBounds.setEmpty();
-        mProgressBounds.set(width / 2 - mCircleRadius - mBarWidth,
+        mProgressBounds.set(
+                width / 2 - mCircleRadius - mBarWidth,
                 mCurrentPosY - mCircleRadius * 2 - mDip2 * 5 - mBarWidth * 2,
                 width / 2 + mCircleRadius + mBarWidth,
                 mCurrentPosY - mDip2 * 5);

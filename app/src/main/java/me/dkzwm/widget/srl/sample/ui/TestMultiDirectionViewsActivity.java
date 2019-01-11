@@ -7,13 +7,11 @@ import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import java.util.ArrayList;
+import java.util.List;
 import me.dkzwm.widget.srl.HorizontalSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -29,8 +27,8 @@ import me.dkzwm.widget.srl.sample.ui.fragment.PageFragment;
  * @author dkzwm
  */
 public class TestMultiDirectionViewsActivity extends AppCompatActivity {
-    private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
-            Color.BLUE, Color.RED, Color.BLACK};
+    private static final int[] sColors =
+            new int[] {Color.WHITE, Color.GREEN, Color.YELLOW, Color.BLUE, Color.RED, Color.BLACK};
     private SmoothRefreshLayout mRefreshLayout;
     private HorizontalSmoothRefreshLayout mInnerRefreshLayout;
     private ViewPager mViewPager;
@@ -52,18 +50,21 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mViewPager.setCurrentItem(0, true);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mViewPager.setCurrentItem(0, true);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mViewPager = findViewById(R.id.viewPager_test_multi_direction_views_pager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < sColors.length; i++) {
@@ -75,32 +76,31 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mRefreshLayout.autoRefresh(false);
         mTextView = findViewById(R.id.textView_load_detail_footer_details);
         mScrollView = findViewById(R.id.scrollView_test_multi_direction_views);
-        mInnerRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_multi_direction_views_inner);
+        mInnerRefreshLayout =
+                findViewById(R.id.smoothRefreshLayout_test_multi_direction_views_inner);
         mInnerRefreshLayout.setDisableRefresh(true);
         mInnerRefreshLayout.setDisableLoadMore(false);
         mInnerRefreshLayout.setLoadingMinTime(0);
         mInnerRefreshLayout.setEnableOverScroll(false);
         CustomLoadDetailFooter footer = new CustomLoadDetailFooter(this);
         mInnerRefreshLayout.setFooterView(footer);
-        mInnerRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
+        mInnerRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
+                    @Override
+                    public void onRefreshing() {}
 
-            }
-
-            @Override
-            public void onLoadingMore() {
-                mInnerRefreshLayout.setDurationToClose(0);
-                mInnerRefreshLayout.refreshComplete();
-                mRefreshLayout.setDurationToClose(0);
-                mRefreshLayout.refreshComplete();
-                mInnerRefreshLayout.setDurationToClose(500);
-                mRefreshLayout.setDurationToClose(500);
-                mScrollView.smoothScrollTo(0, mTextView.getTop());
-            }
-        });
+                    @Override
+                    public void onLoadingMore() {
+                        mInnerRefreshLayout.setDurationToClose(0);
+                        mInnerRefreshLayout.refreshComplete();
+                        mRefreshLayout.setDurationToClose(0);
+                        mRefreshLayout.refreshComplete();
+                        mInnerRefreshLayout.setDurationToClose(500);
+                        mRefreshLayout.setDurationToClose(500);
+                        mScrollView.smoothScrollTo(0, mTextView.getTop());
+                    }
+                });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

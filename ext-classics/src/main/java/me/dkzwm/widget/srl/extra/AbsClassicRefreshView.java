@@ -1,3 +1,27 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.extra;
 
 import android.content.Context;
@@ -12,7 +36,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
@@ -21,14 +44,11 @@ import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public abstract class AbsClassicRefreshView<T extends IIndicator> extends RelativeLayout
         implements IRefreshView<T>, LastUpdateTimeUpdater.ITimeUpdater {
     private static final Interpolator sLinearInterpolator = new LinearInterpolator();
-    @RefreshViewStyle
-    protected int mStyle = STYLE_DEFAULT;
+    @RefreshViewStyle protected int mStyle = STYLE_DEFAULT;
     protected int mDefaultHeightInDP = 64;
     protected RotateAnimation mFlipAnimation;
     protected RotateAnimation mReverseFlipAnimation;
@@ -53,21 +73,33 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     public AbsClassicRefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
-            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable
-                    .AbsClassicRefreshView, 0, 0);
+            final TypedArray arr =
+                    context.obtainStyledAttributes(attrs, R.styleable.AbsClassicRefreshView, 0, 0);
             @RefreshViewStyle
             int style = arr.getInt(R.styleable.AbsClassicRefreshView_sr_style, mStyle);
             mStyle = style;
             arr.recycle();
         }
-        mFlipAnimation = new RotateAnimation(0, -180, RotateAnimation.RELATIVE_TO_SELF,
-                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mFlipAnimation =
+                new RotateAnimation(
+                        0,
+                        -180,
+                        RotateAnimation.RELATIVE_TO_SELF,
+                        0.5f,
+                        RotateAnimation.RELATIVE_TO_SELF,
+                        0.5f);
         mFlipAnimation.setInterpolator(sLinearInterpolator);
         mFlipAnimation.setDuration(mRotateAniTime);
         mFlipAnimation.setFillAfter(true);
 
-        mReverseFlipAnimation = new RotateAnimation(-180, 0, RotateAnimation.RELATIVE_TO_SELF,
-                0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+        mReverseFlipAnimation =
+                new RotateAnimation(
+                        -180,
+                        0,
+                        RotateAnimation.RELATIVE_TO_SELF,
+                        0.5f,
+                        RotateAnimation.RELATIVE_TO_SELF,
+                        0.5f);
         mReverseFlipAnimation.setInterpolator(sLinearInterpolator);
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
@@ -94,7 +126,8 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
 
     @Override
     public void updateTime(AbsClassicRefreshView refreshView) {
-        String time = ClassicConfig.getLastUpdateTime(getContext(), mLastUpdateTime, mLastUpdateTimeKey);
+        String time =
+                ClassicConfig.getLastUpdateTime(getContext(), mLastUpdateTime, mLastUpdateTimeKey);
         if (TextUtils.isEmpty(time)) {
             mLastUpdateTextView.setVisibility(GONE);
         } else {
@@ -156,9 +189,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {
-
-    }
+    public void onFingerUp(SmoothRefreshLayout layout, T indicator) {}
 
     @Override
     public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
@@ -198,5 +229,4 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     public void setLastUpdateTextColor(@ColorInt int color) {
         mLastUpdateTextView.setTextColor(color);
     }
-
 }

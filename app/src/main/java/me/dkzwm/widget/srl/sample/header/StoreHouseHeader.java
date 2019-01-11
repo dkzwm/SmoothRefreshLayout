@@ -7,11 +7,9 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.view.View;
-
+import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -21,12 +19,11 @@ import me.dkzwm.widget.srl.sample.utils.StoreHousePath;
 import me.dkzwm.widget.srl.utils.PixelUtl;
 
 /**
- * Part of the code comes from @see <a href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">
- * Modify by dkzwm
+ * Part of the code comes from @see <a
+ * href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">Modify by dkzwm
  */
 public class StoreHouseHeader extends View implements IRefreshView {
-    @RefreshViewStyle
-    protected int mStyle = STYLE_FOLLOW_SCALE;
+    @RefreshViewStyle protected int mStyle = STYLE_FOLLOW_SCALE;
     protected List<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
     protected List<Matrix> mMatrices = new ArrayList<>();
     protected int mLineWidth = -1;
@@ -57,9 +54,9 @@ public class StoreHouseHeader extends View implements IRefreshView {
     public StoreHouseHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         if (attrs != null) {
-            final TypedArray arr = context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
-            @RefreshViewStyle
-            int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
+            final TypedArray arr =
+                    context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
+            @RefreshViewStyle int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
             mStyle = style;
             arr.recycle();
         }
@@ -124,8 +121,8 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     public void initPathWithString(String str, float fontWidthInPixel, float fontHeightInPixel) {
-        ArrayList<float[]> pointList = StoreHousePath.parsePath(str, fontWidthInPixel,
-                fontHeightInPixel, 22);
+        ArrayList<float[]> pointList =
+                StoreHousePath.parsePath(str, fontWidthInPixel, fontHeightInPixel, 22);
         initPathWithPointList(pointList);
     }
 
@@ -159,14 +156,14 @@ public class StoreHouseHeader extends View implements IRefreshView {
         mMatrices.clear();
         for (int i = 0; i < pointList.size(); i++) {
             float[] line = pointList.get(i);
-            float[] startPoint = new float[]{line[0] * mScale, line[1] * mScale};
-            float[] endPoint = new float[]{line[2] * mScale, line[3] * mScale};
+            float[] startPoint = new float[] {line[0] * mScale, line[1] * mScale};
+            float[] endPoint = new float[] {line[2] * mScale, line[3] * mScale};
             drawWidth = Math.max(drawWidth, startPoint[0]);
             drawWidth = Math.max(drawWidth, endPoint[0]);
             drawHeight = Math.max(drawHeight, startPoint[1]);
             drawHeight = Math.max(drawHeight, endPoint[1]);
-            StoreHouseBarItemAnimation item = new StoreHouseBarItemAnimation(i, startPoint, endPoint,
-                    mTextColor, mLineWidth);
+            StoreHouseBarItemAnimation item =
+                    new StoreHouseBarItemAnimation(i, startPoint, endPoint, mTextColor, mLineWidth);
             item.resetPos(mHorizontalRandomness);
             mAnimations.add(item);
             mMatrices.add(new Matrix());
@@ -219,7 +216,8 @@ public class StoreHouseHeader extends View implements IRefreshView {
                     if (progress <= startPadding) {
                         realProgress = 0;
                     } else {
-                        realProgress = Math.min(1, (progress - startPadding) / internalAnimationFactor);
+                        realProgress =
+                                Math.min(1, (progress - startPadding) / internalAnimationFactor);
                     }
                     offsetX += storeHouseBarItem.getTranslationX() * (1 - realProgress);
                     offsetY += -mDropHeight * (1 - realProgress);
@@ -265,9 +263,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {
-
-    }
+    public void onFingerUp(SmoothRefreshLayout layout, IIndicator indicator) {}
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
@@ -278,9 +274,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshPrepare(SmoothRefreshLayout layout) {
-
-    }
+    public void onRefreshPrepare(SmoothRefreshLayout layout) {}
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
@@ -293,7 +287,8 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onRefreshPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         calculate(indicator);
         if (status == SmoothRefreshLayout.SR_STATUS_PREPARE
                 || status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
@@ -304,7 +299,8 @@ public class StoreHouseHeader extends View implements IRefreshView {
     }
 
     @Override
-    public void onPureScrollPositionChanged(SmoothRefreshLayout layout, byte status, IIndicator indicator) {
+    public void onPureScrollPositionChanged(
+            SmoothRefreshLayout layout, byte status, IIndicator indicator) {
         calculate(indicator);
         float currentPercent = Math.min(1f, indicator.getCurrentPercentOfRefreshOffset());
         setProgress(currentPercent);
@@ -315,18 +311,14 @@ public class StoreHouseHeader extends View implements IRefreshView {
         mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
         if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
             mOffsetY = getTopOffset();
-            mDropHeight = getBottomOffset();
         } else {
             if (mStyle == STYLE_FOLLOW_SCALE && indicator.getCurrentPos() <= getCustomHeight()) {
                 mOffsetY = getTopOffset();
-                mDropHeight = getBottomOffset();
             } else {
-                float percent = Math.min(1, indicator.getCurrentPos() * 1f / getCustomHeight());
-                mOffsetY = (int) (getTopOffset() * percent) + (indicator.getCurrentPos()
-                        - getCustomHeight()) / 2;
-                mDropHeight = (int) (getBottomOffset() * percent);
+                mOffsetY = (int) (getTopOffset() + (getHeight() - getCustomHeight()) / 2f);
             }
         }
+        mDropHeight = getBottomOffset();
     }
 
     private class AniController implements Runnable {
@@ -339,8 +331,9 @@ public class StoreHouseHeader extends View implements IRefreshView {
         private void start() {
             mRunning = true;
             mTick = 0;
-            mInterval = StoreHouseHeader.this.mLoadingAniDuration / StoreHouseHeader.this
-                    .mAnimations.size();
+            mInterval =
+                    StoreHouseHeader.this.mLoadingAniDuration
+                            / StoreHouseHeader.this.mAnimations.size();
             mCountPerSeg = StoreHouseHeader.this.mLoadingAniSegDuration / mInterval;
             mSegCount = StoreHouseHeader.this.mAnimations.size() / mCountPerSeg + 1;
             StoreHouseHeader.this.post(this);

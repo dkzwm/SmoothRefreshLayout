@@ -1,6 +1,5 @@
 package me.dkzwm.widget.srl.sample.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import me.dkzwm.widget.srl.sample.R;
 
 /**
@@ -28,7 +24,7 @@ public class ListViewAdapter extends BaseAdapter {
     private Context mContext;
 
     public ListViewAdapter(Context context, LayoutInflater inflater) {
-        mContext=context;
+        mContext = context;
         mInflater = inflater;
         mList = new ArrayList<>();
     }
@@ -82,26 +78,32 @@ public class ListViewAdapter extends BaseAdapter {
         private ListViewHolder(View view) {
             mImageView = (ImageView) view.findViewById(R.id.imageView_list_item);
             mTextView = (TextView) view.findViewById(R.id.textView_list_item);
-            mTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Object obj = v.getTag();
-                    if (obj instanceof Integer) {
-                        Toast.makeText(v.getContext(), "Click:" + obj, Toast.LENGTH_SHORT).show();
-                    }
-                }
-            });
-            mTextView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Object obj = v.getTag();
-                    if (obj instanceof Integer) {
-                        Toast.makeText(v.getContext(), "LongClick:" + obj, Toast.LENGTH_SHORT).show();
-                    }
-                    return true;
-                }
-            });
+            mTextView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Object obj = v.getTag();
+                            if (obj instanceof Integer) {
+                                Toast.makeText(v.getContext(), "Click:" + obj, Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        }
+                    });
+            mTextView.setOnLongClickListener(
+                    new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            Object obj = v.getTag();
+                            if (obj instanceof Integer) {
+                                Toast.makeText(
+                                                v.getContext(),
+                                                "LongClick:" + obj,
+                                                Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                            return true;
+                        }
+                    });
         }
-
     }
 }

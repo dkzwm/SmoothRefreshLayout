@@ -1,12 +1,34 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.utils;
 
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.google.android.material.appbar.AppBarLayout;
-
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import com.google.android.material.appbar.AppBarLayout;
 import me.dkzwm.widget.srl.ILifecycleObserver;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -16,23 +38,36 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
  *
  * @author dkzwm
  */
-public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChangedListener
-        , SmoothRefreshLayout.OnHeaderEdgeDetectCallBack
-        , SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
+public class AppBarUtil
+        implements ILifecycleObserver,
+                SmoothRefreshLayout.OnHeaderEdgeDetectCallBack,
+                SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private boolean mFullyExpanded;
     private boolean mFullCollapsed;
     private boolean mFound = false;
+    private AppBarLayout.OnOffsetChangedListener mListener;
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
         try {
             AppBarLayout appBarLayout = findAppBarLayout(layout);
-            if (appBarLayout == null)
-                return;
-            appBarLayout.addOnOffsetChangedListener(this);
+            if (appBarLayout == null) return;
+            if (mListener == null) {
+                mListener =
+                        new AppBarLayout.OnOffsetChangedListener() {
+                            @Override
+                            public void onOffsetChanged(
+                                    AppBarLayout appBarLayout, int verticalOffset) {
+                                mFullyExpanded = verticalOffset >= 0;
+                                mFullCollapsed =
+                                        appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
+                            }
+                        };
+            }
+            appBarLayout.addOnOffsetChangedListener(mListener);
             mFound = true;
         } catch (Exception e) {
-            //ignored
+            // ignored
             mFound = false;
         }
     }
@@ -41,19 +76,12 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
     public void onDetached(SmoothRefreshLayout layout) {
         try {
             AppBarLayout appBarLayout = findAppBarLayout(layout);
-            if (appBarLayout == null)
-                return;
-            appBarLayout.removeOnOffsetChangedListener(this);
+            if (appBarLayout == null) return;
+            if (mListener != null) appBarLayout.removeOnOffsetChangedListener(mListener);
         } catch (Exception e) {
-            //ignored
+            // ignored
         }
         mFound = false;
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-        mFullyExpanded = verticalOffset >= 0;
-        mFullCollapsed = appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
     }
 
     private AppBarLayout findAppBarLayout(ViewGroup group) {
@@ -77,22 +105,18 @@ public class AppBarUtil implements ILifecycleObserver, AppBarLayout.OnOffsetChan
     }
 
     @Override
-    public boolean isNotYetInEdgeCannotMoveHeader(SmoothRefreshLayout parent,
-                                                  @Nullable View child,
-                                                  @Nullable IRefreshView header) {
+    public boolean isNotYetInEdgeCannotMoveHeader(
+            SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
         View targetView = parent.getScrollTargetView();
-        if (targetView == null)
-            targetView = child;
+        if (targetView == null) targetView = child;
         return !mFullyExpanded || ScrollCompat.canChildScrollUp(targetView);
     }
 
     @Override
-    public boolean isNotYetInEdgeCannotMoveFooter(SmoothRefreshLayout parent,
-                                                  @Nullable View child,
-                                                  @Nullable IRefreshView footer) {
+    public boolean isNotYetInEdgeCannotMoveFooter(
+            SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
         View targetView = parent.getScrollTargetView();
-        if (targetView == null)
-            targetView = child;
+        if (targetView == null) targetView = child;
         return !mFullCollapsed || ScrollCompat.canChildScrollDown(targetView);
     }
 

@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
@@ -40,54 +39,67 @@ public class WithTextViewActivity extends AppCompatActivity {
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
         mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mCount++;
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mRefreshLayout.refreshComplete();
-                        String times = getString(R.string.number_of_refresh) + mCount;
-                        mTextView.setText(times);
+                    public void onRefreshing() {
+                        mCount++;
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRefreshLayout.refreshComplete();
+                                        String times =
+                                                getString(R.string.number_of_refresh) + mCount;
+                                        mTextView.setText(times);
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.autoRefresh(true);
-        mRefreshLayout.setIndicatorOffsetCalculator(new IIndicator.IOffsetCalculator() {
-            @Override
-            public float calculate(@MovingStatus int status, int currentPos, float
-                    offset) {
-                if (status == Constants.MOVING_HEADER) {
-                    if (offset < 0) {
-                        //如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于下拉则可以在此返回offset
-                        //如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
-                        return offset;
+        mRefreshLayout.setIndicatorOffsetCalculator(
+                new IIndicator.IOffsetCalculator() {
+                    @Override
+                    public float calculate(@MovingStatus int status, int currentPos, float offset) {
+                        if (status == Constants.MOVING_HEADER) {
+                            if (offset < 0) {
+                                // 如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于下拉则可以在此返回offset
+                                // 如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
+                                return offset;
+                            }
+                            return (float)
+                                                    Math.pow(
+                                                            Math.pow(currentPos / 2, 1.28d)
+                                                                    + offset,
+                                                            1 / 1.28d)
+                                            * 2
+                                    - currentPos;
+                        } else if (status == Constants.MOVING_FOOTER) {
+                            if (offset > 0) {
+                                // 如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于上拉则可以在此返回offset
+                                // 如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
+                                return offset;
+                            }
+                            return -((float)
+                                                    Math.pow(
+                                                            Math.pow(currentPos / 2, 1.28d)
+                                                                    - offset,
+                                                            1 / 1.28d)
+                                            * 2
+                                    - currentPos);
+                        } else {
+                            if (offset > 0) {
+                                return (float) Math.pow(offset, 1 / 1.28d) * 2;
+                            } else if (offset < 0) {
+                                return -(float) Math.pow(-offset, 1 / 1.28d) * 2;
+                            } else {
+                                return offset;
+                            }
+                        }
                     }
-                    return (float) Math.pow(Math.pow(currentPos / 2, 1.28d) + offset, 1 / 1.28d) *
-                            2 - currentPos;
-                } else if (status == Constants.MOVING_FOOTER) {
-                    if (offset > 0) {
-                        //如果希望拖动缩回时类似QQ一样没有阻尼效果，阻尼效果只存在于上拉则可以在此返回offset
-                        //如果希望拖动缩回时类似QQ一样有阻尼效果，那么请注释掉这个判断语句
-                        return offset;
-                    }
-                    return -((float) Math.pow(Math.pow(currentPos / 2, 1.28d) - offset, 1 / 1.28d) *
-                            2 - currentPos);
-                } else {
-                    if (offset > 0) {
-                        return (float) Math.pow(offset, 1 / 1.28d) * 2;
-                    } else if (offset < 0) {
-                        return -(float) Math.pow(-offset, 1 / 1.28d) * 2;
-                    } else {
-                        return offset;
-                    }
-                }
-            }
-        });
+                });
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -112,6 +124,4 @@ public class WithTextViewActivity extends AppCompatActivity {
         super.onDestroy();
         mHandler.removeCallbacksAndMessages(null);
     }
-
-
 }

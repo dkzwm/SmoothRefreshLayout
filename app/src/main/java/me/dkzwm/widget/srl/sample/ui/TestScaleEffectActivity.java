@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.animation.Interpolator;
 import android.widget.ListView;
-
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import java.util.List;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.sample.R;
@@ -35,16 +33,18 @@ public class TestScaleEffectActivity extends AppCompatActivity {
         List<String> list = DataUtil.createList(0, 40);
         adapter.updateData(list);
         listView.setAdapter(adapter);
-        SmoothRefreshLayout refreshLayout = findViewById(R.id.smoothRefreshLayout_test_scale_effect);
+        SmoothRefreshLayout refreshLayout =
+                findViewById(R.id.smoothRefreshLayout_test_scale_effect);
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setMode(Constants.MODE_SCALE);
         refreshLayout.setDurationToClose(550);
-        Interpolator interpolator = new Interpolator() {
-            @Override
-            public float getInterpolation(float input) {
-                return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
-            }
-        };
+        Interpolator interpolator =
+                new Interpolator() {
+                    @Override
+                    public float getInterpolation(float input) {
+                        return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
+                    }
+                };
         refreshLayout.setSpringBackInterpolator(interpolator);
     }
 
@@ -64,6 +64,4 @@ public class TestScaleEffectActivity extends AppCompatActivity {
         startActivity(new Intent(TestScaleEffectActivity.this, MainActivity.class));
         finish();
     }
-
 }
-

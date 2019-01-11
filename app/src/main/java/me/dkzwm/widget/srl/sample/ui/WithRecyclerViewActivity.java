@@ -6,13 +6,11 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import java.util.List;
 import me.dkzwm.widget.srl.MaterialSmoothRefreshLayout;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -49,35 +47,43 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableAutoLoadMore(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 60);
-                        mCount = list.size();
-                        mAdapter.updateData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 60);
+                                        mCount = list.size();
+                                        mAdapter.updateData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
 
-            @Override
-            public void onLoadingMore() {
-                Toast.makeText(WithRecyclerViewActivity.this, R.string.has_been_triggered_to_load_more,
-                        Toast.LENGTH_SHORT).show();
-                mHandler.postDelayed(new Runnable() {
                     @Override
-                    public void run() {
-                        List<String> list = DataUtil.createList(mCount, 15);
-                        mCount += list.size();
-                        mAdapter.appendData(list);
-                        mRefreshLayout.refreshComplete();
+                    public void onLoadingMore() {
+                        Toast.makeText(
+                                        WithRecyclerViewActivity.this,
+                                        R.string.has_been_triggered_to_load_more,
+                                        Toast.LENGTH_SHORT)
+                                .show();
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        List<String> list = DataUtil.createList(mCount, 15);
+                                        mCount += list.size();
+                                        mAdapter.appendData(list);
+                                        mRefreshLayout.refreshComplete();
+                                    }
+                                },
+                                2000);
                     }
-                }, 2000);
-            }
-        });
+                });
         mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
@@ -91,9 +97,11 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                 return true;
             case Menu.FIRST:
                 if (mRefreshLayout.getFooterView().getStyle() == IRefreshView.STYLE_SCALE)
-                    ((MaterialFooter) mRefreshLayout.getFooterView()).setStyle(IRefreshView.STYLE_DEFAULT);
+                    ((MaterialFooter) mRefreshLayout.getFooterView())
+                            .setStyle(IRefreshView.STYLE_DEFAULT);
                 else
-                    ((MaterialFooter) mRefreshLayout.getFooterView()).setStyle(IRefreshView.STYLE_SCALE);
+                    ((MaterialFooter) mRefreshLayout.getFooterView())
+                            .setStyle(IRefreshView.STYLE_SCALE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

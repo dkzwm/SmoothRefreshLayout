@@ -1,8 +1,31 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl.utils;
 
 import android.view.View;
 import android.view.ViewConfiguration;
-
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.ILifecycleObserver;
@@ -14,9 +37,10 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
  *
  * @author dkzwm
  */
-public class AutoRefreshUtil implements ILifecycleObserver,
-        SmoothRefreshLayout.OnNestedScrollChangedListener,
-        SmoothRefreshLayout.OnUIPositionChangedListener {
+public class AutoRefreshUtil
+        implements ILifecycleObserver,
+                SmoothRefreshLayout.OnNestedScrollChangedListener,
+                SmoothRefreshLayout.OnUIPositionChangedListener {
     private SmoothRefreshLayout mRefreshLayout;
     private View mTargetView;
     private int mStatus;
@@ -46,16 +70,14 @@ public class AutoRefreshUtil implements ILifecycleObserver,
         mRefreshLayout = null;
     }
 
-    public void autoRefresh(boolean atOnce,
-                            boolean autoRefreshUseSmoothScroll) {
+    public void autoRefresh(boolean atOnce, boolean autoRefreshUseSmoothScroll) {
         if (mRefreshLayout != null) {
-            if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT)
-                return;
+            if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT) return;
             if (mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
                 if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
                     ScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
-                } else if (mRefreshLayout.getSupportScrollAxis() == ViewCompat
-                        .SCROLL_AXIS_HORIZONTAL) {
+                } else if (mRefreshLayout.getSupportScrollAxis()
+                        == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
                     HorizontalScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
                 }
                 mNeedToTriggerRefresh = true;
@@ -70,16 +92,14 @@ public class AutoRefreshUtil implements ILifecycleObserver,
         }
     }
 
-    public void autoLoadMore(boolean atOnce,
-                             boolean autoRefreshUseSmoothScroll) {
+    public void autoLoadMore(boolean atOnce, boolean autoRefreshUseSmoothScroll) {
         if (mRefreshLayout != null) {
-            if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT)
-                return;
+            if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT) return;
             if (mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
                 if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
                     ScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
-                } else if (mRefreshLayout.getSupportScrollAxis() == ViewCompat
-                        .SCROLL_AXIS_HORIZONTAL) {
+                } else if (mRefreshLayout.getSupportScrollAxis()
+                        == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
                     HorizontalScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
                 }
                 mNeedToTriggerLoadMore = true;
@@ -103,14 +123,16 @@ public class AutoRefreshUtil implements ILifecycleObserver,
     public void onNestedScrollChanged() {
         if (mRefreshLayout != null) {
             if (mNeedToTriggerRefresh && !mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
-                if (mRefreshLayout.autoRefresh(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll)) {
+                if (mRefreshLayout.autoRefresh(
+                        mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll)) {
                     ScrollCompat.stopFling(mTargetView);
                     mNeedToTriggerRefresh = false;
                     mCachedActionAtOnce = false;
                     mCachedAutoRefreshUseSmoothScroll = false;
                 }
             } else if (mNeedToTriggerLoadMore && !mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
-                if (mRefreshLayout.autoLoadMore(mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll)) {
+                if (mRefreshLayout.autoLoadMore(
+                        mCachedActionAtOnce, mCachedAutoRefreshUseSmoothScroll)) {
                     ScrollCompat.stopFling(mTargetView);
                     mNeedToTriggerLoadMore = false;
                     mCachedActionAtOnce = false;
@@ -119,5 +141,4 @@ public class AutoRefreshUtil implements ILifecycleObserver,
             }
         }
     }
-
 }

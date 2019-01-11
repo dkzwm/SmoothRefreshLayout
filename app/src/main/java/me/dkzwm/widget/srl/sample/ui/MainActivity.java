@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
@@ -30,44 +29,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_main);
-        //设置刷新回调
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        // 设置刷新回调
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mRefreshLayout.refreshComplete(800);
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRefreshLayout.refreshComplete(800);
+                                    }
+                                },
+                                4000);
                     }
-                }, 4000);
-            }
-        });
+                });
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setDisablePerformLoadMore(true);
         mRefreshLayout.setEnableOldTouchHandling(false);
         mRefreshLayout.getFooterView().getView().setVisibility(View.GONE);
-        mRefreshLayout.getDefaultHeader().setWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
-        mRefreshLayout.getDefaultHeader().setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+        mRefreshLayout
+                .getDefaultHeader()
+                .setWaveColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        mRefreshLayout
+                .getDefaultHeader()
+                .setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
         mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
-        //自动刷新
+        // 自动刷新
         mRefreshLayout.setSpringInterpolator(new OvershootInterpolator(3f));
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.autoRefresh(Constants.ACTION_NOTIFY, true);
-            }
-        }, 100);
+        mHandler.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mRefreshLayout.autoRefresh(Constants.ACTION_NOTIFY, true);
+                    }
+                },
+                100);
         findViewById(R.id.imageView_main_bottom_icon).setOnClickListener(this);
         findViewById(R.id.button_main_with_frameLayout).setOnClickListener(this);
         findViewById(R.id.button_main_with_listView).setOnClickListener(this);
         findViewById(R.id.button_main_with_gridView).setOnClickListener(this);
         findViewById(R.id.button_main_with_recyclerView).setOnClickListener(this);
-        findViewById(R.id.button_main_with_recyclerView_in_coordinatorLayout).setOnClickListener
-                (this);
+        findViewById(R.id.button_main_with_recyclerView_in_coordinatorLayout)
+                .setOnClickListener(this);
         findViewById(R.id.button_main_test_enable_next_pull_to_refresh_at_once)
                 .setOnClickListener(this);
-        findViewById(R.id.button_main_test_material_style)
-                .setOnClickListener(this);
+        findViewById(R.id.button_main_test_material_style).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested).setOnClickListener(this);
         findViewById(R.id.button_main_test_pull_to_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_release_to_refresh).setOnClickListener(this);
@@ -87,7 +94,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_scroll_to_auto_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_scale_effect).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_scale_effect).setOnClickListener(this);
-        findViewById(R.id.button_main_test_nested_with_viewPager_in_one_srl).setOnClickListener(this);
+        findViewById(R.id.button_main_test_nested_with_viewPager_in_one_srl)
+                .setOnClickListener(this);
         mButtonDebug = findViewById(R.id.button_main_debug);
         mButtonDebug.setOnClickListener(this);
     }
@@ -120,7 +128,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, WithRecyclerViewActivity.class));
                 break;
             case R.id.button_main_with_recyclerView_in_coordinatorLayout:
-                startActivity(new Intent(MainActivity.this, WithRecyclerViewInCoordinatorLayoutActivity.class));
+                startActivity(
+                        new Intent(
+                                MainActivity.this,
+                                WithRecyclerViewInCoordinatorLayoutActivity.class));
                 break;
             case R.id.button_main_test_over_scroll:
                 startActivity(new Intent(MainActivity.this, TestOverScrollActivity.class));
@@ -159,13 +170,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, TestNestedViewPagerActivity.class));
                 break;
             case R.id.button_main_test_base_recyclerView_adapter:
-                startActivity(new Intent(MainActivity.this, TestBaseRecyclerViewAdapterActivity.class));
+                startActivity(
+                        new Intent(MainActivity.this, TestBaseRecyclerViewAdapterActivity.class));
                 break;
             case R.id.button_main_test_nested_horizontal_views:
-                startActivity(new Intent(MainActivity.this, TestNestedHorizontalViewsActivity.class));
+                startActivity(
+                        new Intent(MainActivity.this, TestNestedHorizontalViewsActivity.class));
                 break;
             case R.id.button_main_test_horizontal_recyclerView:
-                startActivity(new Intent(MainActivity.this, TestHorizontalRecyclerViewActivity.class));
+                startActivity(
+                        new Intent(MainActivity.this, TestHorizontalRecyclerViewActivity.class));
                 break;
             case R.id.button_main_test_multi_direction_views:
                 startActivity(new Intent(MainActivity.this, TestMultiDirectionViewsActivity.class));
@@ -174,8 +188,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, TestScrollToAutoRefreshActivity.class));
                 break;
             case R.id.imageView_main_bottom_icon:
-                Toast.makeText(this, getString(R.string.current_version) + BuildConfig.VERSION_NAME,
-                        Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                                this,
+                                getString(R.string.current_version) + BuildConfig.VERSION_NAME,
+                                Toast.LENGTH_SHORT)
+                        .show();
                 break;
             case R.id.button_main_test_horizontal_refresh:
                 startActivity(new Intent(MainActivity.this, TestHorizontalRefreshActivity.class));
@@ -184,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(new Intent(MainActivity.this, TestScaleEffectActivity.class));
                 break;
             case R.id.button_main_test_horizontal_scale_effect:
-                startActivity(new Intent(MainActivity.this, TestHorizontalScaleEffectActivity.class));
+                startActivity(
+                        new Intent(MainActivity.this, TestHorizontalScaleEffectActivity.class));
                 break;
             case R.id.button_main_debug:
                 SmoothRefreshLayout.sDebug = !SmoothRefreshLayout.sDebug;
@@ -208,8 +226,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (item.getItemId() == Menu.FIRST) {
             if (mRefreshLayout.getDefaultHeader().getStyle() == IRefreshView.STYLE_SCALE)
                 mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_PIN);
-            else
-                mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_SCALE);
+            else mRefreshLayout.getDefaultHeader().setStyle(IRefreshView.STYLE_SCALE);
             return true;
         }
         return false;

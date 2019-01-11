@@ -7,13 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.recyclerview.widget.RecyclerView;
 import me.dkzwm.widget.srl.sample.R;
 
 /**
@@ -21,7 +18,8 @@ import me.dkzwm.widget.srl.sample.R;
  *
  * @author dkzwm
  */
-public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<HorizontalRecyclerViewAdapter.RecyclerViewHolder> {
+public class HorizontalRecyclerViewAdapter
+        extends RecyclerView.Adapter<HorizontalRecyclerViewAdapter.RecyclerViewHolder> {
     private LayoutInflater mInflater;
     private Context mContext;
     private List<String> mList = new ArrayList<>();
@@ -68,21 +66,29 @@ public class HorizontalRecyclerViewAdapter extends RecyclerView.Adapter<Horizont
             super(itemView);
             mImageView = (ImageView) itemView.findViewById(R.id.imageView_list_item);
             mTextView = (TextView) itemView.findViewById(R.id.textView_list_item);
-            mTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(v.getContext(), "Click:" + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-                }
-            });
-            mTextView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    Toast.makeText(v.getContext(), "LongClick:" + getAdapterPosition(), Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-            });
+            mTextView.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Toast.makeText(
+                                            v.getContext(),
+                                            "Click:" + getAdapterPosition(),
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+            mTextView.setOnLongClickListener(
+                    new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            Toast.makeText(
+                                            v.getContext(),
+                                            "LongClick:" + getAdapterPosition(),
+                                            Toast.LENGTH_SHORT)
+                                    .show();
+                            return true;
+                        }
+                    });
         }
-
     }
-
 }

@@ -1,42 +1,54 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 dkzwm
+ * Copyright (c) 2015 liaohuqiu.net
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package me.dkzwm.widget.srl;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
-
-import androidx.annotation.RequiresApi;
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.extra.header.ClassicHeader;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
     private ClassicHeader mClassicHeader;
     private ClassicFooter mClassicFooter;
 
     public ClassicSmoothRefreshLayout(Context context) {
         super(context);
-        init(context);
     }
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init(context);
     }
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        init(context);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context);
-    }
-
-    private void init(Context context) {
+    @Override
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super.init(context, attrs, defStyleAttr, defStyleRes);
         mClassicHeader = new ClassicHeader(context);
         setHeaderView(mClassicHeader);
         mClassicFooter = new ClassicFooter(context);

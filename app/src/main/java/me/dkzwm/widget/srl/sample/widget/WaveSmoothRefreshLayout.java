@@ -2,7 +2,6 @@ package me.dkzwm.widget.srl.sample.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.header.WaveHeader;
 
@@ -38,5 +37,4 @@ public class WaveSmoothRefreshLayout extends SmoothRefreshLayout {
     public WaveHeader getDefaultHeader() {
         return mWaveHeader;
     }
-
 }

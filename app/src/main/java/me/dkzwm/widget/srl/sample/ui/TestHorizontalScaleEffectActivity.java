@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.animation.Interpolator;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -25,17 +24,18 @@ public class TestHorizontalScaleEffectActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(R.string.test_horizontal_scale_effect);
-        SmoothRefreshLayout refreshLayout = findViewById(R.id
-                .smoothRefreshLayout_test_horizontal_scale_effect);
+        SmoothRefreshLayout refreshLayout =
+                findViewById(R.id.smoothRefreshLayout_test_horizontal_scale_effect);
         refreshLayout.setDisableLoadMore(false);
         refreshLayout.setMode(Constants.MODE_SCALE);
         refreshLayout.setDurationToClose(800);
-        Interpolator interpolator = new Interpolator() {
-            @Override
-            public float getInterpolation(float input) {
-                return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
-            }
-        };
+        Interpolator interpolator =
+                new Interpolator() {
+                    @Override
+                    public float getInterpolation(float input) {
+                        return (float) (--input * input * ((1.7 + 1f) * input + 1.7) + 1f);
+                    }
+                };
         refreshLayout.setSpringBackInterpolator(interpolator);
     }
 
@@ -55,6 +55,4 @@ public class TestHorizontalScaleEffectActivity extends AppCompatActivity {
         startActivity(new Intent(TestHorizontalScaleEffectActivity.this, MainActivity.class));
         finish();
     }
-
 }
-

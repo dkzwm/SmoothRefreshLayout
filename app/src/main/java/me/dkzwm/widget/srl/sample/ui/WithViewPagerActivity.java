@@ -6,15 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.ToxicBakery.viewpager.transforms.DrawerTransformer;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import com.ToxicBakery.viewpager.transforms.DrawerTransformer;
+import java.util.ArrayList;
+import java.util.List;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
@@ -29,8 +26,8 @@ import me.dkzwm.widget.srl.utils.PixelUtl;
  * @author dkzwm
  */
 public class WithViewPagerActivity extends AppCompatActivity {
-    private static final int[] sColors = new int[]{Color.WHITE, Color.GREEN, Color.YELLOW,
-            Color.BLUE, Color.RED, Color.BLACK};
+    private static final int[] sColors =
+            new int[] {Color.WHITE, Color.GREEN, Color.YELLOW, Color.BLUE, Color.RED, Color.BLACK};
     private SmoothRefreshLayout mRefreshLayout;
     private ViewPager mViewPager;
     private ViewPagerAdapter mAdapter;
@@ -50,20 +47,26 @@ public class WithViewPagerActivity extends AppCompatActivity {
         mRefreshLayout.setEnablePinContentView(true);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setOnRefreshListener(new RefreshingListenerAdapter() {
-            @Override
-            public void onRefreshing() {
-                mHandler.postDelayed(new Runnable() {
+        mRefreshLayout.setOnRefreshListener(
+                new RefreshingListenerAdapter() {
                     @Override
-                    public void run() {
-                        mViewPager.setCurrentItem(0, true);
-                        mRefreshLayout.refreshComplete();
-                        Toast.makeText(WithViewPagerActivity.this, R.string.sr_refresh_complete,
-                                Toast.LENGTH_SHORT).show();
+                    public void onRefreshing() {
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mViewPager.setCurrentItem(0, true);
+                                        mRefreshLayout.refreshComplete();
+                                        Toast.makeText(
+                                                        WithViewPagerActivity.this,
+                                                        R.string.sr_refresh_complete,
+                                                        Toast.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                },
+                                4000);
                     }
-                }, 4000);
-            }
-        });
+                });
         mViewPager = findViewById(R.id.viewPager_with_viewPager);
         List<PageFragment> fragments = new ArrayList<>();
         for (int i = 0; i < sColors.length; i++) {
@@ -74,7 +77,6 @@ public class WithViewPagerActivity extends AppCompatActivity {
         mViewPager.setPageTransformer(true, new DrawerTransformer());
         mRefreshLayout.autoRefresh(false);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
