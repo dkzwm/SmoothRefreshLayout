@@ -33,7 +33,10 @@ subprojects {
         apply plugin: 'com.diffplug.gradle.spotless'
         spotless {
             java {
-                target '**/*.java'
+                target fileTree('.') {
+                    include '**/*.java'
+                    exclude '**/MaterialProgressDrawable.java'
+                }
                 googleJavaFormat('1.7').aosp()
                 licenseHeaderFile project.rootProject.file('spotless/copyright.java')
             }
