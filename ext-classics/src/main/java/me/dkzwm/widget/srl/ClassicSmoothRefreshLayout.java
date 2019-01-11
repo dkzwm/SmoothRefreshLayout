@@ -1,8 +1,6 @@
 package me.dkzwm.widget.srl;
 
 import android.content.Context;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 
 import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
@@ -25,11 +23,6 @@ public class ClassicSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public ClassicSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
     }
 
     @Override

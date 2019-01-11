@@ -10,9 +10,6 @@ import android.util.TypedValue;
  * @author dkzwm
  */
 public class PixelUtl {
-    private PixelUtl() {
-    }
-
     public static int dp2px(Context context, float offSet) {
         Resources r;
         if (context == null)
@@ -22,5 +19,4 @@ public class PixelUtl {
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 offSet, r.getDisplayMetrics()));
     }
-
 }

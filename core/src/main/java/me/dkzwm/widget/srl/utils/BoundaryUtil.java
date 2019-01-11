@@ -18,9 +18,6 @@ import android.widget.HorizontalScrollView;
 public class BoundaryUtil {
     private static final int[] sPoint = new int[2];
 
-    private BoundaryUtil() {
-    }
-
     public static boolean isInsideHorizontalView(float rawX, float rawY, @NonNull View view) {
         boolean isHorizontalView = isHorizontalView(view);
         if (isHorizontalView) {
@@ -61,25 +58,18 @@ public class BoundaryUtil {
         if (view instanceof ViewPager || view instanceof HorizontalScrollView
                 || view instanceof WebView) {
             return true;
-        }
-        try {
-            if (view instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) view;
-                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                if (manager != null) {
-                    if (manager instanceof LinearLayoutManager) {
-                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                        if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
-                            return true;
-                    } else if (manager instanceof StaggeredGridLayoutManager) {
-                        StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                        if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
-                            return true;
-                    }
+        } else if (ScrollCompat.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager != null) {
+                if (manager instanceof LinearLayoutManager) {
+                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                    return linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL;
+                } else if (manager instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                    return gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL;
                 }
             }
-        } catch (NoClassDefFoundError e) {
-            e.printStackTrace();
         }
         return false;
     }

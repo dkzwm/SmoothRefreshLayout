@@ -17,10 +17,6 @@ import android.widget.HorizontalScrollView;
  */
 
 public class HorizontalScrollCompat {
-    private HorizontalScrollCompat() {
-
-    }
-
     public static boolean canChildScrollLeft(View view) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return ViewCompat.canScrollHorizontally(view, -1);
@@ -34,7 +30,6 @@ public class HorizontalScrollCompat {
         else
             return view.canScrollHorizontally(1);
     }
-
 
     public static boolean scrollCompat(View view, float deltaY) {
         if (view != null) {
@@ -134,7 +129,7 @@ public class HorizontalScrollCompat {
                 firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() != LinearLayoutManager.HORIZONTAL)
+                if (gridLayoutManager.getOrientation() != StaggeredGridLayoutManager.HORIZONTAL)
                     return false;
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
@@ -151,5 +146,4 @@ public class HorizontalScrollCompat {
         }
         return false;
     }
-
 }

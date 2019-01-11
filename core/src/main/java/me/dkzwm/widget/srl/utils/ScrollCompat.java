@@ -24,10 +24,6 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
  * @author dkzwm
  */
 public class ScrollCompat {
-
-    private ScrollCompat() {
-    }
-
     public static boolean canChildScrollDown(View view) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             if (view instanceof AbsListView) {
@@ -71,7 +67,7 @@ public class ScrollCompat {
                 lastVisiblePosition = linearManager.findLastVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
                     return false;
                 int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findLastVisibleItemPositions(lastPositions);
@@ -108,7 +104,7 @@ public class ScrollCompat {
                 firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() == LinearLayoutManager.HORIZONTAL)
+                if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
                     return false;
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
@@ -236,7 +232,6 @@ public class ScrollCompat {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             //ignored
         }
     }

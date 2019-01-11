@@ -2,8 +2,6 @@ package me.dkzwm.widget.srl;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -39,11 +37,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public HorizontalSmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     @Override
     final public int getSupportScrollAxis() {
         return ViewCompat.SCROLL_AXIS_HORIZONTAL;
@@ -58,8 +51,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledRefresh())
-            return;
+        if (isDisabledRefresh()) return;
         int size = mHeaderView.getCustomHeight();
         if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mHeaderView.getStyle() == IRefreshView.STYLE_PIN
@@ -110,22 +102,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected int layoutContentView(View child) {
-        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-        final int left = getPaddingLeft() + lp.leftMargin;
-        final int right = left + child.getMeasuredWidth();
-        final int top = getPaddingTop() + lp.topMargin;
-        final int bottom = top + child.getMeasuredHeight();
-        child.layout(left, top, right, bottom);
-        if (sDebug)
-            Log.d(TAG, String.format("onLayout(): content: %s %s %s %s", left, top, right, bottom));
-        return right + lp.rightMargin;
-    }
-
-    @Override
     protected void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledLoadMore())
-            return;
+        if (isDisabledLoadMore()) return;
         int size = mFooterView.getCustomHeight();
         if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mFooterView.getStyle() == IRefreshView.STYLE_PIN
@@ -237,6 +215,19 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", left, top, right, bottom));
+    }
+
+    @Override
+    protected int layoutContentView(View child) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+        final int left = getPaddingLeft() + lp.leftMargin;
+        final int right = left + child.getMeasuredWidth();
+        final int top = getPaddingTop() + lp.topMargin;
+        final int bottom = top + child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
+        if (sDebug)
+            Log.d(TAG, String.format("onLayout(): content: %s %s %s %s", left, top, right, bottom));
+        return right + lp.rightMargin;
     }
 
     @Override
@@ -364,32 +355,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             if (!mPreventForAnotherDirection)
                 mDealAnotherDirectionMove = true;
         }
-    }
-
-    /**
-     * Set a callback to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()} method. Non-null
-     * callback will return the value provided by the callback and ignore all internal logic.<br/>
-     * <p>
-     * 设置{@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()}的重载回调，用来检测内容视图是否在最右侧
-     *
-     * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveFooter() is called.
-     */
-    @Override
-    public void setOnFooterEdgeDetectCallBack(OnFooterEdgeDetectCallBack callback) {
-        super.setOnFooterEdgeDetectCallBack(callback);
-    }
-
-    /**
-     * Set a callback to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()} method. Non-null
-     * callback will return the value provided by the callback and ignore all internal logic.<br/>
-     * <p>
-     * 设置{@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()}的重载回调，用来检测内容视图是否在最左边
-     *
-     * @param callback Callback that should be called when isChildNotYetInEdgeCannotMoveHeader() is called.
-     */
-    @Override
-    public void setOnHeaderEdgeDetectCallBack(OnHeaderEdgeDetectCallBack callback) {
-        super.setOnHeaderEdgeDetectCallBack(callback);
     }
 
     @Override

@@ -17,7 +17,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.NestedScrollingChild2;
 import android.support.v4.view.NestedScrollingChildHelper;
@@ -213,12 +212,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         init(context, attrs, defStyleAttr, 0);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public SmoothRefreshLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        init(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     /**
      * Set the static refresh view creator, if the refresh view is null and the frame be
      * needed the refresh view,frame will use this creator to create refresh view.
@@ -369,9 +362,6 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                         throw new IllegalArgumentException("Unsupported operation , " +
                                 "FooterView only can be add once !!");
                     mFooterView = view;
-                    LayoutParams lp = (LayoutParams) params;
-                    lp.topMargin = 30;
-                    lp.bottomMargin = 50;
                     break;
             }
         }
@@ -381,17 +371,15 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (!enabled)
-            reset();
+        if (!enabled) reset();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
-            for (ILifecycleObserver observer : observers) {
+            for (ILifecycleObserver observer : observers)
                 observer.onDetached(this);
-            }
         }
         if (mAppBarUtil != null && mAppBarUtil.hasFound()) {
             if (mInEdgeCanMoveHeaderCallBack == mAppBarUtil)
@@ -415,13 +403,10 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         if (sDebug) Log.d(TAG, "onAttachedToWindow()");
         if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
-            for (ILifecycleObserver observer : observers) {
+            for (ILifecycleObserver observer : observers)
                 observer.onAttached(this);
-            }
         }
-        if (mAppBarUtil != null) {
-            mAppBarUtil.onAttached(this);
-        }
+        if (mAppBarUtil != null) mAppBarUtil.onAttached(this);
     }
 
     @Override
@@ -435,8 +420,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
         int childState = 0;
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
-            if (child.getVisibility() == GONE)
-                continue;
+            if (child.getVisibility() == GONE) continue;
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             if (mHeaderView != null && child == mHeaderView.getView()) {
                 measureHeader(child, lp, widthMeasureSpec, heightMeasureSpec);
@@ -459,8 +443,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void measureHeader(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledRefresh())
-            return;
+        if (isDisabledRefresh()) return;
         int height = mHeaderView.getCustomHeight();
         if (mHeaderView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mHeaderView.getStyle() == IRefreshView.STYLE_PIN
@@ -511,8 +494,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     }
 
     protected void measureFooter(View child, LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
-        if (isDisabledLoadMore())
-            return;
+        if (isDisabledLoadMore()) return;
         int height = mFooterView.getCustomHeight();
         if (mFooterView.getStyle() == IRefreshView.STYLE_DEFAULT
                 || mFooterView.getStyle() == IRefreshView.STYLE_PIN
@@ -565,8 +547,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         final int count = getChildCount();
-        if (count == 0)
-            return;
+        if (count == 0) return;
         checkViewsZAxisNeedReset();
         mIndicator.checkConfig();
         final int parentRight = r - l - getPaddingRight();
@@ -2344,7 +2325,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
 
     /**
      * Set the content view.
-     * <p>设置内容视图`content`状态对应的视图</p>
+     * <p>设置内容视图</p>
      *
      * @param content Content view
      */
@@ -2920,23 +2901,18 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                     View child = getChildAt(i);
                     if (mContentResId == child.getId()) {
                         mTargetView = child;
-                        if (ensure && child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
+                        if (ensure) {
                             View view = ensureScrollTargetView(child, true, 0, 0);
                             if (view != null && view != child) {
                                 mAutoFoundScrollTargetView = view;
-                                break;
                             }
                         }
                         break;
                     } else if (child instanceof ViewGroup) {
                         final View view = foundViewInViewGroupById((ViewGroup) child, mContentResId);
                         if (view != null) {
-                            if (isScrollingView(view)) {
-                                mTargetView = child;
-                                mScrollTargetView = view;
-                            } else {
-                                mTargetView = child;
-                            }
+                            mTargetView = child;
+                            mScrollTargetView = view;
                             break;
                         }
                     }
@@ -2949,9 +2925,8 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
                             View view = ensureScrollTargetView(child, true, 0, 0);
                             if (view != null) {
                                 mTargetView = child;
-                                if (view != child) {
+                                if (view != child)
                                     mAutoFoundScrollTargetView = view;
-                                }
                                 break;
                             }
                         } else {
@@ -4606,7 +4581,7 @@ public class SmoothRefreshLayout extends ViewGroup implements NestedScrollingChi
             $IsScrolling = true;
             $Scroller.startScroll(0, 0, 0, distance, duration);
             removeCallbacks(this);
-            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
+            run();
         }
 
         void computeScrollOffset() {
