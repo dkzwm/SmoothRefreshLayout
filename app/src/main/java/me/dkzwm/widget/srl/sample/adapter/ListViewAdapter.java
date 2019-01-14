@@ -76,24 +76,24 @@ public class ListViewAdapter extends BaseAdapter {
         private ImageView mImageView;
 
         private ListViewHolder(View view) {
-            mImageView = (ImageView) view.findViewById(R.id.imageView_list_item);
-            mTextView = (TextView) view.findViewById(R.id.textView_list_item);
-            mTextView.setOnClickListener(
+            mImageView = view.findViewById(R.id.imageView_list_item);
+            mTextView = view.findViewById(R.id.textView_list_item);
+            view.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Object obj = v.getTag();
+                            Object obj = mTextView.getTag();
                             if (obj instanceof Integer) {
                                 Toast.makeText(v.getContext(), "Click:" + obj, Toast.LENGTH_SHORT)
                                         .show();
                             }
                         }
                     });
-            mTextView.setOnLongClickListener(
+            view.setOnLongClickListener(
                     new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
-                            Object obj = v.getTag();
+                            Object obj = mTextView.getTag();
                             if (obj instanceof Integer) {
                                 Toast.makeText(
                                                 v.getContext(),

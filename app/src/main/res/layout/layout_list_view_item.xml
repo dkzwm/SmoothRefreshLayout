@@ -21,7 +21,7 @@
         android:id="@+id/textView_list_item"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
+        android:gravity="center"
         android:layout_marginLeft="12dp"
         android:textColor="#333333"
         android:textSize="15sp"/>

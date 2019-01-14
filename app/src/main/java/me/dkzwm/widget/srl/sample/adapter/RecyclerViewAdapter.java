@@ -68,7 +68,7 @@ public class RecyclerViewAdapter
             super(itemView);
             mImageView = itemView.findViewById(R.id.imageView_list_item);
             mTextView = itemView.findViewById(R.id.textView_list_item);
-            mTextView.setOnClickListener(
+            itemView.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -79,7 +79,7 @@ public class RecyclerViewAdapter
                                     .show();
                         }
                     });
-            mTextView.setOnLongClickListener(
+            itemView.setOnLongClickListener(
                     new View.OnLongClickListener() {
                         @Override
                         public boolean onLongClick(View v) {
