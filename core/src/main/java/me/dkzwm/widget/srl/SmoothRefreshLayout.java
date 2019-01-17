@@ -3015,6 +3015,8 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         if (dxConsumed > 0 || dyConsumed > 0) {
             onNestedScrollChanged();
+        } else if (type == ViewCompat.TYPE_NON_TOUCH) {
+            stopNestedScroll(type);
         }
     }
 

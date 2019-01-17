@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-        android:name="me.dkzwm.widget.srl.sample.DemoApplication"
+        android:name=".DemoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -24,94 +24,94 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithFrameLayoutActivity"
+            android:name=".ui.WithFrameLayoutActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithTextViewActivity"
+            android:name=".ui.WithTextViewActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithWebViewActivity"
+            android:name=".ui.WithWebViewActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithListViewActivity"
+            android:name=".ui.WithListViewActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithGridViewActivity"
+            android:name=".ui.WithGridViewActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithRecyclerViewActivity"
+            android:name=".ui.WithRecyclerViewActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithRecyclerViewInCoordinatorLayoutActivity"
+            android:name=".ui.WithRecyclerViewInCoordinatorLayoutActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestOverScrollActivity"
+            android:name=".ui.TestOverScrollActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestQQWebStyleActivity"
+            android:name=".ui.TestQQWebStyleActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestTwoLevelRefreshActivity"
+            android:name=".ui.TestTwoLevelRefreshActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.WithViewPagerActivity"
+            android:name=".ui.WithViewPagerActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestPullToRefreshActivity"
+            android:name=".ui.TestPullToRefreshActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestReleaseToRefreshActivity"
+            android:name=".ui.TestReleaseToRefreshActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestNextRefreshAtOnceActivity"
+            android:name=".ui.TestNextRefreshAtOnceActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestMaterialStyleActivity"
+            android:name=".ui.TestMaterialStyleActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestQQActivityStyleActivity"
+            android:name=".ui.TestQQActivityStyleActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestNestedHorizontalViewsActivity"
+            android:name=".ui.TestNestedHorizontalViewsActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestNestedViewPagerActivity"
+            android:name=".ui.TestNestedViewPagerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestNestedActivity"
+            android:name=".ui.TestNestedActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestBaseRecyclerViewAdapterActivity"
+            android:name=".ui.TestBaseRecyclerViewAdapterActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestHorizontalRefreshActivity"
+            android:name=".ui.TestHorizontalRefreshActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestHorizontalRecyclerViewActivity"
+            android:name=".ui.TestHorizontalRecyclerViewActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestMultiDirectionViewsActivity"
+            android:name=".ui.TestMultiDirectionViewsActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestNestedWithViewPagerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:name=".ui.TestNestedWithViewPagerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.TestScrollToAutoRefreshActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestScrollToAutoRefreshActivity"
+            android:name=".ui.TestScaleEffectActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestScaleEffectActivity"
+            android:name=".ui.TestHorizontalScaleEffectActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.TestHorizontalScaleEffectActivity"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name="me.dkzwm.widget.srl.sample.ui.SecondFloorActivity"
-            android:theme="@style/NoAnimTheme"
-            android:screenOrientation="portrait"/>
+            android:name=".ui.SecondFloorActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoAnimTheme"/>
     </application>
 
 </manifest>

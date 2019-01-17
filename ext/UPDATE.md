@@ -1,4 +1,6 @@
 # 更新日志
+## 1.6.6.1
+> 修复由于实现 `NestedScrollingChild2`和 `NestedScrollingParent2` 接口所带来的Fling嵌套滚动传递未正常终结引起的短暂点击失效问题。感谢@dahai2070 的反馈。    
 ## 1.6.6
 > 删除 `ViscousFluidInterpolator`。    
 > 整合`ext-util`包的`QuickConfigAppBarUtil`到 `core`包中，并重命名为AppBarUtil，内置自动适配逻辑以适应越来越流行的嵌套特性。    
