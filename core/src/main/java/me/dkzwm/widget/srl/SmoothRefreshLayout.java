@@ -155,7 +155,8 @@ public class SmoothRefreshLayout extends ViewGroup
     protected boolean mIsInterceptTouchEventInOnceTouch = false;
     protected boolean mIsLastOverScrollCanNotAbort = false;
     protected boolean mIsFingerInsideAnotherDirectionView = false;
-    protected boolean mNestedScrollInProgress = false;
+    protected boolean mNestedScrolling = false;
+    protected boolean mNestedTouchScrolling = false;
     protected float mFlingBackFactor = 1.1f;
     protected byte mStatus = SR_STATUS_INIT;
     protected byte mViewStatus = SR_VIEW_STATUS_INIT;
@@ -912,7 +913,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 || (isEnabledPinRefreshViewWhileLoading()
                         && ((isRefreshing() && isMovingHeader())
                                 || (isLoadingMore() && isMovingFooter())))
-                || mNestedScrollInProgress) {
+                || mNestedTouchScrolling) {
             return super.dispatchTouchEvent(ev);
         }
         return processDispatchTouchEvent(ev);
@@ -2811,9 +2812,12 @@ public class SmoothRefreshLayout extends ViewGroup
         mNestedScrollingParentHelper.onNestedScrollAccepted(child, target, axes, type);
         // Dispatch up to the nested parent
         startNestedScroll(axes & getSupportScrollAxis(), type);
-        if (type == ViewCompat.TYPE_TOUCH) mIndicatorSetter.onFingerDown();
+        if (type == ViewCompat.TYPE_TOUCH) {
+            mIndicatorSetter.onFingerDown();
+            mNestedTouchScrolling = true;
+        }
         mLastNestedType = type;
-        mNestedScrollInProgress = true;
+        mNestedScrolling = true;
     }
 
     @Override
@@ -2934,7 +2938,8 @@ public class SmoothRefreshLayout extends ViewGroup
     public void onStopNestedScroll(@NonNull View target, int type) {
         if (sDebug) Log.d(TAG, String.format("onStopNestedScroll() type: %s", type));
         mNestedScrollingParentHelper.onStopNestedScroll(target, type);
-        if (mLastNestedType == type) mNestedScrollInProgress = false;
+        if (mLastNestedType == type) mNestedScrolling = false;
+        mNestedTouchScrolling = false;
         mIsInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
         mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
         // Dispatch up our nested parent
@@ -3010,6 +3015,8 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         if (dxConsumed > 0 || dyConsumed > 0) {
             onNestedScrollChanged();
+        } else if (type == ViewCompat.TYPE_NON_TOUCH) {
+            stopNestedScroll(type);
         }
     }
 
@@ -3117,7 +3124,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
     @Override
     public void computeScroll() {
-        if (mNestedScrollInProgress || !isMovingContent()) return;
+        if (mNestedScrolling || !isMovingContent()) return;
         onNestedScrollChanged();
     }
 
@@ -3932,7 +3939,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     && !isEnabledPinContentView()
                     && mIsLastRefreshSuccessful
                     && (!mIndicator.hasTouched()
-                            || mNestedScrollInProgress
+                            || mNestedScrolling
                             || isEnabledSmoothRollbackWhenCompleted())
                     && mStatus == SR_STATUS_COMPLETE) {
                 if (sDebug)
@@ -3974,7 +3981,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         mIndicatorSetter.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
-        if (getParent() != null && !mNestedScrollInProgress && mIndicator.hasTouched())
+        if (getParent() != null && !mNestedScrolling && mIndicator.hasTouched())
             getParent().requestDisallowInterceptTouchEvent(true);
         if (isMovingHeader()) updatePos(change);
         else if (isMovingFooter()) updatePos(-change);
@@ -3988,7 +3995,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected void updatePos(int change) {
         if (isEnabledOldTouchHandling()
                 && mIndicator.hasTouched()
-                && !mNestedScrollInProgress
+                && !mNestedScrolling
                 && !mHasSendCancelEvent
                 && mIndicator.hasMoved()) {
             sendCancelEvent(null);
@@ -4020,7 +4027,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 && mIndicator.hasJustBackToStartPosition()) {
             tryToNotifyReset();
             if (isEnabledOldTouchHandling()) {
-                if (mIndicator.hasTouched() && !mNestedScrollInProgress && !mHasSendDownEvent) {
+                if (mIndicator.hasTouched() && !mNestedScrolling && !mHasSendDownEvent) {
                     sendDownEvent(null);
                 }
             }
@@ -5076,6 +5083,8 @@ public class SmoothRefreshLayout extends ViewGroup
         void stop() {
             if ($Mode != Constants.SCROLLER_MODE_NONE) {
                 if (sDebug) Log.d(TAG, "ScrollChecker: stop()");
+                if (mNestedScrolling && $Mode == Constants.SCROLLER_MODE_CALC_FLING)
+                    stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
                 $Mode = Constants.SCROLLER_MODE_NONE;
                 mAutomaticActionUseSmoothScroll = false;
                 $IsScrolling = false;

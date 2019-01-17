@@ -26,6 +26,7 @@ android {
 dependencies {
     compileOnly project(':core')
     compileOnly rootProject.ext.libs.recyclerview
+    compileOnly rootProject.ext.libs.viewpager
 }
 
 
