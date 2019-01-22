@@ -1,4 +1,6 @@
 # 更新日志
+## 1.6.6.2
+> 修复 `setEnableNoMoreData` 功能异常。感谢@seemelala 的反馈。
 ## 1.6.6.1
 > 修复由于实现 `NestedScrollingChild2`和 `NestedScrollingParent2` 接口所带来的Fling嵌套滚动传递未正常终结引起的短暂点击失效问题。感谢@dahai2070 的反馈。    
 ## 1.6.6

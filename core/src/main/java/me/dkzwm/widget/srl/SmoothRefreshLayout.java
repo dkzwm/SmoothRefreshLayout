@@ -3741,8 +3741,8 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) Log.d(TAG, "onFingerUp()");
         notifyFingerUp();
         if (mMode == Constants.MODE_DEFAULT) {
-            if (isEnabledNoMoreData()) return;
-            if (!mScrollChecker.isPreFling()
+            if (!(isEnabledNoMoreData() && isMovingFooter())
+                    && !mScrollChecker.isPreFling()
                     && isEnabledKeepRefreshView()
                     && mStatus != SR_STATUS_COMPLETE) {
                 if (isHeaderInProcessing()
@@ -3787,7 +3787,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 notifyUIRefreshComplete(true, false);
                 return;
             } else if (isEnabledKeepRefreshView()) {
-                if (isHeaderInProcessing() && mHeaderView != null) {
+                if (isHeaderInProcessing() && mHeaderView != null && !isDisabledPerformRefresh()) {
                     if (isRefreshing()
                             && isMovingHeader()
                             && mIndicator.isAlreadyHere(
@@ -3802,7 +3802,9 @@ public class SmoothRefreshLayout extends ViewGroup
                     } else if (isRefreshing() && !isMovingFooter()) {
                         return;
                     }
-                } else if (isFooterInProcessing() && mFooterView != null) {
+                } else if (isFooterInProcessing()
+                        && mFooterView != null
+                        && !isDisabledPerformLoadMore()) {
                     if (isLoadingMore()
                             && isMovingFooter()
                             && mIndicator.isAlreadyHere(
@@ -3893,6 +3895,8 @@ public class SmoothRefreshLayout extends ViewGroup
 
     protected void moveHeaderPos(float delta) {
         if (sDebug) Log.d(TAG, String.format("moveHeaderPos(): delta: %s", delta));
+        if (!mNestedScrolling && isEnabledOldTouchHandling() && mIndicator.hasTouched())
+            sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
         final int current = mIndicator.getCurrentPos();
@@ -3915,6 +3919,8 @@ public class SmoothRefreshLayout extends ViewGroup
 
     protected void moveFooterPos(float delta) {
         if (sDebug) Log.d(TAG, String.format("moveFooterPos(): delta: %s", delta));
+        if (!mNestedScrolling && isEnabledOldTouchHandling() && mIndicator.hasTouched())
+            sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         if (delta < 0) {
             final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
@@ -3993,13 +3999,6 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param change The changed value
      */
     protected void updatePos(int change) {
-        if (isEnabledOldTouchHandling()
-                && mIndicator.hasTouched()
-                && !mNestedScrolling
-                && !mHasSendCancelEvent
-                && mIndicator.hasMoved()) {
-            sendCancelEvent(null);
-        }
         final boolean isMovingHeader = isMovingHeader();
         final boolean isMovingFooter = isMovingFooter();
         // leave initiated position or just refresh complete
@@ -4331,7 +4330,11 @@ public class SmoothRefreshLayout extends ViewGroup
         final byte old = mStatus;
         mStatus = SR_STATUS_COMPLETE;
         notifyStatusChanged(old, mStatus);
-        notifyUIRefreshComplete(!isEnabledNoMoreData(), notifyViews);
+        notifyUIRefreshComplete(
+                !(isMovingFooter()
+                        && isEnabledNoMoreData()
+                        && isEnabledNoSpringBackWhenNoMoreData()),
+                notifyViews);
     }
 
     /** try to perform refresh or loading , if performed return true */
