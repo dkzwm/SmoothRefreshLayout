@@ -103,7 +103,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     return input * input * input * input * input + 1.0F;
                 }
             };
-    protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator();
+    protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator(.95f);
     protected static final Interpolator sSpringBackInterpolator = new DecelerateInterpolator(.92f);
     private static final byte FLAG_AUTO_REFRESH = 0x01;
     private static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
@@ -2187,7 +2187,7 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * The flag has been set to disabled when horizontal move.
      *
-     * <p>是否已经设置不响应横向滑动
+     * <p>是否已经设置响应其它方向滑动
      *
      * @return Disabled
      */
@@ -2198,7 +2198,7 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * Set whether to filter the horizontal moves.
      *
-     * <p>设置不响应横向滑动，当内容视图含有需要响应横向滑动的子视图时，需要设置该属性，否则自视图无法响应横向滑动
+     * <p>设置响应其它方向滑动，当内容视图含有需要响应其它方向滑动的子视图时，需要设置该属性，否则子视图无法响应其它方向的滑动
      *
      * @param disable Enable
      */
@@ -2714,9 +2714,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     String.format(
                             "onFling() velocityX: %s, velocityY: %s, nested: %s", vx, vy, nested));
         if ((isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())) return true;
-        if (mPreventForAnotherDirection) {
-            return nested && dispatchNestedPreFling(-vx, -vy);
-        }
+        if (mPreventForAnotherDirection) return nested && dispatchNestedPreFling(-vx, -vy);
         float realVelocity = isVerticalOrientation() ? vy : vx;
         final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
         final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
@@ -2737,17 +2735,21 @@ public class SmoothRefreshLayout extends ViewGroup
                         }
                     } else {
                         if (mScrollChecker.getFinalY(realVelocity) > mIndicator.getCurrentPos()) {
-                            if (!isEnabledPerformFreshWhenFling()) {
-                                mScrollChecker.startPreFling(realVelocity);
-                            } else if (isMovingHeader()
-                                    && (isDisabledPerformRefresh()
-                                            || mIndicator.getCurrentPos()
-                                                    < mIndicator.getOffsetToRefresh())) {
-                                mScrollChecker.startPreFling(realVelocity);
-                            } else if (isMovingFooter()
-                                    && (isDisabledPerformLoadMore()
-                                            || mIndicator.getCurrentPos()
-                                                    < mIndicator.getOffsetToLoadMore())) {
+                            if (mMode == Constants.MODE_DEFAULT) {
+                                if (!isEnabledPerformFreshWhenFling()) {
+                                    mScrollChecker.startPreFling(realVelocity);
+                                } else if (isMovingHeader()
+                                        && (isDisabledPerformRefresh()
+                                                || mIndicator.getCurrentPos()
+                                                        < mIndicator.getOffsetToRefresh())) {
+                                    mScrollChecker.startPreFling(realVelocity);
+                                } else if (isMovingFooter()
+                                        && (isDisabledPerformLoadMore()
+                                                || mIndicator.getCurrentPos()
+                                                        < mIndicator.getOffsetToLoadMore())) {
+                                    mScrollChecker.startPreFling(realVelocity);
+                                }
+                            } else {
                                 mScrollChecker.startPreFling(realVelocity);
                             }
                         }
@@ -2755,7 +2757,10 @@ public class SmoothRefreshLayout extends ViewGroup
                 }
                 return true;
             }
+            if (nested) return dispatchNestedPreFling(-vx, -vy);
+            else return true;
         } else {
+            tryToResetMovingStatus();
             if (isEnabledOverScroll()
                     && (!isEnabledPinRefreshViewWhileLoading()
                             || ((realVelocity >= 0 || !isDisabledLoadMore())
@@ -2773,9 +2778,10 @@ public class SmoothRefreshLayout extends ViewGroup
                     mDelayToDispatchNestedFling.mLayoutWeakRf = new WeakReference<>(this);
                     mDelayToDispatchNestedFling.mVelocity = (int) realVelocity;
                     ViewCompat.postOnAnimation(this, mDelayToDispatchNestedFling);
+                    invalidate();
+                    return true;
                 }
             }
-            tryToResetMovingStatus();
             invalidate();
         }
         return nested && dispatchNestedPreFling(-vx, -vy);
@@ -2906,9 +2912,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 dx - consumed[0], dy - consumed[1], parentConsumed, null, type)) {
             consumed[0] += parentConsumed[0];
             consumed[1] += parentConsumed[1];
-            onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
-            onNestedScrollChanged();
             if (!isMovingContent() && !(isEnabledPinRefreshViewWhileLoading())) {
                 if (isVerticalOrientation) parentConsumed[1] = dy;
                 else parentConsumed[0] = dx;
@@ -2916,6 +2920,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 consumed[1] += parentConsumed[1];
             }
         }
+        if (consumed[0] != 0 || consumed[1] != 0) onNestedScrollChanged();
         if (sDebug)
             Log.d(
                     TAG,
@@ -3013,7 +3018,7 @@ public class SmoothRefreshLayout extends ViewGroup
             }
             tryToResetMovingStatus();
         }
-        if (dxConsumed > 0 || dyConsumed > 0) {
+        if (dxConsumed != 0 || dyConsumed != 0) {
             onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
             stopNestedScroll(type);
@@ -3987,7 +3992,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         mIndicatorSetter.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
-        if (getParent() != null && !mNestedScrolling && mIndicator.hasTouched())
+        if (getParent() != null && mIndicator.hasTouched())
             getParent().requestDisallowInterceptTouchEvent(true);
         if (isMovingHeader()) updatePos(change);
         else if (isMovingFooter()) updatePos(-change);
