@@ -215,7 +215,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void layoutHeaderView(View child) {
         if (mMode != Constants.MODE_DEFAULT
                 || isDisabledRefresh()
-                || child.getMeasuredHeight() == 0) {
+                || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", 0, 0, 0, 0));
             return;
@@ -301,7 +301,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void layoutFooterView(View child, int contentRight) {
         if (mMode != Constants.MODE_DEFAULT
                 || isDisabledLoadMore()
-                || child.getMeasuredHeight() == 0) {
+                || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", 0, 0, 0, 0));
             return;
