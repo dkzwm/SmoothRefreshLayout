@@ -212,6 +212,7 @@ public class SmoothRefreshLayout extends ViewGroup
     private boolean mHasSendCancelEvent = false;
     private boolean mHasSendDownEvent = false;
     private float[] mCachedPoint = new float[2];
+    private int[] mCachedSpec = new int[2];
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
     private int mFlag =
@@ -489,14 +490,14 @@ public class SmoothRefreshLayout extends ViewGroup
                 measureFooter(child, lp, widthMeasureSpec, heightMeasureSpec);
             } else {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT)
+                    mCachedViews.add(child);
             }
             maxWidth =
                     Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
             maxHeight =
                     Math.max(maxHeight, child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
             childState = combineMeasuredStates(childState, child.getMeasuredState());
-            if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT)
-                mCachedViews.add(child);
         }
         maxWidth += getPaddingLeft() + getPaddingRight();
         maxHeight += getPaddingTop() + getPaddingBottom();
@@ -507,58 +508,68 @@ public class SmoothRefreshLayout extends ViewGroup
                 resolveSizeAndState(
                         maxHeight, heightMeasureSpec, childState << MEASURED_HEIGHT_STATE_SHIFT));
         count = mCachedViews.size();
-        for (int i = 0; i < count; i++) {
-            final View child = mCachedViews.get(i);
-            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
-            final int childWidthMeasureSpec;
-            final int childHeightMeasureSpec;
-            if (lp.width == LayoutParams.MATCH_PARENT) {
-                final int width =
-                        Math.max(
-                                0,
-                                getMeasuredWidth()
-                                        - getPaddingLeft()
-                                        - getPaddingRight()
-                                        - lp.leftMargin
-                                        - lp.rightMargin);
-                childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
-            } else {
-                childWidthMeasureSpec =
-                        getChildMeasureSpec(
-                                widthMeasureSpec,
-                                getPaddingLeft()
-                                        + getPaddingRight()
-                                        + lp.leftMargin
-                                        + lp.rightMargin,
-                                lp.width);
+        if (count > 1) {
+            for (int i = 0; i < count; i++) {
+                final View child = mCachedViews.get(i);
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final int[] spec = measureChildAgain(lp, widthMeasureSpec, heightMeasureSpec);
+                child.measure(spec[0], spec[1]);
             }
-            if (lp.height == LayoutParams.MATCH_PARENT) {
-                final int height =
-                        Math.max(
-                                0,
-                                getMeasuredHeight()
-                                        - getPaddingTop()
-                                        - getPaddingBottom()
-                                        - lp.topMargin
-                                        - lp.bottomMargin);
-                childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
-            } else {
-                childHeightMeasureSpec =
-                        getChildMeasureSpec(
-                                heightMeasureSpec,
-                                getPaddingTop()
-                                        + getPaddingBottom()
-                                        + lp.topMargin
-                                        + lp.bottomMargin,
-                                lp.height);
-            }
-            if (mHeaderView != null && child == mHeaderView.getView())
-                measureHeader(child, lp, childWidthMeasureSpec, childHeightMeasureSpec);
-            else if (mFooterView != null && child == mFooterView.getView())
-                measureFooter(child, lp, childWidthMeasureSpec, childHeightMeasureSpec);
-            else child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
         }
         mCachedViews.clear();
+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
+                || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
+            if (mHeaderView != null && mHeaderView.getView().getVisibility() != GONE) {
+                final View child = mHeaderView.getView();
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final int[] spec = measureChildAgain(lp, widthMeasureSpec, heightMeasureSpec);
+                measureHeader(child, lp, spec[0], spec[1]);
+            }
+            if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
+                final View child = mFooterView.getView();
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final int[] spec = measureChildAgain(lp, widthMeasureSpec, heightMeasureSpec);
+                measureFooter(child, lp, spec[0], spec[1]);
+            }
+        }
+    }
+
+    private int[] measureChildAgain(LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
+        if (lp.width == LayoutParams.MATCH_PARENT) {
+            final int width =
+                    Math.max(
+                            0,
+                            getMeasuredWidth()
+                                    - getPaddingLeft()
+                                    - getPaddingRight()
+                                    - lp.leftMargin
+                                    - lp.rightMargin);
+            mCachedSpec[0] = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        } else {
+            mCachedSpec[0] =
+                    getChildMeasureSpec(
+                            widthMeasureSpec,
+                            getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
+                            lp.width);
+        }
+        if (lp.height == LayoutParams.MATCH_PARENT) {
+            final int height =
+                    Math.max(
+                            0,
+                            getMeasuredHeight()
+                                    - getPaddingTop()
+                                    - getPaddingBottom()
+                                    - lp.topMargin
+                                    - lp.bottomMargin);
+            mCachedSpec[1] = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        } else {
+            mCachedSpec[1] =
+                    getChildMeasureSpec(
+                            heightMeasureSpec,
+                            getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin,
+                            lp.height);
+        }
+        return mCachedSpec;
     }
 
     protected void measureHeader(
