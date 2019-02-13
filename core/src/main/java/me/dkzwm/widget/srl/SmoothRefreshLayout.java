@@ -103,7 +103,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     return input * input * input * input * input + 1.0F;
                 }
             };
-    protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator();
+    protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator(.95f);
     protected static final Interpolator sSpringBackInterpolator = new DecelerateInterpolator(.92f);
     private static final byte FLAG_AUTO_REFRESH = 0x01;
     private static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
@@ -212,6 +212,7 @@ public class SmoothRefreshLayout extends ViewGroup
     private boolean mHasSendCancelEvent = false;
     private boolean mHasSendDownEvent = false;
     private float[] mCachedPoint = new float[2];
+    private int[] mCachedSpec = new int[2];
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
     private int mFlag =
@@ -478,6 +479,7 @@ public class SmoothRefreshLayout extends ViewGroup
         int maxHeight = 0;
         int maxWidth = 0;
         int childState = 0;
+        mCachedViews.clear();
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) continue;
@@ -488,6 +490,8 @@ public class SmoothRefreshLayout extends ViewGroup
                 measureFooter(child, lp, widthMeasureSpec, heightMeasureSpec);
             } else {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
+                if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT)
+                    mCachedViews.add(child);
             }
             maxWidth =
                     Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
@@ -503,6 +507,69 @@ public class SmoothRefreshLayout extends ViewGroup
                 resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
                 resolveSizeAndState(
                         maxHeight, heightMeasureSpec, childState << MEASURED_HEIGHT_STATE_SHIFT));
+        count = mCachedViews.size();
+        if (count > 1) {
+            for (int i = 0; i < count; i++) {
+                final View child = mCachedViews.get(i);
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final int[] spec = measureChildAgain(lp, widthMeasureSpec, heightMeasureSpec);
+                child.measure(spec[0], spec[1]);
+            }
+        }
+        mCachedViews.clear();
+        if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
+                || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY) {
+            if (mHeaderView != null && mHeaderView.getView().getVisibility() != GONE) {
+                final View child = mHeaderView.getView();
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final int[] spec = measureChildAgain(lp, widthMeasureSpec, heightMeasureSpec);
+                measureHeader(child, lp, spec[0], spec[1]);
+            }
+            if (mFooterView != null && mFooterView.getView().getVisibility() != GONE) {
+                final View child = mFooterView.getView();
+                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                final int[] spec = measureChildAgain(lp, widthMeasureSpec, heightMeasureSpec);
+                measureFooter(child, lp, spec[0], spec[1]);
+            }
+        }
+    }
+
+    private int[] measureChildAgain(LayoutParams lp, int widthMeasureSpec, int heightMeasureSpec) {
+        if (lp.width == LayoutParams.MATCH_PARENT) {
+            final int width =
+                    Math.max(
+                            0,
+                            getMeasuredWidth()
+                                    - getPaddingLeft()
+                                    - getPaddingRight()
+                                    - lp.leftMargin
+                                    - lp.rightMargin);
+            mCachedSpec[0] = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+        } else {
+            mCachedSpec[0] =
+                    getChildMeasureSpec(
+                            widthMeasureSpec,
+                            getPaddingLeft() + getPaddingRight() + lp.leftMargin + lp.rightMargin,
+                            lp.width);
+        }
+        if (lp.height == LayoutParams.MATCH_PARENT) {
+            final int height =
+                    Math.max(
+                            0,
+                            getMeasuredHeight()
+                                    - getPaddingTop()
+                                    - getPaddingBottom()
+                                    - lp.topMargin
+                                    - lp.bottomMargin);
+            mCachedSpec[1] = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+        } else {
+            mCachedSpec[1] =
+                    getChildMeasureSpec(
+                            heightMeasureSpec,
+                            getPaddingTop() + getPaddingBottom() + lp.topMargin + lp.bottomMargin,
+                            lp.height);
+        }
+        return mCachedSpec;
     }
 
     protected void measureHeader(
@@ -659,18 +726,17 @@ public class SmoothRefreshLayout extends ViewGroup
                 layoutHeaderView(child);
             } else if (mTargetView != null && child == mTargetView) {
                 contentBottom = layoutContentView(child);
+            } else if (mStickyHeaderView != null && child == mStickyHeaderView) {
+                layoutStickyHeaderView(child);
             } else if ((mFooterView == null || mFooterView.getView() != child)
-                    && (mStickyFooterView == null || mStickyFooterView != child)
-                    && (mStickyHeaderView == null || mStickyHeaderView != child)) {
+                    && (mStickyFooterView == null || mStickyFooterView != child)) {
                 layoutOtherView(child, parentRight, parentBottom);
             }
         }
         if (mFooterView != null && mFooterView.getView().getVisibility() != GONE)
             layoutFooterView(mFooterView.getView(), contentBottom);
-        if (mStickyHeaderView != null && mStickyHeaderView.getVisibility() != GONE)
-            layoutStickyHeaderView();
         if (mStickyFooterView != null && mStickyFooterView.getVisibility() != GONE)
-            layoutStickyFooterView(contentBottom);
+            layoutStickyFooterView(mStickyFooterView, contentBottom);
         tryToPerformAutoRefresh();
     }
 
@@ -830,13 +896,13 @@ public class SmoothRefreshLayout extends ViewGroup
             Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutStickyHeaderView() {
-        final LayoutParams lp = (LayoutParams) mStickyHeaderView.getLayoutParams();
+    protected void layoutStickyHeaderView(@NonNull View child) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
-        final int right = left + mStickyHeaderView.getMeasuredWidth();
+        final int right = left + child.getMeasuredWidth();
         final int top = getPaddingTop() + lp.topMargin;
-        final int bottom = top + mStickyHeaderView.getMeasuredHeight();
-        mStickyHeaderView.layout(left, top, right, bottom);
+        final int bottom = top + child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(
                     TAG,
@@ -844,13 +910,13 @@ public class SmoothRefreshLayout extends ViewGroup
                             "onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutStickyFooterView(int contentBottom) {
-        final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
+    protected void layoutStickyFooterView(@NonNull View child, int contentBottom) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
-        final int right = left + mStickyFooterView.getMeasuredWidth();
+        final int right = left + child.getMeasuredWidth();
         final int bottom = contentBottom - lp.bottomMargin;
-        final int top = bottom - mStickyFooterView.getMeasuredHeight();
-        mStickyFooterView.layout(left, top, right, bottom);
+        final int top = bottom - child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(
                     TAG,
@@ -2187,7 +2253,7 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * The flag has been set to disabled when horizontal move.
      *
-     * <p>是否已经设置不响应横向滑动
+     * <p>是否已经设置响应其它方向滑动
      *
      * @return Disabled
      */
@@ -2198,7 +2264,7 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * Set whether to filter the horizontal moves.
      *
-     * <p>设置不响应横向滑动，当内容视图含有需要响应横向滑动的子视图时，需要设置该属性，否则自视图无法响应横向滑动
+     * <p>设置响应其它方向滑动，当内容视图含有需要响应其它方向滑动的子视图时，需要设置该属性，否则子视图无法响应其它方向的滑动
      *
      * @param disable Enable
      */
@@ -2714,9 +2780,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     String.format(
                             "onFling() velocityX: %s, velocityY: %s, nested: %s", vx, vy, nested));
         if ((isNeedInterceptTouchEvent() || isCanNotAbortOverScrolling())) return true;
-        if (mPreventForAnotherDirection) {
-            return nested && dispatchNestedPreFling(-vx, -vy);
-        }
+        if (mPreventForAnotherDirection) return nested && dispatchNestedPreFling(-vx, -vy);
         float realVelocity = isVerticalOrientation() ? vy : vx;
         final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
         final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
@@ -2737,17 +2801,21 @@ public class SmoothRefreshLayout extends ViewGroup
                         }
                     } else {
                         if (mScrollChecker.getFinalY(realVelocity) > mIndicator.getCurrentPos()) {
-                            if (!isEnabledPerformFreshWhenFling()) {
-                                mScrollChecker.startPreFling(realVelocity);
-                            } else if (isMovingHeader()
-                                    && (isDisabledPerformRefresh()
-                                            || mIndicator.getCurrentPos()
-                                                    < mIndicator.getOffsetToRefresh())) {
-                                mScrollChecker.startPreFling(realVelocity);
-                            } else if (isMovingFooter()
-                                    && (isDisabledPerformLoadMore()
-                                            || mIndicator.getCurrentPos()
-                                                    < mIndicator.getOffsetToLoadMore())) {
+                            if (mMode == Constants.MODE_DEFAULT) {
+                                if (!isEnabledPerformFreshWhenFling()) {
+                                    mScrollChecker.startPreFling(realVelocity);
+                                } else if (isMovingHeader()
+                                        && (isDisabledPerformRefresh()
+                                                || mIndicator.getCurrentPos()
+                                                        < mIndicator.getOffsetToRefresh())) {
+                                    mScrollChecker.startPreFling(realVelocity);
+                                } else if (isMovingFooter()
+                                        && (isDisabledPerformLoadMore()
+                                                || mIndicator.getCurrentPos()
+                                                        < mIndicator.getOffsetToLoadMore())) {
+                                    mScrollChecker.startPreFling(realVelocity);
+                                }
+                            } else {
                                 mScrollChecker.startPreFling(realVelocity);
                             }
                         }
@@ -2755,7 +2823,10 @@ public class SmoothRefreshLayout extends ViewGroup
                 }
                 return true;
             }
+            if (nested) return dispatchNestedPreFling(-vx, -vy);
+            else return true;
         } else {
+            tryToResetMovingStatus();
             if (isEnabledOverScroll()
                     && (!isEnabledPinRefreshViewWhileLoading()
                             || ((realVelocity >= 0 || !isDisabledLoadMore())
@@ -2773,9 +2844,10 @@ public class SmoothRefreshLayout extends ViewGroup
                     mDelayToDispatchNestedFling.mLayoutWeakRf = new WeakReference<>(this);
                     mDelayToDispatchNestedFling.mVelocity = (int) realVelocity;
                     ViewCompat.postOnAnimation(this, mDelayToDispatchNestedFling);
+                    invalidate();
+                    return true;
                 }
             }
-            tryToResetMovingStatus();
             invalidate();
         }
         return nested && dispatchNestedPreFling(-vx, -vy);
@@ -2906,9 +2978,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 dx - consumed[0], dy - consumed[1], parentConsumed, null, type)) {
             consumed[0] += parentConsumed[0];
             consumed[1] += parentConsumed[1];
-            onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
-            onNestedScrollChanged();
             if (!isMovingContent() && !(isEnabledPinRefreshViewWhileLoading())) {
                 if (isVerticalOrientation) parentConsumed[1] = dy;
                 else parentConsumed[0] = dx;
@@ -2916,6 +2986,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 consumed[1] += parentConsumed[1];
             }
         }
+        if (consumed[0] != 0 || consumed[1] != 0) onNestedScrollChanged();
         if (sDebug)
             Log.d(
                     TAG,
@@ -3013,7 +3084,7 @@ public class SmoothRefreshLayout extends ViewGroup
             }
             tryToResetMovingStatus();
         }
-        if (dxConsumed > 0 || dyConsumed > 0) {
+        if (dxConsumed != 0 || dyConsumed != 0) {
             onNestedScrollChanged();
         } else if (type == ViewCompat.TYPE_NON_TOUCH) {
             stopNestedScroll(type);
@@ -3987,7 +4058,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         mIndicatorSetter.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
-        if (getParent() != null && !mNestedScrolling && mIndicator.hasTouched())
+        if (getParent() != null && mIndicator.hasTouched())
             getParent().requestDisallowInterceptTouchEvent(true);
         if (isMovingHeader()) updatePos(change);
         else if (isMovingFooter()) updatePos(-change);

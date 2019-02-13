@@ -30,6 +30,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -99,9 +101,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                     0,
                                     specSize
                                             - (getPaddingLeft()
-                                                    + getPaddingRight()
-                                                    + lp.leftMargin
-                                                    + lp.rightMargin));
+                                            + getPaddingRight()
+                                            + lp.leftMargin
+                                            + lp.rightMargin));
                     mIndicatorSetter.setHeaderHeight(size);
                 } else {
                     mIndicatorSetter.setHeaderHeight(size + lp.leftMargin + lp.rightMargin);
@@ -169,9 +171,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                     0,
                                     specSize
                                             - (getPaddingLeft()
-                                                    + getPaddingRight()
-                                                    + lp.leftMargin
-                                                    + lp.rightMargin));
+                                            + getPaddingRight()
+                                            + lp.leftMargin
+                                            + lp.rightMargin));
                     mIndicatorSetter.setFooterHeight(size);
                 } else {
                     mIndicatorSetter.setFooterHeight(size + lp.leftMargin + lp.rightMargin);
@@ -215,7 +217,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void layoutHeaderView(View child) {
         if (mMode != Constants.MODE_DEFAULT
                 || isDisabledRefresh()
-                || child.getMeasuredHeight() == 0) {
+                || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) Log.d(TAG, String.format("onLayout(): header: %s %s %s %s", 0, 0, 0, 0));
             return;
@@ -267,8 +269,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 getPaddingLeft()
                                         + lp.leftMargin
                                         + (mIndicator.getCurrentPos()
-                                                        - mIndicator.getHeaderHeight())
-                                                / 2;
+                                        - mIndicator.getHeaderHeight())
+                                        / 2;
                     }
                 } else {
                     left = getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
@@ -301,7 +303,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void layoutFooterView(View child, int contentRight) {
         if (mMode != Constants.MODE_DEFAULT
                 || isDisabledLoadMore()
-                || child.getMeasuredHeight() == 0) {
+                || child.getMeasuredWidth() == 0) {
             child.layout(0, 0, 0, 0);
             if (sDebug) Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", 0, 0, 0, 0));
             return;
@@ -340,26 +342,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     left = lp.leftMargin + contentRight;
                 }
                 break;
-            case IRefreshView.STYLE_FOLLOW_CENTER:
-                {
-                    child.setTranslationX(0);
-                    if (isMovingFooter()) {
-                        if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
-                            left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
-                        } else {
-                            left =
-                                    lp.leftMargin
-                                            + contentRight
-                                            - mIndicator.getCurrentPos()
-                                            + (mIndicator.getCurrentPos()
-                                                            - mIndicator.getFooterHeight())
-                                                    / 2;
-                        }
+            case IRefreshView.STYLE_FOLLOW_CENTER: {
+                child.setTranslationX(0);
+                if (isMovingFooter()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                        left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
                     } else {
-                        left = lp.leftMargin + contentRight;
+                        left =
+                                lp.leftMargin
+                                        + contentRight
+                                        - mIndicator.getCurrentPos()
+                                        + (mIndicator.getCurrentPos()
+                                        - mIndicator.getFooterHeight())
+                                        / 2;
                     }
-                    break;
+                } else {
+                    left = lp.leftMargin + contentRight;
                 }
+                break;
+            }
         }
         if (isInEditMode()) left = left - child.getMeasuredWidth();
         right = left + child.getMeasuredWidth();
@@ -371,13 +372,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void layoutStickyFooterView(int contentRight) {
-        final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
+    protected void layoutStickyFooterView(@NonNull View child, int contentRight) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int top = getPaddingTop() + lp.topMargin;
-        final int bottom = top + mStickyFooterView.getMeasuredHeight();
+        final int bottom = top + child.getMeasuredHeight();
         final int right = contentRight - lp.rightMargin;
-        final int left = right - mStickyFooterView.getMeasuredWidth();
-        mStickyFooterView.layout(left, top, right, bottom);
+        final int left = right - child.getMeasuredWidth();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(
                     TAG,

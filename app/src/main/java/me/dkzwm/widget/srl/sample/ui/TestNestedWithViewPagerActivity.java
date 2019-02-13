@@ -89,6 +89,7 @@ public class TestNestedWithViewPagerActivity extends AppCompatActivity {
                     }
                 });
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
+        mRefreshLayout.setEnableDynamicEnsureTargetView(true);
         mRefreshLayout.autoRefresh(false);
     }
 
