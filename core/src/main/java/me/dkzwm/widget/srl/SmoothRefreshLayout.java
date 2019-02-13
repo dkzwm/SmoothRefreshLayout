@@ -726,18 +726,17 @@ public class SmoothRefreshLayout extends ViewGroup
                 layoutHeaderView(child);
             } else if (mTargetView != null && child == mTargetView) {
                 contentBottom = layoutContentView(child);
+            } else if (mStickyHeaderView != null && child == mStickyHeaderView) {
+                layoutStickyHeaderView(child);
             } else if ((mFooterView == null || mFooterView.getView() != child)
-                    && (mStickyFooterView == null || mStickyFooterView != child)
-                    && (mStickyHeaderView == null || mStickyHeaderView != child)) {
+                    && (mStickyFooterView == null || mStickyFooterView != child)) {
                 layoutOtherView(child, parentRight, parentBottom);
             }
         }
         if (mFooterView != null && mFooterView.getView().getVisibility() != GONE)
             layoutFooterView(mFooterView.getView(), contentBottom);
-        if (mStickyHeaderView != null && mStickyHeaderView.getVisibility() != GONE)
-            layoutStickyHeaderView();
         if (mStickyFooterView != null && mStickyFooterView.getVisibility() != GONE)
-            layoutStickyFooterView(contentBottom);
+            layoutStickyFooterView(mStickyFooterView, contentBottom);
         tryToPerformAutoRefresh();
     }
 
@@ -897,13 +896,13 @@ public class SmoothRefreshLayout extends ViewGroup
             Log.d(TAG, String.format("onLayout(): footer: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutStickyHeaderView() {
-        final LayoutParams lp = (LayoutParams) mStickyHeaderView.getLayoutParams();
+    protected void layoutStickyHeaderView(@NonNull View child) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
-        final int right = left + mStickyHeaderView.getMeasuredWidth();
+        final int right = left + child.getMeasuredWidth();
         final int top = getPaddingTop() + lp.topMargin;
-        final int bottom = top + mStickyHeaderView.getMeasuredHeight();
-        mStickyHeaderView.layout(left, top, right, bottom);
+        final int bottom = top + child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(
                     TAG,
@@ -911,13 +910,13 @@ public class SmoothRefreshLayout extends ViewGroup
                             "onLayout(): stickyHeader: %s %s %s %s", left, top, right, bottom));
     }
 
-    protected void layoutStickyFooterView(int contentBottom) {
-        final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
+    protected void layoutStickyFooterView(@NonNull View child, int contentBottom) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int left = getPaddingLeft() + lp.leftMargin;
-        final int right = left + mStickyFooterView.getMeasuredWidth();
+        final int right = left + child.getMeasuredWidth();
         final int bottom = contentBottom - lp.bottomMargin;
-        final int top = bottom - mStickyFooterView.getMeasuredHeight();
-        mStickyFooterView.layout(left, top, right, bottom);
+        final int top = bottom - child.getMeasuredHeight();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(
                     TAG,

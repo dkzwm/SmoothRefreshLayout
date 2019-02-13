@@ -26,6 +26,7 @@ package me.dkzwm.widget.srl;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -371,13 +372,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void layoutStickyFooterView(int contentRight) {
-        final LayoutParams lp = (LayoutParams) mStickyFooterView.getLayoutParams();
+    protected void layoutStickyFooterView(@NonNull View child, int contentRight) {
+        final LayoutParams lp = (LayoutParams) child.getLayoutParams();
         final int top = getPaddingTop() + lp.topMargin;
-        final int bottom = top + mStickyFooterView.getMeasuredHeight();
+        final int bottom = top + child.getMeasuredHeight();
         final int right = contentRight - lp.rightMargin;
-        final int left = right - mStickyFooterView.getMeasuredWidth();
-        mStickyFooterView.layout(left, top, right, bottom);
+        final int left = right - child.getMeasuredWidth();
+        child.layout(left, top, right, bottom);
         if (sDebug)
             Log.d(
                     TAG,
