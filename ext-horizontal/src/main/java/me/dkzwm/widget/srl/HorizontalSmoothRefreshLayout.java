@@ -130,7 +130,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 - lp.rightMargin;
                 int realWidth =
                         Math.min(
-                                mIndicator.getCurrentPos() - lp.topMargin - lp.rightMargin,
+                                mIndicator.getCurrentPos() - lp.leftMargin - lp.rightMargin,
                                 maxWidth);
                 childWidthMeasureSpec =
                         MeasureSpec.makeMeasureSpec(
@@ -200,7 +200,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 - lp.rightMargin;
                 int realWidth =
                         Math.min(
-                                mIndicator.getCurrentPos() - lp.topMargin - lp.rightMargin,
+                                mIndicator.getCurrentPos() - lp.leftMargin - lp.rightMargin,
                                 maxWidth);
                 childWidthMeasureSpec =
                         MeasureSpec.makeMeasureSpec(
