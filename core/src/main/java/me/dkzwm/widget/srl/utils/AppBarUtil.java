@@ -43,14 +43,21 @@ public class AppBarUtil
                 SmoothRefreshLayout.OnHeaderEdgeDetectCallBack,
                 SmoothRefreshLayout.OnFooterEdgeDetectCallBack {
     private boolean mFullyExpanded;
-    private boolean mFullCollapsed;
+    private boolean mFullyCollapsed;
     private boolean mFound = false;
     private AppBarLayout.OnOffsetChangedListener mListener;
 
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
         try {
-            AppBarLayout appBarLayout = findAppBarLayout(layout);
+            ViewGroup group = layout;
+            ViewGroup tempGroup = layout;
+            while (tempGroup != null) {
+                group = tempGroup;
+                if (group instanceof CoordinatorLayout) break;
+                tempGroup = findRootViewGroup(tempGroup);
+            }
+            AppBarLayout appBarLayout = findAppBarLayout(group);
             if (appBarLayout == null) return;
             if (mListener == null) {
                 mListener =
@@ -59,7 +66,7 @@ public class AppBarUtil
                             public void onOffsetChanged(
                                     AppBarLayout appBarLayout, int verticalOffset) {
                                 mFullyExpanded = verticalOffset >= 0;
-                                mFullCollapsed =
+                                mFullyCollapsed =
                                         appBarLayout.getTotalScrollRange() + verticalOffset <= 0;
                             }
                         };
@@ -85,23 +92,34 @@ public class AppBarUtil
     }
 
     private AppBarLayout findAppBarLayout(ViewGroup group) {
-        AppBarLayout bar = null;
+        if (group instanceof CoordinatorLayout) {
+            CoordinatorLayout layout = (CoordinatorLayout) group;
+            final int count = layout.getChildCount();
+            for (int i = 0; i < count; i++) {
+                final View subView = layout.getChildAt(i);
+                if (subView instanceof AppBarLayout) {
+                    return (AppBarLayout) subView;
+                }
+            }
+            return null;
+        }
         final int count = group.getChildCount();
         for (int i = 0; i < count; i++) {
             final View view = group.getChildAt(i);
             if (view instanceof CoordinatorLayout) {
-                CoordinatorLayout layout = (CoordinatorLayout) view;
-                final int subCount = layout.getChildCount();
-                for (int j = 0; j < subCount; j++) {
-                    final View subView = layout.getChildAt(j);
-                    if (subView instanceof AppBarLayout) {
-                        bar = (AppBarLayout) subView;
-                        break;
-                    }
-                }
+                return findAppBarLayout((ViewGroup) view);
+            } else if (view instanceof ViewGroup) {
+                AppBarLayout layout = findAppBarLayout((ViewGroup) view);
+                if (layout != null) return layout;
             }
         }
-        return bar;
+        return null;
+    }
+
+    private ViewGroup findRootViewGroup(ViewGroup group) {
+        if (group.getParent() != null && group.getParent() instanceof ViewGroup)
+            return (ViewGroup) group.getParent();
+        return null;
     }
 
     @Override
@@ -117,7 +135,7 @@ public class AppBarUtil
             SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
         View targetView = parent.getScrollTargetView();
         if (targetView == null) targetView = child;
-        return !mFullCollapsed || ScrollCompat.canChildScrollDown(targetView);
+        return !mFullyCollapsed || ScrollCompat.canChildScrollDown(targetView);
     }
 
     public boolean hasFound() {
