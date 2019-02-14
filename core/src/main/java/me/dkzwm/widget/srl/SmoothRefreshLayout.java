@@ -3976,7 +3976,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 && !mHasSendCancelEvent
                 && isEnabledOldTouchHandling()
                 && mIndicator.hasTouched()
-                && mIndicator.getCurrentPos() != IIndicator.START_POS) sendCancelEvent(null);
+                && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
         final int current = mIndicator.getCurrentPos();
@@ -4003,7 +4003,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 && !mHasSendCancelEvent
                 && isEnabledOldTouchHandling()
                 && mIndicator.hasTouched()
-                && mIndicator.getCurrentPos() != IIndicator.START_POS) sendCancelEvent(null);
+                && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         if (delta < 0) {
             final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
@@ -4125,7 +4125,7 @@ public class SmoothRefreshLayout extends ViewGroup
         boolean needRequestLayout = offsetChild(change, isMovingHeader, isMovingFooter);
         if (needRequestLayout) {
             requestLayout();
-        } else if (mBackgroundPaint != null || mIndicator.getCurrentPos() == IIndicator.START_POS) {
+        } else if (mBackgroundPaint != null || mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             invalidate();
         }
     }
