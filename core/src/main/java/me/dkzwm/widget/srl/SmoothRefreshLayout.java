@@ -3511,10 +3511,10 @@ public class SmoothRefreshLayout extends ViewGroup
                 mLastMoveEvent = ev;
                 if (tryToFilterTouchEvent(ev)) return true;
                 tryToResetMovingStatus();
-                final float[] pressDownPoint = mIndicator.getFingerDownPoint();
-                final float offsetX = ev.getX(index) - pressDownPoint[0];
-                final float offsetY = ev.getY(index) - pressDownPoint[1];
                 if (!mDealAnotherDirectionMove) {
+                    final float[] pressDownPoint = mIndicator.getFingerDownPoint();
+                    final float offsetX = ev.getX(index) - pressDownPoint[0];
+                    final float offsetY = ev.getY(index) - pressDownPoint[1];
                     tryToDealAnotherDirectionMove(offsetX, offsetY);
                     if (mDealAnotherDirectionMove)
                         mIndicatorSetter.onFingerDown(
