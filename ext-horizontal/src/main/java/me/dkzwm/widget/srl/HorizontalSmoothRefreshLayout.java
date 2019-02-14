@@ -30,7 +30,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.config.Constants;
@@ -101,9 +100,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                     0,
                                     specSize
                                             - (getPaddingLeft()
-                                            + getPaddingRight()
-                                            + lp.leftMargin
-                                            + lp.rightMargin));
+                                                    + getPaddingRight()
+                                                    + lp.leftMargin
+                                                    + lp.rightMargin));
                     mIndicatorSetter.setHeaderHeight(size);
                 } else {
                     mIndicatorSetter.setHeaderHeight(size + lp.leftMargin + lp.rightMargin);
@@ -171,9 +170,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                     0,
                                     specSize
                                             - (getPaddingLeft()
-                                            + getPaddingRight()
-                                            + lp.leftMargin
-                                            + lp.rightMargin));
+                                                    + getPaddingRight()
+                                                    + lp.leftMargin
+                                                    + lp.rightMargin));
                     mIndicatorSetter.setFooterHeight(size);
                 } else {
                     mIndicatorSetter.setFooterHeight(size + lp.leftMargin + lp.rightMargin);
@@ -269,8 +268,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 getPaddingLeft()
                                         + lp.leftMargin
                                         + (mIndicator.getCurrentPos()
-                                        - mIndicator.getHeaderHeight())
-                                        / 2;
+                                                        - mIndicator.getHeaderHeight())
+                                                / 2;
                     }
                 } else {
                     left = getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
@@ -342,25 +341,26 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     left = lp.leftMargin + contentRight;
                 }
                 break;
-            case IRefreshView.STYLE_FOLLOW_CENTER: {
-                child.setTranslationX(0);
-                if (isMovingFooter()) {
-                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
-                        left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
+            case IRefreshView.STYLE_FOLLOW_CENTER:
+                {
+                    child.setTranslationX(0);
+                    if (isMovingFooter()) {
+                        if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                            left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
+                        } else {
+                            left =
+                                    lp.leftMargin
+                                            + contentRight
+                                            - mIndicator.getCurrentPos()
+                                            + (mIndicator.getCurrentPos()
+                                                            - mIndicator.getFooterHeight())
+                                                    / 2;
+                        }
                     } else {
-                        left =
-                                lp.leftMargin
-                                        + contentRight
-                                        - mIndicator.getCurrentPos()
-                                        + (mIndicator.getCurrentPos()
-                                        - mIndicator.getFooterHeight())
-                                        / 2;
+                        left = lp.leftMargin + contentRight;
                     }
-                } else {
-                    left = lp.leftMargin + contentRight;
+                    break;
                 }
-                break;
-            }
         }
         if (isInEditMode()) left = left - child.getMeasuredWidth();
         right = left + child.getMeasuredWidth();

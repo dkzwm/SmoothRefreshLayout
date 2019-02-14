@@ -28,7 +28,6 @@ import android.os.Build;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.HorizontalScrollView;
-
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;

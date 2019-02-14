@@ -992,7 +992,7 @@ public class SmoothRefreshLayout extends ViewGroup
             if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 mOffsetConsumed = 0;
                 mOffsetTotal = 0;
-                mOffsetRemaining = mTouchSlop * 3;
+                mOffsetRemaining = mTouchSlop * 2;
             } else {
                 if (!mIndicator.isAlreadyHere(IIndicator.START_POS)
                         && mIndicator.getRawOffset() != 0) {
@@ -2838,7 +2838,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     return nested && dispatchNestedPreFling(-vx, -vy);
                 }
                 mScrollChecker.startFling(realVelocity);
-                if (!nested && isEnabledOldTouchHandling() && mIndicator.hasMoved()) {
+                if (!nested && isEnabledOldTouchHandling()) {
                     if (mDelayToDispatchNestedFling == null)
                         mDelayToDispatchNestedFling = new DelayToDispatchNestedFling();
                     mDelayToDispatchNestedFling.mLayoutWeakRf = new WeakReference<>(this);
@@ -3400,6 +3400,7 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) Log.d(TAG, String.format("processDispatchTouchEvent(): action: %s", action));
         if (mVelocityTracker == null) mVelocityTracker = VelocityTracker.obtain();
         mVelocityTracker.addMovement(ev);
+        final boolean oldTouchHanding = isEnabledOldTouchHandling();
         switch (action) {
             case MotionEvent.ACTION_UP:
                 final int pointerId = ev.getPointerId(0);
@@ -3513,7 +3514,12 @@ public class SmoothRefreshLayout extends ViewGroup
                 final float[] pressDownPoint = mIndicator.getFingerDownPoint();
                 final float offsetX = ev.getX(index) - pressDownPoint[0];
                 final float offsetY = ev.getY(index) - pressDownPoint[1];
-                if (!mDealAnotherDirectionMove) tryToDealAnotherDirectionMove(offsetX, offsetY);
+                if (!mDealAnotherDirectionMove) {
+                    tryToDealAnotherDirectionMove(offsetX, offsetY);
+                    if (mDealAnotherDirectionMove)
+                        mIndicatorSetter.onFingerDown(
+                                ev.getX(index) + offsetX / 10f, ev.getY(index) + offsetY / 10f);
+                }
                 final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
                 final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
                 if (mPreventForAnotherDirection) {
@@ -3533,7 +3539,7 @@ public class SmoothRefreshLayout extends ViewGroup
                         && mIndicator.hasLeftStartPosition()
                         && !canNotChildScrollDown) {
                     mScrollChecker.scrollTo(IIndicator.START_POS, 0);
-                    if (isEnabledOldTouchHandling()) return true;
+                    if (oldTouchHanding) return true;
                     return dispatchTouchEventSuper(ev);
                 }
                 if (!movingDown
@@ -3551,36 +3557,36 @@ public class SmoothRefreshLayout extends ViewGroup
                     if ((movingDown && !canHeaderMoveDown) || (!movingDown && !canFooterMoveUp)) {
                         if (isLoadingMore() && mIndicator.hasLeftStartPosition()) {
                             moveFooterPos(offset);
-                            if (isEnabledOldTouchHandling()) return true;
+                            if (oldTouchHanding) return true;
                         } else if (isRefreshing() && mIndicator.hasLeftStartPosition()) {
                             moveHeaderPos(offset);
-                            if (isEnabledOldTouchHandling()) return true;
+                            if (oldTouchHanding) return true;
                         }
                     } else if (movingDown) {
                         if (!isDisabledRefresh()) {
                             moveHeaderPos(offset);
-                            if (isEnabledOldTouchHandling()) return true;
+                            if (oldTouchHanding) return true;
                         }
                     } else if (!isDisabledLoadMore()) {
                         moveFooterPos(offset);
-                        if (isEnabledOldTouchHandling()) return true;
+                        if (oldTouchHanding) return true;
                     }
                 } else if (canMoveUp) {
                     if (isDisabledRefresh()) return dispatchTouchEventSuper(ev);
                     if ((!canHeaderMoveDown && movingDown)) {
-                        if (isEnabledOldTouchHandling()) sendDownEvent(ev);
+                        if (oldTouchHanding) sendDownEvent(ev);
                         return dispatchTouchEventSuper(ev);
                     }
                     moveHeaderPos(offset);
-                    if (isEnabledOldTouchHandling()) return true;
+                    if (oldTouchHanding) return true;
                 } else {
                     if (isDisabledLoadMore()) return dispatchTouchEventSuper(ev);
                     if ((!canFooterMoveUp && !movingDown)) {
-                        if (isEnabledOldTouchHandling()) sendDownEvent(ev);
+                        if (oldTouchHanding) sendDownEvent(ev);
                         return dispatchTouchEventSuper(ev);
                     }
                     moveFooterPos(offset);
-                    if (isEnabledOldTouchHandling()) return true;
+                    if (oldTouchHanding) return true;
                 }
         }
         return dispatchTouchEventSuper(ev);
@@ -3966,8 +3972,11 @@ public class SmoothRefreshLayout extends ViewGroup
 
     protected void moveHeaderPos(float delta) {
         if (sDebug) Log.d(TAG, String.format("moveHeaderPos(): delta: %s", delta));
-        if (!mNestedScrolling && isEnabledOldTouchHandling() && mIndicator.hasTouched())
-            sendCancelEvent(null);
+        if (!mNestedScrolling
+                && !mHasSendCancelEvent
+                && isEnabledOldTouchHandling()
+                && mIndicator.hasTouched()
+                && mIndicator.getCurrentPos() != IIndicator.START_POS) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
         final int current = mIndicator.getCurrentPos();
@@ -3990,8 +3999,11 @@ public class SmoothRefreshLayout extends ViewGroup
 
     protected void moveFooterPos(float delta) {
         if (sDebug) Log.d(TAG, String.format("moveFooterPos(): delta: %s", delta));
-        if (!mNestedScrolling && isEnabledOldTouchHandling() && mIndicator.hasTouched())
-            sendCancelEvent(null);
+        if (!mNestedScrolling
+                && !mHasSendCancelEvent
+                && isEnabledOldTouchHandling()
+                && mIndicator.hasTouched()
+                && mIndicator.getCurrentPos() != IIndicator.START_POS) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         if (delta < 0) {
             final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
