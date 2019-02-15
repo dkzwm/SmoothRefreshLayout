@@ -72,6 +72,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
 import me.dkzwm.widget.srl.utils.AppBarUtil;
 import me.dkzwm.widget.srl.utils.BoundaryUtil;
+import me.dkzwm.widget.srl.utils.SRReflectUtil;
 import me.dkzwm.widget.srl.utils.ScrollCompat;
 
 /**
@@ -3358,6 +3359,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mCachedPoint[1] = y;
         mCachedPoint[0] += group.getScrollX() - child.getLeft();
         mCachedPoint[1] += group.getScrollY() - child.getTop();
+        SRReflectUtil.compatMapTheInverseMatrix(child, mCachedPoint);
         final boolean isInView =
                 mCachedPoint[0] >= 0
                         && mCachedPoint[1] >= 0

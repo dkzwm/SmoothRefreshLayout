@@ -1,7 +1,6 @@
 package me.dkzwm.widget.srl.sample;
 
 import android.app.Application;
-import com.squareup.leakcanary.LeakCanary;
 import me.dkzwm.widget.srl.IRefreshViewCreator;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -18,7 +17,6 @@ public class DemoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LeakCanary.install(this);
         SmoothRefreshLayout.setDefaultCreator(
                 new IRefreshViewCreator() {
                     @Override
