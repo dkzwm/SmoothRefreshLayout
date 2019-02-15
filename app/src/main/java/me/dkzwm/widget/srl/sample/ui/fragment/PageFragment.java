@@ -28,12 +28,12 @@ public class PageFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(
-            LayoutInflater inflater,
+            @NonNull LayoutInflater inflater,
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_page, container, false);
+        view.findViewById(R.id.frameLayout_page).setBackgroundColor(mColor);
         TextView textView = view.findViewById(R.id.textView_page);
-        textView.setBackgroundColor(mColor);
         textView.setText(String.valueOf(mPage));
         return view;
     }
