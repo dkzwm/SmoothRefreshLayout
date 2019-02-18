@@ -31,7 +31,7 @@ import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.footer.MaterialFooter;
 import me.dkzwm.widget.srl.extra.header.MaterialHeader;
 import me.dkzwm.widget.srl.indicator.IIndicator;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /** @author dkzwm */
 public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {

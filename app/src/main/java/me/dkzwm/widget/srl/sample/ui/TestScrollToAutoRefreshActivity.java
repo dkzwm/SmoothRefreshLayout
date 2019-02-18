@@ -16,7 +16,7 @@ import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
-import me.dkzwm.widget.srl.utils.AutoRefreshUtil;
+import me.dkzwm.widget.srl.util.AutoRefreshUtil;
 
 /**
  * Created by dkzwm on 2017/12/23.

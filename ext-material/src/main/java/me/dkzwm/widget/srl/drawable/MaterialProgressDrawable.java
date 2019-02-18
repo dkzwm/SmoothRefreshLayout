@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /** Fancy progress indicator for Material theme. */
 public class MaterialProgressDrawable extends Drawable implements Animatable {

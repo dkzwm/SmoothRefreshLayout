@@ -16,7 +16,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.animation.StoreHouseBarItemAnimation;
 import me.dkzwm.widget.srl.sample.utils.StoreHousePath;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /**
  * Part of the code comes from @see <a

@@ -16,7 +16,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.RecyclerViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /**
  * Created by dkzwm on 2017/6/1.

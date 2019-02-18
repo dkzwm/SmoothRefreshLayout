@@ -70,10 +70,10 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
-import me.dkzwm.widget.srl.utils.AppBarUtil;
-import me.dkzwm.widget.srl.utils.BoundaryUtil;
-import me.dkzwm.widget.srl.utils.SRReflectUtil;
-import me.dkzwm.widget.srl.utils.ScrollCompat;
+import me.dkzwm.widget.srl.util.AppBarUtil;
+import me.dkzwm.widget.srl.util.BoundaryUtil;
+import me.dkzwm.widget.srl.util.SRReflectUtil;
+import me.dkzwm.widget.srl.util.ScrollCompat;
 
 /**
  * Created by dkzwm on 2017/5/18.
