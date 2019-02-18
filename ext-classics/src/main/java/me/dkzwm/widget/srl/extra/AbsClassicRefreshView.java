@@ -42,7 +42,7 @@ import android.widget.TextView;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.indicator.IIndicator;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /** @author dkzwm */
 public abstract class AbsClassicRefreshView<T extends IIndicator> extends RelativeLayout

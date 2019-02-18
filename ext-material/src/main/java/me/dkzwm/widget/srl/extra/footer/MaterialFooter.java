@@ -38,7 +38,7 @@ import android.view.View;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /** @author dkzwm */
 public class MaterialFooter<T extends IIndicator> extends View implements IRefreshView<T> {

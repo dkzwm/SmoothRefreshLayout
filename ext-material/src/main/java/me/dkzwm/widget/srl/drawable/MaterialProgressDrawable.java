@@ -45,7 +45,7 @@ import android.view.animation.Transformation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /** Fancy progress indicator for Material theme. */
 public class MaterialProgressDrawable extends Drawable implements Animatable {

@@ -14,7 +14,7 @@ import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.header.StoreHouseHeader;
-import me.dkzwm.widget.srl.utils.PixelUtl;
+import me.dkzwm.widget.srl.util.PixelUtl;
 
 /**
  * Created by dkzwm on 2017/6/1.

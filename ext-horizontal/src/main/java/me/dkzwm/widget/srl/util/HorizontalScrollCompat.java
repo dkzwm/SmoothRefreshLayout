@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.dkzwm.widget.srl.utils;
+package me.dkzwm.widget.srl.util;
 
 import android.os.Build;
 import android.support.v4.view.ViewCompat;
