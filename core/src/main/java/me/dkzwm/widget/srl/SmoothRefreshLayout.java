@@ -3204,9 +3204,9 @@ public class SmoothRefreshLayout extends ViewGroup
     public boolean canScrollVertically(int direction) {
         if (isVerticalOrientation()) {
             if (direction < 0) {
-                if (isDisabledLoadMore()) return isNotYetInEdgeCannotMoveFooter();
-            } else {
                 if (isDisabledRefresh()) return isNotYetInEdgeCannotMoveHeader();
+            } else {
+                if (isDisabledLoadMore()) return isNotYetInEdgeCannotMoveFooter();
             }
         }
         return super.canScrollVertically(direction);
@@ -3216,9 +3216,9 @@ public class SmoothRefreshLayout extends ViewGroup
     public boolean canScrollHorizontally(int direction) {
         if (!isVerticalOrientation()) {
             if (direction < 0) {
-                if (isDisabledLoadMore()) return isNotYetInEdgeCannotMoveFooter();
-            } else {
                 if (isDisabledRefresh()) return isNotYetInEdgeCannotMoveHeader();
+            } else {
+                if (isDisabledLoadMore()) return isNotYetInEdgeCannotMoveFooter();
             }
         }
         return super.canScrollHorizontally(direction);
