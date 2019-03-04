@@ -3200,6 +3200,30 @@ public class SmoothRefreshLayout extends ViewGroup
         onNestedScrollChanged();
     }
 
+    @Override
+    public boolean canScrollVertically(int direction) {
+        if (isVerticalOrientation()) {
+            if (direction < 0) {
+                if (isDisabledLoadMore()) return isNotYetInEdgeCannotMoveFooter();
+            } else {
+                if (isDisabledRefresh()) return isNotYetInEdgeCannotMoveHeader();
+            }
+        }
+        return super.canScrollVertically(direction);
+    }
+
+    @Override
+    public boolean canScrollHorizontally(int direction) {
+        if (!isVerticalOrientation()) {
+            if (direction < 0) {
+                if (isDisabledLoadMore()) return isNotYetInEdgeCannotMoveFooter();
+            } else {
+                if (isDisabledRefresh()) return isNotYetInEdgeCannotMoveHeader();
+            }
+        }
+        return super.canScrollHorizontally(direction);
+    }
+
     public void onNestedScrollChanged() {
         if (mNeedFilterScrollEvent) {
             mNeedFilterScrollEvent = false;
