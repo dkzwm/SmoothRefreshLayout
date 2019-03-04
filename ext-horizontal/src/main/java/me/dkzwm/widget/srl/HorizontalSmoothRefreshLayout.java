@@ -529,11 +529,11 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                     mStickyHeaderView.setTranslationX(mIndicator.getCurrentPos());
                 if (isMovingFooter && mStickyFooterView != null)
                     mStickyFooterView.setTranslationX(-mIndicator.getCurrentPos());
-                if (mScrollTargetView != null && isMovingFooter) {
+                if (mScrollTargetView != null && isMovingFooter)
                     mScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
-                } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
+                else if (mAutoFoundScrollTargetView != null && isMovingFooter)
                     mAutoFoundScrollTargetView.setTranslationX(-mIndicator.getCurrentPos());
-                } else if (mTargetView != null) {
+                else if (mTargetView != null) {
                     if (isMovingHeader) mTargetView.setTranslationX(mIndicator.getCurrentPos());
                     else if (isMovingFooter)
                         mTargetView.setTranslationX(-mIndicator.getCurrentPos());
@@ -551,13 +551,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 }
             } else if (isMovingFooter) {
                 final View targetView;
-                if (mScrollTargetView != null) {
-                    targetView = mScrollTargetView;
-                } else if (mAutoFoundScrollTargetView != null) {
+                if (mScrollTargetView != null) targetView = mScrollTargetView;
+                else if (mAutoFoundScrollTargetView != null)
                     targetView = mAutoFoundScrollTargetView;
-                } else {
-                    targetView = mTargetView;
-                }
+                else targetView = mTargetView;
                 if (HorizontalScrollCompat.canScaleInternal(targetView)) {
                     View view = ((ViewGroup) targetView).getChildAt(0);
                     view.setPivotX(view.getWidth());
@@ -595,11 +592,8 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void compatLoadMoreScroll(View view, float delta) {
-        if (mLoadMoreScrollCallback == null) {
-            HorizontalScrollCompat.scrollCompat(view, delta);
-        } else {
-            mLoadMoreScrollCallback.onScroll(view, delta);
-        }
+        if (mLoadMoreScrollCallback == null) HorizontalScrollCompat.scrollCompat(view, delta);
+        else mLoadMoreScrollCallback.onScroll(view, delta);
     }
 
     @Override
@@ -607,9 +601,9 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         if (sDebug) Log.d(TAG, String.format("dispatchNestedFling() : %s", velocity));
         if (mScrollTargetView != null)
             HorizontalScrollCompat.flingCompat(mScrollTargetView, -velocity);
-        else if (mAutoFoundScrollTargetView != null) {
+        else if (mAutoFoundScrollTargetView != null)
             HorizontalScrollCompat.flingCompat(mAutoFoundScrollTargetView, -velocity);
-        } else HorizontalScrollCompat.flingCompat(mTargetView, -velocity);
+        else if (mTargetView != null) HorizontalScrollCompat.flingCompat(mTargetView, -velocity);
     }
 
     @Override
