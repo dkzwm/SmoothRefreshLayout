@@ -205,6 +205,7 @@ public class SmoothRefreshLayout extends ViewGroup
     private ArrayList<ILifecycleObserver> mLifecycleObservers;
     private DelayToDispatchNestedFling mDelayToDispatchNestedFling;
     private DelayToRefreshComplete mDelayToRefreshComplete;
+    private DelayToPerformAutoRefresh mDelayToPerformAutoRefresh;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
     private boolean mIsLastRefreshSuccessful = true;
@@ -269,6 +270,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mNestedScrollingParentHelper = new NestedScrollingParentHelper(this);
         mAppBarUtil = new AppBarUtil();
+        mDelayToPerformAutoRefresh = new DelayToPerformAutoRefresh();
         TypedArray arr =
                 context.obtainStyledAttributes(
                         attrs, R.styleable.SmoothRefreshLayout, defStyleAttr, defStyleRes);
@@ -738,7 +740,10 @@ public class SmoothRefreshLayout extends ViewGroup
             layoutFooterView(mFooterView.getView(), contentBottom);
         if (mStickyFooterView != null && mStickyFooterView.getVisibility() != GONE)
             layoutStickyFooterView(mStickyFooterView, contentBottom);
-        tryToPerformAutoRefresh();
+        if (!mAutomaticActionTriggered) {
+            removeCallbacks(mDelayToPerformAutoRefresh);
+            postDelayed(mDelayToPerformAutoRefresh, 90);
+        }
     }
 
     protected int layoutContentView(View child) {
@@ -1587,6 +1592,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mAutomaticAction = action;
         if (mIndicator.getHeaderHeight() <= 0) {
             mAutomaticActionTriggered = false;
+            mDelayToPerformAutoRefresh.mLayoutWeakRf = new WeakReference<>(this);
         } else {
             scrollToTriggeredAutomatic(true);
         }
@@ -1661,6 +1667,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mAutomaticActionUseSmoothScroll = smoothScroll;
         if (mIndicator.getFooterHeight() <= 0) {
             mAutomaticActionTriggered = false;
+            mDelayToPerformAutoRefresh.mLayoutWeakRf = new WeakReference<>(this);
         } else {
             scrollToTriggeredAutomatic(false);
         }
@@ -3544,7 +3551,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     tryToDealAnotherDirectionMove(offsetX, offsetY);
                     if (mDealAnotherDirectionMove)
                         mIndicatorSetter.onFingerDown(
-                                ev.getX(index) + offsetX / 10f, ev.getY(index) + offsetY / 10f);
+                                ev.getX(index) - offsetX / 10, ev.getY(index) - offsetY / 10);
                 }
                 final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
                 final boolean canNotChildScrollUp = !isNotYetInEdgeCannotMoveHeader();
@@ -4850,6 +4857,19 @@ public class SmoothRefreshLayout extends ViewGroup
             if (mLayoutWeakRf.get() != null) {
                 if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
                 mLayoutWeakRf.get().dispatchNestedFling(mVelocity);
+            }
+        }
+    }
+
+    /** Delayed to dispatch nested fling */
+    private static class DelayToPerformAutoRefresh implements Runnable {
+        private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
+
+        @Override
+        public void run() {
+            if (mLayoutWeakRf.get() != null) {
+                if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
+                mLayoutWeakRf.get().tryToPerformAutoRefresh();
             }
         }
     }
