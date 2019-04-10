@@ -59,7 +59,6 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -459,6 +458,9 @@ public class SmoothRefreshLayout extends ViewGroup
         reset();
         if (mHeaderRefreshCompleteHook != null) mHeaderRefreshCompleteHook.mLayout = null;
         if (mFooterRefreshCompleteHook != null) mFooterRefreshCompleteHook.mLayout = null;
+        if (mDelayToDispatchNestedFling != null) mDelayToDispatchNestedFling.mLayout = null;
+        if (mDelayToRefreshComplete != null) mDelayToRefreshComplete.mLayout = null;
+        mDelayToPerformAutoRefresh.mLayout = null;
         if (sDebug) Log.d(TAG, "onDetachedFromWindow()");
         super.onDetachedFromWindow();
     }
@@ -471,6 +473,7 @@ public class SmoothRefreshLayout extends ViewGroup
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) observer.onAttached(this);
         }
+        mDelayToPerformAutoRefresh.mLayout = this;
         if (mAppBarUtil != null) mAppBarUtil.onAttached(this);
     }
 
@@ -1471,7 +1474,7 @@ public class SmoothRefreshLayout extends ViewGroup
             } else {
                 if (mDelayToRefreshComplete == null)
                     mDelayToRefreshComplete = new DelayToRefreshComplete();
-                mDelayToRefreshComplete.mLayoutWeakRf = new WeakReference<>(this);
+                mDelayToRefreshComplete.mLayout = this;
                 mDelayToRefreshComplete.mNotifyViews = true;
                 postDelayed(mDelayToRefreshComplete, delay);
             }
@@ -1484,7 +1487,7 @@ public class SmoothRefreshLayout extends ViewGroup
             if (delayDurationToChangeState < delay) delayDurationToChangeState = delay;
             if (mDelayToRefreshComplete == null)
                 mDelayToRefreshComplete = new DelayToRefreshComplete();
-            mDelayToRefreshComplete.mLayoutWeakRf = new WeakReference<>(this);
+            mDelayToRefreshComplete.mLayout = this;
             mDelayToRefreshComplete.mNotifyViews = false;
             postDelayed(mDelayToRefreshComplete, delayDurationToChangeState);
         }
@@ -1592,7 +1595,6 @@ public class SmoothRefreshLayout extends ViewGroup
         mAutomaticAction = action;
         if (mIndicator.getHeaderHeight() <= 0) {
             mAutomaticActionTriggered = false;
-            mDelayToPerformAutoRefresh.mLayoutWeakRf = new WeakReference<>(this);
         } else {
             scrollToTriggeredAutomatic(true);
         }
@@ -1667,7 +1669,6 @@ public class SmoothRefreshLayout extends ViewGroup
         mAutomaticActionUseSmoothScroll = smoothScroll;
         if (mIndicator.getFooterHeight() <= 0) {
             mAutomaticActionTriggered = false;
-            mDelayToPerformAutoRefresh.mLayoutWeakRf = new WeakReference<>(this);
         } else {
             scrollToTriggeredAutomatic(false);
         }
@@ -2849,7 +2850,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (!nested && isEnabledOldTouchHandling()) {
                     if (mDelayToDispatchNestedFling == null)
                         mDelayToDispatchNestedFling = new DelayToDispatchNestedFling();
-                    mDelayToDispatchNestedFling.mLayoutWeakRf = new WeakReference<>(this);
+                    mDelayToDispatchNestedFling.mLayout = this;
                     mDelayToDispatchNestedFling.mVelocity = (int) realVelocity;
                     ViewCompat.postOnAnimation(this, mDelayToDispatchNestedFling);
                     invalidate();
@@ -3300,7 +3301,9 @@ public class SmoothRefreshLayout extends ViewGroup
         notifyStatusChanged(old, mStatus);
         mAutomaticActionTriggered = true;
         mScrollChecker.stop();
-        if (mDelayToRefreshComplete != null) removeCallbacks(mDelayToRefreshComplete);
+        removeCallbacks(mDelayToRefreshComplete);
+        removeCallbacks(mDelayToDispatchNestedFling);
+        removeCallbacks(mDelayToPerformAutoRefresh);
         if (sDebug) Log.d(TAG, "reset()");
     }
 
@@ -4835,41 +4838,41 @@ public class SmoothRefreshLayout extends ViewGroup
 
     /** Delayed completion of loading */
     private static class DelayToRefreshComplete implements Runnable {
-        private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
+        private SmoothRefreshLayout mLayout;
         private boolean mNotifyViews;
 
         @Override
         public void run() {
-            if (mLayoutWeakRf.get() != null) {
-                if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToRefreshComplete: run()");
-                mLayoutWeakRf.get().performRefreshComplete(true, mNotifyViews);
+            if (mLayout != null) {
+                if (sDebug) Log.d(mLayout.TAG, "DelayToRefreshComplete: run()");
+                mLayout.performRefreshComplete(true, mNotifyViews);
             }
         }
     }
 
     /** Delayed to dispatch nested fling */
     private static class DelayToDispatchNestedFling implements Runnable {
-        private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
+        private SmoothRefreshLayout mLayout;
         private int mVelocity;
 
         @Override
         public void run() {
-            if (mLayoutWeakRf.get() != null) {
-                if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
-                mLayoutWeakRf.get().dispatchNestedFling(mVelocity);
+            if (mLayout != null) {
+                if (sDebug) Log.d(mLayout.TAG, "DelayToDispatchNestedFling: run()");
+                mLayout.dispatchNestedFling(mVelocity);
             }
         }
     }
 
-    /** Delayed to dispatch nested fling */
+    /** Delayed to perform auto refresh */
     private static class DelayToPerformAutoRefresh implements Runnable {
-        private WeakReference<SmoothRefreshLayout> mLayoutWeakRf;
+        private SmoothRefreshLayout mLayout;
 
         @Override
         public void run() {
-            if (mLayoutWeakRf.get() != null) {
-                if (sDebug) Log.d(mLayoutWeakRf.get().TAG, "DelayToDispatchNestedFling: run()");
-                mLayoutWeakRf.get().tryToPerformAutoRefresh();
+            if (mLayout != null) {
+                if (sDebug) Log.d(mLayout.TAG, "DelayToPerformAutoRefresh: run()");
+                mLayout.tryToPerformAutoRefresh();
             }
         }
     }

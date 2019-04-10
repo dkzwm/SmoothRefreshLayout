@@ -97,7 +97,7 @@ public class TestTwoLevelRefreshActivity extends AppCompatActivity {
                         }
                     }
                 });
-        mRefreshLayout.autoTwoLevelRefreshHint(false, 2000, true);
+        mRefreshLayout.autoTwoLevelRefreshHint(true, 2000, true);
     }
 
     @Override
