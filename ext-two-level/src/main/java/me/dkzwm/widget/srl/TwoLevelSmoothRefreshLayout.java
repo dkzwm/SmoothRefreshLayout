@@ -35,7 +35,6 @@ import android.view.ViewGroup;
 import androidx.annotation.CallSuper;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
-import java.lang.ref.WeakReference;
 import me.dkzwm.widget.srl.annotation.Action;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.ext.twolevel.R;
@@ -318,7 +317,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mNeedFilterRefreshEvent = false;
             mDurationToStayAtHint = 0;
             final int action = ev.getAction() & MotionEvent.ACTION_MASK;
-            if (action == MotionEvent.ACTION_DOWN && mDelayToBackToTopRunnable != null) {
+            if (action == MotionEvent.ACTION_DOWN) {
                 removeCallbacks(mDelayToBackToTopRunnable);
             }
         }
@@ -339,6 +338,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                 mScrollChecker.scrollTo(
                         offsetToRefreshHint,
                         mAutomaticActionUseSmoothScroll ? mDurationToCloseHeader : 0);
+                return;
             }
         }
         if (mNeedFilterRefreshEvent) super.tryToPerformAutoRefresh();
@@ -351,8 +351,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
                     && (mStatus == SR_STATUS_PREPARE
                             || (mStatus == SR_STATUS_COMPLETE && isEnabledNextPtrAtOnce()))) {
                 // reach fresh height while moving from top to bottom or reach load more height
-                // while
-                // moving from bottom to top
+                // while moving from bottom to top
                 if (mIndicator.hasTouched() && !isAutoRefresh() && isEnabledPullToRefresh()) {
                     if (isMovingHeader() && mTwoLevelIndicator.crossTwoLevelRefreshLine())
                         tryToPerformRefresh();
@@ -386,14 +385,16 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
             mNeedFilterRefreshEvent = false;
             mAutoHintCanBeInterrupted = true;
             mDurationToStayAtHint = 0;
-            if (mDelayToBackToTopRunnable != null) removeCallbacks(mDelayToBackToTopRunnable);
+            removeCallbacks(mDelayToBackToTopRunnable);
+            if (mDelayToBackToTopRunnable != null) mDelayToBackToTopRunnable.mLayout = null;
         }
         return reset;
     }
 
     @Override
     protected void reset() {
-        if (mDelayToBackToTopRunnable != null) removeCallbacks(mDelayToBackToTopRunnable);
+        removeCallbacks(mDelayToBackToTopRunnable);
+        if (mDelayToBackToTopRunnable != null) mDelayToBackToTopRunnable.mLayout = null;
         super.reset();
     }
 
@@ -482,9 +483,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     private void delayForStay() {
-        if (mDelayToBackToTopRunnable == null)
-            mDelayToBackToTopRunnable = new DelayToBackToTop(this);
-        else mDelayToBackToTopRunnable.mLayoutWeakRf = new WeakReference<>(this);
+        if (mDelayToBackToTopRunnable == null) mDelayToBackToTopRunnable = new DelayToBackToTop();
+        mDelayToBackToTopRunnable.mLayout = this;
         postDelayed(mDelayToBackToTopRunnable, mDurationToStayAtHint);
     }
 
@@ -493,19 +493,14 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     private static class DelayToBackToTop implements Runnable {
-        private WeakReference<TwoLevelSmoothRefreshLayout> mLayoutWeakRf;
-
-        private DelayToBackToTop(TwoLevelSmoothRefreshLayout layout) {
-            mLayoutWeakRf = new WeakReference<>(layout);
-        }
+        private TwoLevelSmoothRefreshLayout mLayout;
 
         @Override
         public void run() {
-            if (mLayoutWeakRf.get() != null) {
-                if (SmoothRefreshLayout.sDebug)
-                    Log.d(mLayoutWeakRf.get().TAG, "DelayToBackToTop: run()");
-                TwoLevelSmoothRefreshLayout layout = mLayoutWeakRf.get();
-                layout.mScrollChecker.scrollTo(IIndicator.START_POS, layout.mDurationToCloseHeader);
+            if (mLayout != null) {
+                if (SmoothRefreshLayout.sDebug) Log.d(mLayout.TAG, "DelayToBackToTop: run()");
+                mLayout.mScrollChecker.scrollTo(
+                        IIndicator.START_POS, mLayout.mDurationToCloseHeader);
             }
         }
     }
