@@ -42,8 +42,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  */
 public class HorizontalBoundaryUtil {
     public static boolean isInsideVerticalView(float rawX, float rawY, @NonNull View view) {
-        boolean isHorizontalView = isVerticalView(view);
-        if (isHorizontalView) {
+        boolean isVerticalView = isVerticalView(view);
+        if (isVerticalView) {
             return BoundaryUtil.isInsideView(rawX, rawY, view);
         } else if (view instanceof ViewGroup)
             return isInsideViewGroup(rawX, rawY, (ViewGroup) view);
@@ -55,14 +55,13 @@ public class HorizontalBoundaryUtil {
         for (int i = 0; i < size; i++) {
             View child = group.getChildAt(i);
             if (child.getVisibility() != View.VISIBLE) continue;
-            boolean isHorizontalView = isVerticalView(child);
-            if (isHorizontalView) {
+            boolean isVerticalView = isVerticalView(child);
+            if (isVerticalView) {
                 boolean isInside = BoundaryUtil.isInsideView(rawX, rawY, child);
                 if (isInside) return true;
             } else {
-                if (child instanceof ViewGroup) {
+                if (child instanceof ViewGroup)
                     return isInsideViewGroup(rawX, rawY, (ViewGroup) child);
-                }
             }
         }
         return false;
@@ -80,12 +79,11 @@ public class HorizontalBoundaryUtil {
             if (manager != null) {
                 if (manager instanceof LinearLayoutManager) {
                     LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                    return linearManager.getOrientation() == LinearLayoutManager.VERTICAL;
+                    return linearManager.getOrientation() == RecyclerView.VERTICAL;
                 } else if (manager instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager gridLayoutManager =
                             (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation()
-                            == StaggeredGridLayoutManager.VERTICAL;
+                    return gridLayoutManager.getOrientation() == RecyclerView.VERTICAL;
                 }
             }
         }

@@ -87,12 +87,11 @@ public class ScrollCompat {
             int lastVisiblePosition = 0;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL) return false;
+                if (linearManager.getOrientation() == RecyclerView.HORIZONTAL) return false;
                 lastVisiblePosition = linearManager.findLastVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
-                    return false;
+                if (gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) return false;
                 int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findLastVisibleItemPositions(lastPositions);
                 lastVisiblePosition = lastPositions[0];
@@ -124,12 +123,11 @@ public class ScrollCompat {
             int firstVisiblePosition = -1;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                if (linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL) return false;
+                if (linearManager.getOrientation() == RecyclerView.HORIZONTAL) return false;
                 firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() == StaggeredGridLayoutManager.HORIZONTAL)
-                    return false;
+                if (gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) return false;
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
                 firstVisiblePosition = firstPositions[0];

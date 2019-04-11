@@ -69,9 +69,8 @@ public class BoundaryUtil {
                 boolean isInside = isInsideView(rawX, rawY, child);
                 if (isInside) return true;
             } else {
-                if (child instanceof ViewGroup) {
+                if (child instanceof ViewGroup)
                     return isInsideViewGroup(rawX, rawY, (ViewGroup) child);
-                }
             }
         }
         return false;
@@ -88,12 +87,11 @@ public class BoundaryUtil {
             if (manager != null) {
                 if (manager instanceof LinearLayoutManager) {
                     LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                    return linearManager.getOrientation() == LinearLayoutManager.HORIZONTAL;
+                    return linearManager.getOrientation() == RecyclerView.HORIZONTAL;
                 } else if (manager instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager gridLayoutManager =
                             (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation()
-                            == StaggeredGridLayoutManager.HORIZONTAL;
+                    return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
                 }
             }
         }
