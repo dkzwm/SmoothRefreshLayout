@@ -28,6 +28,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.view.View;
 import android.widget.AbsListView;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -46,10 +47,12 @@ public class SRReflectUtil {
     private static Method sTrackMotionScrollMethod;
     private static Method sHasIdentityMatrixMethod;
     private static Method sGetInverseMatrixMethod;
+    private static boolean sFound = false;
 
     @SuppressLint("PrivateApi")
     @SuppressWarnings("unchecked")
     static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
+        if (sFound) return;
         if (sFlingRunnableClass == null) {
             Class<?>[] clazz = AbsListView.class.getDeclaredClasses();
             for (Class c : clazz) {
@@ -59,11 +62,12 @@ public class SRReflectUtil {
                 }
             }
         }
+        sFound = true;
         if (sFlingRunnableClass == null) return;
         try {
             if (sFlingRunnableField == null) {
                 sFlingRunnableField = AbsListView.class.getDeclaredField("mFlingRunnable");
-                if (sFlingRunnableField != null) sFlingRunnableField.setAccessible(true);
+                sFlingRunnableField.setAccessible(true);
             }
             if (sFlingRunnableField == null) return;
             Object obj = sFlingRunnableField.get(view);
@@ -71,8 +75,7 @@ public class SRReflectUtil {
                 if (sFlingRunnableConstructor == null) {
                     sFlingRunnableConstructor =
                             sFlingRunnableClass.getDeclaredConstructor(AbsListView.class);
-                    if (sFlingRunnableConstructor != null)
-                        sFlingRunnableConstructor.setAccessible(true);
+                    sFlingRunnableConstructor.setAccessible(true);
                 }
                 if (sFlingRunnableConstructor == null) return;
                 obj = sFlingRunnableConstructor.newInstance(view);
@@ -81,8 +84,7 @@ public class SRReflectUtil {
             if (sReportScrollStateChangeMethod == null) {
                 sReportScrollStateChangeMethod =
                         AbsListView.class.getDeclaredMethod("reportScrollStateChange", int.class);
-                if (sReportScrollStateChangeMethod != null)
-                    sReportScrollStateChangeMethod.setAccessible(true);
+                sReportScrollStateChangeMethod.setAccessible(true);
             }
             if (sReportScrollStateChangeMethod == null) return;
             sReportScrollStateChangeMethod.invoke(
@@ -90,8 +92,7 @@ public class SRReflectUtil {
             if (sFlingRunnableStartMethod == null) {
                 sFlingRunnableStartMethod =
                         sFlingRunnableClass.getDeclaredMethod("start", int.class);
-                if (sFlingRunnableStartMethod != null)
-                    sFlingRunnableStartMethod.setAccessible(true);
+                sFlingRunnableStartMethod.setAccessible(true);
             }
             if (sFlingRunnableStartMethod == null) return;
             sFlingRunnableStartMethod.invoke(obj, velocityY);
