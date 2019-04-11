@@ -91,8 +91,7 @@ public class BoundaryUtil {
                 } else if (manager instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager gridLayoutManager =
                             (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation()
-                            == RecyclerView.HORIZONTAL;
+                    return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
                 }
             }
         }

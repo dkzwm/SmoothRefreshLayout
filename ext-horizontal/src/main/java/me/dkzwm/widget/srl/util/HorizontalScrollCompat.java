@@ -98,8 +98,7 @@ public class HorizontalScrollCompat {
                 } else if (manager instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager gridLayoutManager =
                             (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation()
-                            == RecyclerView.HORIZONTAL;
+                    return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
                 }
             }
         }
@@ -118,8 +117,7 @@ public class HorizontalScrollCompat {
                 lastVisiblePosition = linearManager.findLastVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL)
-                    return false;
+                if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL) return false;
                 int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findLastVisibleItemPositions(lastPositions);
                 lastVisiblePosition = lastPositions[0];
@@ -150,8 +148,7 @@ public class HorizontalScrollCompat {
                 firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
             } else if (manager instanceof StaggeredGridLayoutManager) {
                 StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
-                if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL)
-                    return false;
+                if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL) return false;
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
                 firstVisiblePosition = firstPositions[0];

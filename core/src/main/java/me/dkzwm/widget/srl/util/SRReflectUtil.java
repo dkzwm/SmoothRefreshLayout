@@ -28,7 +28,6 @@ import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.view.View;
 import android.widget.AbsListView;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

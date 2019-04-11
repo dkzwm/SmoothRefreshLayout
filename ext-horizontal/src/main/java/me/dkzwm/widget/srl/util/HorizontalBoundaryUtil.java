@@ -83,8 +83,7 @@ public class HorizontalBoundaryUtil {
                 } else if (manager instanceof StaggeredGridLayoutManager) {
                     StaggeredGridLayoutManager gridLayoutManager =
                             (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation()
-                            == RecyclerView.VERTICAL;
+                    return gridLayoutManager.getOrientation() == RecyclerView.VERTICAL;
                 }
             }
         }
