@@ -78,7 +78,8 @@ public class AutoRefreshUtil
                     ScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
                 } else if (mRefreshLayout.getSupportScrollAxis()
                         == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
-                    HorizontalScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
+                    HorizontalScrollCompat.flingCompat(
+                            mTargetView, -mMaximumFlingVelocity, Integer.MAX_VALUE);
                 }
                 mNeedToTriggerRefresh = true;
                 mCachedActionAtOnce = atOnce;
@@ -100,7 +101,8 @@ public class AutoRefreshUtil
                     ScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
                 } else if (mRefreshLayout.getSupportScrollAxis()
                         == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
-                    HorizontalScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
+                    HorizontalScrollCompat.flingCompat(
+                            mTargetView, mMaximumFlingVelocity, Integer.MAX_VALUE);
                 }
                 mNeedToTriggerLoadMore = true;
                 mCachedActionAtOnce = atOnce;
