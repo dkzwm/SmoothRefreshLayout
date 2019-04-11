@@ -4901,7 +4901,7 @@ public class SmoothRefreshLayout extends ViewGroup
             $Interpolator = mSpringInterpolator;
             $Physical = SensorManager.GRAVITY_EARTH * 39.37f * dm.density * 160f * 0.84f;
             $Scroller = new Scroller(getContext(), $Interpolator);
-            $CalcScroller=new Scroller(getContext());
+            $CalcScroller = new Scroller(getContext());
         }
 
         @Override
