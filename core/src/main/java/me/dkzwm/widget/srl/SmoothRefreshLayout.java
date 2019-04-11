@@ -4881,6 +4881,7 @@ public class SmoothRefreshLayout extends ViewGroup
         private final float $Physical;
         private final int $MaxDistance;
         Scroller $Scroller;
+        Scroller $CalcScroller;
         Interpolator $Interpolator;
         int $LastY;
         int $LastStart;
@@ -4900,6 +4901,7 @@ public class SmoothRefreshLayout extends ViewGroup
             $Interpolator = mSpringInterpolator;
             $Physical = SensorManager.GRAVITY_EARTH * 39.37f * dm.density * 160f * 0.84f;
             $Scroller = new Scroller(getContext(), $Interpolator);
+            $CalcScroller=new Scroller(getContext());
         }
 
         @Override
@@ -4998,8 +5000,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
 
         int getFinalY(float v) {
-            stop();
-            $Scroller.fling(
+            $CalcScroller.fling(
                     0,
                     0,
                     0,
@@ -5008,14 +5009,14 @@ public class SmoothRefreshLayout extends ViewGroup
                     Integer.MAX_VALUE,
                     Integer.MIN_VALUE,
                     Integer.MAX_VALUE);
-            final int y = Math.abs($Scroller.getFinalY());
+            final int y = Math.abs($CalcScroller.getFinalY());
             if (sDebug)
                 Log.d(
                         TAG,
                         String.format(
                                 "ScrollChecker: getFinalY(): v: %s, finalY: %s, " + "currentY: %s",
                                 v, y, mIndicator.getCurrentPos()));
-            $Scroller.forceFinished(true);
+            $CalcScroller.abortAnimation();
             return y;
         }
 
