@@ -56,7 +56,6 @@ public class HorizontalScrollCompat {
         if (view != null) {
             try {
                 if (view instanceof WebView
-                        || view instanceof ViewPager
                         || view instanceof HorizontalScrollView
                         || ScrollCompat.isRecyclerView(view)) {
                     view.scrollBy((int) deltaY, 0);
@@ -69,13 +68,26 @@ public class HorizontalScrollCompat {
         return false;
     }
 
-    public static void flingCompat(View view, int velocityX) {
+    public static void flingCompat(View view, int velocityX, int distance) {
         if (view instanceof WebView) {
             ((WebView) view).flingScroll(velocityX, 0);
         } else if (ScrollCompat.isRecyclerView(view)) {
             ((RecyclerView) view).fling(velocityX, 0);
         } else if (view instanceof HorizontalScrollView) {
             ((HorizontalScrollView) view).fling(velocityX);
+        } else if (view instanceof ViewPager) {
+            final PagerAdapter adapter = ((ViewPager) view).getAdapter();
+            final ViewPager pager = (ViewPager) view;
+            if (adapter == null) return;
+            final int count = adapter.getCount();
+            final int now = pager.getCurrentItem();
+            final int half = pager.getWidth() / 2;
+            if (Math.abs(distance) < half) return;
+            if (velocityX > 0) {
+                if (count > now) pager.setCurrentItem(now + 1, true);
+            } else {
+                if (now > 0) pager.setCurrentItem(now - 1, true);
+            }
         }
     }
 
