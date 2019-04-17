@@ -26,24 +26,30 @@ package me.dkzwm.widget.srl.indicator;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 import me.dkzwm.widget.srl.config.Constants;
 
-/** @author dkzwm */
+/**
+ * @author dkzwm
+ */
 public class DefaultIndicator implements IIndicator, IIndicatorSetter {
-    protected final float[] mLastMovePoint = new float[] {0f, 0f};
-    protected final float[] mFingerDownPoint = new float[] {0f, 0f};
-    protected IOffsetCalculator mOffsetCalculator;
-    protected int mCurrentPos = 0;
-    protected int mLastPos = 0;
-    protected int mHeaderHeight = -1;
-    protected int mFooterHeight = -1;
-    protected int mPressedPos = 0;
-    protected float mOffset;
-    protected boolean mTouched = false;
-    @MovingStatus protected int mStatus = Constants.MOVING_CONTENT;
-    protected float mResistanceHeader = DEFAULT_RESISTANCE;
-    protected float mResistanceFooter = DEFAULT_RESISTANCE;
+    final float[] mLastMovePoint = new float[]{0f, 0f};
+    final float[] mFingerDownPoint = new float[]{0f, 0f};
+    IOffsetCalculator mOffsetCalculator;
+    float mRawOffsetX;
+    float mRawOffsetY;
+    int mCurrentPos = 0;
+    int mLastPos = 0;
+    int mHeaderHeight = -1;
+    int mFooterHeight = -1;
+    int mPressedPos = 0;
+    float mOffset;
+    boolean mTouched = false;
+    @MovingStatus
+    private int mStatus = Constants.MOVING_CONTENT;
+    private float mResistanceHeader = DEFAULT_RESISTANCE;
+    private float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 0;
     private int mOffsetToKeepHeader = 0;
     private int mOffsetToLoadMore = 0;
@@ -54,7 +60,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     private float mRatioOfFooterHeightToLoadMore = DEFAULT_RATIO_TO_REFRESH;
     private float mCanMoveTheMaxRatioOfHeaderHeight = DEFAULT_MAX_MOVE_RATIO;
     private float mCanMoveTheMaxRatioOfFooterHeight = DEFAULT_MAX_MOVE_RATIO;
-    private float mRawOffset;
 
     @Override
     public boolean hasTouched() {
@@ -133,8 +138,11 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public void onFingerMove(float x, float y) {
+        float offsetX = (x - mLastMovePoint[0]);
         float offsetY = (y - mLastMovePoint[1]);
         processOnMove(offsetY);
+        mRawOffsetX = offsetX;
+        mRawOffsetY = offsetY;
         mLastMovePoint[0] = x;
         mLastMovePoint[1] = y;
     }
@@ -357,11 +365,15 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
                 }
             }
         }
-        mRawOffset = offset;
     }
 
     @Override
     public float getRawOffset() {
-        return mRawOffset;
+        return mRawOffsetY;
+    }
+
+    @Override
+    public float[] getRawOffsets() {
+        return new float[]{mRawOffsetX, mRawOffsetY};
     }
 }
