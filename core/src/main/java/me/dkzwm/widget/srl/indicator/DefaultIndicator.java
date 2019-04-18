@@ -26,16 +26,13 @@ package me.dkzwm.widget.srl.indicator;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 import me.dkzwm.widget.srl.config.Constants;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class DefaultIndicator implements IIndicator, IIndicatorSetter {
-    final float[] mLastMovePoint = new float[]{0f, 0f};
-    final float[] mFingerDownPoint = new float[]{0f, 0f};
+    final float[] mLastMovePoint = new float[] {0f, 0f};
+    final float[] mFingerDownPoint = new float[] {0f, 0f};
     IOffsetCalculator mOffsetCalculator;
     float mRawOffsetX;
     float mRawOffsetY;
@@ -46,8 +43,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     int mPressedPos = 0;
     float mOffset;
     boolean mTouched = false;
-    @MovingStatus
-    private int mStatus = Constants.MOVING_CONTENT;
+    @MovingStatus private int mStatus = Constants.MOVING_CONTENT;
     private float mResistanceHeader = DEFAULT_RESISTANCE;
     private float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 0;
@@ -374,6 +370,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
 
     @Override
     public float[] getRawOffsets() {
-        return new float[]{mRawOffsetX, mRawOffsetY};
+        return new float[] {mRawOffsetX, mRawOffsetY};
     }
 }
