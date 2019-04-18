@@ -28,8 +28,11 @@ package me.dkzwm.widget.srl.indicator;
 public class HorizontalDefaultIndicator extends DefaultIndicator {
     @Override
     public void onFingerMove(float x, float y) {
-        float offset = (x - mLastMovePoint[0]);
-        processOnMove(offset);
+        float offsetX = (x - mLastMovePoint[0]);
+        float offsetY = (y - mLastMovePoint[1]);
+        processOnMove(offsetX);
+        mRawOffsetX = offsetX;
+        mRawOffsetY = offsetY;
         mLastMovePoint[0] = x;
         mLastMovePoint[1] = y;
     }

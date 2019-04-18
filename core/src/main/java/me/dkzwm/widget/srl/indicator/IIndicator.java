@@ -56,6 +56,8 @@ public interface IIndicator {
 
     float getRawOffset();
 
+    float[] getRawOffsets();
+
     int getLastPos();
 
     int getHeaderHeight();

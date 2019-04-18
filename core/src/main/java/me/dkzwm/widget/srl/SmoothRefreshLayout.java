@@ -3610,7 +3610,10 @@ public class SmoothRefreshLayout extends ViewGroup
                 } else if (canMoveUp) {
                     if (isDisabledRefresh()) return dispatchTouchEventSuper(ev);
                     if ((!canHeaderMoveDown && movingDown)) {
-                        if (oldTouchHanding) sendDownEvent(ev);
+                        if (oldTouchHanding) {
+                            sendDownEvent(ev);
+                            return true;
+                        }
                         return dispatchTouchEventSuper(ev);
                     }
                     moveHeaderPos(offset);
@@ -3618,7 +3621,10 @@ public class SmoothRefreshLayout extends ViewGroup
                 } else {
                     if (isDisabledLoadMore()) return dispatchTouchEventSuper(ev);
                     if ((!canFooterMoveUp && !movingDown)) {
-                        if (oldTouchHanding) sendDownEvent(ev);
+                        if (oldTouchHanding) {
+                            sendDownEvent(ev);
+                            return true;
+                        }
                         return dispatchTouchEventSuper(ev);
                     }
                     moveFooterPos(offset);
@@ -3828,18 +3834,29 @@ public class SmoothRefreshLayout extends ViewGroup
         final MotionEvent last;
         if (event == null) last = mLastMoveEvent;
         else last = event;
-        final MotionEvent ev =
+        final float[] rawOffsets = mIndicator.getRawOffsets();
+        final MotionEvent downEvent =
                 MotionEvent.obtain(
                         last.getDownTime(),
                         last.getEventTime(),
                         MotionEvent.ACTION_DOWN,
+                        last.getX() - rawOffsets[0],
+                        last.getY() - rawOffsets[1],
+                        last.getMetaState());
+        super.dispatchTouchEvent(downEvent);
+        downEvent.recycle();
+        final MotionEvent moveEvent =
+                MotionEvent.obtain(
+                        last.getDownTime(),
+                        last.getEventTime(),
+                        MotionEvent.ACTION_MOVE,
                         last.getX(),
                         last.getY(),
                         last.getMetaState());
         mHasSendCancelEvent = false;
         mHasSendDownEvent = true;
-        super.dispatchTouchEvent(ev);
-        ev.recycle();
+        super.dispatchTouchEvent(moveEvent);
+        moveEvent.recycle();
     }
 
     protected void notifyFingerUp() {
