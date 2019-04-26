@@ -3348,7 +3348,8 @@ public class SmoothRefreshLayout extends ViewGroup
                         }
                     }
                 }
-            } else {
+            }
+            if (mTargetView == null) {
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
@@ -3372,6 +3373,11 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (mInEdgeCanMoveFooterCallBack == null)
                     mInEdgeCanMoveFooterCallBack = mAppBarUtil;
             }
+        } else if (mTargetView.getParent() == null) {
+            mTargetView = null;
+            ensureTargetView();
+            offsetChild(0, isMovingHeader(), isMovingFooter());
+            return;
         }
         if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID)
             mStickyHeaderView = findViewById(mStickyHeaderResId);
