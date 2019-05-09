@@ -39,7 +39,6 @@ import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
-
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 
 /**
@@ -53,15 +52,15 @@ public class ScrollCompat {
             if (view instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
-                        && (absListView.getLastVisiblePosition()
-                        < absListView.getAdapter().getCount() - 1)
+                                && (absListView.getLastVisiblePosition()
+                                        < absListView.getAdapter().getCount() - 1)
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
-                        > absListView.getHeight() - absListView.getListPaddingBottom();
+                                > absListView.getHeight() - absListView.getListPaddingBottom();
             } else if (view instanceof ScrollView) {
                 final ScrollView scrollView = (ScrollView) view;
                 return scrollView.getChildCount() != 0
                         && scrollView.getScrollY()
-                        < scrollView.getChildAt(0).getHeight() - scrollView.getHeight();
+                                < scrollView.getChildAt(0).getHeight() - scrollView.getHeight();
             } else {
                 return ViewCompat.canScrollVertically(view, 1);
             }
@@ -151,8 +150,8 @@ public class ScrollCompat {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0
-                        || absListView.getChildAt(0).getTop()
-                        < absListView.getListPaddingTop());
+                                || absListView.getChildAt(0).getTop()
+                                        < absListView.getListPaddingTop());
             } else {
                 return ViewCompat.canScrollVertically(view, -1) || view.getScrollY() > 0;
             }
@@ -210,7 +209,7 @@ public class ScrollCompat {
     public static boolean canScaleInternal(View view) {
         return view instanceof ScrollView && ((ScrollView) view).getChildCount() > 0
                 || view instanceof NestedScrollView
-                && ((NestedScrollView) view).getChildCount() > 0;
+                        && ((NestedScrollView) view).getChildCount() > 0;
     }
 
     public static boolean isScrollingView(View view) {
