@@ -3095,8 +3095,6 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         if (dxConsumed != 0 || dyConsumed != 0) {
             onNestedScrollChanged();
-        } else if (type == ViewCompat.TYPE_NON_TOUCH) {
-            stopNestedScroll(type);
         }
     }
 
@@ -3127,12 +3125,14 @@ public class SmoothRefreshLayout extends ViewGroup
 
     @Override
     public void stopNestedScroll(int type) {
+        if (sDebug) Log.d(TAG, String.format("stopNestedScroll() type: %s", type));
         final View targetView;
         if (mScrollTargetView != null) targetView = mScrollTargetView;
         else if (mAutoFoundScrollTargetView != null) targetView = mAutoFoundScrollTargetView;
         else targetView = mTargetView;
         if (targetView != null) ViewCompat.stopNestedScroll(targetView, type);
         else mNestedScrollingChildHelper.stopNestedScroll(type);
+        onNestedScrollChanged();
     }
 
     @Override
@@ -4929,8 +4929,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
         @Override
         public void run() {
-            if ($Mode == Constants.SCROLLER_MODE_NONE
-                    || $Mode == Constants.SCROLLER_MODE_CALC_FLING) return;
+            if ($Mode == Constants.SCROLLER_MODE_NONE || isCalcFling()) return;
             boolean finished =
                     $Mode == Constants.SCROLLER_MODE_FLING
                             ? $LastTo <= $LastY
@@ -5007,6 +5006,10 @@ public class SmoothRefreshLayout extends ViewGroup
 
         boolean isFlingBack() {
             return $Mode == Constants.SCROLLER_MODE_FLING_BACK;
+        }
+
+        boolean isCalcFling() {
+            return $Mode == Constants.SCROLLER_MODE_CALC_FLING;
         }
 
         float getCurrVelocity() {
@@ -5113,7 +5116,7 @@ public class SmoothRefreshLayout extends ViewGroup
         void computeScrollOffset() {
             if ($Scroller.computeScrollOffset()) {
                 if (sDebug) Log.d(TAG, "ScrollChecker: computeScrollOffset()");
-                if ($Mode == Constants.SCROLLER_MODE_CALC_FLING) {
+                if (isCalcFling()) {
                     $LastY = $Scroller.getCurrY();
                     if ($Velocity > 0
                             && mIndicator.isAlreadyHere(IIndicator.START_POS)
@@ -5219,8 +5222,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     case Constants.SCROLLER_MODE_CALC_FLING:
                         final float currentVelocity = getCurrVelocity();
                         $Scroller = new Scroller(getContext(), interpolator);
-                        if ($Mode == Constants.SCROLLER_MODE_CALC_FLING)
-                            startFling(currentVelocity);
+                        if (isCalcFling()) startFling(currentVelocity);
                         else startPreFling(currentVelocity);
                         break;
                     case Constants.SCROLLER_MODE_NONE:
@@ -5242,8 +5244,7 @@ public class SmoothRefreshLayout extends ViewGroup
         void stop() {
             if ($Mode != Constants.SCROLLER_MODE_NONE) {
                 if (sDebug) Log.d(TAG, "ScrollChecker: stop()");
-                if (mNestedScrolling && $Mode == Constants.SCROLLER_MODE_CALC_FLING)
-                    stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
+                if (mNestedScrolling && isCalcFling()) stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
                 $Mode = Constants.SCROLLER_MODE_NONE;
                 mAutomaticActionUseSmoothScroll = false;
                 $IsScrolling = false;

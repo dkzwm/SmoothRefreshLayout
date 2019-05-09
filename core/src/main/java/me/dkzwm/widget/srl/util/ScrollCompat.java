@@ -194,10 +194,8 @@ public class ScrollCompat {
                     // Fix the problem of adding new data to RecyclerView while in Fling state,
                     // the new items will continue to Fling
                     RecyclerView recyclerView = (RecyclerView) view;
-                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
+                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING)
                         recyclerView.stopScroll();
-                        refreshLayout.stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
-                    }
                     view.scrollBy(0, (int) deltaY);
                     return true;
                 }

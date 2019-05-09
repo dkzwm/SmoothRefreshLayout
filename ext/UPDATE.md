@@ -1,4 +1,6 @@
 # 更新日志
+## 1.6.6.6
+> 修改嵌套滚动Fling消耗问题，感谢@dnwalter 的反馈，后续准备实现NestedScrollingParent3和NestedScrollingChild3接口，提高嵌套滚动下的Fling顺滑度。    
 ## 1.6.6.5
 > 修复横向刷新，当内部视图为ViewPager时，Fling传递问题。感谢@renzhenfei 的反馈。    
 ## 1.6.6.4
