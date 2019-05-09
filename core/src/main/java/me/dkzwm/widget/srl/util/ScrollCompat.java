@@ -39,6 +39,7 @@ import android.widget.AbsListView;
 import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
+
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 
 /**
@@ -52,15 +53,15 @@ public class ScrollCompat {
             if (view instanceof AbsListView) {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
-                                && (absListView.getLastVisiblePosition()
-                                        < absListView.getAdapter().getCount() - 1)
+                        && (absListView.getLastVisiblePosition()
+                        < absListView.getAdapter().getCount() - 1)
                         || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
-                                > absListView.getHeight() - absListView.getListPaddingBottom();
+                        > absListView.getHeight() - absListView.getListPaddingBottom();
             } else if (view instanceof ScrollView) {
                 final ScrollView scrollView = (ScrollView) view;
                 return scrollView.getChildCount() != 0
                         && scrollView.getScrollY()
-                                < scrollView.getChildAt(0).getHeight() - scrollView.getHeight();
+                        < scrollView.getChildAt(0).getHeight() - scrollView.getHeight();
             } else {
                 return ViewCompat.canScrollVertically(view, 1);
             }
@@ -150,8 +151,8 @@ public class ScrollCompat {
                 final AbsListView absListView = (AbsListView) view;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0
-                                || absListView.getChildAt(0).getTop()
-                                        < absListView.getListPaddingTop());
+                        || absListView.getChildAt(0).getTop()
+                        < absListView.getListPaddingTop());
             } else {
                 return ViewCompat.canScrollVertically(view, -1) || view.getScrollY() > 0;
             }
@@ -194,10 +195,8 @@ public class ScrollCompat {
                     // Fix the problem of adding new data to RecyclerView while in Fling state,
                     // the new items will continue to Fling
                     RecyclerView recyclerView = (RecyclerView) view;
-                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
+                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING)
                         recyclerView.stopScroll();
-                        refreshLayout.stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
-                    }
                     view.scrollBy(0, (int) deltaY);
                     return true;
                 }
@@ -211,7 +210,7 @@ public class ScrollCompat {
     public static boolean canScaleInternal(View view) {
         return view instanceof ScrollView && ((ScrollView) view).getChildCount() > 0
                 || view instanceof NestedScrollView
-                        && ((NestedScrollView) view).getChildCount() > 0;
+                && ((NestedScrollView) view).getChildCount() > 0;
     }
 
     public static boolean isScrollingView(View view) {
