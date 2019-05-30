@@ -105,34 +105,34 @@ public class SmoothRefreshLayout extends ViewGroup
             };
     protected static final Interpolator sFlingInterpolator = new DecelerateInterpolator(.95f);
     protected static final Interpolator sSpringBackInterpolator = new DecelerateInterpolator(.92f);
-    private static final byte FLAG_AUTO_REFRESH = 0x01;
-    private static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
-    private static final byte FLAG_ENABLE_OVER_SCROLL = 0x01 << 3;
-    private static final byte FLAG_ENABLE_KEEP_REFRESH_VIEW = 0x01 << 4;
-    private static final byte FLAG_ENABLE_PIN_CONTENT_VIEW = 0x01 << 5;
-    private static final byte FLAG_ENABLE_PULL_TO_REFRESH = 0x01 << 6;
-    private static final int FLAG_ENABLE_PIN_REFRESH_VIEW_WHILE_LOADING = 0x01 << 7;
-    private static final int FLAG_ENABLE_HEADER_DRAWER_STYLE = 0x01 << 8;
-    private static final int FLAG_ENABLE_FOOTER_DRAWER_STYLE = 0x01 << 9;
-    private static final int FLAG_DISABLE_PERFORM_LOAD_MORE = 0x01 << 10;
-    private static final int FLAG_ENABLE_NO_MORE_DATA = 0x01 << 11;
-    private static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 12;
-    private static final int FLAG_DISABLE_PERFORM_REFRESH = 0x01 << 13;
-    private static final int FLAG_DISABLE_REFRESH = 0x01 << 14;
-    private static final int FLAG_ENABLE_AUTO_PERFORM_LOAD_MORE = 0x01 << 15;
-    private static final int FLAG_ENABLE_AUTO_PERFORM_REFRESH = 0x01 << 16;
-    private static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 17;
-    private static final int FLAG_DISABLE_WHEN_ANOTHER_DIRECTION_MOVE = 0x01 << 18;
-    private static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 19;
-    private static final int FLAG_ENABLE_NO_MORE_DATA_NO_BACK = 0x01 << 20;
-    private static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 21;
-    private static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
-    private static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
-    private static final int FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW = 0x01 << 24;
-    private static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 25;
-    private static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 26;
-    private static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
-    private static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
+    protected static final byte FLAG_AUTO_REFRESH = 0x01;
+    protected static final byte FLAG_ENABLE_NEXT_AT_ONCE = 0x01 << 2;
+    protected static final byte FLAG_ENABLE_OVER_SCROLL = 0x01 << 3;
+    protected static final byte FLAG_ENABLE_KEEP_REFRESH_VIEW = 0x01 << 4;
+    protected static final byte FLAG_ENABLE_PIN_CONTENT_VIEW = 0x01 << 5;
+    protected static final byte FLAG_ENABLE_PULL_TO_REFRESH = 0x01 << 6;
+    protected static final int FLAG_ENABLE_PIN_REFRESH_VIEW_WHILE_LOADING = 0x01 << 7;
+    protected static final int FLAG_ENABLE_HEADER_DRAWER_STYLE = 0x01 << 8;
+    protected static final int FLAG_ENABLE_FOOTER_DRAWER_STYLE = 0x01 << 9;
+    protected static final int FLAG_DISABLE_PERFORM_LOAD_MORE = 0x01 << 10;
+    protected static final int FLAG_ENABLE_NO_MORE_DATA = 0x01 << 11;
+    protected static final int FLAG_DISABLE_LOAD_MORE = 0x01 << 12;
+    protected static final int FLAG_DISABLE_PERFORM_REFRESH = 0x01 << 13;
+    protected static final int FLAG_DISABLE_REFRESH = 0x01 << 14;
+    protected static final int FLAG_ENABLE_AUTO_PERFORM_LOAD_MORE = 0x01 << 15;
+    protected static final int FLAG_ENABLE_AUTO_PERFORM_REFRESH = 0x01 << 16;
+    protected static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 17;
+    protected static final int FLAG_DISABLE_WHEN_ANOTHER_DIRECTION_MOVE = 0x01 << 18;
+    protected static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 19;
+    protected static final int FLAG_ENABLE_NO_MORE_DATA_NO_BACK = 0x01 << 20;
+    protected static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 21;
+    protected static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
+    protected static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
+    protected static final int FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW = 0x01 << 24;
+    protected static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 25;
+    protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 26;
+    protected static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
+    protected static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
     private static final int[] LAYOUT_ATTRS = new int[] {android.R.attr.enabled};
     public static boolean sDebug = false;
     private static int sId = 0;
@@ -194,6 +194,11 @@ public class SmoothRefreshLayout extends ViewGroup
     protected OnLoadMoreScrollCallback mLoadMoreScrollCallback;
     protected OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     protected OnPerformAutoRefreshCallBack mAutoRefreshCallBack;
+    protected int mFlag =
+            FLAG_DISABLE_LOAD_MORE
+                    | FLAG_ENABLE_COMPAT_SYNC_SCROLL
+                    | FLAG_ENABLE_OLD_TOUCH_HANDLING
+                    | FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING;
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
     private Interpolator mSpringInterpolator;
@@ -216,11 +221,6 @@ public class SmoothRefreshLayout extends ViewGroup
     private int[] mCachedSpec = new int[2];
     private float mOffsetConsumed = 0f;
     private float mOffsetTotal = 0f;
-    private int mFlag =
-            FLAG_DISABLE_LOAD_MORE
-                    | FLAG_ENABLE_COMPAT_SYNC_SCROLL
-                    | FLAG_ENABLE_OLD_TOUCH_HANDLING
-                    | FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING;
     private int mMaxOverScrollDuration = 350;
     private int mMinOverScrollDuration = 100;
     private int mOffsetRemaining = 0;
@@ -1542,7 +1542,6 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param atOnce Auto refresh at once
      */
-    @Deprecated
     public boolean autoRefresh(boolean atOnce) {
         return autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
@@ -1556,7 +1555,6 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param atOnce Auto refresh at once
      * @param smoothScroll Auto refresh use smooth scrolling
      */
-    @Deprecated
     public boolean autoRefresh(boolean atOnce, boolean smoothScroll) {
         return autoRefresh(
                 atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
@@ -1568,7 +1566,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * the `action` been set to `SR_ACTION_AT_ONCE`, we will notify the refresh listener at once. If
      * the `action` been set to `SR_ACTION_NOTIFY`, we will notify the refresh listener when in
      * refreshing be later If @param smooth has been set to true. Auto perform refresh will using
-     * smooth scrolling. listener
+     * smooth scrolling.
      *
      * <p>自动刷新，`action`触发刷新的动作，`smooth`滚动到触发位置
      *
@@ -1617,7 +1615,6 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param atOnce Auto load more at once
      */
-    @Deprecated
     public boolean autoLoadMore(boolean atOnce) {
         return autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
@@ -1631,7 +1628,6 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param atOnce Auto load more at once
      * @param smoothScroll Auto load more use smooth scrolling
      */
-    @Deprecated
     public boolean autoLoadMore(boolean atOnce, boolean smoothScroll) {
         return autoLoadMore(
                 atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
@@ -2141,6 +2137,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public void setDisablePerformRefresh(boolean disable) {
         if (disable) {
             mFlag = mFlag | FLAG_DISABLE_PERFORM_REFRESH;
+            if (isRefreshing()) reset();
         } else {
             mFlag = mFlag & ~FLAG_DISABLE_PERFORM_REFRESH;
         }
@@ -2194,6 +2191,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public void setDisablePerformLoadMore(boolean disable) {
         if (disable) {
             mFlag = mFlag | FLAG_DISABLE_PERFORM_LOAD_MORE;
+            if (isLoadingMore()) reset();
         } else {
             mFlag = mFlag & ~FLAG_DISABLE_PERFORM_LOAD_MORE;
         }
@@ -3310,10 +3308,10 @@ public class SmoothRefreshLayout extends ViewGroup
     protected void tryToPerformAutoRefresh() {
         if (!mAutomaticActionTriggered) {
             if (sDebug) Log.d(TAG, "tryToPerformAutoRefresh()");
-            if (isHeaderInProcessing()) {
+            if (isHeaderInProcessing() && isMovingHeader()) {
                 if (mHeaderView == null || mIndicator.getHeaderHeight() <= 0) return;
                 scrollToTriggeredAutomatic(true);
-            } else if (isFooterInProcessing()) {
+            } else if (isFooterInProcessing() && isMovingFooter()) {
                 if (mFooterView == null || mIndicator.getFooterHeight() <= 0) return;
                 scrollToTriggeredAutomatic(false);
             }
@@ -4621,7 +4619,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
     }
 
-    private void notifyStatusChanged(byte old, byte now) {
+    protected void notifyStatusChanged(byte old, byte now) {
         if (mStatusChangedListeners != null && !mStatusChangedListeners.isEmpty()) {
             final List<OnStatusChangedListener> listeners = mStatusChangedListeners;
             for (OnStatusChangedListener listener : listeners) {
