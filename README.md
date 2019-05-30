@@ -52,10 +52,10 @@ dependencies {
 #### 老版本升级务必查看
  [更新日志](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/ext/UPDATE.md) 
 ## 快照
-- 测试拉伸收缩效果 
+- 测试拉伸收缩效果    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
 
-- 测试横向刷新
+- 测试横向刷新    
 ![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
 
 - 测试多方向布局下的刷新    
