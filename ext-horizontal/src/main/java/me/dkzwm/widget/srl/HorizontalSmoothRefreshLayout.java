@@ -36,7 +36,6 @@ import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.util.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.util.HorizontalScrollCompat;
 
