@@ -512,7 +512,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                     child, lp, mCachedWidthMeasureSpec, mCachedHeightMeasureSpec);
                             layoutHeaderView(child);
                         }
-                        needRequestLayout = true;
                         break;
                     case IRefreshView.STYLE_PIN:
                         mHeaderView.getView().setTranslationX(0);
@@ -529,7 +528,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
                                     || MeasureSpec.getMode(mCachedHeightMeasureSpec)
                                             != MeasureSpec.EXACTLY) {
-                                needRequestLayout = true;
+                                needRequestLayout = !ViewCompat.isInLayout(this);
                             } else {
                                 final View child = mHeaderView.getView();
                                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -593,7 +592,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
                                     || MeasureSpec.getMode(mCachedHeightMeasureSpec)
                                             != MeasureSpec.EXACTLY) {
-                                needRequestLayout = true;
+                                needRequestLayout = !ViewCompat.isInLayout(this);
                             } else {
                                 final View child = mFooterView.getView();
                                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -662,10 +661,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 }
             }
         }
-        return needRequestLayout
-                || (mIndicator.getCurrentPos() == IIndicator.START_POS
-                        && !ViewCompat.isInLayout(this)
-                        && mMode == Constants.MODE_DEFAULT);
+        return needRequestLayout;
     }
 
     @Override

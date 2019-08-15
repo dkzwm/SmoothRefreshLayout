@@ -4261,7 +4261,7 @@ public class SmoothRefreshLayout extends ViewGroup
                             if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
                                     || MeasureSpec.getMode(mCachedHeightMeasureSpec)
                                             != MeasureSpec.EXACTLY) {
-                                needRequestLayout = true;
+                                needRequestLayout = !ViewCompat.isInLayout(this);
                             } else {
                                 final View child = mHeaderView.getView();
                                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -4325,7 +4325,7 @@ public class SmoothRefreshLayout extends ViewGroup
                             if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
                                     || MeasureSpec.getMode(mCachedHeightMeasureSpec)
                                             != MeasureSpec.EXACTLY) {
-                                needRequestLayout = true;
+                                needRequestLayout = !ViewCompat.isInLayout(this);
                             } else {
                                 final View child = mFooterView.getView();
                                 final LayoutParams lp = (LayoutParams) child.getLayoutParams();
@@ -4407,10 +4407,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 }
             }
         }
-        return needRequestLayout
-                || (mIndicator.getCurrentPos() == IIndicator.START_POS
-                        && !ViewCompat.isInLayout(this)
-                        && mMode == Constants.MODE_DEFAULT);
+        return needRequestLayout;
     }
 
     protected float calculateScale() {
