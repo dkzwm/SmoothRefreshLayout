@@ -199,6 +199,8 @@ public class SmoothRefreshLayout extends ViewGroup
                     | FLAG_ENABLE_COMPAT_SYNC_SCROLL
                     | FLAG_ENABLE_OLD_TOUCH_HANDLING
                     | FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING;
+    protected int mCachedWidthMeasureSpec;
+    protected int mCachedHeightMeasureSpec;
     private NestedScrollingParentHelper mNestedScrollingParentHelper;
     private NestedScrollingChildHelper mNestedScrollingChildHelper;
     private Interpolator mSpringInterpolator;
@@ -256,9 +258,10 @@ public class SmoothRefreshLayout extends ViewGroup
     protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         sId++;
         createIndicator();
-        if (mIndicator == null || mIndicatorSetter == null)
+        if (mIndicator == null || mIndicatorSetter == null) {
             throw new IllegalArgumentException(
                     "You must create a IIndicator, current indicator is null");
+        }
         ViewConfiguration viewConfiguration = ViewConfiguration.get(getContext());
         mTouchSlop = viewConfiguration.getScaledTouchSlop();
         mMaximumFlingVelocity = viewConfiguration.getScaledMaximumFlingVelocity();
@@ -479,6 +482,8 @@ public class SmoothRefreshLayout extends ViewGroup
 
     @Override
     public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        mCachedWidthMeasureSpec = widthMeasureSpec;
+        mCachedHeightMeasureSpec = heightMeasureSpec;
         int count = getChildCount();
         if (count == 0) return;
         ensureTargetView();
@@ -774,8 +779,11 @@ public class SmoothRefreshLayout extends ViewGroup
         int left, right, top = 0, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
-                if (isMovingHeader()) child.setTranslationY(mIndicator.getCurrentPos());
-                else child.setTranslationY(0);
+                if (isMovingHeader()) {
+                    child.setTranslationY(mIndicator.getCurrentPos());
+                } else {
+                    child.setTranslationY(0);
+                }
                 top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
                 break;
             case IRefreshView.STYLE_SCALE:
@@ -785,21 +793,30 @@ public class SmoothRefreshLayout extends ViewGroup
                 break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
                 child.setTranslationY(0);
-                if (isMovingHeader()
-                        && mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
-                    top =
-                            getPaddingTop()
-                                    - child.getMeasuredHeight()
-                                    + mIndicator.getCurrentPos()
-                                    - lp.bottomMargin;
+                if (isMovingHeader()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                        top =
+                                getPaddingTop()
+                                        - child.getMeasuredHeight()
+                                        + mIndicator.getCurrentPos()
+                                        - lp.bottomMargin;
+                    } else {
+                        top = getPaddingTop() + lp.topMargin;
+                    }
                 } else {
-                    top = getPaddingTop() + lp.topMargin;
+                    top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
                 }
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
-                if (isMovingHeader() && mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
-                    child.setTranslationY(mIndicator.getCurrentPos());
-                else child.setTranslationY(0);
+                if (isMovingHeader()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                        child.setTranslationY(mIndicator.getCurrentPos());
+                    } else {
+                        child.setTranslationY(mIndicator.getHeaderHeight());
+                    }
+                } else {
+                    child.setTranslationY(0);
+                }
                 top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
                 break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
@@ -813,11 +830,12 @@ public class SmoothRefreshLayout extends ViewGroup
                                         - lp.bottomMargin;
                     } else {
                         top =
-                                getPaddingTop()
-                                        + lp.topMargin
-                                        + (mIndicator.getCurrentPos()
-                                                        - mIndicator.getHeaderHeight())
-                                                / 2;
+                                (int)
+                                        (getPaddingTop()
+                                                + lp.topMargin
+                                                + (mIndicator.getCurrentPos()
+                                                                - mIndicator.getHeaderHeight())
+                                                        / 2f);
                     }
                 } else {
                     top = getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
@@ -846,8 +864,11 @@ public class SmoothRefreshLayout extends ViewGroup
         int left, right, top = 0, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
-                if (isMovingFooter()) child.setTranslationY(-mIndicator.getCurrentPos());
-                else child.setTranslationY(0);
+                if (isMovingFooter()) {
+                    child.setTranslationY(-mIndicator.getCurrentPos());
+                } else {
+                    child.setTranslationY(0);
+                }
                 top = lp.topMargin + contentBottom;
                 break;
             case IRefreshView.STYLE_SCALE:
@@ -862,15 +883,25 @@ public class SmoothRefreshLayout extends ViewGroup
                 top = contentBottom - lp.bottomMargin - child.getMeasuredHeight();
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
-                if (isMovingFooter() && mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
-                    child.setTranslationY(-mIndicator.getCurrentPos());
-                else child.setTranslationY(0);
+                if (isMovingFooter()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                        child.setTranslationY(-mIndicator.getCurrentPos());
+                    } else {
+                        child.setTranslationY(-mIndicator.getFooterHeight());
+                    }
+                } else {
+                    child.setTranslationY(0);
+                }
                 top = lp.topMargin + contentBottom;
                 break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
                 child.setTranslationY(0);
                 if (isMovingFooter()) {
-                    top = lp.topMargin + contentBottom - mIndicator.getCurrentPos();
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                        top = lp.topMargin + contentBottom - mIndicator.getCurrentPos();
+                    } else {
+                        top = lp.topMargin + contentBottom - child.getMeasuredHeight();
+                    }
                 } else {
                     top = lp.topMargin + contentBottom;
                 }
@@ -883,12 +914,13 @@ public class SmoothRefreshLayout extends ViewGroup
                             top = lp.topMargin + contentBottom - mIndicator.getCurrentPos();
                         } else {
                             top =
-                                    lp.topMargin
-                                            + contentBottom
-                                            - mIndicator.getCurrentPos()
-                                            + (mIndicator.getCurrentPos()
-                                                            - mIndicator.getFooterHeight())
-                                                    / 2;
+                                    (int)
+                                            (lp.topMargin
+                                                    + contentBottom
+                                                    - mIndicator.getCurrentPos()
+                                                    + (mIndicator.getCurrentPos()
+                                                                    - mIndicator.getFooterHeight())
+                                                            / 2f);
                         }
                     } else {
                         top = lp.topMargin + contentBottom;
@@ -946,10 +978,11 @@ public class SmoothRefreshLayout extends ViewGroup
         switch (absoluteGravity & Gravity.HORIZONTAL_GRAVITY_MASK) {
             case Gravity.CENTER_HORIZONTAL:
                 childLeft =
-                        getPaddingLeft()
-                                + (parentRight - getPaddingLeft() - width) / 2
-                                + lp.leftMargin
-                                - lp.rightMargin;
+                        (int)
+                                (getPaddingLeft()
+                                        + (parentRight - getPaddingLeft() - width) / 2f
+                                        + lp.leftMargin
+                                        - lp.rightMargin);
                 break;
             case Gravity.RIGHT:
                 childLeft = parentRight - width - lp.rightMargin;
@@ -960,10 +993,11 @@ public class SmoothRefreshLayout extends ViewGroup
         switch (verticalGravity) {
             case Gravity.CENTER_VERTICAL:
                 childTop =
-                        getPaddingTop()
-                                + (parentBottom - getPaddingTop() - height) / 2
-                                + lp.topMargin
-                                - lp.bottomMargin;
+                        (int)
+                                (getPaddingTop()
+                                        + (parentBottom - getPaddingTop() - height) / 2f
+                                        + lp.topMargin
+                                        - lp.bottomMargin);
                 break;
             case Gravity.BOTTOM:
                 childTop = parentBottom - height - lp.bottomMargin;
@@ -4200,7 +4234,17 @@ public class SmoothRefreshLayout extends ViewGroup
                         mHeaderView.getView().setTranslationY(mIndicator.getCurrentPos());
                         break;
                     case IRefreshView.STYLE_SCALE:
-                        needRequestLayout = true;
+                        if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                        != MeasureSpec.EXACTLY) {
+                            needRequestLayout = !ViewCompat.isInLayout(this);
+                        } else {
+                            final View child = mHeaderView.getView();
+                            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                            measureHeader(
+                                    child, lp, mCachedWidthMeasureSpec, mCachedHeightMeasureSpec);
+                            layoutHeaderView(child);
+                        }
                         break;
                     case IRefreshView.STYLE_PIN:
                         mHeaderView.getView().setTranslationY(0);
@@ -4212,9 +4256,25 @@ public class SmoothRefreshLayout extends ViewGroup
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
-                        if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
-                            needRequestLayout = true;
-                        else ViewCompat.offsetTopAndBottom(mHeaderView.getView(), change);
+                        if (ViewCompat.isInLayout(this)) break;
+                        if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight()) {
+                            if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                    || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                            != MeasureSpec.EXACTLY) {
+                                needRequestLayout = !ViewCompat.isInLayout(this);
+                            } else {
+                                final View child = mHeaderView.getView();
+                                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                                measureHeader(
+                                        child,
+                                        lp,
+                                        mCachedWidthMeasureSpec,
+                                        mCachedHeightMeasureSpec);
+                                layoutHeaderView(child);
+                            }
+                        } else {
+                            ViewCompat.offsetTopAndBottom(mHeaderView.getView(), change);
+                        }
                         break;
                 }
                 if (isHeaderInProcessing())
@@ -4230,7 +4290,25 @@ public class SmoothRefreshLayout extends ViewGroup
                         mFooterView.getView().setTranslationY(-mIndicator.getCurrentPos());
                         break;
                     case IRefreshView.STYLE_SCALE:
-                        needRequestLayout = true;
+                        if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                        != MeasureSpec.EXACTLY) {
+                            needRequestLayout = !ViewCompat.isInLayout(this);
+                        } else {
+                            final View child = mFooterView.getView();
+                            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                            measureFooter(
+                                    child, lp, mCachedWidthMeasureSpec, mCachedHeightMeasureSpec);
+                            final int bottom;
+                            if (mTargetView != null) {
+                                final LayoutParams lpTarget =
+                                        (LayoutParams) mTargetView.getLayoutParams();
+                                bottom = mTargetView.getBottom() + lpTarget.bottomMargin;
+                            } else {
+                                bottom = 0;
+                            }
+                            layoutFooterView(child, bottom);
+                        }
                         break;
                     case IRefreshView.STYLE_PIN:
                         mFooterView.getView().setTranslationY(0);
@@ -4242,9 +4320,33 @@ public class SmoothRefreshLayout extends ViewGroup
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
-                        if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
-                            needRequestLayout = true;
-                        else ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
+                        if (ViewCompat.isInLayout(this)) break;
+                        if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight()) {
+                            if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                    || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                            != MeasureSpec.EXACTLY) {
+                                needRequestLayout = !ViewCompat.isInLayout(this);
+                            } else {
+                                final View child = mFooterView.getView();
+                                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                                measureFooter(
+                                        child,
+                                        lp,
+                                        mCachedWidthMeasureSpec,
+                                        mCachedHeightMeasureSpec);
+                                final int bottom;
+                                if (mTargetView != null) {
+                                    final LayoutParams lpTarget =
+                                            (LayoutParams) mTargetView.getLayoutParams();
+                                    bottom = mTargetView.getBottom() + lpTarget.bottomMargin;
+                                } else {
+                                    bottom = 0;
+                                }
+                                layoutFooterView(child, bottom);
+                            }
+                        } else {
+                            ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
+                        }
                         break;
                 }
                 if (isFooterInProcessing())

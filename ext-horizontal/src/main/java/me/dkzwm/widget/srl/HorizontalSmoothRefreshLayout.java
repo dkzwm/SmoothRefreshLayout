@@ -30,6 +30,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.config.Constants;
@@ -226,8 +227,11 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         int left = 0, right, top, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
-                if (isMovingHeader()) child.setTranslationX(mIndicator.getCurrentPos());
-                else child.setTranslationX(0);
+                if (isMovingHeader()) {
+                    child.setTranslationX(mIndicator.getCurrentPos());
+                } else {
+                    child.setTranslationX(0);
+                }
                 left = getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
                 break;
             case IRefreshView.STYLE_SCALE:
@@ -237,21 +241,30 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
                 child.setTranslationX(0);
-                if (isMovingHeader()
-                        && mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
-                    left =
-                            getPaddingLeft()
-                                    - child.getMeasuredWidth()
-                                    + mIndicator.getCurrentPos()
-                                    - lp.rightMargin;
+                if (isMovingHeader()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                        left =
+                                getPaddingLeft()
+                                        - child.getMeasuredWidth()
+                                        + mIndicator.getCurrentPos()
+                                        - lp.rightMargin;
+                    } else {
+                        left = getPaddingLeft() + lp.leftMargin;
+                    }
                 } else {
-                    left = getPaddingLeft() + lp.leftMargin;
+                    left = getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
                 }
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
-                if (isMovingHeader() && mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight())
-                    child.setTranslationX(mIndicator.getCurrentPos());
-                else child.setTranslationX(0);
+                if (isMovingHeader()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getHeaderHeight()) {
+                        child.setTranslationX(mIndicator.getCurrentPos());
+                    } else {
+                        child.setTranslationX(mIndicator.getHeaderHeight());
+                    }
+                } else {
+                    child.setTranslationX(0);
+                }
                 left = getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
                 break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
@@ -265,11 +278,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                         - lp.rightMargin;
                     } else {
                         left =
-                                getPaddingLeft()
-                                        + lp.leftMargin
-                                        + (mIndicator.getCurrentPos()
-                                                        - mIndicator.getHeaderHeight())
-                                                / 2;
+                                (int)
+                                        (getPaddingLeft()
+                                                + lp.leftMargin
+                                                + (mIndicator.getCurrentPos()
+                                                                - mIndicator.getHeaderHeight())
+                                                        / 2f);
                     }
                 } else {
                     left = getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
@@ -312,8 +326,11 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         int left = 0, right, top, bottom;
         switch (type) {
             case IRefreshView.STYLE_DEFAULT:
-                if (isMovingFooter()) child.setTranslationX(-mIndicator.getCurrentPos());
-                else child.setTranslationX(0);
+                if (isMovingFooter()) {
+                    child.setTranslationX(-mIndicator.getCurrentPos());
+                } else {
+                    child.setTranslationX(0);
+                }
                 left = lp.leftMargin + contentRight;
                 break;
             case IRefreshView.STYLE_SCALE:
@@ -328,15 +345,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                 left = contentRight - lp.rightMargin - child.getMeasuredWidth();
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
-                if (isMovingFooter() && mIndicator.getCurrentPos() <= mIndicator.getFooterHeight())
-                    child.setTranslationX(-mIndicator.getCurrentPos());
-                else child.setTranslationX(0);
+                if (isMovingFooter()) {
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                        child.setTranslationX(-mIndicator.getCurrentPos());
+                    } else {
+                        child.setTranslationX(-mIndicator.getFooterHeight());
+                    }
+                } else {
+                    child.setTranslationX(0);
+                }
                 left = lp.leftMargin + contentRight;
                 break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
                 child.setTranslationX(0);
                 if (isMovingFooter()) {
-                    left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
+                    if (mIndicator.getCurrentPos() <= mIndicator.getFooterHeight()) {
+                        left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
+                    } else {
+                        left = lp.leftMargin + contentRight - child.getMeasuredWidth();
+                    }
                 } else {
                     left = lp.leftMargin + contentRight;
                 }
@@ -349,12 +376,13 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                             left = lp.leftMargin + contentRight - mIndicator.getCurrentPos();
                         } else {
                             left =
-                                    lp.leftMargin
-                                            + contentRight
-                                            - mIndicator.getCurrentPos()
-                                            + (mIndicator.getCurrentPos()
-                                                            - mIndicator.getFooterHeight())
-                                                    / 2;
+                                    (int)
+                                            (lp.leftMargin
+                                                    + contentRight
+                                                    - mIndicator.getCurrentPos()
+                                                    + (mIndicator.getCurrentPos()
+                                                                    - mIndicator.getFooterHeight())
+                                                            / 2f);
                         }
                     } else {
                         left = lp.leftMargin + contentRight;
@@ -473,7 +501,17 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         mHeaderView.getView().setTranslationX(mIndicator.getCurrentPos());
                         break;
                     case IRefreshView.STYLE_SCALE:
-                        needRequestLayout = true;
+                        if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                        != MeasureSpec.EXACTLY) {
+                            needRequestLayout = !ViewCompat.isInLayout(this);
+                        } else {
+                            final View child = mHeaderView.getView();
+                            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                            measureHeader(
+                                    child, lp, mCachedWidthMeasureSpec, mCachedHeightMeasureSpec);
+                            layoutHeaderView(child);
+                        }
                         break;
                     case IRefreshView.STYLE_PIN:
                         mHeaderView.getView().setTranslationX(0);
@@ -485,9 +523,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
-                        if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight())
-                            needRequestLayout = true;
-                        else ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
+                        if (ViewCompat.isInLayout(this)) break;
+                        if (mIndicator.getCurrentPos() > mIndicator.getHeaderHeight()) {
+                            if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                    || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                            != MeasureSpec.EXACTLY) {
+                                needRequestLayout = !ViewCompat.isInLayout(this);
+                            } else {
+                                final View child = mHeaderView.getView();
+                                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                                measureHeader(
+                                        child,
+                                        lp,
+                                        mCachedWidthMeasureSpec,
+                                        mCachedHeightMeasureSpec);
+                                layoutHeaderView(child);
+                            }
+                        } else {
+                            ViewCompat.offsetLeftAndRight(mHeaderView.getView(), change);
+                        }
                         break;
                 }
                 if (isHeaderInProcessing())
@@ -503,7 +557,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         mFooterView.getView().setTranslationX(-mIndicator.getCurrentPos());
                         break;
                     case IRefreshView.STYLE_SCALE:
-                        needRequestLayout = true;
+                        if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                        != MeasureSpec.EXACTLY) {
+                            needRequestLayout = !ViewCompat.isInLayout(this);
+                        } else {
+                            final View child = mFooterView.getView();
+                            final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                            measureFooter(
+                                    child, lp, mCachedWidthMeasureSpec, mCachedHeightMeasureSpec);
+                            final int right;
+                            if (mTargetView != null) {
+                                final LayoutParams lpTarget =
+                                        (LayoutParams) mTargetView.getLayoutParams();
+                                right = mTargetView.getRight() + lpTarget.rightMargin;
+                            } else {
+                                right = 0;
+                            }
+                            layoutFooterView(child, right);
+                        }
                         break;
                     case IRefreshView.STYLE_PIN:
                         mFooterView.getView().setTranslationX(0);
@@ -515,9 +587,33 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                         break;
                     case IRefreshView.STYLE_FOLLOW_SCALE:
                     case IRefreshView.STYLE_FOLLOW_CENTER:
-                        if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight())
-                            needRequestLayout = true;
-                        else ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
+                        if (ViewCompat.isInLayout(this)) break;
+                        if (mIndicator.getCurrentPos() > mIndicator.getFooterHeight()) {
+                            if (MeasureSpec.getMode(mCachedWidthMeasureSpec) != MeasureSpec.EXACTLY
+                                    || MeasureSpec.getMode(mCachedHeightMeasureSpec)
+                                            != MeasureSpec.EXACTLY) {
+                                needRequestLayout = !ViewCompat.isInLayout(this);
+                            } else {
+                                final View child = mFooterView.getView();
+                                final LayoutParams lp = (LayoutParams) child.getLayoutParams();
+                                measureFooter(
+                                        child,
+                                        lp,
+                                        mCachedWidthMeasureSpec,
+                                        mCachedHeightMeasureSpec);
+                                final int right;
+                                if (mTargetView != null) {
+                                    final LayoutParams lpTarget =
+                                            (LayoutParams) mTargetView.getLayoutParams();
+                                    right = mTargetView.getRight() + lpTarget.rightMargin;
+                                } else {
+                                    right = 0;
+                                }
+                                layoutFooterView(child, right);
+                            }
+                        } else {
+                            ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
+                        }
                         break;
                 }
                 if (isFooterInProcessing())

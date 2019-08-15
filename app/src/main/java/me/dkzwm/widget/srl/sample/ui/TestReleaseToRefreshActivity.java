@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.extra.footer.ClassicFooter;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.header.StoreHouseHeader;
 import me.dkzwm.widget.srl.util.PixelUtl;
@@ -27,6 +28,7 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     private int mCount = 0;
     private StoreHouseHeader mStoreHouseHeader;
+    private ClassicFooter mClassicFooter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,13 +45,32 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
         mStoreHouseHeader.setTextColor(Color.WHITE);
         mStoreHouseHeader.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(mStoreHouseHeader);
+        mClassicFooter = new ClassicFooter<>(mRefreshLayout.getContext());
+        mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
+        mRefreshLayout.setFooterView(mClassicFooter);
         mRefreshLayout.setRatioToKeepHeader(1);
         mRefreshLayout.setRatioOfHeaderToRefresh(1);
-        mRefreshLayout.setDisableLoadMore(true);
+        mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {
                     @Override
                     public void onRefreshing() {
+                        mCount++;
+                        mHandler.postDelayed(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mRefreshLayout.refreshComplete();
+                                        String times =
+                                                getString(R.string.number_of_refresh) + mCount;
+                                        mTextView.setText(times);
+                                    }
+                                },
+                                2000);
+                    }
+
+                    @Override
+                    public void onLoadingMore() {
                         mCount++;
                         mHandler.postDelayed(
                                 new Runnable() {
@@ -75,27 +96,27 @@ public class TestReleaseToRefreshActivity extends AppCompatActivity {
                 return true;
             case Menu.FIRST:
                 mStoreHouseHeader.setStyle(IRefreshView.STYLE_DEFAULT);
-                mStoreHouseHeader.setStyle(IRefreshView.STYLE_DEFAULT);
+                mClassicFooter.setStyle(IRefreshView.STYLE_DEFAULT);
                 return true;
             case Menu.FIRST + 1:
                 mStoreHouseHeader.setStyle(IRefreshView.STYLE_SCALE);
-                mStoreHouseHeader.setStyle(IRefreshView.STYLE_SCALE);
+                mClassicFooter.setStyle(IRefreshView.STYLE_SCALE);
                 return true;
             case Menu.FIRST + 2:
                 mStoreHouseHeader.setStyle(IRefreshView.STYLE_PIN);
-                mStoreHouseHeader.setStyle(IRefreshView.STYLE_PIN);
+                mClassicFooter.setStyle(IRefreshView.STYLE_PIN);
                 return true;
             case Menu.FIRST + 3:
                 mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
-                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
+                mClassicFooter.setStyle(IRefreshView.STYLE_FOLLOW_SCALE);
                 return true;
             case Menu.FIRST + 4:
                 mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
-                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
+                mClassicFooter.setStyle(IRefreshView.STYLE_FOLLOW_PIN);
                 return true;
             case Menu.FIRST + 5:
                 mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
-                mStoreHouseHeader.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
+                mClassicFooter.setStyle(IRefreshView.STYLE_FOLLOW_CENTER);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
