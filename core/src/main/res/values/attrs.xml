@@ -36,9 +36,6 @@
         <attr name="sr_enablePinContent" format="boolean"/>
         <attr name="sr_enableRefresh" format="boolean"/>
         <attr name="sr_enableLoadMore" format="boolean"/>
-        <attr name="sr_emptyLayout" format="reference"/>
-        <attr name="sr_errorLayout" format="reference"/>
-        <attr name="sr_customLayout" format="reference"/>
         <attr name="sr_stickyHeader" format="reference"/>
         <attr name="sr_stickyFooter" format="reference"/>
         <attr name="sr_mode" format="enum">
