@@ -1,4 +1,8 @@
 # 更新日志
+## 1.6.6.8
+> 调整优化刷新视图自定样式效率，在`STYLE_SCALE`/`STYLE_FOLLOW_SCALE`/`STYLE_FOLLOW_CENTER`下不再使用`requestLayout`进行重布局，考虑到SRL高度固定情况下，直接在内部进行计算，大幅提高布局的效率。    
+> 修复#95，感谢@tbxyxs 的反馈。    
+> 移除无用attr。    
 ## 1.6.6.7
 > 添加自动二级刷新功能。
 ## 1.6.6.6
