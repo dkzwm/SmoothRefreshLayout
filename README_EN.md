@@ -1,6 +1,6 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.6.6.7-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+[![Release](https://img.shields.io/badge/JCenter-1.6.6.8-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-737%20%7C%2076%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-11-blue.svg)](https://developer.android.com/about/versions/android-3.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -32,20 +32,20 @@ Thank him for providing such a great open source library ！
  Add the following dependency to your build.gradle file:
  ```
  dependencies {
-     implementation 'me.dkzwm.widget.srl:core:1.6.6.7'
-     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.7'
-     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.7'
-     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.7'
-     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.7'
-     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.7'
+     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
+     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
+     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
+     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8'
+     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8'
+     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8'
     
      //androidX version
-     implementation 'me.dkzwm.widget.srl:core:1.6.6.7.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.7.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.7.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.7.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.7.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.7.androidx'
+     implementation 'me.dkzwm.widget.srl:core:1.6.6.8.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8.androidx'
+     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8.androidx'
  }
  ```
 
