@@ -5344,8 +5344,12 @@ public class SmoothRefreshLayout extends ViewGroup
         void stop() {
             if ($Mode != Constants.SCROLLER_MODE_NONE) {
                 if (sDebug) Log.d(TAG, "ScrollChecker: stop()");
-                if (mNestedScrolling && isCalcFling()) stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
-                $Mode = Constants.SCROLLER_MODE_NONE;
+                if (mNestedScrolling && isCalcFling()) {
+                    $Mode = Constants.SCROLLER_MODE_NONE;
+                    stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
+                }else {
+                    $Mode = Constants.SCROLLER_MODE_NONE;
+                }
                 mAutomaticActionUseSmoothScroll = false;
                 $IsScrolling = false;
                 $Scroller.forceFinished(true);
