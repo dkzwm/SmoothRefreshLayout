@@ -611,7 +611,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
                                 layoutFooterView(child, right);
                             }
                         } else {
-                            ViewCompat.offsetTopAndBottom(mFooterView.getView(), change);
+                            ViewCompat.offsetLeftAndRight(mFooterView.getView(), change);
                         }
                         break;
                 }

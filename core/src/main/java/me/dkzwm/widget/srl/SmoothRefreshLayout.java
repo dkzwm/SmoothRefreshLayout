@@ -5347,7 +5347,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (mNestedScrolling && isCalcFling()) {
                     $Mode = Constants.SCROLLER_MODE_NONE;
                     stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
-                }else {
+                } else {
                     $Mode = Constants.SCROLLER_MODE_NONE;
                 }
                 mAutomaticActionUseSmoothScroll = false;
