@@ -30,7 +30,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.config.Constants;
