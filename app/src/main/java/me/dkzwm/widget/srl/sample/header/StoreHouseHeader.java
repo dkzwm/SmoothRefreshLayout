@@ -1,7 +1,6 @@
 package me.dkzwm.widget.srl.sample.header;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -13,7 +12,6 @@ import java.util.List;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
-import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.animation.StoreHouseBarItemAnimation;
 import me.dkzwm.widget.srl.sample.utils.StoreHousePath;
 import me.dkzwm.widget.srl.util.PixelUtl;
@@ -23,7 +21,6 @@ import me.dkzwm.widget.srl.util.PixelUtl;
  * href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">Modify by dkzwm
  */
 public class StoreHouseHeader extends View implements IRefreshView {
-    @RefreshViewStyle protected int mStyle = STYLE_FOLLOW_SCALE;
     protected List<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
     protected List<Matrix> mMatrices = new ArrayList<>();
     protected int mLineWidth = -1;
@@ -42,6 +39,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     private float mBottomOffset = 25;
     private AniController mAniController = new AniController();
     private int mTextColor = Color.WHITE;
+    private me.dkzwm.widget.srl.extra.RefreshViewStyle mStyle;
 
     public StoreHouseHeader(Context context) {
         this(context, null);
@@ -53,13 +51,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     public StoreHouseHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (attrs != null) {
-            final TypedArray arr =
-                    context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
-            @RefreshViewStyle int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
-            mStyle = style;
-            arr.recycle();
-        }
+        mStyle = new me.dkzwm.widget.srl.extra.RefreshViewStyle(context, attrs, defStyleAttr, 0);
         mLineWidth = PixelUtl.dp2px(context, 1);
         setBackgroundColor(Color.DKGRAY);
         mHorizontalRandomness = context.getResources().getDisplayMetrics().widthPixels / 2;
@@ -243,12 +235,14 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     @Override
     public int getStyle() {
-        return mStyle;
+        return mStyle.mStyle;
     }
 
     public void setStyle(@RefreshViewStyle int style) {
-        mStyle = style;
-        requestLayout();
+        if (mStyle.mStyle != style) {
+            mStyle.mStyle = style;
+            requestLayout();
+        }
     }
 
     @Override
@@ -309,10 +303,11 @@ public class StoreHouseHeader extends View implements IRefreshView {
 
     private void calculate(IIndicator indicator) {
         mOffsetX = (getWidth() - mDrawZoneWidth) / 2;
-        if (mStyle != STYLE_SCALE && mStyle != STYLE_FOLLOW_SCALE) {
+        if (mStyle.mStyle != STYLE_SCALE && mStyle.mStyle != STYLE_FOLLOW_SCALE) {
             mOffsetY = getTopOffset();
         } else {
-            if (mStyle == STYLE_FOLLOW_SCALE && indicator.getCurrentPos() <= getCustomHeight()) {
+            if (mStyle.mStyle == STYLE_FOLLOW_SCALE
+                    && indicator.getCurrentPos() <= getCustomHeight()) {
                 mOffsetY = getTopOffset();
             } else {
                 mOffsetY = (int) (getTopOffset() + (getHeight() - getCustomHeight()) / 2f);

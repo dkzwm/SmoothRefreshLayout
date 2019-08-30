@@ -25,7 +25,6 @@
 package me.dkzwm.widget.srl.extra;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
@@ -48,7 +47,6 @@ import me.dkzwm.widget.srl.util.PixelUtl;
 public abstract class AbsClassicRefreshView<T extends IIndicator> extends RelativeLayout
         implements IRefreshView<T>, LastUpdateTimeUpdater.ITimeUpdater {
     private static final Interpolator sLinearInterpolator = new LinearInterpolator();
-    @RefreshViewStyle protected int mStyle = STYLE_DEFAULT;
     protected int mDefaultHeightInDP = 64;
     protected RotateAnimation mFlipAnimation;
     protected RotateAnimation mReverseFlipAnimation;
@@ -61,6 +59,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     protected long mLastUpdateTime = -1;
     protected int mRotateAniTime = 200;
     protected LastUpdateTimeUpdater mLastUpdateTimeUpdater;
+    protected me.dkzwm.widget.srl.extra.RefreshViewStyle mStyle;
 
     public AbsClassicRefreshView(Context context) {
         this(context, null);
@@ -72,14 +71,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
 
     public AbsClassicRefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (attrs != null) {
-            final TypedArray arr =
-                    context.obtainStyledAttributes(attrs, R.styleable.AbsClassicRefreshView, 0, 0);
-            @RefreshViewStyle
-            int style = arr.getInt(R.styleable.AbsClassicRefreshView_sr_style, mStyle);
-            mStyle = style;
-            arr.recycle();
-        }
+        mStyle = new me.dkzwm.widget.srl.extra.RefreshViewStyle(context, attrs, defStyleAttr, 0);
         mFlipAnimation =
                 new RotateAnimation(
                         0,
@@ -151,12 +143,14 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
 
     @Override
     public int getStyle() {
-        return mStyle;
+        return mStyle.mStyle;
     }
 
     public void setStyle(@RefreshViewStyle int style) {
-        mStyle = style;
-        requestLayout();
+        if (mStyle.mStyle != style) {
+            mStyle.mStyle = style;
+            requestLayout();
+        }
     }
 
     public void setTimeUpdater(@NonNull LastUpdateTimeUpdater.ITimeUpdater timeUpdater) {

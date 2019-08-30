@@ -50,12 +50,14 @@ public class SRReflectUtil {
 
     @SuppressLint("PrivateApi")
     @SuppressWarnings("unchecked")
+    @Deprecated
     static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
         if (sFound) return;
         if (sFlingRunnableClass == null) {
             Class<?>[] clazz = AbsListView.class.getDeclaredClasses();
             for (Class c : clazz) {
-                if (c.getCanonicalName().endsWith("FlingRunnable")) {
+                if (c.getCanonicalName() != null
+                        && c.getCanonicalName().endsWith("FlingRunnable")) {
                     sFlingRunnableClass = c;
                     break;
                 }

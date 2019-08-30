@@ -1,7 +1,6 @@
 package me.dkzwm.widget.srl.sample.header;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -21,10 +20,10 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
-import me.dkzwm.widget.srl.R;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
+import me.dkzwm.widget.srl.extra.RefreshViewStyle;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.util.PixelUtl;
 
@@ -45,7 +44,6 @@ public class WaveHeader extends View implements IRefreshView {
     protected byte mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
     protected float[] mLastPoint = new float[] {0, 0};
     protected int mDefaultHeight;
-    @RefreshViewStyle protected int mStyle = STYLE_PIN;
     protected float mMaxY = 0;
     protected float mProgress = 0f;
     protected int mCurrentPosY = 0;
@@ -56,6 +54,7 @@ public class WaveHeader extends View implements IRefreshView {
     private long mLastDrawProgressTime = 0;
     private int mBarWidth = 4;
     private int mDip2;
+    private me.dkzwm.widget.srl.extra.RefreshViewStyle mStyle;
 
     public WaveHeader(Context context) {
         this(context, null);
@@ -67,13 +66,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     public WaveHeader(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (attrs != null) {
-            final TypedArray arr =
-                    context.obtainStyledAttributes(attrs, R.styleable.IRefreshView, 0, 0);
-            @RefreshViewStyle int style = arr.getInt(R.styleable.IRefreshView_sr_style, mStyle);
-            mStyle = style;
-            arr.recycle();
-        }
+        mStyle = new me.dkzwm.widget.srl.extra.RefreshViewStyle(context, attrs, defStyleAttr, 0);
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         mWavePaint.setStyle(Paint.Style.FILL);
         mWavePaint.setColor(Color.BLUE);
@@ -130,12 +123,14 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public int getStyle() {
-        return mStyle;
+        return mStyle.mStyle;
     }
 
     public void setStyle(@RefreshViewStyle int style) {
-        mStyle = style;
-        requestLayout();
+        if (mStyle.mStyle != style) {
+            mStyle.mStyle = style;
+            requestLayout();
+        }
     }
 
     @Override
@@ -184,7 +179,7 @@ public class WaveHeader extends View implements IRefreshView {
             mFromFront = !mFromFront;
         }
         float distance =
-                (float) Math.cos((mGrowingTime / barSpinCycleTime + 1) * Math.PI) / 2 + 0.5f;
+                (float) Math.cos((mGrowingTime / barSpinCycleTime + 1) * Math.PI) / 2f + 0.5f;
         int barMaxLength = 270;
         float destLength = (barMaxLength - barLength);
 
@@ -212,8 +207,8 @@ public class WaveHeader extends View implements IRefreshView {
         canvas.save();
         canvas.restore();
         float textCenterY =
-                mCurrentPosY + ((mTextPaint.descent() + mTextPaint.ascent()) / 2) - mDip2 * 5;
-        canvas.drawText(mText, getWidth() / 2, textCenterY, mTextPaint);
+                mCurrentPosY + ((mTextPaint.descent() + mTextPaint.ascent()) / 2f) - mDip2 * 5;
+        canvas.drawText(mText, getWidth() / 2f, textCenterY, mTextPaint);
         canvas.save();
     }
 
@@ -300,27 +295,27 @@ public class WaveHeader extends View implements IRefreshView {
                         percent = 0;
                     }
                     if (x > width) {
-                        x = x - (x - width / 2) * (1 - percent);
+                        x = x - (x - width / 2f) * (1 - percent);
                     } else {
-                        x = x + (width / 2 - x) * (1 - percent);
+                        x = x + (width / 2f - x) * (1 - percent);
                     }
                 } else {
                     percent = mCurrentPosY / mMaxY;
                     if (x > width) {
-                        x = x - (x - width / 2) * (1 - percent);
+                        x = x - (x - width / 2f) * (1 - percent);
                     } else {
-                        x = x + (width / 2 - x) * (1 - percent);
+                        x = x + (width / 2f - x) * (1 - percent);
                     }
                 }
             } else {
-                x = width / 2;
+                x = width / 2f;
             }
             mLastPoint[0] = x;
             mLastPoint[1] = mCurrentPosY;
         } else if (status == SmoothRefreshLayout.SR_STATUS_REFRESHING) {
             updateProgressBounds();
         } else if (status == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
-            mLastPoint[0] = width / 2;
+            mLastPoint[0] = width / 2f;
             mLastPoint[1] = mCurrentPosY;
         }
         invalidate();
@@ -332,7 +327,7 @@ public class WaveHeader extends View implements IRefreshView {
         final int width = getWidth();
         if (indicator.hasTouched()) {
             mLastPoint = new float[] {indicator.getLastMovePoint()[0], mCurrentPosY};
-        } else mLastPoint[0] = width / 2;
+        } else mLastPoint[0] = width / 2f;
         mLastPoint[1] = mCurrentPosY;
         invalidate();
     }
@@ -341,11 +336,11 @@ public class WaveHeader extends View implements IRefreshView {
         final int width = getWidth();
         mProgressBounds.setEmpty();
         mProgressBounds.set(
-                width / 2 - mCircleRadius - mBarWidth,
+                width / 2f - mCircleRadius - mBarWidth,
                 mCurrentPosY - mCircleRadius * 2 - mDip2 * 5 - mBarWidth * 2,
-                width / 2 + mCircleRadius + mBarWidth,
+                width / 2f + mCircleRadius + mBarWidth,
                 mCurrentPosY - mDip2 * 5);
-        mLastPoint[0] = width / 2;
+        mLastPoint[0] = width / 2f;
         mLastPoint[1] = mCurrentPosY;
     }
 

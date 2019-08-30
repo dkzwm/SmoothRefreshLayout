@@ -34,7 +34,6 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 
 /** @author dkzwm */
 public interface IRefreshView<T extends IIndicator> {
-
     byte TYPE_HEADER = 0;
     byte TYPE_FOOTER = 1;
 
