@@ -695,14 +695,10 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     protected void dispatchNestedFling(int velocity) {
         if (sDebug) Log.d(TAG, String.format("dispatchNestedFling() : %s", velocity));
         if (mScrollTargetView != null)
-            HorizontalScrollCompat.flingCompat(
-                    mScrollTargetView, -velocity, mScrollChecker.getFinalY(velocity));
+            HorizontalScrollCompat.flingCompat(mScrollTargetView, -velocity);
         else if (mAutoFoundScrollTargetView != null)
-            HorizontalScrollCompat.flingCompat(
-                    mAutoFoundScrollTargetView, -velocity, mScrollChecker.getFinalY(velocity));
-        else if (mTargetView != null)
-            HorizontalScrollCompat.flingCompat(
-                    mTargetView, -velocity, mScrollChecker.getFinalY(velocity));
+            HorizontalScrollCompat.flingCompat(mAutoFoundScrollTargetView, -velocity);
+        else if (mTargetView != null) HorizontalScrollCompat.flingCompat(mTargetView, -velocity);
     }
 
     @Override

@@ -47,6 +47,7 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent2;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -1137,9 +1138,13 @@ public class SmoothRefreshLayout extends ViewGroup
 
     @Nullable
     public View getScrollTargetView() {
-        if (mScrollTargetView != null) return mScrollTargetView;
-        else if (mAutoFoundScrollTargetView != null) return mAutoFoundScrollTargetView;
-        else return null;
+        if (mScrollTargetView != null) {
+            return mScrollTargetView;
+        } else if (mAutoFoundScrollTargetView != null) {
+            return mAutoFoundScrollTargetView;
+        } else {
+            return mTargetView;
+        }
     }
 
     /**
@@ -3158,10 +3163,7 @@ public class SmoothRefreshLayout extends ViewGroup
     @Override
     public void stopNestedScroll(int type) {
         if (sDebug) Log.d(TAG, String.format("stopNestedScroll() type: %s", type));
-        final View targetView;
-        if (mScrollTargetView != null) targetView = mScrollTargetView;
-        else if (mAutoFoundScrollTargetView != null) targetView = mAutoFoundScrollTargetView;
-        else targetView = mTargetView;
+        final View targetView = getScrollTargetView();
         if (targetView != null) ViewCompat.stopNestedScroll(targetView, type);
         else mNestedScrollingChildHelper.stopNestedScroll(type);
         onNestedScrollChanged();
@@ -3484,7 +3486,10 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (Math.abs(vx) >= mMinimumFlingVelocity
                         || Math.abs(vy) >= mMinimumFlingVelocity) {
                     boolean handler = onFling(vx, vy, false);
-                    if (handler) ev.setAction(MotionEvent.ACTION_CANCEL);
+                    final View targetView = getScrollTargetView();
+                    if (handler && !(targetView instanceof ViewPager)) {
+                        ev.setAction(MotionEvent.ACTION_CANCEL);
+                    }
                 }
             case MotionEvent.ACTION_CANCEL:
                 mIsFingerInsideAnotherDirectionView = false;
@@ -3805,17 +3810,13 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public boolean isNotYetInEdgeCannotMoveHeader() {
-        if (mScrollTargetView != null) return isNotYetInEdgeCannotMoveHeader(mScrollTargetView);
-        if (mAutoFoundScrollTargetView != null)
-            return isNotYetInEdgeCannotMoveHeader(mAutoFoundScrollTargetView);
-        return isNotYetInEdgeCannotMoveHeader(mTargetView);
+        final View targetView = getScrollTargetView();
+        return isNotYetInEdgeCannotMoveHeader(targetView);
     }
 
     public boolean isNotYetInEdgeCannotMoveFooter() {
-        if (mScrollTargetView != null) return isNotYetInEdgeCannotMoveFooter(mScrollTargetView);
-        if (mAutoFoundScrollTargetView != null)
-            return isNotYetInEdgeCannotMoveFooter(mAutoFoundScrollTargetView);
-        return isNotYetInEdgeCannotMoveFooter(mTargetView);
+        final View targetView = getScrollTargetView();
+        return isNotYetInEdgeCannotMoveFooter(targetView);
     }
 
     protected boolean isNotYetInEdgeCannotMoveHeader(View view) {

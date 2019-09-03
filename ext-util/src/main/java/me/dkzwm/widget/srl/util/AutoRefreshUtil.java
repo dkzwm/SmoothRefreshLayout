@@ -25,7 +25,9 @@
 package me.dkzwm.widget.srl.util;
 
 import android.support.annotation.NonNull;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewConfiguration;
 import me.dkzwm.widget.srl.ILifecycleObserver;
@@ -78,8 +80,15 @@ public class AutoRefreshUtil
                     ScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
                 } else if (mRefreshLayout.getSupportScrollAxis()
                         == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
-                    HorizontalScrollCompat.flingCompat(
-                            mTargetView, -mMaximumFlingVelocity, Integer.MAX_VALUE);
+                    if (mTargetView instanceof ViewPager) {
+                        final ViewPager pager = (ViewPager) mTargetView;
+                        final PagerAdapter adapter = pager.getAdapter();
+                        if (adapter == null) return;
+                        if (adapter.getCount() <= 0) return;
+                        pager.setCurrentItem(0, true);
+                    } else {
+                        HorizontalScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
+                    }
                 }
                 mNeedToTriggerRefresh = true;
                 mCachedActionAtOnce = atOnce;
@@ -101,8 +110,15 @@ public class AutoRefreshUtil
                     ScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
                 } else if (mRefreshLayout.getSupportScrollAxis()
                         == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
-                    HorizontalScrollCompat.flingCompat(
-                            mTargetView, mMaximumFlingVelocity, Integer.MAX_VALUE);
+                    if (mTargetView instanceof ViewPager) {
+                        final ViewPager pager = (ViewPager) mTargetView;
+                        final PagerAdapter adapter = pager.getAdapter();
+                        if (adapter == null) return;
+                        if (adapter.getCount() <= 0) return;
+                        pager.setCurrentItem(adapter.getCount() - 1, true);
+                    } else {
+                        HorizontalScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
+                    }
                 }
                 mNeedToTriggerLoadMore = true;
                 mCachedActionAtOnce = atOnce;
