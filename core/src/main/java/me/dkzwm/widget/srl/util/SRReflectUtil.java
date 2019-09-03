@@ -38,6 +38,9 @@ import java.lang.reflect.Method;
  * @author dkzwm
  */
 public class SRReflectUtil {
+    /** Don't want to be compatible with the old version, you can set it to true */
+    public static boolean COMPATIBLE = false;
+
     private static Class sFlingRunnableClass;
     private static Field sFlingRunnableField;
     private static Method sReportScrollStateChangeMethod;
@@ -52,7 +55,12 @@ public class SRReflectUtil {
     @SuppressWarnings("unchecked")
     @Deprecated
     static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
-        if (sFound) return;
+        if (!COMPATIBLE) {
+            return;
+        }
+        if (sFound) {
+            return;
+        }
         if (sFlingRunnableClass == null) {
             Class<?>[] clazz = AbsListView.class.getDeclaredClasses();
             for (Class c : clazz) {
@@ -64,13 +72,17 @@ public class SRReflectUtil {
             }
         }
         sFound = true;
-        if (sFlingRunnableClass == null) return;
+        if (sFlingRunnableClass == null) {
+            return;
+        }
         try {
             if (sFlingRunnableField == null) {
                 sFlingRunnableField = AbsListView.class.getDeclaredField("mFlingRunnable");
                 sFlingRunnableField.setAccessible(true);
             }
-            if (sFlingRunnableField == null) return;
+            if (sFlingRunnableField == null) {
+                return;
+            }
             Object obj = sFlingRunnableField.get(view);
             if (obj == null) {
                 if (sFlingRunnableConstructor == null) {
@@ -78,7 +90,9 @@ public class SRReflectUtil {
                             sFlingRunnableClass.getDeclaredConstructor(AbsListView.class);
                     sFlingRunnableConstructor.setAccessible(true);
                 }
-                if (sFlingRunnableConstructor == null) return;
+                if (sFlingRunnableConstructor == null) {
+                    return;
+                }
                 obj = sFlingRunnableConstructor.newInstance(view);
             }
             sFlingRunnableField.set(view, obj);
@@ -87,7 +101,9 @@ public class SRReflectUtil {
                         AbsListView.class.getDeclaredMethod("reportScrollStateChange", int.class);
                 sReportScrollStateChangeMethod.setAccessible(true);
             }
-            if (sReportScrollStateChangeMethod == null) return;
+            if (sReportScrollStateChangeMethod == null) {
+                return;
+            }
             sReportScrollStateChangeMethod.invoke(
                     view, AbsListView.OnScrollListener.SCROLL_STATE_FLING);
             if (sFlingRunnableStartMethod == null) {
@@ -95,7 +111,9 @@ public class SRReflectUtil {
                         sFlingRunnableClass.getDeclaredMethod("start", int.class);
                 sFlingRunnableStartMethod.setAccessible(true);
             }
-            if (sFlingRunnableStartMethod == null) return;
+            if (sFlingRunnableStartMethod == null) {
+                return;
+            }
             sFlingRunnableStartMethod.invoke(obj, velocityY);
         } catch (Exception e) {
             // ignore exception
@@ -103,7 +121,11 @@ public class SRReflectUtil {
     }
 
     @SuppressLint("PrivateApi")
+    @Deprecated
     static void compatOlderAbsListViewScrollListBy(AbsListView view, int delta) {
+        if (!COMPATIBLE) {
+            return;
+        }
         try {
             if (sTrackMotionScrollMethod == null) {
                 sTrackMotionScrollMethod =
@@ -121,6 +143,9 @@ public class SRReflectUtil {
 
     @SuppressLint("PrivateApi")
     public static void compatMapTheInverseMatrix(View view, float[] point) {
+        if (!COMPATIBLE) {
+            return;
+        }
         try {
             if (sHasIdentityMatrixMethod == null) {
                 sHasIdentityMatrixMethod = View.class.getDeclaredMethod("hasIdentityMatrix");
@@ -135,7 +160,9 @@ public class SRReflectUtil {
                     }
                     if (sGetInverseMatrixMethod != null) {
                         Matrix matrix = (Matrix) sGetInverseMatrixMethod.invoke(view);
-                        if (matrix != null) matrix.mapPoints(point);
+                        if (matrix != null) {
+                            matrix.mapPoints(point);
+                        }
                     }
                 }
             }

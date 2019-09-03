@@ -26,14 +26,7 @@ package me.dkzwm.widget.srl.util;
 
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.AbsListView;
-import android.widget.ScrollView;
 import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 /**
  * Created by dkzwm on 2017/10/23.
@@ -42,11 +35,12 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  */
 public class HorizontalBoundaryUtil {
     public static boolean isInsideVerticalView(float rawX, float rawY, @NonNull View view) {
-        boolean isVerticalView = isVerticalView(view);
+        boolean isVerticalView = ScrollCompat.isScrollingView(view);
         if (isVerticalView) {
             return BoundaryUtil.isInsideView(rawX, rawY, view);
-        } else if (view instanceof ViewGroup)
+        } else if (view instanceof ViewGroup) {
             return isInsideViewGroup(rawX, rawY, (ViewGroup) view);
+        }
         return false;
     }
 
@@ -54,36 +48,18 @@ public class HorizontalBoundaryUtil {
         final int size = group.getChildCount();
         for (int i = 0; i < size; i++) {
             View child = group.getChildAt(i);
-            if (child.getVisibility() != View.VISIBLE) continue;
-            boolean isVerticalView = isVerticalView(child);
+            if (child.getVisibility() != View.VISIBLE) {
+                continue;
+            }
+            boolean isVerticalView = ScrollCompat.isScrollingView(child);
             if (isVerticalView) {
                 boolean isInside = BoundaryUtil.isInsideView(rawX, rawY, child);
-                if (isInside) return true;
+                if (isInside) {
+                    return true;
+                }
             } else {
-                if (child instanceof ViewGroup)
+                if (child instanceof ViewGroup) {
                     return isInsideViewGroup(rawX, rawY, (ViewGroup) child);
-            }
-        }
-        return false;
-    }
-
-    private static boolean isVerticalView(View view) {
-        if (view instanceof AbsListView
-                || view instanceof ScrollView
-                || view instanceof NestedScrollView
-                || view instanceof WebView) {
-            return true;
-        } else if (ScrollCompat.isRecyclerView(view)) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if (manager != null) {
-                if (manager instanceof LinearLayoutManager) {
-                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                    return linearManager.getOrientation() == RecyclerView.VERTICAL;
-                } else if (manager instanceof StaggeredGridLayoutManager) {
-                    StaggeredGridLayoutManager gridLayoutManager =
-                            (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation() == RecyclerView.VERTICAL;
                 }
             }
         }

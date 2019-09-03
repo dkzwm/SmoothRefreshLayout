@@ -46,8 +46,9 @@ public class BoundaryUtil {
         boolean isHorizontalView = isHorizontalView(view);
         if (isHorizontalView) {
             return isInsideView(rawX, rawY, view);
-        } else if (view instanceof ViewGroup)
+        } else if (view instanceof ViewGroup) {
             return isInsideViewGroup(rawX, rawY, (ViewGroup) view);
+        }
         return false;
     }
 
@@ -63,37 +64,46 @@ public class BoundaryUtil {
         final int size = group.getChildCount();
         for (int i = 0; i < size; i++) {
             View child = group.getChildAt(i);
-            if (child.getVisibility() != View.VISIBLE) continue;
+            if (child.getVisibility() != View.VISIBLE) {
+                continue;
+            }
             boolean isHorizontalView = isHorizontalView(child);
             if (isHorizontalView) {
                 boolean isInside = isInsideView(rawX, rawY, child);
-                if (isInside) return true;
+                if (isInside) {
+                    return true;
+                }
             } else {
-                if (child instanceof ViewGroup)
+                if (child instanceof ViewGroup) {
                     return isInsideViewGroup(rawX, rawY, (ViewGroup) child);
+                }
             }
         }
         return false;
     }
 
-    private static boolean isHorizontalView(View view) {
-        if (view instanceof ViewPager
-                || view instanceof HorizontalScrollView
-                || view instanceof WebView) {
-            return true;
-        } else if (ScrollCompat.isRecyclerView(view)) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-            if (manager != null) {
-                if (manager instanceof LinearLayoutManager) {
-                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                    return linearManager.getOrientation() == RecyclerView.HORIZONTAL;
-                } else if (manager instanceof StaggeredGridLayoutManager) {
-                    StaggeredGridLayoutManager gridLayoutManager =
-                            (StaggeredGridLayoutManager) manager;
-                    return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
+    public static boolean isHorizontalView(View view) {
+        try {
+            if (view instanceof ViewPager
+                    || view instanceof HorizontalScrollView
+                    || view instanceof WebView) {
+                return true;
+            } else if (view instanceof RecyclerView) {
+                RecyclerView recyclerView = (RecyclerView) view;
+                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+                if (manager != null) {
+                    if (manager instanceof LinearLayoutManager) {
+                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                        return linearManager.getOrientation() == RecyclerView.HORIZONTAL;
+                    } else if (manager instanceof StaggeredGridLayoutManager) {
+                        StaggeredGridLayoutManager gridLayoutManager =
+                                (StaggeredGridLayoutManager) manager;
+                        return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
+                    }
                 }
             }
+        } catch (Exception e) {
+            // ignored
         }
         return false;
     }

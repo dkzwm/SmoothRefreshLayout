@@ -287,17 +287,19 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     @Override
     public void checkConfig() {
         if (mCanMoveTheMaxRatioOfHeaderHeight > 0
-                && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh)
+                && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh) {
             Log.w(
                     getClass().getSimpleName(),
                     "If the max can move ratio of header less than "
                             + "the triggered refresh ratio of header, refresh will be never trigger!");
+        }
         if (mCanMoveTheMaxRatioOfFooterHeight > 0
-                && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore)
+                && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore) {
             Log.w(
                     getClass().getSimpleName(),
                     "If the max can move ratio of footer less than "
                             + "the triggered load more ratio of footer, load more will be never trigger!");
+        }
     }
 
     @Override
