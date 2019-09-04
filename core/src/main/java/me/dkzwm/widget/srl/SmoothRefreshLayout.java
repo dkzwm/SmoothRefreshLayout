@@ -1354,14 +1354,14 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     /**
-     * Set a scrolling callback when loading more.
+     * Set a sync scrolling callback when refresh competed.
      *
-     * <p>设置当加载更多时滚动回调，可使用该属性对内容视图做滑动处理。例如内容视图是ListView，完成加载更多时，
+     * <p>设置同步滚动回调，可使用该属性对内容视图做滑动处理。例如内容视图是ListView，完成加载更多时，
      * 需要将加载出的数据显示出来，那么设置该回调，每次Footer回滚时拿到滚动的数值对ListView做向上滚动处理，将数据展示处理
      *
-     * @param callback Callback that should be called when scrolling on loading more.
+     * @param callback  a sync scrolling callback when refresh competed.
      */
-    public void setOnLoadMoreScrollCallback(OnSyncScrollCallback callback) {
+    public void setOnSyncScrollCallback(OnSyncScrollCallback callback) {
         mSyncScrollCallback = callback;
     }
 
