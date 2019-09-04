@@ -189,7 +189,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected OnHeaderEdgeDetectCallBack mInEdgeCanMoveHeaderCallBack;
     protected OnFooterEdgeDetectCallBack mInEdgeCanMoveFooterCallBack;
     protected OnInsideAnotherDirectionViewCallback mInsideAnotherDirectionViewCallback;
-    protected OnLoadMoreScrollCallback mLoadMoreScrollCallback;
+    protected OnSyncScrollCallback mSyncScrollCallback;
     protected OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     protected OnPerformAutoRefreshCallBack mAutoRefreshCallBack;
     protected int mFlag =
@@ -1361,8 +1361,8 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param callback Callback that should be called when scrolling on loading more.
      */
-    public void setOnLoadMoreScrollCallback(OnLoadMoreScrollCallback callback) {
-        mLoadMoreScrollCallback = callback;
+    public void setOnLoadMoreScrollCallback(OnSyncScrollCallback callback) {
+        mSyncScrollCallback = callback;
     }
 
     /**
@@ -4367,22 +4367,42 @@ public class SmoothRefreshLayout extends ViewGroup
                 && mIndicator.hasTouched()
                 && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
-        final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-        final int current = mIndicator.getCurrentPos();
-        final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
-        if (maxHeaderDistance > 0 && delta > 0) {
-            if (current >= maxHeaderDistance) {
-                if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
-                    updateAnotherDirectionPos();
-                    return;
-                }
-            } else if (current + delta > maxHeaderDistance) {
-                if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
-                    delta = maxHeaderDistance - current;
-                    if (isFling) {
-                        mScrollChecker.$Scroller.forceFinished(true);
+        if (delta > 0) {
+            final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+            final int current = mIndicator.getCurrentPos();
+            final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
+            if (maxHeaderDistance > 0) {
+                if (current >= maxHeaderDistance) {
+                    if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
+                        updateAnotherDirectionPos();
+                        return;
+                    }
+                } else if (current + delta > maxHeaderDistance) {
+                    if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
+                        delta = maxHeaderDistance - current;
+                        if (isFling) {
+                            mScrollChecker.$Scroller.forceFinished(true);
+                        }
                     }
                 }
+            }
+        } else {
+            // check if it is needed to compatible scroll
+            if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
+                    && isNotYetInEdgeCannotMoveHeader()
+                    && !isEnabledPinContentView()
+                    && mIsLastRefreshSuccessful
+                    && (!mIndicator.hasTouched()
+                            || mNestedScrolling
+                            || isEnabledSmoothRollbackWhenCompleted())
+                    && mStatus == SR_STATUS_COMPLETE) {
+                if (sDebug) {
+                    Log.d(
+                            TAG,
+                            String.format("moveHeaderPos(): compatible scroll delta: %s", delta));
+                }
+                mNeedFilterScrollEvent = true;
+                tryToCompatSyncScroll(getScrollTargetView(), delta);
             }
         }
         movePos(delta);
@@ -4420,6 +4440,7 @@ public class SmoothRefreshLayout extends ViewGroup
         } else {
             // check if it is needed to compatible scroll
             if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
+                    && isNotYetInEdgeCannotMoveFooter()
                     && !isEnabledPinContentView()
                     && mIsLastRefreshSuccessful
                     && (!mIndicator.hasTouched()
@@ -4432,15 +4453,15 @@ public class SmoothRefreshLayout extends ViewGroup
                             String.format("moveFooterPos(): compatible scroll delta: %s", delta));
                 }
                 mNeedFilterScrollEvent = true;
-                compatLoadMoreScroll(getScrollTargetView(), delta);
+                tryToCompatSyncScroll(getScrollTargetView(), delta);
             }
         }
         movePos(-delta);
     }
 
-    protected void compatLoadMoreScroll(View view, float delta) {
-        if (mLoadMoreScrollCallback != null) {
-            mLoadMoreScrollCallback.onScroll(view, delta);
+    protected void tryToCompatSyncScroll(View view, float delta) {
+        if (mSyncScrollCallback != null) {
+            mSyncScrollCallback.onScroll(view, delta);
         } else {
             ScrollCompat.scrollCompat(view, delta);
         }
@@ -5183,10 +5204,10 @@ public class SmoothRefreshLayout extends ViewGroup
         void onChanged(byte status, IIndicator indicator);
     }
 
-    /** Classes that wish to be called when load more completed spring back to start position */
-    public interface OnLoadMoreScrollCallback {
+    /** Classes that wish to be called when refresh completed spring back to start position */
+    public interface OnSyncScrollCallback {
         /**
-         * Called when load more completed spring back to start position, each move triggers a
+         * Called when refresh completed spring back to start position, each move triggers a
          * callback once
          *
          * @param content The content view

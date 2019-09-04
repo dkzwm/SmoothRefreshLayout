@@ -45,8 +45,9 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAdapter);
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_recyclerView);
         mRefreshLayout.setDisableLoadMore(false);
-        mRefreshLayout.materialStyle();
+        //        mRefreshLayout.materialStyle();
         mRefreshLayout.setEnableAutoLoadMore(true);
+        mRefreshLayout.setEnableAutoRefresh(true);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {
                     @Override
@@ -57,7 +58,7 @@ public class WithRecyclerViewActivity extends AppCompatActivity {
                                     public void run() {
                                         List<String> list = DataUtil.createList(mCount, 60);
                                         mCount = list.size();
-                                        mAdapter.updateData(list);
+                                        mAdapter.insertData(list);
                                         mRefreshLayout.refreshComplete();
                                     }
                                 },
