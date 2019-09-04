@@ -4350,6 +4350,9 @@ public class SmoothRefreshLayout extends ViewGroup
             }
         }
         if (useScroll) {
+            if (mScrollChecker.isFlingBack()) {
+                mScrollChecker.stop();
+            }
             tryScrollBackToTopByPercentDuration();
         }
     }
