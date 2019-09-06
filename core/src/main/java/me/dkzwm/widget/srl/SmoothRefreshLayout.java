@@ -5245,14 +5245,6 @@ public class SmoothRefreshLayout extends ViewGroup
         boolean canAutoRefresh(SmoothRefreshLayout parent, @Nullable View child);
     }
 
-    public interface OnReflectCallback {
-        void mapTheInverseMatrix(View view, float[] point);
-    }
-
-    public interface OnTargetViewFlingListener {
-        void onFling(View view, int velocity);
-    }
-
     /**
      * Classes that wish to be notified when the scroll events triggered in this view and all
      * internal views
