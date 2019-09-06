@@ -14,7 +14,7 @@ Thank him for providing such a great open source library ！
 ## Features:
  - Can support all Views, according to the specific needs to adaptation.
  - Support Multi-Touch.
- - Support Nested-Scroll feature, implemented the NestedScrollingChild2, NestedScrollingParent2 interface.
+ - Support Nested-Scroll feature, implemented the NestedScrollingChild3, NestedScrollingParent3 interface.
  - Extends the ViewGroup, has excellent performance,support similar FameLayout feature（Gravity、Margin).
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）、Scroll to top to Auto-Refresh.
  - Support Cross boundary rebound(OverScroll).

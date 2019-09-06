@@ -13,7 +13,7 @@
 ## 特性:
  - 理论上支持所有的视图,且可根据具体需求高效适配.
  - 支持多点触摸.
- - 支持嵌套滑动,完整实现了NestedScrollingChild2，NestedScrollingParent2 接口,玩转CoordinatorLayout.
+ - 支持嵌套滑动,完整实现了NestedScrollingChild3，NestedScrollingParent3 接口,玩转CoordinatorLayout.
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
  - 支持越界回弹.
