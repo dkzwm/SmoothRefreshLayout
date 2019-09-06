@@ -24,7 +24,6 @@
  */
 package me.dkzwm.widget.srl;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -46,10 +45,7 @@ import android.view.animation.Interpolator;
 import android.widget.Scroller;
 import androidx.annotation.CallSuper;
 import androidx.annotation.ColorInt;
-import androidx.annotation.FloatRange;
 import androidx.annotation.IdRes;
-import androidx.annotation.IntRange;
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
@@ -70,7 +66,6 @@ import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
 import me.dkzwm.widget.srl.util.BoundaryUtil;
-import me.dkzwm.widget.srl.util.SRReflectUtil;
 import me.dkzwm.widget.srl.util.ScrollCompat;
 
 /**
@@ -1000,7 +995,6 @@ public class SmoothRefreshLayout extends ViewGroup
         }
     }
 
-    @SuppressLint({"RtlHardcpded", "RtlHardcoded"})
     protected void layoutOtherView(View child, int parentRight, int parentBottom) {
         final int width = child.getMeasuredWidth();
         final int height = child.getMeasuredHeight();
@@ -1359,7 +1353,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * <p>设置同步滚动回调，可使用该属性对内容视图做滑动处理。例如内容视图是ListView，完成加载更多时，
      * 需要将加载出的数据显示出来，那么设置该回调，每次Footer回滚时拿到滚动的数值对ListView做向上滚动处理，将数据展示处理
      *
-     * @param callback  a sync scrolling callback when refresh competed.
+     * @param callback a sync scrolling callback when refresh competed.
      */
     public void setOnSyncScrollCallback(OnSyncScrollCallback callback) {
         mSyncScrollCallback = callback;
@@ -1771,7 +1765,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param resistance Resistance
      */
-    public void setResistance(@FloatRange(from = 0, to = Float.MAX_VALUE) float resistance) {
+    public void setResistance(float resistance) {
         mIndicatorSetter.setResistance(resistance);
     }
 
@@ -1782,8 +1776,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param resistance Resistance
      */
-    public void setResistanceOfFooter(
-            @FloatRange(from = 0, to = Float.MAX_VALUE) float resistance) {
+    public void setResistanceOfFooter(float resistance) {
         mIndicatorSetter.setResistanceOfFooter(resistance);
     }
 
@@ -1794,8 +1787,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param resistance Resistance
      */
-    public void setResistanceOfHeader(
-            @FloatRange(from = 0, to = Float.MAX_VALUE) float resistance) {
+    public void setResistanceOfHeader(float resistance) {
         mIndicatorSetter.setResistanceOfHeader(resistance);
     }
 
@@ -1806,7 +1798,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio Height ratio
      */
-    public void setRatioToRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setRatioToRefresh(float ratio) {
         mIndicatorSetter.setRatioToRefresh(ratio);
     }
 
@@ -1817,7 +1809,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio Height ratio
      */
-    public void setRatioOfHeaderToRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setRatioOfHeaderToRefresh(float ratio) {
         mIndicatorSetter.setRatioOfHeaderToRefresh(ratio);
     }
 
@@ -1828,7 +1820,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio Height ratio
      */
-    public void setRatioOfFooterToRefresh(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setRatioOfFooterToRefresh(float ratio) {
         mIndicatorSetter.setRatioOfFooterToRefresh(ratio);
     }
 
@@ -1840,7 +1832,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio Height ratio
      */
-    public void setRatioToKeep(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setRatioToKeep(float ratio) {
         mIndicatorSetter.setRatioToKeepHeader(ratio);
         mIndicatorSetter.setRatioToKeepFooter(ratio);
     }
@@ -1852,7 +1844,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio Height ratio
      */
-    public void setRatioToKeepHeader(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setRatioToKeepHeader(float ratio) {
         mIndicatorSetter.setRatioToKeepHeader(ratio);
     }
 
@@ -1863,7 +1855,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio Height ratio
      */
-    public void setRatioToKeepFooter(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setRatioToKeepFooter(float ratio) {
         mIndicatorSetter.setRatioToKeepFooter(ratio);
     }
 
@@ -1874,7 +1866,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Duration
      */
-    public void setMaxOverScrollDuration(@IntRange(from = 0, to = 10000) int duration) {
+    public void setMaxOverScrollDuration(int duration) {
         mMaxOverScrollDuration = duration;
     }
 
@@ -1885,7 +1877,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Duration
      */
-    public void setMinOverScrollDuration(@IntRange(from = 0, to = 10000) int duration) {
+    public void setMinOverScrollDuration(int duration) {
         mMinOverScrollDuration = duration;
     }
 
@@ -1896,7 +1888,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Millis
      */
-    public void setDurationToClose(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+    public void setDurationToClose(int duration) {
         mDurationToCloseHeader = duration;
         mDurationToCloseFooter = duration;
     }
@@ -1917,7 +1909,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Millis
      */
-    public void setDurationToCloseHeader(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+    public void setDurationToCloseHeader(int duration) {
         mDurationToCloseHeader = duration;
     }
 
@@ -1937,7 +1929,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Millis
      */
-    public void setDurationToCloseFooter(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+    public void setDurationToCloseFooter(int duration) {
         mDurationToCloseFooter = duration;
     }
 
@@ -1948,7 +1940,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Millis
      */
-    public void setDurationOfBackToKeep(@IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+    public void setDurationOfBackToKeep(int duration) {
         mDurationOfBackToHeaderHeight = duration;
         mDurationOfBackToFooterHeight = duration;
     }
@@ -1960,8 +1952,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Millis
      */
-    public void setDurationOfBackToKeepHeader(
-            @IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+    public void setDurationOfBackToKeepHeader(int duration) {
         this.mDurationOfBackToHeaderHeight = duration;
     }
 
@@ -1972,8 +1963,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param duration Millis
      */
-    public void setDurationOfBackToKeepFooter(
-            @IntRange(from = 0, to = Integer.MAX_VALUE) int duration) {
+    public void setDurationOfBackToKeepFooter(int duration) {
         this.mDurationOfBackToFooterHeight = duration;
     }
 
@@ -1984,7 +1974,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio The max ratio of refresh view
      */
-    public void setMaxMoveRatio(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setMaxMoveRatio(float ratio) {
         mIndicatorSetter.setMaxMoveRatio(ratio);
     }
 
@@ -1995,7 +1985,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio The max ratio of Header view
      */
-    public void setMaxMoveRatioOfHeader(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setMaxMoveRatioOfHeader(float ratio) {
         mIndicatorSetter.setMaxMoveRatioOfHeader(ratio);
     }
 
@@ -2006,7 +1996,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @param ratio The max ratio of Footer view
      */
-    public void setMaxMoveRatioOfFooter(@FloatRange(from = 0, to = Float.MAX_VALUE) float ratio) {
+    public void setMaxMoveRatioOfFooter(float ratio) {
         mIndicatorSetter.setMaxMoveRatioOfFooter(ratio);
     }
 
@@ -3635,7 +3625,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mCachedFloatPoint[1] = y;
         mCachedFloatPoint[0] += group.getScrollX() - child.getLeft();
         mCachedFloatPoint[1] += group.getScrollY() - child.getTop();
-        SRReflectUtil.compatMapTheInverseMatrix(child, mCachedFloatPoint);
+        mapTheInverseMatrix(child, mCachedFloatPoint);
         final boolean isInView =
                 mCachedFloatPoint[0] >= 0
                         && mCachedFloatPoint[1] >= 0
@@ -3647,6 +3637,8 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         return isInView;
     }
+
+    protected void mapTheInverseMatrix(View child, float[] point) {}
 
     protected View ensureScrollTargetView(View target, boolean noTransform, float x, float y) {
         if (target instanceof IRefreshView
@@ -5217,7 +5209,6 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public interface OnHookUIRefreshCompleteCallBack {
-        @MainThread
         void onHook(RefreshCompleteHook hook);
     }
 
@@ -5252,6 +5243,14 @@ public class SmoothRefreshLayout extends ViewGroup
          * @return whether need trigger
          */
         boolean canAutoRefresh(SmoothRefreshLayout parent, @Nullable View child);
+    }
+
+    public interface OnReflectCallback {
+        void mapTheInverseMatrix(View view, float[] point);
+    }
+
+    public interface OnTargetViewFlingListener {
+        void onFling(View view, int velocity);
     }
 
     /**

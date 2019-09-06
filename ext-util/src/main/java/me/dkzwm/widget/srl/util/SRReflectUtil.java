@@ -24,7 +24,6 @@
  */
 package me.dkzwm.widget.srl.util;
 
-import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.view.View;
 import android.widget.AbsListView;
@@ -38,26 +37,17 @@ import java.lang.reflect.Method;
  * @author dkzwm
  */
 public class SRReflectUtil {
-    /** Don't want to be compatible with the old version, you can set it to true */
-    public static boolean COMPATIBLE = false;
-
     private static Class sFlingRunnableClass;
     private static Field sFlingRunnableField;
     private static Method sReportScrollStateChangeMethod;
     private static Method sFlingRunnableStartMethod;
     private static Constructor sFlingRunnableConstructor;
-    private static Method sTrackMotionScrollMethod;
     private static Method sHasIdentityMatrixMethod;
     private static Method sGetInverseMatrixMethod;
     private static boolean sFound = false;
 
-    @SuppressLint("PrivateApi")
     @SuppressWarnings("unchecked")
-    @Deprecated
-    static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
-        if (!COMPATIBLE) {
-            return;
-        }
+    public static void compatOlderAbsListViewFling(AbsListView view, int velocityY) {
         if (sFound) {
             return;
         }
@@ -120,32 +110,7 @@ public class SRReflectUtil {
         }
     }
 
-    @SuppressLint("PrivateApi")
-    @Deprecated
-    static void compatOlderAbsListViewScrollListBy(AbsListView view, int delta) {
-        if (!COMPATIBLE) {
-            return;
-        }
-        try {
-            if (sTrackMotionScrollMethod == null) {
-                sTrackMotionScrollMethod =
-                        AbsListView.class.getDeclaredMethod(
-                                "trackMotionScroll", int.class, int.class);
-                sTrackMotionScrollMethod.setAccessible(true);
-            }
-            if (sTrackMotionScrollMethod != null) {
-                sTrackMotionScrollMethod.invoke(view, -delta, -delta);
-            }
-        } catch (Exception e) {
-            // ignore exception
-        }
-    }
-
-    @SuppressLint("PrivateApi")
     public static void compatMapTheInverseMatrix(View view, float[] point) {
-        if (!COMPATIBLE) {
-            return;
-        }
         try {
             if (sHasIdentityMatrixMethod == null) {
                 sHasIdentityMatrixMethod = View.class.getDeclaredMethod("hasIdentityMatrix");

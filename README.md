@@ -29,20 +29,20 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
+    implementation 'me.dkzwm.widget.srl:core:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.7.androidx'
+	
+	//android support 最终版本
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8'
-	
-    //androidX版本
-    implementation 'me.dkzwm.widget.srl:core:1.6.6.8.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8.androidx'
 }
 ```
 
@@ -340,7 +340,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setSpringInterpolator|Interpolator|设置主动弹出时的滚动插值器|
 |setSpringBackInterpolator|Interpolator|设置释放时的滚动插值器|
 |setEnableCheckInsideAnotherDirectionView|boolean|设置是否开启检查手指按下点是否位于其他方向滚动视图内，该属性起作用必须满足开启`setDisableWhenAnotherDirectionMove`|
-|setEnableCompatLoadMoreScroll|boolean|设置是否开启加载更多时的同步滚动（默认:`true`）|
+|setEnableCompatSyncScroll|boolean|设置是否开启回滚时的同步滚动（默认:`true`）|
 |setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setEnableSmoothRollbackWhenCompleted|boolean|设置开启当刷新完成时，回滚动作不能被打断|
@@ -358,7 +358,7 @@ public interface IRefreshView <T extends IIndicator> {
 |addLifecycleObserver|ILifecycleObserver|添加生命周期监听|
 |addOnStatusChangedListener|addOnStatusChangedListener|设置内部状态改变回调|
 |addOnUIPositionChangedListener|OnUIPositionChangedListener|添加视图位置变化的监听回调|
-|setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|设置Footer完成刷新后进行平滑滚动的回调|
+|setOnSyncScrollCallback|OnSyncScrollCallback|设置完成刷新后进行平滑滚动的回调|
 |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|设置触发自动加载更多的条件回调，如果回调的`canAutoLoadMore()`方法返回`true`则会立即触发加载更多|
 |setOnPerformAutoRefreshCallBack|OnPerformAutoRefreshCallBack|设置触发自动刷新的条件回调，如果回调的`canAutoRefresh()`方法返回`true`则会立即触发刷新|
 |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|设置检查内容视图是否在顶部的重载回调（SmoothRefreshLayout内部`isNotYetInEdgeCannotMoveHeader()`方法）|

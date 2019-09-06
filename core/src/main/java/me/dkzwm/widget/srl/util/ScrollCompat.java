@@ -201,7 +201,7 @@ public class ScrollCompat {
                         final int newTop = (int) (firstView.getTop() - deltaY);
                         listView.setSelectionFromTop(firstPosition, newTop);
                     } else {
-                        SRReflectUtil.compatOlderAbsListViewScrollListBy(absListView, (int) deltaY);
+                        absListView.smoothScrollBy((int) deltaY, 0);
                     }
                     return true;
                 } else if (view instanceof WebView
@@ -278,8 +278,6 @@ public class ScrollCompat {
                 AbsListView listView = (AbsListView) view;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     listView.fling(velocityY);
-                } else {
-                    SRReflectUtil.compatOlderAbsListViewFling(listView, velocityY);
                 }
             }
         } catch (Exception e) {

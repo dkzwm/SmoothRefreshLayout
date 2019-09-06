@@ -30,24 +30,24 @@ Thank him for providing such a great open source library ！
  
  ## Installation
  Add the following dependency to your build.gradle file:
- ```
- dependencies {
-     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
-     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
-     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
-     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8'
-     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8'
-     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8'
-    
-     //androidX version
-     implementation 'me.dkzwm.widget.srl:core:1.6.6.8.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8.androidx'
-     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8.androidx'
- }
- ```
+```
+dependencies {
+    implementation 'me.dkzwm.widget.srl:core:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.7.androidx'
+	
+	//android support final version
+    implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8'
+}
+```
 
 ## Demo
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
@@ -391,7 +391,7 @@ public interface IRefreshView<T extends IIndicator> {
  |setSpringInterpolator|Interpolator|Set spring interpolator|
  |setOverScrollInterpolator|Interpolator|Set OverScroll interpolator|
  |setEnableCheckInsideAnotherDirectionView|boolean|Enable whether the finger pressed point is inside another direction view，you must set `setDisableWhenAnotherDirectionMove(true)`|
- |setEnableCompatLoadMoreScroll|boolean|Set whether to turn on the synchronized scroll when Footer loading（Default: `true`）|
+ |setEnableCompatSyncScroll|boolean|Set whether to turn on the synchronized scroll when spring back（Default: `true`）|
  |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
  |setEnableSmoothRollbackWhenCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
@@ -407,7 +407,7 @@ public interface IRefreshView<T extends IIndicator> {
  |addLifecycleObserver|ILifecycleObserver|Add a lifecycle callback|
  |addOnStatusChangedListener|OnStatusChangedListener|Set the listener to be notified when the Status changed|
  |addOnUIPositionChangedListener|OnUIPositionChangedListener|Add a listener to listen the views position change event|
- |setOnLoadMoreScrollCallback|OnLoadMoreScrollCallback|Set a scrolling callback when loading more|
+ |setOnSyncScrollCallback|OnSyncScrollCallback|Set a scrolling callback when spring back|
  |setOnPerformAutoRefreshCallBack|OnPerformAutoRefreshCallBack|Set a callback to make sure you need to customize the specified trigger the auto refresh rule|
  |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|Set a callback to make sure you need to customize the specified trigger the auto load more rule| |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Header| |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Footer|
  |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Header refresh complete event be triggered|
