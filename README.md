@@ -35,8 +35,8 @@ dependencies {
     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.7.androidx'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.6.7.androidx'
     implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.7.androidx'
-	
-	//android support 最终版本
+
+    //android support 最终版本
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
     implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
