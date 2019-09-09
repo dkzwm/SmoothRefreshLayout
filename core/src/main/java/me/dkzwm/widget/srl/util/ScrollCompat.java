@@ -32,7 +32,6 @@ import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import androidx.core.view.ScrollingView;
-import androidx.core.view.ViewCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,30 +43,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
  * @author dkzwm
  */
 public class ScrollCompat {
-    public static boolean canChildScrollDown(View view) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            if (view instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) view;
-                return absListView.getChildCount() > 0
-                                && (absListView.getLastVisiblePosition()
-                                        < absListView.getAdapter().getCount() - 1)
-                        || absListView.getChildAt(absListView.getChildCount() - 1).getBottom()
-                                > absListView.getHeight() - absListView.getListPaddingBottom();
-            } else if (view instanceof ScrollView) {
-                final ScrollView scrollView = (ScrollView) view;
-                return scrollView.getChildCount() != 0
-                        && scrollView.getScrollY()
-                                < scrollView.getChildAt(0).getHeight() - scrollView.getHeight();
-            } else {
-                return ViewCompat.canScrollVertically(view, 1);
-            }
-        } else if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return ViewCompat.canScrollVertically(view, 1);
-        } else {
-            return view.canScrollVertically(1);
-        }
-    }
-
     public static boolean canAutoLoadMore(View view) {
         try {
             if (view instanceof AbsListView) {
@@ -161,22 +136,6 @@ public class ScrollCompat {
             // ignored
         }
         return false;
-    }
-
-    public static boolean canChildScrollUp(View view) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            if (view instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) view;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0
-                                || absListView.getChildAt(0).getTop()
-                                        < absListView.getListPaddingTop());
-            } else {
-                return ViewCompat.canScrollVertically(view, -1) || view.getScrollY() > 0;
-            }
-        } else {
-            return view.canScrollVertically(-1);
-        }
     }
 
     public static boolean scrollCompat(View view, float deltaY) {

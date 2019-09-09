@@ -24,11 +24,9 @@
  */
 package me.dkzwm.widget.srl.util;
 
-import android.os.Build;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.HorizontalScrollView;
-import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -40,22 +38,6 @@ import androidx.viewpager.widget.ViewPager;
  * @author dkzwm
  */
 public class HorizontalScrollCompat {
-    public static boolean canChildScrollLeft(View view) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return ViewCompat.canScrollHorizontally(view, -1);
-        } else {
-            return view.canScrollHorizontally(-1);
-        }
-    }
-
-    public static boolean canChildScrollRight(View view) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return ViewCompat.canScrollHorizontally(view, 1);
-        } else {
-            return view.canScrollHorizontally(1);
-        }
-    }
-
     public static boolean scrollCompat(View view, float deltaY) {
         if (view != null) {
             try {

@@ -706,7 +706,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(
                     this, view, mHeaderView);
         }
-        return HorizontalScrollCompat.canChildScrollLeft(view);
+        return view.canScrollHorizontally(-1);
     }
 
     @Override
@@ -715,7 +715,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(
                     this, view, mFooterView);
         }
-        return HorizontalScrollCompat.canChildScrollRight(view);
+        return view.canScrollHorizontally(1);
     }
 
     protected boolean isInsideAnotherDirectionView(final float x, final float y) {

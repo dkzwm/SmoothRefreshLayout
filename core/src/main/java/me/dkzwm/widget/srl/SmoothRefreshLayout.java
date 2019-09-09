@@ -4083,7 +4083,7 @@ public class SmoothRefreshLayout extends ViewGroup
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(
                     this, view, mHeaderView);
         }
-        return ScrollCompat.canChildScrollUp(view);
+        return view.canScrollVertically(-1);
     }
 
     protected boolean isNotYetInEdgeCannotMoveFooter(View view) {
@@ -4091,7 +4091,7 @@ public class SmoothRefreshLayout extends ViewGroup
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(
                     this, view, mFooterView);
         }
-        return ScrollCompat.canChildScrollDown(view);
+        return view.canScrollVertically(1);
     }
 
     protected boolean isInsideAnotherDirectionView(final float x, final float y) {
