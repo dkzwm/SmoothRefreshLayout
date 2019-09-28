@@ -83,27 +83,23 @@ public class BoundaryUtil {
     }
 
     public static boolean isHorizontalView(View view) {
-        try {
-            if (view instanceof ViewPager
-                    || view instanceof HorizontalScrollView
-                    || view instanceof WebView) {
-                return true;
-            } else if (view instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) view;
-                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                if (manager != null) {
-                    if (manager instanceof LinearLayoutManager) {
-                        LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                        return linearManager.getOrientation() == RecyclerView.HORIZONTAL;
-                    } else if (manager instanceof StaggeredGridLayoutManager) {
-                        StaggeredGridLayoutManager gridLayoutManager =
-                                (StaggeredGridLayoutManager) manager;
-                        return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
-                    }
+        if (view instanceof ViewPager
+                || view instanceof HorizontalScrollView
+                || view instanceof WebView) {
+            return true;
+        } else if (view instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager != null) {
+                if (manager instanceof LinearLayoutManager) {
+                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                    return linearManager.getOrientation() == RecyclerView.HORIZONTAL;
+                } else if (manager instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager gridLayoutManager =
+                            (StaggeredGridLayoutManager) manager;
+                    return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
                 }
             }
-        } catch (Exception e) {
-            // ignored
         }
         return false;
     }

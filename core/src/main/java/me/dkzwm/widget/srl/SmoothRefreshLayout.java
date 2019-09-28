@@ -5582,7 +5582,7 @@ public class SmoothRefreshLayout extends ViewGroup
             if (sDebug) {
                 Log.d(TAG, String.format("ScrollChecker: startPreFling(): v: %s", v));
             }
-            run();
+            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
 
         void startFling(float v) {
@@ -5634,7 +5634,7 @@ public class SmoothRefreshLayout extends ViewGroup
             $IsScrolling = true;
             $Scroller.startScroll(0, 0, 0, distance, duration);
             removeCallbacks(this);
-            run();
+            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
 
         void computeScrollOffset() {
@@ -5720,7 +5720,8 @@ public class SmoothRefreshLayout extends ViewGroup
             $LastStart = mIndicator.getCurrentPos();
             $Mode = Constants.SCROLLER_MODE_FLING;
             $IsScrolling = true;
-            run();
+            removeCallbacks(this);
+            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
 
         void setInterpolator(Interpolator interpolator) {
@@ -5745,7 +5746,8 @@ public class SmoothRefreshLayout extends ViewGroup
                         int passed = $Scroller.timePassed();
                         $Scroller = new Scroller(getContext(), interpolator);
                         $Scroller.startScroll(0, 0, 0, distance, $Duration - passed);
-                        run();
+                        removeCallbacks(this);
+                        ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
                         break;
                     case Constants.SCROLLER_MODE_PRE_FLING:
                     case Constants.SCROLLER_MODE_CALC_FLING:

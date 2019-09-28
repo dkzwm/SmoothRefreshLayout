@@ -39,32 +39,22 @@ import androidx.viewpager.widget.ViewPager;
  */
 public class HorizontalScrollCompat {
     public static boolean scrollCompat(View view, float deltaY) {
-        if (view != null) {
-            try {
-                if (view instanceof WebView
-                        || view instanceof HorizontalScrollView
-                        || view instanceof RecyclerView) {
-                    view.scrollBy((int) deltaY, 0);
-                    return true;
-                }
-            } catch (Exception e) {
-                // ignored
-            }
+        if (view instanceof WebView
+                || view instanceof HorizontalScrollView
+                || view instanceof RecyclerView) {
+            view.scrollBy((int) deltaY, 0);
+            return true;
         }
         return false;
     }
 
     public static void flingCompat(View view, int velocityX) {
-        try {
-            if (view instanceof WebView) {
-                ((WebView) view).flingScroll(velocityX, 0);
-            } else if (view instanceof RecyclerView) {
-                ((RecyclerView) view).fling(velocityX, 0);
-            } else if (view instanceof HorizontalScrollView) {
-                ((HorizontalScrollView) view).fling(velocityX);
-            }
-        } catch (Exception e) {
-            // ignored
+        if (view instanceof WebView) {
+            ((WebView) view).flingScroll(velocityX, 0);
+        } else if (view instanceof RecyclerView) {
+            ((RecyclerView) view).fling(velocityX, 0);
+        } else if (view instanceof HorizontalScrollView) {
+            ((HorizontalScrollView) view).fling(velocityX);
         }
     }
 
@@ -75,83 +65,73 @@ public class HorizontalScrollCompat {
     }
 
     public static boolean canAutoLoadMore(View view) {
-        try {
-            if (view instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) view;
-                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                if (manager == null) {
+        if (view instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null) {
+                return false;
+            }
+            int lastVisiblePosition = 0;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                if (linearManager.getOrientation() != RecyclerView.HORIZONTAL) {
                     return false;
                 }
-                int lastVisiblePosition = 0;
-                if (manager instanceof LinearLayoutManager) {
-                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                    if (linearManager.getOrientation() != RecyclerView.HORIZONTAL) {
-                        return false;
-                    }
-                    lastVisiblePosition = linearManager.findLastVisibleItemPosition();
-                } else if (manager instanceof StaggeredGridLayoutManager) {
-                    StaggeredGridLayoutManager gridLayoutManager =
-                            (StaggeredGridLayoutManager) manager;
-                    if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL) {
-                        return false;
-                    }
-                    int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
-                    gridLayoutManager.findLastVisibleItemPositions(lastPositions);
-                    lastVisiblePosition = lastPositions[0];
-                    for (int value : lastPositions) {
-                        if (value > lastVisiblePosition) {
-                            lastVisiblePosition = value;
-                        }
+                lastVisiblePosition = linearManager.findLastVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL) {
+                    return false;
+                }
+                int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findLastVisibleItemPositions(lastPositions);
+                lastVisiblePosition = lastPositions[0];
+                for (int value : lastPositions) {
+                    if (value > lastVisiblePosition) {
+                        lastVisiblePosition = value;
                     }
                 }
-                RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                return adapter != null
-                        && adapter.getItemCount() > 0
-                        && lastVisiblePosition >= 0
-                        && lastVisiblePosition >= adapter.getItemCount() - 1;
             }
-        } catch (Exception e) {
-            // ignored
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null
+                    && adapter.getItemCount() > 0
+                    && lastVisiblePosition >= 0
+                    && lastVisiblePosition >= adapter.getItemCount() - 1;
         }
         return false;
     }
 
     public static boolean canAutoRefresh(View view) {
-        try {
-            if (view instanceof RecyclerView) {
-                RecyclerView recyclerView = (RecyclerView) view;
-                RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
-                if (manager == null) {
+        if (view instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager == null) {
+                return false;
+            }
+            int firstVisiblePosition = -1;
+            if (manager instanceof LinearLayoutManager) {
+                LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                if (linearManager.getOrientation() != RecyclerView.HORIZONTAL) {
                     return false;
                 }
-                int firstVisiblePosition = -1;
-                if (manager instanceof LinearLayoutManager) {
-                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
-                    if (linearManager.getOrientation() != RecyclerView.HORIZONTAL) {
-                        return false;
-                    }
-                    firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
-                } else if (manager instanceof StaggeredGridLayoutManager) {
-                    StaggeredGridLayoutManager gridLayoutManager =
-                            (StaggeredGridLayoutManager) manager;
-                    if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL) {
-                        return false;
-                    }
-                    int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
-                    gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
-                    firstVisiblePosition = firstPositions[0];
-                    for (int value : firstPositions) {
-                        if (value == 0) {
-                            firstVisiblePosition = 0;
-                            break;
-                        }
+                firstVisiblePosition = linearManager.findFirstVisibleItemPosition();
+            } else if (manager instanceof StaggeredGridLayoutManager) {
+                StaggeredGridLayoutManager gridLayoutManager = (StaggeredGridLayoutManager) manager;
+                if (gridLayoutManager.getOrientation() != RecyclerView.HORIZONTAL) {
+                    return false;
+                }
+                int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
+                gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
+                firstVisiblePosition = firstPositions[0];
+                for (int value : firstPositions) {
+                    if (value == 0) {
+                        firstVisiblePosition = 0;
+                        break;
                     }
                 }
-                RecyclerView.Adapter adapter = recyclerView.getAdapter();
-                return adapter != null && firstVisiblePosition == 0;
             }
-        } catch (Exception e) {
-            // ignored
+            RecyclerView.Adapter adapter = recyclerView.getAdapter();
+            return adapter != null && firstVisiblePosition == 0;
         }
         return false;
     }
