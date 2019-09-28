@@ -1,8 +1,7 @@
 # 更新日志
 ## 1.6.7
 > 修改支持`NestedScrollingParent3`、`NestedScrollingChild3`，此版本开始不再更新`android.support`对应包，只更新`androidx`包。    
-> 删除`AppBarUtil`，实现`NestedScrollingParent3`接口后嵌套滚动模式下已不需要再判断AppBarLayout的展开状态，故删除，如需在非嵌套滚动模式下使用，请自行调用`setOnHeaderEdgeDetectCallBack`和`setOnFooterEdgeDetectCallBack`进行边界判断。    
-> 移动`SRReflectUtil`到`util`包下，`core`包不再包含反射代码，如需使用请自行继承`SmoothRefreshLayout`重新相应函数自行调用`SRReflectUtil`对应方法进行使用。    
+> 移动`SRReflectUtil`到`util`包下，`core`包不再包含反射代码，如需使用请自行继承`SmoothRefreshLayout`重写相应函数自行调用`SRReflectUtil`对应方法进行使用。    
 > 重命名`OnLoadMoreScrollCallback`接口为`OnSyncScrollCallback`，同时实现滚动到顶自动刷新的同步滚动逻辑。    
 ## 1.6.6.8
 > 调整优化刷新视图自定样式效率，在`STYLE_SCALE`/`STYLE_FOLLOW_SCALE`/`STYLE_FOLLOW_CENTER`下不再使用`requestLayout`进行重布局，考虑到SRL高度固定情况下，直接在内部进行计算，大幅提高布局的效率。    

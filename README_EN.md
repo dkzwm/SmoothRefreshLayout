@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
 [![Release](https://img.shields.io/badge/JCenter-1.6.7-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-696%20%7C%2073%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-712%20%7C%2078%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 

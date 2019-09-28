@@ -22,8 +22,7 @@ import me.dkzwm.widget.srl.util.PixelUtl;
  */
 public class StoreHouseHeader extends View implements IRefreshView {
     protected List<StoreHouseBarItemAnimation> mAnimations = new ArrayList<>();
-    protected List<Matrix> mMatrices = new ArrayList<>();
-    protected int mLineWidth = -1;
+    protected int mLineWidth;
     protected float mScale = .5f;
     protected int mDropHeight = -1;
     protected float mProgress = 0;
@@ -40,6 +39,7 @@ public class StoreHouseHeader extends View implements IRefreshView {
     private AniController mAniController = new AniController();
     private int mTextColor = Color.WHITE;
     private me.dkzwm.widget.srl.extra.RefreshViewStyle mStyle;
+    private Matrix mMatrix = new Matrix();
 
     public StoreHouseHeader(Context context) {
         this(context, null);
@@ -89,7 +89,6 @@ public class StoreHouseHeader extends View implements IRefreshView {
         super.onDetachedFromWindow();
         mAniController.stop();
         mAnimations.clear();
-        mMatrices.clear();
     }
 
     public int getTopOffset() {
@@ -145,7 +144,6 @@ public class StoreHouseHeader extends View implements IRefreshView {
         float drawHeight = 0;
         boolean shouldLayout = mAnimations.size() > 0;
         mAnimations.clear();
-        mMatrices.clear();
         for (int i = 0; i < pointList.size(); i++) {
             float[] line = pointList.get(i);
             float[] startPoint = new float[] {line[0] * mScale, line[1] * mScale};
@@ -158,7 +156,6 @@ public class StoreHouseHeader extends View implements IRefreshView {
                     new StoreHouseBarItemAnimation(i, startPoint, endPoint, mTextColor, mLineWidth);
             item.resetPos(mHorizontalRandomness);
             mAnimations.add(item);
-            mMatrices.add(new Matrix());
         }
         mDrawZoneWidth = (int) Math.ceil(drawWidth);
         mDrawZoneHeight = (int) Math.ceil(drawHeight);
@@ -213,13 +210,12 @@ public class StoreHouseHeader extends View implements IRefreshView {
                     }
                     offsetX += storeHouseBarItem.getTranslationX() * (1 - realProgress);
                     offsetY += -mDropHeight * (1 - realProgress);
-                    Matrix matrix = mMatrices.get(i);
-                    matrix.reset();
-                    matrix.postRotate(360 * realProgress);
-                    matrix.postScale(realProgress, realProgress);
-                    matrix.postTranslate(offsetX, offsetY);
+                    mMatrix.reset();
+                    mMatrix.postRotate(360 * realProgress);
+                    mMatrix.postScale(realProgress, realProgress);
+                    mMatrix.postTranslate(offsetX, offsetY);
                     storeHouseBarItem.setAlpha(barDarkAlpha * realProgress);
-                    canvas.concat(matrix);
+                    canvas.concat(mMatrix);
                 }
             }
             storeHouseBarItem.onDraw(canvas);

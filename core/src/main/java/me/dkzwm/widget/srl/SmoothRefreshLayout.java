@@ -65,8 +65,10 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
+import me.dkzwm.widget.srl.util.AppBarLayoutUtil;
 import me.dkzwm.widget.srl.util.BoundaryUtil;
 import me.dkzwm.widget.srl.util.ScrollCompat;
+import me.dkzwm.widget.srl.util.ViewCatcherUtil;
 
 /**
  * Created by dkzwm on 2017/5/18.
@@ -207,6 +209,7 @@ public class SmoothRefreshLayout extends ViewGroup
     private DelayToPerformAutoRefresh mDelayToPerformAutoRefresh;
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
+    private AppBarLayoutUtil mAppBarLayoutUtil;
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
@@ -452,6 +455,16 @@ public class SmoothRefreshLayout extends ViewGroup
                 observer.onDetached(this);
             }
         }
+        if (mAppBarLayoutUtil != null) {
+            if (mInEdgeCanMoveHeaderCallBack == mAppBarLayoutUtil) {
+                mInEdgeCanMoveHeaderCallBack = null;
+            }
+            if (mInEdgeCanMoveFooterCallBack == mAppBarLayoutUtil) {
+                mInEdgeCanMoveFooterCallBack = null;
+            }
+            mAppBarLayoutUtil.detach();
+        }
+        mAppBarLayoutUtil = null;
         reset();
         if (mHeaderRefreshCompleteHook != null) {
             mHeaderRefreshCompleteHook.mLayout = null;
@@ -482,6 +495,16 @@ public class SmoothRefreshLayout extends ViewGroup
             final List<ILifecycleObserver> observers = mLifecycleObservers;
             for (ILifecycleObserver observer : observers) {
                 observer.onAttached(this);
+            }
+        }
+        View view = ViewCatcherUtil.catchAppBarLayout(this);
+        if (view != null) {
+            mAppBarLayoutUtil = new AppBarLayoutUtil(view);
+            if (mInEdgeCanMoveHeaderCallBack == null) {
+                mInEdgeCanMoveHeaderCallBack = mAppBarLayoutUtil;
+            }
+            if (mInEdgeCanMoveFooterCallBack == null) {
+                mInEdgeCanMoveFooterCallBack = mAppBarLayoutUtil;
             }
         }
         mDelayToPerformAutoRefresh.mLayout = this;
@@ -3551,7 +3574,7 @@ public class SmoothRefreshLayout extends ViewGroup
     private void ensureTargetView() {
         if (mTargetView == null) {
             final int count = getChildCount();
-            final boolean ensure = isEnabledDynamicEnsureTargetView();
+            final boolean ensure = isEnabledDynamicEnsureTargetView() || mAppBarLayoutUtil != null;
             if (mContentResId != View.NO_ID) {
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
@@ -3638,6 +3661,7 @@ public class SmoothRefreshLayout extends ViewGroup
         return isInView;
     }
 
+    /** 如果内部视图进行了矩阵变换，则需要重载本方法，使用SRReflectUtil的compatMapTheInverseMatrix方法，进行兼容处理。 */
     protected void mapTheInverseMatrix(View child, float[] point) {}
 
     protected View ensureScrollTargetView(View target, boolean noTransform, float x, float y) {
@@ -3779,7 +3803,8 @@ public class SmoothRefreshLayout extends ViewGroup
                 }
                 mHasSendDownEvent = false;
                 mPreventForAnotherDirection = false;
-                if (mScrollTargetView == null && isEnabledDynamicEnsureTargetView()) {
+                if (mScrollTargetView == null
+                        && (isEnabledDynamicEnsureTargetView() || mAppBarLayoutUtil != null)) {
                     View view = ensureScrollTargetView(this, false, ev.getX(), ev.getY());
                     if (view != null && mTargetView != view && mAutoFoundScrollTargetView != view) {
                         mAutoFoundScrollTargetView = view;
@@ -3813,7 +3838,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     final float offsetX = ev.getX(index) - pressDownPoint[0];
                     final float offsetY = ev.getY(index) - pressDownPoint[1];
                     tryToDealAnotherDirectionMove(offsetX, offsetY);
-                    if (mDealAnotherDirectionMove) {
+                    if (mDealAnotherDirectionMove && oldTouchHanding) {
                         mIndicatorSetter.onFingerDown(
                                 ev.getX(index) - offsetX / 10, ev.getY(index) - offsetY / 10);
                     }
