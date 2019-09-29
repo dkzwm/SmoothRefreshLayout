@@ -52,7 +52,7 @@ public class ScrollCompat {
                     && adapter.getCount() > 0
                     && lastVisiblePosition >= 0
                     && lastVisiblePosition >= adapter.getCount() - 1;
-        } else if (view instanceof RecyclerView) {
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
             if (manager == null) {
@@ -94,7 +94,7 @@ public class ScrollCompat {
             final int lastVisiblePosition = listView.getLastVisiblePosition();
             final Adapter adapter = listView.getAdapter();
             return adapter != null && lastVisiblePosition == 0;
-        } else if (view instanceof RecyclerView) {
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
             if (manager == null) {
@@ -157,7 +157,7 @@ public class ScrollCompat {
                     || view instanceof NestedScrollView) {
                 view.scrollBy(0, (int) deltaY);
                 return true;
-            } else if (view instanceof RecyclerView) {
+            } else if (ViewCatcherUtil.isRecyclerView(view)) {
                 // Fix the problem of adding new data to RecyclerView while in Fling state,
                 // the new items will continue to Fling
                 RecyclerView recyclerView = (RecyclerView) view;
@@ -181,7 +181,7 @@ public class ScrollCompat {
         if (view instanceof AbsListView || view instanceof ScrollView || view instanceof WebView) {
             return true;
         }
-        if (view instanceof RecyclerView) {
+        if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
             if (manager != null) {
@@ -207,7 +207,7 @@ public class ScrollCompat {
         } else if (view instanceof WebView) {
             WebView webView = (WebView) view;
             webView.flingScroll(0, velocityY);
-        } else if (view instanceof RecyclerView) {
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.fling(0, velocityY);
         } else if (view instanceof NestedScrollView) {
@@ -228,7 +228,7 @@ public class ScrollCompat {
         } else if (view instanceof WebView) {
             WebView webView = (WebView) view;
             webView.flingScroll(0, 0);
-        } else if (view instanceof RecyclerView) {
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             recyclerView.stopScroll();
         } else if (view instanceof NestedScrollView) {

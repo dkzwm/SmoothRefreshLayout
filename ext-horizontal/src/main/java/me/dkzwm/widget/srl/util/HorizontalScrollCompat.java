@@ -25,12 +25,12 @@
 package me.dkzwm.widget.srl.util;
 
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.HorizontalScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-import androidx.viewpager.widget.ViewPager;
 
 /**
  * Created by dkzwm on 2017/10/25.
@@ -41,7 +41,7 @@ public class HorizontalScrollCompat {
     public static boolean scrollCompat(View view, float deltaY) {
         if (view instanceof WebView
                 || view instanceof HorizontalScrollView
-                || view instanceof RecyclerView) {
+                || ViewCatcherUtil.isRecyclerView(view)) {
             view.scrollBy((int) deltaY, 0);
             return true;
         }
@@ -51,7 +51,7 @@ public class HorizontalScrollCompat {
     public static void flingCompat(View view, int velocityX) {
         if (view instanceof WebView) {
             ((WebView) view).flingScroll(velocityX, 0);
-        } else if (view instanceof RecyclerView) {
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
             ((RecyclerView) view).fling(velocityX, 0);
         } else if (view instanceof HorizontalScrollView) {
             ((HorizontalScrollView) view).fling(velocityX);
@@ -61,11 +61,11 @@ public class HorizontalScrollCompat {
     public static boolean canScaleInternal(View view) {
         return (view instanceof HorizontalScrollView
                         && ((HorizontalScrollView) view).getChildCount() > 0)
-                || (view instanceof ViewPager && ((ViewPager) view).getChildCount() > 0);
+                || (ViewCatcherUtil.isViewPager(view) && ((ViewGroup) view).getChildCount() > 0);
     }
 
     public static boolean canAutoLoadMore(View view) {
-        if (view instanceof RecyclerView) {
+        if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
             if (manager == null) {
@@ -102,7 +102,7 @@ public class HorizontalScrollCompat {
     }
 
     public static boolean canAutoRefresh(View view) {
-        if (view instanceof RecyclerView) {
+        if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
             if (manager == null) {

@@ -54,7 +54,6 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
-import androidx.viewpager.widget.ViewPager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -3718,7 +3717,7 @@ public class SmoothRefreshLayout extends ViewGroup
                         || Math.abs(vy) >= mMinimumFlingVelocity) {
                     final boolean handler = onFling(vx, vy, false);
                     final View targetView = getScrollTargetView();
-                    if (handler && !(targetView instanceof ViewPager)) {
+                    if (handler && !(ViewCatcherUtil.isViewPager(targetView))) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                     }
                 }
@@ -4726,7 +4725,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
                 } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
                     final View targetView;
-                    if (mAutoFoundScrollTargetView.getParent() instanceof ViewPager) {
+                    if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
                         targetView = (View) mAutoFoundScrollTargetView.getParent();
                     } else {
                         targetView = mAutoFoundScrollTargetView;
@@ -4755,7 +4754,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (mScrollTargetView != null) {
                     targetView = mScrollTargetView;
                 } else if (mAutoFoundScrollTargetView != null) {
-                    if (mAutoFoundScrollTargetView.getParent() instanceof ViewPager) {
+                    if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
                         targetView = (View) mAutoFoundScrollTargetView.getParent();
                     } else {
                         targetView = mAutoFoundScrollTargetView;
@@ -4906,7 +4905,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     resetViewScale(mScrollTargetView);
                 } else if (mAutoFoundScrollTargetView != null) {
                     final View targetView;
-                    if (mAutoFoundScrollTargetView.getParent() instanceof ViewPager) {
+                    if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
                         targetView = (View) mAutoFoundScrollTargetView.getParent();
                     } else {
                         targetView = mAutoFoundScrollTargetView;

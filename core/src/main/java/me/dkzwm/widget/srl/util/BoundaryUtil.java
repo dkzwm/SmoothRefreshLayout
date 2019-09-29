@@ -87,7 +87,7 @@ public class BoundaryUtil {
                 || view instanceof HorizontalScrollView
                 || view instanceof WebView) {
             return true;
-        } else if (view instanceof RecyclerView) {
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
             RecyclerView recyclerView = (RecyclerView) view;
             RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
             if (manager != null) {

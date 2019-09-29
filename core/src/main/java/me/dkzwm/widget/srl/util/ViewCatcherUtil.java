@@ -28,21 +28,62 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by dkzwm on 2017/12/18. 视图搜寻工具
+ * 视图搜寻工具,用以在未依赖相关包的情况下避免应用崩溃
  *
  * @author dkzwm
  */
 public class ViewCatcherUtil {
+    private static Class<?> sClassOfCoordinatorLayout;
+    private static Class<?> sClassOfAppBarLayout;
+    private static Class<?> sClassOfViewPager;
+    private static Class<?> sClassOfRecyclerView;
+    private static boolean sIsCaughtAppBarLayout = false;
+    private static boolean sIsCaughtViewPager = false;
+    private static boolean sIsCaughtRecyclerView = false;
+
+    public static boolean isViewPager(View view) {
+        if (sIsCaughtViewPager && sClassOfViewPager == null) return false;
+        sIsCaughtViewPager = true;
+        if (sClassOfViewPager == null) {
+            try {
+                sClassOfViewPager = Class.forName("androidx.viewpager.widget.ViewPager");
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return sClassOfViewPager.isAssignableFrom(view.getClass());
+    }
+
+    public static boolean isRecyclerView(View view) {
+        if (sIsCaughtRecyclerView && sClassOfRecyclerView == null) return false;
+        sIsCaughtRecyclerView = true;
+        if (sClassOfRecyclerView == null) {
+            try {
+                sClassOfRecyclerView = Class.forName("androidx.recyclerview.widget.RecyclerView");
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return sClassOfRecyclerView.isAssignableFrom(view.getClass());
+    }
+
     public static View catchAppBarLayout(ViewGroup group) {
+        if (sIsCaughtAppBarLayout
+                && (sClassOfCoordinatorLayout == null || sClassOfAppBarLayout == null)) return null;
+        sIsCaughtAppBarLayout = true;
         try {
-            Class<?> classOfCoordinatorLayout =
-                    Class.forName("androidx.coordinatorlayout.widget.CoordinatorLayout");
-            Class<?> classOfAppBarLayout =
-                    Class.forName("com.google.android.material.appbar.AppBarLayout");
-            return findAppBarLayout(group, classOfCoordinatorLayout, classOfAppBarLayout);
+            if (sClassOfCoordinatorLayout == null) {
+                sClassOfCoordinatorLayout =
+                        Class.forName("androidx.coordinatorlayout.widget.CoordinatorLayout");
+            }
+            if (sClassOfAppBarLayout == null) {
+                sClassOfAppBarLayout =
+                        Class.forName("com.google.android.material.appbar.AppBarLayout");
+            }
         } catch (Exception e) {
             return null;
         }
+        return findAppBarLayout(group, sClassOfCoordinatorLayout, sClassOfAppBarLayout);
     }
 
     private static View findAppBarLayout(
