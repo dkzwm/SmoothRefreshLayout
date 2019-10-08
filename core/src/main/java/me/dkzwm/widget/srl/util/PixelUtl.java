@@ -28,11 +28,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.TypedValue;
 
-/**
- * Created by dkzwm on 2017/5/31.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class PixelUtl {
     public static int dp2px(Context context, float offSet) {
         Resources r;

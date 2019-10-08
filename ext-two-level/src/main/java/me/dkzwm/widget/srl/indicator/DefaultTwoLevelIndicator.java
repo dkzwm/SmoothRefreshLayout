@@ -26,11 +26,7 @@ package me.dkzwm.widget.srl.indicator;
 
 import android.util.Log;
 
-/**
- * Created by dkzwm on 2017/6/12.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class DefaultTwoLevelIndicator extends DefaultIndicator
         implements ITwoLevelIndicator, ITwoLevelIndicatorSetter {
     private int mOffsetToHintTwoLevelRefresh = 0;

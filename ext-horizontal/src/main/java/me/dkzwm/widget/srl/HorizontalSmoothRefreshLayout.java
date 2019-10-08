@@ -40,13 +40,7 @@ import me.dkzwm.widget.srl.util.BoundaryUtil;
 import me.dkzwm.widget.srl.util.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.util.HorizontalScrollCompat;
 
-/**
- * Created by dkzwm on 2017/10/20.
- *
- * <p>Support Horizontal refresh feature;<br>
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public HorizontalSmoothRefreshLayout(Context context) {

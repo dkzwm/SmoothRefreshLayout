@@ -24,11 +24,7 @@
  */
 package me.dkzwm.widget.srl.config;
 
-/**
- * Created by dkzwm on 2018/2/27.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public interface Constants {
     int MODE_DEFAULT = 0;
     int MODE_SCALE = 1;

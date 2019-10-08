@@ -30,6 +30,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 
+/** @author dkzwm */
 public class AppBarLayoutUtil
         implements SmoothRefreshLayout.OnHeaderEdgeDetectCallBack,
                 SmoothRefreshLayout.OnFooterEdgeDetectCallBack {

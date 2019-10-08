@@ -32,11 +32,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-/**
- * Created by dkzwm on 2017/10/25.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class HorizontalScrollCompat {
     public static boolean scrollCompat(View view, float deltaY) {
         if (view instanceof WebView
@@ -51,10 +47,10 @@ public class HorizontalScrollCompat {
     public static void flingCompat(View view, int velocityX) {
         if (view instanceof WebView) {
             ((WebView) view).flingScroll(velocityX, 0);
-        } else if (ViewCatcherUtil.isRecyclerView(view)) {
-            ((RecyclerView) view).fling(velocityX, 0);
         } else if (view instanceof HorizontalScrollView) {
             ((HorizontalScrollView) view).fling(velocityX);
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
+            ((RecyclerView) view).fling(velocityX, 0);
         }
     }
 

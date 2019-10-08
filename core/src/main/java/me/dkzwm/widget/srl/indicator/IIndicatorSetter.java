@@ -26,11 +26,7 @@ package me.dkzwm.widget.srl.indicator;
 
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 
-/**
- * Created by dkzwm on 2018/3/21.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public interface IIndicatorSetter {
 
     void setRatioToKeepFooter(float ratio);

@@ -29,6 +29,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import me.dkzwm.widget.srl.R;
 
+/** @author dkzwm */
 public class RefreshViewStyle {
     @IRefreshView.RefreshViewStyle public int mStyle = IRefreshView.STYLE_DEFAULT;
 

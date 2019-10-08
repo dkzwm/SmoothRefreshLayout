@@ -37,11 +37,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-/**
- * Created by dkzwm on 2017/5/27.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class ScrollCompat {
     public static boolean canAutoLoadMore(View view) {
         if (view instanceof AbsListView) {
@@ -194,7 +190,7 @@ public class ScrollCompat {
                     return gridLayoutManager.getOrientation() == RecyclerView.VERTICAL;
                 }
             }
-            return true;
+            return false;
         } else {
             return view instanceof ScrollingView;
         }
@@ -207,9 +203,6 @@ public class ScrollCompat {
         } else if (view instanceof WebView) {
             WebView webView = (WebView) view;
             webView.flingScroll(0, velocityY);
-        } else if (ViewCatcherUtil.isRecyclerView(view)) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.fling(0, velocityY);
         } else if (view instanceof NestedScrollView) {
             NestedScrollView scrollView = (NestedScrollView) view;
             scrollView.fling(velocityY);
@@ -218,6 +211,9 @@ public class ScrollCompat {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 listView.fling(velocityY);
             }
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView.fling(0, velocityY);
         }
     }
 
@@ -228,15 +224,15 @@ public class ScrollCompat {
         } else if (view instanceof WebView) {
             WebView webView = (WebView) view;
             webView.flingScroll(0, 0);
-        } else if (ViewCatcherUtil.isRecyclerView(view)) {
-            RecyclerView recyclerView = (RecyclerView) view;
-            recyclerView.stopScroll();
         } else if (view instanceof NestedScrollView) {
             NestedScrollView scrollView = (NestedScrollView) view;
             scrollView.smoothScrollBy(0, 0);
         } else if (view instanceof AbsListView) {
             AbsListView listView = (AbsListView) view;
             listView.smoothScrollBy(0, 0);
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView.stopScroll();
         }
     }
 }

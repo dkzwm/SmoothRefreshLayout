@@ -34,11 +34,7 @@ import me.dkzwm.widget.srl.ILifecycleObserver;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
-/**
- * Created by dkzwm on 2017/12/23.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class AutoRefreshUtil
         implements ILifecycleObserver,
                 SmoothRefreshLayout.OnNestedScrollChangedListener,

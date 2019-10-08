@@ -31,11 +31,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-/**
- * Created by dkzwm on 2017/12/19.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class SRReflectUtil {
     private static Class sFlingRunnableClass;
     private static Field sFlingRunnableField;

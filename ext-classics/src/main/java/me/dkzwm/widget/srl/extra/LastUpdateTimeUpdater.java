@@ -26,11 +26,7 @@ package me.dkzwm.widget.srl.extra;
 
 import androidx.annotation.NonNull;
 
-/**
- * Created by dkzwm on 2017/10/11.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class LastUpdateTimeUpdater implements Runnable {
     private AbsClassicRefreshView mRefreshView;
     private ITimeUpdater mUpdater;

@@ -20,7 +20,6 @@ android {
     }
 }
 
-
 dependencies {
     api project(':core')
     api project(':ext-two-level')
@@ -29,7 +28,6 @@ dependencies {
     api project(':ext-material')
     api project(':ext-util')
     implementation rootProject.ext.libs.appcompatV7
-    implementation rootProject.ext.libs.supportV13
     implementation rootProject.ext.libs.recyclerview
     implementation rootProject.ext.libs.design
     implementation rootProject.ext.libs.viewpager

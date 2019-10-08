@@ -28,11 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
-/**
- * Created by dkzwm on 2017/10/23.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class HorizontalBoundaryUtil {
     public static boolean isInsideVerticalView(float rawX, float rawY, @NonNull View view) {
         boolean isVerticalView = ScrollCompat.isScrollingView(view);

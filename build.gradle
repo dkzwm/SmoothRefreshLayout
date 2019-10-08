@@ -7,7 +7,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -17,7 +17,7 @@ buildscript {
 }
 
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.16.0"
+    id "com.diffplug.gradle.spotless" version "3.25.0"
 }
 
 allprojects {
@@ -62,13 +62,12 @@ ext {
             versionName      : "1.6.7.androidx"
     ]
     libs = [
-            recyclerview: "androidx.recyclerview:recyclerview:1.1.0-beta02",
+            recyclerview: "androidx.recyclerview:recyclerview:1.1.0-beta04",
             viewpager:"androidx.viewpager:viewpager:1.0.0",
-            design: "com.google.android.material:material:1.1.0-alpha09",
-            appcompatV7: "androidx.appcompat:appcompat:1.1.0-rc01",
-            supportV13: "androidx.legacy:legacy-support-v13:1.0.0",
+            design: "com.google.android.material:material:1.1.0-beta01",
+            appcompatV7: "androidx.appcompat:appcompat:1.1.0",
             interpolator: "androidx.interpolator:interpolator:1.0.0",
-            annotation: "androidx.annotation:annotation:1.1.0"
+            annotation: "androidx.annotation:annotation:1.1.0",
     ]
     bintray = [
             siteUrl       : 'https://github.com/dkzwm/SmoothRefreshLayout',

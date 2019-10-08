@@ -34,11 +34,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.viewpager.widget.ViewPager;
 
-/**
- * Created by dkzwm on 2017/9/13.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class BoundaryUtil {
     private static final int[] sPoint = new int[2];
 

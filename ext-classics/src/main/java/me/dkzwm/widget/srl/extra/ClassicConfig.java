@@ -43,11 +43,7 @@ import java.util.Locale;
 import me.dkzwm.widget.srl.ext.classic.R;
 import me.dkzwm.widget.srl.util.PixelUtl;
 
-/**
- * Created by dkzwm on 2017/5/31.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class ClassicConfig {
     private static final String SP_NAME = "sr_classic_last_update_time";
     private static final SimpleDateFormat sDataFormat =

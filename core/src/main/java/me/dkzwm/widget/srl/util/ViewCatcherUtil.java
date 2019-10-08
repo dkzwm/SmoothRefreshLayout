@@ -27,11 +27,7 @@ package me.dkzwm.widget.srl.util;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * 视图搜寻工具,用以在未依赖相关包的情况下避免应用崩溃
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class ViewCatcherUtil {
     private static Class<?> sClassOfCoordinatorLayout;
     private static Class<?> sClassOfAppBarLayout;

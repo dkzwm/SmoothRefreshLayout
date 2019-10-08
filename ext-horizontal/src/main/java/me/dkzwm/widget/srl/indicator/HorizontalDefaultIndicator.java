@@ -24,7 +24,7 @@
  */
 package me.dkzwm.widget.srl.indicator;
 
-/** Created by dkzwm on 2017/10/20. */
+/** @author dkzwm */
 public class HorizontalDefaultIndicator extends DefaultIndicator {
     @Override
     public void onFingerMove(float x, float y) {

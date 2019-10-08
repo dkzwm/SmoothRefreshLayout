@@ -44,11 +44,7 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicatorSetter;
 
-/**
- * Support Two-Level refresh feature;<br>
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     private static final byte FLAG_DISABLE_TWO_LEVEL_REFRESH = 0x01 << 1;
     private static final byte FLAG_TRIGGER_TWO_LEVEL_REFRESH = 0x01 << 2;

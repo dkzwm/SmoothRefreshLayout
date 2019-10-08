@@ -27,11 +27,7 @@ package me.dkzwm.widget.srl.indicator;
 import androidx.annotation.NonNull;
 import me.dkzwm.widget.srl.annotation.MovingStatus;
 
-/**
- * Created by dkzwm on 2017/5/22.
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public interface IIndicator {
     float DEFAULT_RATIO_TO_REFRESH = 1f;
     float DEFAULT_MAX_MOVE_RATIO = 0f;

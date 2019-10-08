@@ -69,16 +69,7 @@ import me.dkzwm.widget.srl.util.BoundaryUtil;
 import me.dkzwm.widget.srl.util.ScrollCompat;
 import me.dkzwm.widget.srl.util.ViewCatcherUtil;
 
-/**
- * Created by dkzwm on 2017/5/18.
- *
- * <p>Part of the code comes from @see <a
- * href="https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh">
- * android-Ultra-Pull-To-Refresh</a><br>
- * 部分代码实现来自 @see <a href="https://github.com/liaohuqiu">LiaoHuQiu</a> 的UltraPullToRefresh项目
- *
- * @author dkzwm
- */
+/** @author dkzwm */
 public class SmoothRefreshLayout extends ViewGroup
         implements NestedScrollingParent3, NestedScrollingChild3 {
     // status
@@ -424,13 +415,13 @@ public class SmoothRefreshLayout extends ViewGroup
                 case IRefreshView.TYPE_HEADER:
                     if (mHeaderView != null)
                         throw new IllegalArgumentException(
-                                "Unsupported operation , " + "HeaderView only can be add once !!");
+                                "Unsupported operation, HeaderView only can be add once !!");
                     mHeaderView = view;
                     break;
                 case IRefreshView.TYPE_FOOTER:
                     if (mFooterView != null)
                         throw new IllegalArgumentException(
-                                "Unsupported operation , " + "FooterView only can be add once !!");
+                                "Unsupported operation, FooterView only can be add once !!");
                     mFooterView = view;
                     break;
             }
