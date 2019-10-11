@@ -406,7 +406,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (params == null) {
             params = generateDefaultLayoutParams();
-        } else if (!checkLayoutParams(params)) {
+        } else {
             params = generateLayoutParams(params);
         }
         if (child instanceof IRefreshView) {
@@ -2841,18 +2841,19 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     @Override
-    protected boolean checkLayoutParams(ViewGroup.LayoutParams p) {
-        return p instanceof LayoutParams;
-    }
-
-    @Override
     protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     }
 
     @Override
-    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
-        return new LayoutParams(p);
+    protected ViewGroup.LayoutParams generateLayoutParams(ViewGroup.LayoutParams lp) {
+        if (lp instanceof LayoutParams) {
+            return lp;
+        } else if (lp instanceof MarginLayoutParams) {
+            return new LayoutParams((MarginLayoutParams) lp);
+        } else {
+            return new LayoutParams(lp);
+        }
     }
 
     @Override
@@ -3527,15 +3528,22 @@ public class SmoothRefreshLayout extends ViewGroup
         if (isRefreshing() || isLoadingMore()) {
             notifyUIRefreshComplete(false, true);
         }
+        if (mHeaderView != null) {
+            mHeaderView.onReset(this);
+        }
+        if (mFooterView != null) {
+            mFooterView.onReset(this);
+        }
         if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             mScrollChecker.scrollTo(IIndicator.START_POS, 0);
         }
+        mScrollChecker.stop();
         mScrollChecker.setInterpolator(mSpringInterpolator);
         final byte old = mStatus;
         mStatus = SR_STATUS_INIT;
         notifyStatusChanged(old, mStatus);
         mAutomaticActionTriggered = true;
-        mScrollChecker.stop();
+        tryToResetViewsScale();
         removeCallbacks(mDelayToRefreshComplete);
         removeCallbacks(mDelayToDispatchNestedFling);
         removeCallbacks(mDelayToPerformAutoRefresh);
@@ -4295,22 +4303,10 @@ public class SmoothRefreshLayout extends ViewGroup
         // Use the current percentage duration of the current position to scroll back to the top
         if (mScrollChecker.isFlingBack()) {
             final int curPos = mIndicator.getCurrentPos();
-            int duration;
-            if (curPos > mScrollChecker.$MaxDistance) {
-                duration =
-                        Math.max(
-                                (int)
-                                        (1000f
-                                                * Math.sqrt(
-                                                        2f * mScrollChecker.$MaxDistance / 2000f)
-                                                * mFlingBackFactor),
-                                mMinFlingBackDuration);
-            } else {
-                duration =
-                        Math.max(
-                                (int) (1000f * Math.sqrt(3f * curPos / 2000f) * mFlingBackFactor),
-                                mMinFlingBackDuration);
-            }
+            int duration =
+                    Math.max(
+                            (int) (1000f * Math.sqrt(1.65f * curPos / 2000f) * mFlingBackFactor),
+                            mMinFlingBackDuration);
             tryScrollBackToTop(duration);
         } else if (isMovingHeader()) {
             float percent = mIndicator.getCurrentPercentOfRefreshOffset();
@@ -4884,26 +4880,9 @@ public class SmoothRefreshLayout extends ViewGroup
             mStatus = SR_STATUS_INIT;
             notifyStatusChanged(old, mStatus);
             mViewStatus = SR_VIEW_STATUS_INIT;
-            if (mScrollChecker.$Scroller.isFinished()) {
-                mScrollChecker.stop();
-                mScrollChecker.setInterpolator(mSpringInterpolator);
-            }
             mAutomaticActionTriggered = true;
             tryToResetMovingStatus();
-            if (mMode == Constants.MODE_SCALE && mTargetView != null) {
-                resetViewScale(mTargetView);
-                if (mScrollTargetView != null) {
-                    resetViewScale(mScrollTargetView);
-                } else if (mAutoFoundScrollTargetView != null) {
-                    final View targetView;
-                    if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
-                        targetView = (View) mAutoFoundScrollTargetView.getParent();
-                    } else {
-                        targetView = mAutoFoundScrollTargetView;
-                    }
-                    resetViewScale(targetView);
-                }
-            }
+            tryToResetViewsScale();
             if (!mIndicator.hasTouched()) {
                 mIsSpringBackCanNotBeInterrupted = false;
             }
@@ -4913,6 +4892,23 @@ public class SmoothRefreshLayout extends ViewGroup
             return true;
         }
         return false;
+    }
+
+    protected void tryToResetViewsScale() {
+        if (mMode == Constants.MODE_SCALE && mTargetView != null) {
+            resetViewScale(mTargetView);
+            if (mScrollTargetView != null) {
+                resetViewScale(mScrollTargetView);
+            } else if (mAutoFoundScrollTargetView != null) {
+                final View targetView;
+                if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
+                    targetView = (View) mAutoFoundScrollTargetView.getParent();
+                } else {
+                    targetView = mAutoFoundScrollTargetView;
+                }
+                resetViewScale(targetView);
+            }
+        }
     }
 
     protected void resetViewScale(View targetView) {
@@ -5085,8 +5081,8 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     private void notifyUIPositionChanged() {
-        if (mUIPositionChangedListeners != null && !mUIPositionChangedListeners.isEmpty()) {
-            final List<OnUIPositionChangedListener> listeners = mUIPositionChangedListeners;
+        final List<OnUIPositionChangedListener> listeners = mUIPositionChangedListeners;
+        if (listeners != null && !listeners.isEmpty()) {
             for (OnUIPositionChangedListener listener : listeners) {
                 listener.onChanged(mStatus, mIndicator);
             }
@@ -5095,8 +5091,8 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     private void notifyNestedScrollChanged() {
-        if (mNestedScrollChangedListeners != null && !mNestedScrollChangedListeners.isEmpty()) {
-            final List<OnNestedScrollChangedListener> listeners = mNestedScrollChangedListeners;
+        final List<OnNestedScrollChangedListener> listeners = mNestedScrollChangedListeners;
+        if (listeners != null && !listeners.isEmpty()) {
             for (OnNestedScrollChangedListener listener : listeners) {
                 listener.onNestedScrollChanged();
             }
@@ -5104,8 +5100,8 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     protected void notifyStatusChanged(byte old, byte now) {
-        if (mStatusChangedListeners != null && !mStatusChangedListeners.isEmpty()) {
-            final List<OnStatusChangedListener> listeners = mStatusChangedListeners;
+        final List<OnStatusChangedListener> listeners = mStatusChangedListeners;
+        if (listeners != null && !listeners.isEmpty()) {
             for (OnStatusChangedListener listener : listeners) {
                 listener.onStatusChanged(old, now);
             }
@@ -5408,9 +5404,6 @@ public class SmoothRefreshLayout extends ViewGroup
         byte $Mode = Constants.SCROLLER_MODE_NONE;
         float $Velocity;
         boolean $IsScrolling = false;
-        private float $CalcFactor = 0;
-        private float $CalcPart = 0;
-        private float $LastCalcPart = 1;
         private int[] $CachedPair;
 
         ScrollChecker() {
@@ -5427,18 +5420,8 @@ public class SmoothRefreshLayout extends ViewGroup
             if ($Mode == Constants.SCROLLER_MODE_NONE || isCalcFling()) {
                 return;
             }
-            boolean finished =
-                    $Mode == Constants.SCROLLER_MODE_FLING
-                            ? $LastTo <= $LastY
-                            : !$Scroller.computeScrollOffset() && $Scroller.getCurrY() == $LastY;
-            int curY;
-            if ($Mode != Constants.SCROLLER_MODE_FLING) {
-                curY = $Scroller.getCurrY();
-            } else {
-                curY = (int) Math.ceil(($LastY + $CalcPart * $LastCalcPart));
-                $LastCalcPart = $LastCalcPart * $CalcFactor;
-                if (curY > $LastTo) curY = $LastTo;
-            }
+            boolean finished = !$Scroller.computeScrollOffset() && $Scroller.getCurrY() == $LastY;
+            int curY = $Scroller.getCurrY();
             int deltaY = curY - $LastY;
             if (sDebug) {
                 Log.d(
@@ -5669,7 +5652,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
         int[] computeScroll(float velocity) {
             // Multiply by a given empirical value
-            velocity = velocity * .65f;
+            velocity = velocity * .535f;
             if ($CachedPair == null) $CachedPair = new int[2];
             float deceleration =
                     (float)
@@ -5695,21 +5678,21 @@ public class SmoothRefreshLayout extends ViewGroup
         }
 
         void startBounce(int to, int duration) {
-            final int totalTimes = (int) Math.floor((duration * 60f / 1000));
-            final float factor = (float) Math.pow(0.26, 1f / totalTimes);
-            float sumPer = 1;
-            float last = 1;
-            for (int i = 1; i < totalTimes; i++) {
-                last = last * factor;
-                sumPer += last;
-            }
-            $CalcFactor = factor;
-            $LastCalcPart = 1;
-            $CalcPart = to / sumPer;
-            $LastTo = to;
-            $LastStart = mIndicator.getCurrentPos();
             $Mode = Constants.SCROLLER_MODE_FLING;
+            setInterpolator(sSpringInterpolator);
+            $LastStart = mIndicator.getCurrentPos();
+            $LastTo = to;
+            if (sDebug) {
+                Log.d(
+                        TAG,
+                        String.format(
+                                "ScrollChecker: startBounce(): to:%s, duration:%s", to, duration));
+            }
+            int distance = $LastTo - $LastStart;
+            $LastY = 0;
+            $Duration = duration;
             $IsScrolling = true;
+            $Scroller.startScroll(0, 0, 0, distance, duration);
             removeCallbacks(this);
             ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
         }
@@ -5749,16 +5732,8 @@ public class SmoothRefreshLayout extends ViewGroup
                             startPreFling(currentVelocity);
                         }
                         break;
-                    case Constants.SCROLLER_MODE_NONE:
-                        $Scroller = new Scroller(getContext(), interpolator);
-                        break;
                     default:
-                        if (sDebug) {
-                            Log.d(
-                                    TAG,
-                                    "SCROLLER_MODE_FLING does not use Scroller, so we "
-                                            + "ignored it.");
-                        }
+                        $Scroller = new Scroller(getContext(), interpolator);
                         break;
                 }
             } else {
@@ -5781,7 +5756,6 @@ public class SmoothRefreshLayout extends ViewGroup
                 $IsScrolling = false;
                 $Scroller.forceFinished(true);
                 $Duration = 0;
-                $LastCalcPart = 1;
                 $LastY = 0;
                 $LastTo = -1;
                 $LastStart = 0;
