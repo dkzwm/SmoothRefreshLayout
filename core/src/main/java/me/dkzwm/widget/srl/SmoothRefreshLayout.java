@@ -2822,7 +2822,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public void setSpringBackInterpolator(@NonNull Interpolator interpolator) {
         if (mSpringBackInterpolator != interpolator) {
             mSpringBackInterpolator = interpolator;
-            if (mScrollChecker.$Mode == Constants.SCROLLER_MODE_SPRING_BACK) {
+            if (mScrollChecker.isSpringBack() || mScrollChecker.isFlingBack()) {
                 mScrollChecker.setInterpolator(interpolator);
             }
         }
@@ -5495,6 +5495,10 @@ public class SmoothRefreshLayout extends ViewGroup
 
         boolean isFlingBack() {
             return $Mode == Constants.SCROLLER_MODE_FLING_BACK;
+        }
+
+        boolean isSpringBack() {
+            return $Mode == Constants.SCROLLER_MODE_SPRING_BACK;
         }
 
         boolean isCalcFling() {
