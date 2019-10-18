@@ -34,6 +34,7 @@ import android.widget.ScrollView;
 import androidx.core.view.ScrollingView;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -154,13 +155,15 @@ public class ScrollCompat {
                 view.scrollBy(0, (int) deltaY);
                 return true;
             } else if (ViewCatcherUtil.isRecyclerView(view)) {
-                // Fix the problem of adding new data to RecyclerView while in Fling state,
-                // the new items will continue to Fling
                 RecyclerView recyclerView = (RecyclerView) view;
-                if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
-                    recyclerView.stopScroll();
+                if (!(recyclerView.getOnFlingListener() instanceof PagerSnapHelper)) {
+                    // Fix the problem of adding new data to RecyclerView while in Fling state,
+                    // the new items will continue to Fling
+                    if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING) {
+                        recyclerView.stopScroll();
+                    }
+                    view.scrollBy(0, (int) deltaY);
                 }
-                view.scrollBy(0, (int) deltaY);
                 return true;
             }
         }

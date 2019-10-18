@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_scroll_to_auto_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_scale_effect).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_scale_effect).setOnClickListener(this);
+        findViewById(R.id.button_main_test_bottom_sheet_dialog).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested_with_viewPager_in_one_srl)
                 .setOnClickListener(this);
         mButtonDebug = findViewById(R.id.button_main_debug);
@@ -203,6 +204,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_test_horizontal_scale_effect:
                 startActivity(
                         new Intent(MainActivity.this, TestHorizontalScaleEffectActivity.class));
+                break;
+            case R.id.button_main_test_bottom_sheet_dialog:
+                startActivity(new Intent(MainActivity.this, TestBottomSheetDialogActivity.class));
                 break;
             case R.id.button_main_debug:
                 SmoothRefreshLayout.sDebug = !SmoothRefreshLayout.sDebug;

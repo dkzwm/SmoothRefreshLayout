@@ -2,50 +2,51 @@
 <resources>
 
     <attr name="sr_style" format="enum">
-        <enum name="style_default" value="0"/>
-        <enum name="style_scale" value="1"/>
-        <enum name="style_pin" value="2"/>
-        <enum name="style_followScale" value="3"/>
-        <enum name="style_followPin" value="4"/>
-        <enum name="style_followCenter" value="5"/>
+        <enum name="style_default" value="0" />
+        <enum name="style_scale" value="1" />
+        <enum name="style_pin" value="2" />
+        <enum name="style_followScale" value="3" />
+        <enum name="style_followPin" value="4" />
+        <enum name="style_followCenter" value="5" />
     </attr>
 
     <declare-styleable name="SmoothRefreshLayout">
-        <attr name="sr_content" format="reference"/>
-        <attr name="sr_resistance" format="float"/>
-        <attr name="sr_resistanceOfFooter" format="float"/>
-        <attr name="sr_resistanceOfHeader" format="float"/>
-        <attr name="sr_ratioToRefresh" format="float"/>
-        <attr name="sr_ratioOfHeaderToRefresh" format="float"/>
-        <attr name="sr_ratioOfFooterToRefresh" format="float"/>
-        <attr name="sr_ratioToKeep" format="float"/>
-        <attr name="sr_ratioToKeepHeader" format="float"/>
-        <attr name="sr_ratioToKeepFooter" format="float"/>
-        <attr name="sr_maxMoveRatio" format="float"/>
-        <attr name="sr_maxMoveRatioOfHeader" format="float"/>
-        <attr name="sr_maxMoveRatioOfFooter" format="float"/>
-        <attr name="sr_closeDuration" format="integer"/>
-        <attr name="sr_closeHeaderDuration" format="integer"/>
-        <attr name="sr_closeFooterDuration" format="integer"/>
-        <attr name="sr_backToKeepDuration" format="integer"/>
-        <attr name="sr_backToKeepHeaderDuration" format="integer"/>
-        <attr name="sr_backToKeepFooterDuration" format="integer"/>
-        <attr name="sr_enablePullToRefresh" format="boolean"/>
-        <attr name="sr_enableKeep" format="boolean"/>
-        <attr name="sr_enableOverScroll" format="boolean"/>
-        <attr name="sr_enablePinContent" format="boolean"/>
-        <attr name="sr_enableRefresh" format="boolean"/>
-        <attr name="sr_enableLoadMore" format="boolean"/>
-        <attr name="sr_stickyHeader" format="reference"/>
-        <attr name="sr_stickyFooter" format="reference"/>
+        <attr name="android:enabled" />
+        <attr name="sr_content" format="reference" />
+        <attr name="sr_resistance" format="float" />
+        <attr name="sr_resistanceOfFooter" format="float" />
+        <attr name="sr_resistanceOfHeader" format="float" />
+        <attr name="sr_ratioToRefresh" format="float" />
+        <attr name="sr_ratioOfHeaderToRefresh" format="float" />
+        <attr name="sr_ratioOfFooterToRefresh" format="float" />
+        <attr name="sr_ratioToKeep" format="float" />
+        <attr name="sr_ratioToKeepHeader" format="float" />
+        <attr name="sr_ratioToKeepFooter" format="float" />
+        <attr name="sr_maxMoveRatio" format="float" />
+        <attr name="sr_maxMoveRatioOfHeader" format="float" />
+        <attr name="sr_maxMoveRatioOfFooter" format="float" />
+        <attr name="sr_closeDuration" format="integer" />
+        <attr name="sr_closeHeaderDuration" format="integer" />
+        <attr name="sr_closeFooterDuration" format="integer" />
+        <attr name="sr_backToKeepDuration" format="integer" />
+        <attr name="sr_backToKeepHeaderDuration" format="integer" />
+        <attr name="sr_backToKeepFooterDuration" format="integer" />
+        <attr name="sr_enablePullToRefresh" format="boolean" />
+        <attr name="sr_enableKeep" format="boolean" />
+        <attr name="sr_enableOverScroll" format="boolean" />
+        <attr name="sr_enablePinContent" format="boolean" />
+        <attr name="sr_enableRefresh" format="boolean" />
+        <attr name="sr_enableLoadMore" format="boolean" />
+        <attr name="sr_stickyHeader" format="reference" />
+        <attr name="sr_stickyFooter" format="reference" />
         <attr name="sr_mode" format="enum">
-            <enum name="mode_default" value="0"/>
-            <enum name="mode_scale" value="1"/>
+            <enum name="mode_default" value="0" />
+            <enum name="mode_scale" value="1" />
         </attr>
-        <attr name="sr_headerBackgroundColor" format="color"/>
-        <attr name="sr_footerBackgroundColor" format="color"/>
+        <attr name="sr_headerBackgroundColor" format="color" />
+        <attr name="sr_footerBackgroundColor" format="color" />
     </declare-styleable>
     <declare-styleable name="IRefreshView">
-        <attr name="sr_style"/>
+        <attr name="sr_style" />
     </declare-styleable>
 </resources>

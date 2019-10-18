@@ -152,6 +152,10 @@
                 android:id="@+id/button_main_test_horizontal_scale_effect"
                 style="@style/LargeButtonStyle"
                 android:text="@string/test_horizontal_scale_effect"/>
+            <Button
+                android:id="@+id/button_main_test_bottom_sheet_dialog"
+                style="@style/LargeButtonStyle"
+                android:text="@string/test_bottom_sheet_dialog"/>
         </LinearLayout>
     </ScrollView>
 

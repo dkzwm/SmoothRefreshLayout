@@ -82,4 +82,6 @@
     <string name="test_nested_with_viewpager">Test nested with viewPager in one
         refreshLayout</string>
     <string name="second_floor">Second floor</string>
+    <string name="open">Open</string>
+    <string name="test_bottom_sheet_dialog">Test BottomSheetDialog</string>
 </resources>

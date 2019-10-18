@@ -114,9 +114,8 @@ public class SmoothRefreshLayout extends ViewGroup
     protected static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 21;
     protected static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
     protected static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
-    protected static final int FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW = 0x01 << 24;
-    protected static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 25;
-    protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 26;
+    protected static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 24;
+    protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 25;
     protected static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     protected static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
     private static final int[] LAYOUT_ATTRS = new int[] {android.R.attr.enabled};
@@ -508,6 +507,20 @@ public class SmoothRefreshLayout extends ViewGroup
         if (count == 0) {
             return;
         }
+        final int specSizeWidth = MeasureSpec.getSize(heightMeasureSpec);
+        final int specModeWidth = MeasureSpec.getMode(widthMeasureSpec);
+        final int specSizeHeight = MeasureSpec.getSize(heightMeasureSpec);
+        final int specModeHeight = MeasureSpec.getMode(heightMeasureSpec);
+        Log.d(
+                TAG,
+                "specSizeWidth:"
+                        + specSizeWidth
+                        + " specModeWidth:"
+                        + specModeWidth
+                        + " specSizeHeight:"
+                        + specSizeHeight
+                        + " specModeHeight:"
+                        + specModeHeight);
         ensureTargetView();
         int maxHeight = 0;
         int maxWidth = 0;
@@ -2632,30 +2645,6 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     /**
-     * The flag has been set to dynamic search the target view.
-     *
-     * <p>是否已经开启了固定内容视图
-     *
-     * @return Enabled
-     */
-    public boolean isEnabledDynamicEnsureTargetView() {
-        return (mFlag & FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW) > 0;
-    }
-
-    /**
-     * If @param enable has been set to true. Frame will be dynamic search the target view.
-     *
-     * @param enable dynamic search
-     */
-    public void setEnableDynamicEnsureTargetView(boolean enable) {
-        if (enable) {
-            mFlag = mFlag | FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW;
-        } else {
-            mFlag = mFlag & ~FLAG_ENABLE_DYNAMIC_ENSURE_TARGET_VIEW;
-        }
-    }
-
-    /**
      * The flag has been set to perform refresh when Fling.
      *
      * <p>是否已经开启了当收回刷新视图的手势被触发且当前位置大于触发刷新的位置时，将可以触发刷新同时将不存在Fling效果的功能,
@@ -2706,21 +2695,16 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param footer Footer view
      */
     public void setFooterView(@NonNull IRefreshView footer) {
+        if (footer.getType() != IRefreshView.TYPE_FOOTER) {
+            throw new IllegalArgumentException("Wrong type, FooterView type must be TYPE_FOOTER");
+        }
         if (mFooterView != null) {
             removeView(mFooterView.getView());
             mFooterView = null;
         }
-        if (footer.getType() != IRefreshView.TYPE_FOOTER) {
-            throw new IllegalArgumentException(
-                    "Wrong type, FooterView type must be " + "TYPE_FOOTER");
-        }
-        View view = footer.getView();
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp == null) {
-            lp = generateDefaultLayoutParams();
-        }
+        final View view = footer.getView();
         mViewsZAxisNeedReset = true;
-        addView(view, lp);
+        addView(view, -1, view.getLayoutParams());
     }
 
     @Nullable
@@ -2746,21 +2730,16 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param header Header view
      */
     public void setHeaderView(@NonNull IRefreshView header) {
+        if (header.getType() != IRefreshView.TYPE_HEADER) {
+            throw new IllegalArgumentException("Wrong type, HeaderView type must be TYPE_HEADER");
+        }
         if (mHeaderView != null) {
             removeView(mHeaderView.getView());
             mHeaderView = null;
         }
-        if (header.getType() != IRefreshView.TYPE_HEADER) {
-            throw new IllegalArgumentException(
-                    "Wrong type, HeaderView type must be " + "TYPE_HEADER");
-        }
-        View view = header.getView();
-        ViewGroup.LayoutParams lp = view.getLayoutParams();
-        if (lp == null) {
-            lp = generateDefaultLayoutParams();
-        }
+        final View view = header.getView();
         mViewsZAxisNeedReset = true;
-        addView(view, lp);
+        addView(view, -1, view.getLayoutParams());
     }
 
     /**
@@ -3425,13 +3404,9 @@ public class SmoothRefreshLayout extends ViewGroup
     public boolean canScrollVertically(int direction) {
         if (isVerticalOrientation()) {
             if (direction < 0) {
-                if (isDisabledRefresh()) {
-                    return super.canScrollVertically(direction) && isNotYetInEdgeCannotMoveHeader();
-                }
+                return super.canScrollVertically(direction) || isNotYetInEdgeCannotMoveHeader();
             } else {
-                if (isDisabledLoadMore()) {
-                    return super.canScrollVertically(direction) && isNotYetInEdgeCannotMoveFooter();
-                }
+                return super.canScrollVertically(direction) || isNotYetInEdgeCannotMoveFooter();
             }
         }
         return super.canScrollVertically(direction);
@@ -3441,15 +3416,9 @@ public class SmoothRefreshLayout extends ViewGroup
     public boolean canScrollHorizontally(int direction) {
         if (!isVerticalOrientation()) {
             if (direction < 0) {
-                if (isDisabledRefresh()) {
-                    return super.canScrollHorizontally(direction)
-                            && isNotYetInEdgeCannotMoveHeader();
-                }
+                return super.canScrollHorizontally(direction) || isNotYetInEdgeCannotMoveHeader();
             } else {
-                if (isDisabledLoadMore()) {
-                    return super.canScrollHorizontally(direction)
-                            && isNotYetInEdgeCannotMoveFooter();
-                }
+                return super.canScrollHorizontally(direction) || isNotYetInEdgeCannotMoveFooter();
             }
         }
         return super.canScrollHorizontally(direction);
@@ -3572,17 +3541,14 @@ public class SmoothRefreshLayout extends ViewGroup
     private void ensureTargetView() {
         if (mTargetView == null) {
             final int count = getChildCount();
-            final boolean ensure = isEnabledDynamicEnsureTargetView() || mAppBarLayoutUtil != null;
             if (mContentResId != View.NO_ID) {
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (mContentResId == child.getId()) {
                         mTargetView = child;
-                        if (ensure) {
-                            View view = ensureScrollTargetView(child, true, 0, 0);
-                            if (view != null && view != child) {
-                                mAutoFoundScrollTargetView = view;
-                            }
+                        View view = ensureScrollTargetView(child, true, 0, 0);
+                        if (view != null && view != child) {
+                            mAutoFoundScrollTargetView = view;
                         }
                         break;
                     } else if (child instanceof ViewGroup) {
@@ -3600,15 +3566,13 @@ public class SmoothRefreshLayout extends ViewGroup
                 for (int i = count - 1; i >= 0; i--) {
                     View child = getChildAt(i);
                     if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
-                        if (ensure) {
-                            View view = ensureScrollTargetView(child, true, 0, 0);
-                            if (view != null) {
-                                mTargetView = child;
-                                if (view != child) {
-                                    mAutoFoundScrollTargetView = view;
-                                }
-                                break;
+                        View view = ensureScrollTargetView(child, true, 0, 0);
+                        if (view != null) {
+                            mTargetView = child;
+                            if (view != child) {
+                                mAutoFoundScrollTargetView = view;
                             }
+                            break;
                         } else {
                             mTargetView = child;
                             break;
@@ -3801,8 +3765,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 }
                 mHasSendDownEvent = false;
                 mPreventForAnotherDirection = false;
-                if (mScrollTargetView == null
-                        && (isEnabledDynamicEnsureTargetView() || mAppBarLayoutUtil != null)) {
+                if (mScrollTargetView == null) {
                     View view = ensureScrollTargetView(this, false, ev.getX(), ev.getY());
                     if (view != null && mTargetView != view && mAutoFoundScrollTargetView != view) {
                         mAutoFoundScrollTargetView = view;

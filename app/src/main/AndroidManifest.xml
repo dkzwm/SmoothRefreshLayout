@@ -109,6 +109,9 @@
             android:name=".ui.TestHorizontalScaleEffectActivity"
             android:screenOrientation="portrait"/>
         <activity
+            android:name=".ui.TestBottomSheetDialogActivity"
+            android:screenOrientation="portrait"/>
+        <activity
             android:name=".ui.SecondFloorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoAnimTheme"/>
