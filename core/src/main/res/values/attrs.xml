@@ -46,6 +46,9 @@
         <attr name="sr_headerBackgroundColor" format="color" />
         <attr name="sr_footerBackgroundColor" format="color" />
     </declare-styleable>
+    <declare-styleable name="SmoothRefreshLayout_Layout">
+        <attr name="android:layout_gravity" />
+    </declare-styleable>
     <declare-styleable name="IRefreshView">
         <attr name="sr_style" />
     </declare-styleable>

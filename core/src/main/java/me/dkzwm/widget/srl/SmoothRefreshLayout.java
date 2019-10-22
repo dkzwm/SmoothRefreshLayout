@@ -118,7 +118,6 @@ public class SmoothRefreshLayout extends ViewGroup
     protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 25;
     protected static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     protected static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
-    private static final int[] LAYOUT_ATTRS = new int[] {android.R.attr.enabled};
     public static boolean sDebug = true;
     private static int sId = 0;
     private static IRefreshViewCreator sCreator;
@@ -369,15 +368,8 @@ public class SmoothRefreshLayout extends ViewGroup
                 int mode =
                         arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, Constants.MODE_DEFAULT);
                 mMode = mode;
+                setEnabled(arr.getBoolean(R.styleable.SmoothRefreshLayout_android_enabled, true));
                 preparePaint();
-            } finally {
-                arr.recycle();
-            }
-            try {
-                arr =
-                        context.obtainStyledAttributes(
-                                attrs, LAYOUT_ATTRS, defStyleAttr, defStyleRes);
-                setEnabled(arr.getBoolean(0, true));
             } finally {
                 arr.recycle();
             }
@@ -507,25 +499,14 @@ public class SmoothRefreshLayout extends ViewGroup
         if (count == 0) {
             return;
         }
-        final int specSizeWidth = MeasureSpec.getSize(heightMeasureSpec);
-        final int specModeWidth = MeasureSpec.getMode(widthMeasureSpec);
-        final int specSizeHeight = MeasureSpec.getSize(heightMeasureSpec);
-        final int specModeHeight = MeasureSpec.getMode(heightMeasureSpec);
-        Log.d(
-                TAG,
-                "specSizeWidth:"
-                        + specSizeWidth
-                        + " specModeWidth:"
-                        + specModeWidth
-                        + " specSizeHeight:"
-                        + specSizeHeight
-                        + " specModeHeight:"
-                        + specModeHeight);
         ensureTargetView();
         int maxHeight = 0;
         int maxWidth = 0;
         int childState = 0;
         mCachedViews.clear();
+        final boolean measureMatchParentChildren =
+                MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
+                        || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) {
@@ -538,8 +519,11 @@ public class SmoothRefreshLayout extends ViewGroup
                 measureFooter(child, lp, widthMeasureSpec, heightMeasureSpec);
             } else {
                 measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
-                if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT)
+                if (measureMatchParentChildren
+                        && (lp.width == LayoutParams.MATCH_PARENT
+                                || lp.height == LayoutParams.MATCH_PARENT)) {
                     mCachedViews.add(child);
+                }
             }
             maxWidth =
                     Math.max(maxWidth, child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin);
@@ -4467,6 +4451,13 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param change The changed value
      */
     protected void updatePos(int change) {
+        if (sDebug) {
+            Log.d(
+                    TAG,
+                    String.format(
+                            "updatePos(): change: %s, current: %s last: %s",
+                            change, mIndicator.getCurrentPos(), mIndicator.getLastPos()));
+        }
         final boolean isMovingHeader = isMovingHeader();
         final boolean isMovingFooter = isMovingFooter();
         // leave initiated position or just refresh complete
@@ -4504,13 +4495,6 @@ public class SmoothRefreshLayout extends ViewGroup
             }
         }
         tryToPerformRefreshWhenMoved();
-        if (sDebug) {
-            Log.d(
-                    TAG,
-                    String.format(
-                            "updatePos(): change: %s, current: %s last: %s",
-                            change, mIndicator.getCurrentPos(), mIndicator.getLastPos()));
-        }
         notifyUIPositionChanged();
         boolean needRequestLayout = offsetChild(change, isMovingHeader, isMovingFooter);
         if (needRequestLayout) {
@@ -5244,14 +5228,16 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public static class LayoutParams extends MarginLayoutParams {
-        private static final int[] LAYOUT_ATTRS = new int[] {android.R.attr.layout_gravity};
         public int gravity = Gravity.TOP | Gravity.START;
 
         @SuppressWarnings("WeakerAccess")
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
-            final TypedArray a = c.obtainStyledAttributes(attrs, LAYOUT_ATTRS);
-            gravity = a.getInt(0, gravity);
+            final TypedArray a =
+                    c.obtainStyledAttributes(attrs, R.styleable.SmoothRefreshLayout_Layout);
+            gravity =
+                    a.getInt(
+                            R.styleable.SmoothRefreshLayout_Layout_android_layout_gravity, gravity);
             a.recycle();
         }
 
@@ -5574,7 +5560,11 @@ public class SmoothRefreshLayout extends ViewGroup
             $IsScrolling = true;
             $Scroller.startScroll(0, 0, 0, distance, duration);
             removeCallbacks(this);
-            ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
+            if (duration <= 0) {
+                run();
+            } else {
+                ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
+            }
         }
 
         void computeScrollOffset() {
