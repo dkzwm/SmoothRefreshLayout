@@ -1,9 +1,11 @@
+import groovy.xml.XmlUtil
+
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 group = rootProject.ext.bintray['groupId']
-version=rootProject.ext.android['versionName']
+version = rootProject.ext.android['versionName']
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -24,6 +26,7 @@ android {
 }
 
 dependencies {
+    compileOnly files('libs/classes.jar')
     compileOnly rootProject.ext.libs.annotation
     compileOnly rootProject.ext.libs.recyclerview
     compileOnly rootProject.ext.libs.viewpager
@@ -87,10 +90,9 @@ install {
     }
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
 bintray {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.key")
 
@@ -103,5 +105,31 @@ bintray {
         vcsUrl = rootProject.ext.bintray['gitUrl']
         licenses = rootProject.ext.allLicenses
         publish = true
+    }
+}
+
+gradle.buildFinished { project ->
+    Thread.start {
+        def imlFile = file("core.iml")
+        println 'We need invoke the hidden api, so we must keep the custom jar in front of the android.jar'
+        try {
+            def parsedXml = (new XmlParser()).parse(imlFile)
+            def jdkNode = parsedXml.component[1].orderEntry.find { it.'@type' == 'jdk' }
+            def jdkName = jdkNode.attributes()['jdkName']
+            def jdkType = jdkNode.attributes()['jdkType']
+            parsedXml.component[1].remove(jdkNode)
+            new Node(parsedXml.component[1], 'orderEntry',
+                    [
+                            'type'   : 'jdk',
+                            'jdkName': jdkName,
+                            'jdkType': jdkType
+                    ])
+            def text=XmlUtil.serialize(parsedXml)
+            imlFile.withWriter("UTF8") { writer ->
+                writer.write(text)
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace()
+        }
     }
 }

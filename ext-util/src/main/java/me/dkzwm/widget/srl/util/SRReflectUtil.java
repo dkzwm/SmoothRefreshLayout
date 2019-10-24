@@ -24,8 +24,6 @@
  */
 package me.dkzwm.widget.srl.util;
 
-import android.graphics.Matrix;
-import android.view.View;
 import android.widget.AbsListView;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -38,8 +36,6 @@ public class SRReflectUtil {
     private static Method sReportScrollStateChangeMethod;
     private static Method sFlingRunnableStartMethod;
     private static Constructor sFlingRunnableConstructor;
-    private static Method sHasIdentityMatrixMethod;
-    private static Method sGetInverseMatrixMethod;
     private static boolean sFound = false;
 
     @SuppressWarnings("unchecked")
@@ -101,32 +97,6 @@ public class SRReflectUtil {
                 return;
             }
             sFlingRunnableStartMethod.invoke(obj, velocityY);
-        } catch (Exception e) {
-            // ignore exception
-        }
-    }
-
-    public static void compatMapTheInverseMatrix(View view, float[] point) {
-        try {
-            if (sHasIdentityMatrixMethod == null) {
-                sHasIdentityMatrixMethod = View.class.getDeclaredMethod("hasIdentityMatrix");
-                sHasIdentityMatrixMethod.setAccessible(true);
-            }
-            if (sHasIdentityMatrixMethod != null) {
-                Object obj = sHasIdentityMatrixMethod.invoke(view);
-                if (obj instanceof Boolean && !(boolean) obj) {
-                    if (sGetInverseMatrixMethod == null) {
-                        sGetInverseMatrixMethod = View.class.getDeclaredMethod("getInverseMatrix");
-                        sGetInverseMatrixMethod.setAccessible(true);
-                    }
-                    if (sGetInverseMatrixMethod != null) {
-                        Matrix matrix = (Matrix) sGetInverseMatrixMethod.invoke(view);
-                        if (matrix != null) {
-                            matrix.mapPoints(point);
-                        }
-                    }
-                }
-            }
         } catch (Exception e) {
             // ignore exception
         }

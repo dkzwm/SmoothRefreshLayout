@@ -3586,15 +3586,13 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @see ViewGroup source code
      */
-    private boolean isTransformedTouchPointInView(float x, float y, View group, View child) {
+    private boolean isTransformedTouchPointInView(float x, float y, ViewGroup group, View child) {
         if (child.getVisibility() != VISIBLE || child.getAnimation() != null) {
             return false;
         }
         mCachedFloatPoint[0] = x;
         mCachedFloatPoint[1] = y;
-        mCachedFloatPoint[0] += group.getScrollX() - child.getLeft();
-        mCachedFloatPoint[1] += group.getScrollY() - child.getTop();
-        mapTheInverseMatrix(child, mCachedFloatPoint);
+        group.transformPointToViewLocal(mCachedFloatPoint, child);
         final boolean isInView =
                 mCachedFloatPoint[0] >= 0
                         && mCachedFloatPoint[1] >= 0
@@ -3606,9 +3604,6 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         return isInView;
     }
-
-    /** 如果内部视图进行了矩阵变换，则需要重载本方法，使用SRReflectUtil的compatMapTheInverseMatrix方法，进行兼容处理。 */
-    protected void mapTheInverseMatrix(View child, float[] point) {}
 
     protected View ensureScrollTargetView(View target, boolean noTransform, float x, float y) {
         if (target instanceof IRefreshView
@@ -4167,7 +4162,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (isHeaderInProcessing()
                         && !isDisabledPerformRefresh()
                         && isMovingHeader()
-                        && mIndicator.isOverOffsetToKeepHeaderWhileLoading()) {
+                        && mIndicator.isOverOffsetToRefresh()) {
                     if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepHeaderWhileLoading())) {
                         mScrollChecker.scrollTo(
                                 mIndicator.getOffsetToKeepHeaderWhileLoading(),
@@ -4177,7 +4172,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 } else if (isFooterInProcessing()
                         && !isDisabledPerformLoadMore()
                         && isMovingFooter()
-                        && mIndicator.isOverOffsetToKeepFooterWhileLoading()) {
+                        && mIndicator.isOverOffsetToLoadMore()) {
                     if (!mIndicator.isAlreadyHere(mIndicator.getOffsetToKeepFooterWhileLoading())) {
                         mScrollChecker.scrollTo(
                                 mIndicator.getOffsetToKeepFooterWhileLoading(),
