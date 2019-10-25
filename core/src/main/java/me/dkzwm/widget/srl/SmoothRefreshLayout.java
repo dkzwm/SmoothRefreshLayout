@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.Build;
 import android.os.SystemClock;
@@ -198,6 +199,7 @@ public class SmoothRefreshLayout extends ViewGroup
     private RefreshCompleteHook mHeaderRefreshCompleteHook;
     private RefreshCompleteHook mFooterRefreshCompleteHook;
     private AppBarLayoutUtil mAppBarLayoutUtil;
+    private Matrix mCachedMatrix = new Matrix();
     private boolean mIsLastRefreshSuccessful = true;
     private boolean mViewsZAxisNeedReset = true;
     private boolean mNeedFilterScrollEvent = false;
@@ -3587,12 +3589,14 @@ public class SmoothRefreshLayout extends ViewGroup
      * @see ViewGroup source code
      */
     private boolean isTransformedTouchPointInView(float x, float y, ViewGroup group, View child) {
-        if (child.getVisibility() != VISIBLE || child.getAnimation() != null) {
+        if (child.getVisibility() != VISIBLE
+                || child.getAnimation() != null
+                || child instanceof IRefreshView) {
             return false;
         }
         mCachedFloatPoint[0] = x;
         mCachedFloatPoint[1] = y;
-        group.transformPointToViewLocal(mCachedFloatPoint, child);
+        transformPointToViewLocal(group, mCachedFloatPoint, child);
         final boolean isInView =
                 mCachedFloatPoint[0] >= 0
                         && mCachedFloatPoint[1] >= 0
@@ -3603,6 +3607,24 @@ public class SmoothRefreshLayout extends ViewGroup
             mCachedFloatPoint[1] = mCachedFloatPoint[1] - y;
         }
         return isInView;
+    }
+
+    private void transformPointToViewLocal(ViewGroup group, float[] point, View child) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            group.transformPointToViewLocal(point, child);
+        } else {
+            // When the system version is lower than LOLLIPOP_MR1, the system source code has no
+            // transformPointToViewLocal method. We need to be compatible with it.
+            point[0] += group.getScrollX() - child.getLeft();
+            point[1] += group.getScrollY() - child.getTop();
+            Matrix matrix = child.getMatrix();
+            if (!matrix.isIdentity()) {
+                mCachedMatrix.reset();
+                if (matrix.invert(mCachedMatrix)) {
+                    mCachedMatrix.mapPoints(point);
+                }
+            }
+        }
     }
 
     protected View ensureScrollTargetView(View target, boolean noTransform, float x, float y) {
