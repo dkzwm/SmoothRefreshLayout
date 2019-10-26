@@ -3098,7 +3098,7 @@ public class SmoothRefreshLayout extends ViewGroup
             }
         }
         if (consumed[0] != 0 || consumed[1] != 0) {
-            onNestedScrollChanged();
+            onNestedScrollChanged(false);
         }
         if (sDebug) {
             Log.d(
@@ -3137,6 +3137,7 @@ public class SmoothRefreshLayout extends ViewGroup
             mIndicatorSetter.onFingerUp();
             onFingerUp();
         }
+        onNestedScrollChanged(true);
     }
 
     @Override
@@ -3198,16 +3199,12 @@ public class SmoothRefreshLayout extends ViewGroup
         final boolean isVerticalOrientation = isVerticalOrientation();
         if (isVerticalOrientation) {
             if (dyUnconsumed == 0 || consumed[1] == dyUnconsumed) {
-                if (dxConsumed != 0 || dyConsumed != 0 || consumed[0] != 0 || consumed[1] != 0) {
-                    onNestedScrollChanged();
-                }
+                onNestedScrollChanged(false);
                 return;
             }
         } else {
             if (dxUnconsumed == 0 || consumed[0] == dxUnconsumed) {
-                if (dxConsumed != 0 || dyConsumed != 0 || consumed[0] != 0 || consumed[1] != 0) {
-                    onNestedScrollChanged();
-                }
+                onNestedScrollChanged(false);
                 return;
             }
         }
@@ -3255,7 +3252,7 @@ public class SmoothRefreshLayout extends ViewGroup
             tryToResetMovingStatus();
         }
         if (dxConsumed != 0 || dyConsumed != 0 || consumed[0] != 0 || consumed[1] != 0) {
-            onNestedScrollChanged();
+            onNestedScrollChanged(false);
         }
     }
 
@@ -3295,7 +3292,6 @@ public class SmoothRefreshLayout extends ViewGroup
         } else {
             mNestedScrollingChildHelper.stopNestedScroll(type);
         }
-        onNestedScrollChanged();
     }
 
     @Override
@@ -3383,7 +3379,7 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mNestedScrolling || !isMovingContent()) {
             return;
         }
-        onNestedScrollChanged();
+        onNestedScrollChanged(true);
     }
 
     @Override
@@ -3410,14 +3406,16 @@ public class SmoothRefreshLayout extends ViewGroup
         return super.canScrollHorizontally(direction);
     }
 
-    public void onNestedScrollChanged() {
+    public void onNestedScrollChanged(boolean compute) {
         if (mNeedFilterScrollEvent) {
             mNeedFilterScrollEvent = false;
             return;
         }
-        tryScrollToPerformAutoRefresh();
         notifyNestedScrollChanged();
-        mScrollChecker.computeScrollOffset();
+        tryScrollToPerformAutoRefresh();
+        if (compute) {
+            mScrollChecker.computeScrollOffset();
+        }
     }
 
     private boolean isVerticalOrientation() {
