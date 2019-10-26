@@ -26,6 +26,8 @@ package me.dkzwm.widget.srl.util;
 
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import me.dkzwm.widget.srl.extra.IRefreshView;
 
 /** @author dkzwm */
 public class ViewCatcherUtil {
@@ -79,11 +81,25 @@ public class ViewCatcherUtil {
         } catch (Exception e) {
             return null;
         }
+        while (true) {
+            ViewParent parent = group.getParent();
+            if (parent instanceof ViewGroup) {
+                group = (ViewGroup) parent;
+                if (group.getId() == android.R.id.content) {
+                    break;
+                }
+                continue;
+            }
+            break;
+        }
         return findAppBarLayout(group, sClassOfCoordinatorLayout, sClassOfAppBarLayout);
     }
 
     private static View findAppBarLayout(
             ViewGroup group, Class<?> classOfCoordinatorLayout, Class<?> classOfAppBarLayout) {
+        if (group instanceof IRefreshView) {
+            return null;
+        }
         if (classOfCoordinatorLayout.isAssignableFrom(group.getClass())) {
             final int count = group.getChildCount();
             for (int i = 0; i < count; i++) {
