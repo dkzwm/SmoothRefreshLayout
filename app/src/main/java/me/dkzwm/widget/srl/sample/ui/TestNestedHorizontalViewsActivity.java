@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -73,38 +71,7 @@ public class TestNestedHorizontalViewsActivity extends AppCompatActivity {
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
         mViewPager.setPageTransformer(true, new DrawerTransformer());
-        mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
         mRefreshLayout.autoRefresh(false);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case Menu.FIRST:
-                if (mRefreshLayout.isEnableCheckInsideAnotherDirectionView()) {
-                    mRefreshLayout.setEnableCheckInsideAnotherDirectionView(false);
-                    item.setTitle(R.string.enable_check_finger_inside_horizontal_view);
-                } else {
-                    mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
-                    item.setTitle(R.string.disable_check_finger_inside_horizontal_view);
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(
-                Menu.NONE,
-                Menu.FIRST,
-                Menu.NONE,
-                R.string.disable_check_finger_inside_horizontal_view);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

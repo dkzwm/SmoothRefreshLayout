@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.6.7-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-712%20%7C%2078%20KB-e91e63.svg)
+[![Release](https://img.shields.io/badge/JCenter-1.7.0.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-707%20%7C%2072%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -32,12 +32,12 @@ Thank him for providing such a great open source library ！
  Add the following dependency to your build.gradle file:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.0.androidx'
 
     //android support final version
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
@@ -390,7 +390,6 @@ public interface IRefreshView<T extends IIndicator> {
  |setEnablePinRefreshViewWhileLoading|boolean|The refresh view will pinned at the keep refresh position（Default: `false`）|
  |setSpringInterpolator|Interpolator|Set spring interpolator|
  |setOverScrollInterpolator|Interpolator|Set OverScroll interpolator|
- |setEnableCheckInsideAnotherDirectionView|boolean|Enable whether the finger pressed point is inside another direction view，you must set `setDisableWhenAnotherDirectionMove(true)`|
  |setEnableCompatSyncScroll|boolean|Set whether to turn on the synchronized scroll when spring back（Default: `true`）|
  |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
@@ -412,7 +411,6 @@ public interface IRefreshView<T extends IIndicator> {
  |setOnPerformAutoLoadMoreCallBack|OnPerformAutoLoadMoreCallBack|Set a callback to make sure you need to customize the specified trigger the auto load more rule| |setOnHeaderEdgeDetectCallBack|OnHeaderEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Header| |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|Set a callback to check if the content view is in edge can move Footer|
  |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Header refresh complete event be triggered|
  |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|Set a hook callback when the Footer refresh complete event be triggered|
- |setOnInsideAnotherDirectionViewCallback|OnInsideAnotherDirectionViewCallback|Set a callback to check the finger pressed point whether inside another direction view|
  
  #### SmoothRefreshLayout others
  |Name|Params|Desc|

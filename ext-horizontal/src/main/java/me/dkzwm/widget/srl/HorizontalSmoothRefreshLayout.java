@@ -36,8 +36,6 @@ import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
-import me.dkzwm.widget.srl.util.BoundaryUtil;
-import me.dkzwm.widget.srl.util.HorizontalBoundaryUtil;
 import me.dkzwm.widget.srl.util.HorizontalScrollCompat;
 
 /** @author dkzwm */
@@ -466,7 +464,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected void tryToDealAnotherDirectionMove(float offsetX, float offsetY) {
-        if (isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
+        if (isDisabledWhenAnotherDirectionMove()) {
             if ((Math.abs(offsetY) >= mTouchSlop && Math.abs(offsetY) > Math.abs(offsetX))) {
                 mPreventForAnotherDirection = true;
                 mDealAnotherDirectionMove = true;
@@ -712,13 +710,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
         return view.canScrollHorizontally(1);
     }
 
-    protected boolean isInsideAnotherDirectionView(final float x, final float y) {
-        if (mInsideAnotherDirectionViewCallback != null) {
-            return mInsideAnotherDirectionViewCallback.isInside(x, y, mTargetView);
-        }
-        return HorizontalBoundaryUtil.isInsideVerticalView(x, y, mTargetView);
-    }
-
     @Override
     protected void tryToCompatSyncScroll(View view, float delta) {
         if (mSyncScrollCallback == null) {
@@ -755,6 +746,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     protected boolean isScrollingView(View target) {
-        return BoundaryUtil.isHorizontalView(target);
+        return HorizontalScrollCompat.isScrollingView(target);
     }
 }

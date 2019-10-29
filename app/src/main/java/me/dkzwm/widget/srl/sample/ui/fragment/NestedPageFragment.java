@@ -43,6 +43,7 @@ public class NestedPageFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setBackgroundColor(mColor);
+        recyclerView.setTranslationX(-getResources().getDisplayMetrics().widthPixels / 2f);
         mAdapter = new RecyclerViewAdapter(getActivity(), inflater);
         recyclerView.setAdapter(mAdapter);
         mAdapter.updateData(mList);

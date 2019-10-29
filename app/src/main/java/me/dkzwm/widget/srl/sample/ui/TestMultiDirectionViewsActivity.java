@@ -49,7 +49,6 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         mRefreshLayout.setHeaderView(header);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
-        mRefreshLayout.setEnableCheckInsideAnotherDirectionView(true);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {
                     @Override
@@ -72,7 +71,6 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
         }
         mAdapter = new ViewPagerAdapter(getSupportFragmentManager(), fragments);
         mViewPager.setAdapter(mAdapter);
-        mRefreshLayout.setLoadingMinTime(0);
         mRefreshLayout.autoRefresh(false);
         mTextView = findViewById(R.id.textView_load_detail_footer_details);
         mScrollView = findViewById(R.id.scrollView_test_multi_direction_views);
@@ -80,7 +78,6 @@ public class TestMultiDirectionViewsActivity extends AppCompatActivity {
                 findViewById(R.id.smoothRefreshLayout_test_multi_direction_views_inner);
         mInnerRefreshLayout.setDisableRefresh(true);
         mInnerRefreshLayout.setDisableLoadMore(false);
-        mInnerRefreshLayout.setLoadingMinTime(0);
         mInnerRefreshLayout.setEnableOverScroll(false);
         CustomLoadDetailFooter footer = new CustomLoadDetailFooter(this);
         mInnerRefreshLayout.setFooterView(footer);

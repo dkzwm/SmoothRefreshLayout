@@ -19,7 +19,7 @@
             android:theme="@style/AppBarOverlay"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleMarginStart="10dp"
-            app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <ImageView
                 android:layout_width="match_parent"

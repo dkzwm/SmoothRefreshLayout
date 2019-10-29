@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.6.7-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-712%20%7C%2078%20KB-e91e63.svg)
+[![Release](https://img.shields.io/badge/JCenter-1.7.0.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-708%20%7C%2072%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -29,12 +29,12 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.7.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.7.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.0.androidx'
 
     //android support 最终版本
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
@@ -339,7 +339,6 @@ public interface IRefreshView <T extends IIndicator> {
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 |setSpringInterpolator|Interpolator|设置主动弹出时的滚动插值器|
 |setSpringBackInterpolator|Interpolator|设置释放时的滚动插值器|
-|setEnableCheckInsideAnotherDirectionView|boolean|设置是否开启检查手指按下点是否位于其他方向滚动视图内，该属性起作用必须满足开启`setDisableWhenAnotherDirectionMove`|
 |setEnableCompatSyncScroll|boolean|设置是否开启回滚时的同步滚动（默认:`true`）|
 |setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
@@ -365,7 +364,6 @@ public interface IRefreshView <T extends IIndicator> {
 |setOnFooterEdgeDetectCallBack|OnFooterEdgeDetectCallBack|设置检查内容视图是否在底部的重载回调（SmoothRefreshLayout内部`isNotYetInEdgeCannotMoveFooter()`方法）|
 |setOnHookHeaderRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Header刷新完成的Hook回调，可实现延迟完成刷新|
 |setOnHookFooterRefreshCompleteCallback|OnHookUIRefreshCompleteCallBack|设置Footer刷新完成的Hook回调，可实现延迟完成刷新|
-|setOnInsideAnotherDirectionViewCallback|OnInsideAnotherDirectionViewCallback|设置检查手指按下点是否位于其他滚动视图内的重载回调，可自定义判断逻辑，提高判断效率|
 
 #### SmoothRefreshLayout 其它
 |名称|参数|描述|

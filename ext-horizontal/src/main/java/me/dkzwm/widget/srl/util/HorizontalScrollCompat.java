@@ -131,4 +131,26 @@ public class HorizontalScrollCompat {
         }
         return false;
     }
+
+    public static boolean isScrollingView(View view) {
+        if (ViewCatcherUtil.isViewPager(view)
+                || view instanceof HorizontalScrollView
+                || view instanceof WebView) {
+            return true;
+        } else if (ViewCatcherUtil.isRecyclerView(view)) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
+            if (manager != null) {
+                if (manager instanceof LinearLayoutManager) {
+                    LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
+                    return linearManager.getOrientation() == RecyclerView.HORIZONTAL;
+                } else if (manager instanceof StaggeredGridLayoutManager) {
+                    StaggeredGridLayoutManager gridLayoutManager =
+                            (StaggeredGridLayoutManager) manager;
+                    return gridLayoutManager.getOrientation() == RecyclerView.HORIZONTAL;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -65,13 +65,14 @@ public class WithGridViewActivity extends AppCompatActivity {
                                         List<String> list = DataUtil.createList(mCount, 15);
                                         mCount += list.size();
                                         mAdapter.appendData(list);
-                                        mRefreshLayout.refreshComplete();
+                                        mRefreshLayout.refreshComplete(100);
                                     }
                                 },
                                 2000);
                     }
                 });
         mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
+        mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.autoRefresh(false);
     }
 

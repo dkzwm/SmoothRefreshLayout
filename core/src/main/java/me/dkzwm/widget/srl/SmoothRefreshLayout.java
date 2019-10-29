@@ -66,7 +66,6 @@ import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
 import me.dkzwm.widget.srl.util.AppBarLayoutUtil;
-import me.dkzwm.widget.srl.util.BoundaryUtil;
 import me.dkzwm.widget.srl.util.ScrollCompat;
 import me.dkzwm.widget.srl.util.ViewCatcherUtil;
 
@@ -110,13 +109,12 @@ public class SmoothRefreshLayout extends ViewGroup
     protected static final int FLAG_ENABLE_AUTO_PERFORM_REFRESH = 0x01 << 16;
     protected static final int FLAG_ENABLE_INTERCEPT_EVENT_WHILE_LOADING = 0x01 << 17;
     protected static final int FLAG_DISABLE_WHEN_ANOTHER_DIRECTION_MOVE = 0x01 << 18;
-    protected static final int FLAG_ENABLE_CHECK_FINGER_INSIDE = 0x01 << 19;
-    protected static final int FLAG_ENABLE_NO_MORE_DATA_NO_BACK = 0x01 << 20;
-    protected static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 21;
-    protected static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 22;
-    protected static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 23;
-    protected static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 24;
-    protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 25;
+    protected static final int FLAG_ENABLE_NO_MORE_DATA_NO_BACK = 0x01 << 19;
+    protected static final int FLAG_ENABLE_SMOOTH_ROLLBACK_WHEN_COMPLETED = 0x01 << 20;
+    protected static final int FLAG_DISABLE_LOAD_MORE_WHEN_CONTENT_NOT_FULL = 0x01 << 21;
+    protected static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 22;
+    protected static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 23;
+    protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 24;
     protected static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 10;
     protected static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 13;
     public static boolean sDebug = true;
@@ -139,13 +137,11 @@ public class SmoothRefreshLayout extends ViewGroup
     protected boolean mPreventForAnotherDirection = false;
     protected boolean mIsInterceptTouchEventInOnceTouch = false;
     protected boolean mIsLastOverScrollCanNotAbort = false;
-    protected boolean mIsFingerInsideAnotherDirectionView = false;
     protected boolean mNestedScrolling = false;
     protected boolean mNestedTouchScrolling = false;
     protected float mFlingBackFactor = 1.1f;
     protected byte mStatus = SR_STATUS_INIT;
     protected byte mViewStatus = SR_VIEW_STATUS_INIT;
-    protected long mLoadingMinTime = 500;
     protected long mLoadingStartTime = 0;
     protected int mAutomaticAction = Constants.ACTION_NOTIFY;
     protected int mLastNestedType = ViewCompat.TYPE_NON_TOUCH;
@@ -174,7 +170,6 @@ public class SmoothRefreshLayout extends ViewGroup
     protected MotionEvent mLastMoveEvent;
     protected OnHeaderEdgeDetectCallBack mInEdgeCanMoveHeaderCallBack;
     protected OnFooterEdgeDetectCallBack mInEdgeCanMoveFooterCallBack;
-    protected OnInsideAnotherDirectionViewCallback mInsideAnotherDirectionViewCallback;
     protected OnSyncScrollCallback mSyncScrollCallback;
     protected OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     protected OnPerformAutoRefreshCallBack mAutoRefreshCallBack;
@@ -1452,22 +1447,6 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     /**
-     * Set a callback to override {@link SmoothRefreshLayout#isInsideAnotherDirectionView(float,
-     * float)}} method. Non-null callback will return the value provided by the callback and ignore
-     * all internal logic.
-     *
-     * <p>设置{@link SmoothRefreshLayout#isInsideAnotherDirectionView(float, float)}的重载回调，
-     * 用来检查手指按下的点是否位于水平视图内部
-     *
-     * @param callback Callback that should be called when isFingerInsideAnotherDirectionView(float,
-     *     float) is called.
-     */
-    public void setOnInsideAnotherDirectionViewCallback(
-            OnInsideAnotherDirectionViewCallback callback) {
-        mInsideAnotherDirectionViewCallback = callback;
-    }
-
-    /**
      * Whether it is refreshing state.
      *
      * <p>是否在刷新中
@@ -1552,25 +1531,13 @@ public class SmoothRefreshLayout extends ViewGroup
         if (!isRefreshing() && !isLoadingMore()) {
             return;
         }
-        long delay = mLoadingMinTime - (SystemClock.uptimeMillis() - mLoadingStartTime);
         if (delayDurationToChangeState <= 0) {
-            if (delay <= 0) {
-                performRefreshComplete(true, true);
-            } else {
-                if (mDelayToRefreshComplete == null)
-                    mDelayToRefreshComplete = new DelayToRefreshComplete();
-                mDelayToRefreshComplete.mLayout = this;
-                mDelayToRefreshComplete.mNotifyViews = true;
-                postDelayed(mDelayToRefreshComplete, delay);
-            }
+            performRefreshComplete(true, true);
         } else {
             if (isRefreshing() && mHeaderView != null) {
                 mHeaderView.onRefreshComplete(this, isSuccessful);
             } else if (isLoadingMore() && mFooterView != null) {
                 mFooterView.onRefreshComplete(this, isSuccessful);
-            }
-            if (delayDurationToChangeState < delay) {
-                delayDurationToChangeState = delay;
             }
             if (mDelayToRefreshComplete == null) {
                 mDelayToRefreshComplete = new DelayToRefreshComplete();
@@ -1579,17 +1546,6 @@ public class SmoothRefreshLayout extends ViewGroup
             mDelayToRefreshComplete.mNotifyViews = false;
             postDelayed(mDelayToRefreshComplete, delayDurationToChangeState);
         }
-    }
-
-    /**
-     * Set the loading min time.
-     *
-     * <p>设置加载过程的最小持续时间
-     *
-     * @param time Millis
-     */
-    public void setLoadingMinTime(long time) {
-        mLoadingMinTime = time;
     }
 
     /**
@@ -2125,33 +2081,6 @@ public class SmoothRefreshLayout extends ViewGroup
             mFlag = mFlag | FLAG_ENABLE_PULL_TO_REFRESH;
         } else {
             mFlag = mFlag & ~FLAG_ENABLE_PULL_TO_REFRESH;
-        }
-    }
-
-    /**
-     * The flag has been set to check whether the finger pressed point is inside horizontal view.
-     *
-     * <p>是否已经开启检查按下点是否位于水平滚动视图内
-     *
-     * @return Enabled
-     */
-    public boolean isEnableCheckInsideAnotherDirectionView() {
-        return (mFlag & FLAG_ENABLE_CHECK_FINGER_INSIDE) > 0;
-    }
-
-    /**
-     * If @param enable has been set to true. Touch event handling will be check whether the finger
-     * pressed point is inside horizontal view.
-     *
-     * <p>设置开启检查按下点是否位于水平滚动视图内
-     *
-     * @param enable Pull to refresh
-     */
-    public void setEnableCheckInsideAnotherDirectionView(boolean enable) {
-        if (enable) {
-            mFlag = mFlag | FLAG_ENABLE_CHECK_FINGER_INSIDE;
-        } else {
-            mFlag = mFlag & ~FLAG_ENABLE_CHECK_FINGER_INSIDE;
         }
     }
 
@@ -3683,7 +3612,6 @@ public class SmoothRefreshLayout extends ViewGroup
                     }
                 }
             case MotionEvent.ACTION_CANCEL:
-                mIsFingerInsideAnotherDirectionView = false;
                 mIndicatorSetter.onFingerUp();
                 mPreventForAnotherDirection = false;
                 mDealAnotherDirectionMove = false;
@@ -3751,11 +3679,6 @@ public class SmoothRefreshLayout extends ViewGroup
                 mIndicatorSetter.onFingerUp();
                 mTouchPointerId = ev.getPointerId(0);
                 mIndicatorSetter.onFingerDown(ev.getX(), ev.getY());
-                mIsFingerInsideAnotherDirectionView =
-                        isDisabledWhenAnotherDirectionMove()
-                                && (!isEnableCheckInsideAnotherDirectionView()
-                                        || isInsideAnotherDirectionView(
-                                                ev.getRawX(), ev.getRawY()));
                 mIsInterceptTouchEventInOnceTouch = isNeedInterceptTouchEvent();
                 mIsLastOverScrollCanNotAbort = isCanNotAbortOverScrolling();
                 if (!isNeedFilterTouchEvent()) {
@@ -3905,7 +3828,7 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     protected void tryToDealAnotherDirectionMove(float offsetX, float offsetY) {
-        if (isDisabledWhenAnotherDirectionMove() && mIsFingerInsideAnotherDirectionView) {
+        if (isDisabledWhenAnotherDirectionMove()) {
             if ((Math.abs(offsetX) >= mTouchSlop && Math.abs(offsetX) > Math.abs(offsetY))) {
                 mPreventForAnotherDirection = true;
                 mDealAnotherDirectionMove = true;
@@ -4076,13 +3999,6 @@ public class SmoothRefreshLayout extends ViewGroup
                     this, view, mFooterView);
         }
         return view.canScrollVertically(1);
-    }
-
-    protected boolean isInsideAnotherDirectionView(final float x, final float y) {
-        if (mInsideAnotherDirectionViewCallback != null) {
-            return mInsideAnotherDirectionViewCallback.isInside(x, y, mTargetView);
-        }
-        return BoundaryUtil.isInsideHorizontalView(x, y, mTargetView);
     }
 
     protected void makeNewTouchDownEvent(MotionEvent ev) {
@@ -5121,24 +5037,6 @@ public class SmoothRefreshLayout extends ViewGroup
          */
         boolean isNotYetInEdgeCannotMoveFooter(
                 SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer);
-    }
-
-    /**
-     * Classes that wish to override {@link SmoothRefreshLayout#isInsideAnotherDirectionView(float,
-     * float)}} method behavior should implement this interface.
-     */
-    public interface OnInsideAnotherDirectionViewCallback {
-        /**
-         * Callback that will be called when {@link
-         * SmoothRefreshLayout#isInsideAnotherDirectionView(float, float)}} method is called to
-         * allow the implementer to override its behavior.
-         *
-         * @param x The finger pressed x of the screen.
-         * @param y The finger pressed y of the screen.
-         * @param view The target view.
-         * @return Whether the finger pressed point is inside horizontal view
-         */
-        boolean isInside(float x, float y, View view);
     }
 
     /**
