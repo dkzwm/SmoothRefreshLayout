@@ -100,7 +100,7 @@ public class ViewCatcherUtil {
                 if (findViewGroup.getId() == android.R.id.content) {
                     return null;
                 }
-                if (isViewPager(findViewGroup)) {
+                if (isViewPager(findViewGroup) || isRecyclerView(findViewGroup)) {
                     return null;
                 }
                 continue;
@@ -114,8 +114,11 @@ public class ViewCatcherUtil {
             ViewGroup ignoredGroup,
             Class<?> classOfCoordinatorLayout,
             Class<?> classOfAppBarLayout) {
-        if (ignoredGroup != null && group == ignoredGroup) return null;
-        if (group instanceof IRefreshView) {
+        if (ignoredGroup != null) {
+            if (ignoredGroup == group) {
+                return null;
+            }
+        } else if (group instanceof IRefreshView) {
             return null;
         }
         if (classOfCoordinatorLayout.isAssignableFrom(group.getClass())) {

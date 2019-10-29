@@ -3418,12 +3418,11 @@ public class SmoothRefreshLayout extends ViewGroup
         }
     }
 
-    private boolean isVerticalOrientation() {
+    public boolean isVerticalOrientation() {
         final int axis = getSupportScrollAxis();
         if (axis == ViewCompat.SCROLL_AXIS_NONE) {
             throw new IllegalArgumentException(
-                    "Unsupported operation , "
-                            + "Support scroll axis must be SCROLL_AXIS_HORIZONTAL or SCROLL_AXIS_VERTICAL !!");
+                    "Unsupported operation. Support scroll axis must be SCROLL_AXIS_HORIZONTAL or SCROLL_AXIS_VERTICAL!");
 
         } else {
             return axis == ViewCompat.SCROLL_AXIS_VERTICAL;

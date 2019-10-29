@@ -63,18 +63,36 @@ public class AppBarLayoutUtil
     @Override
     public boolean isNotYetInEdgeCannotMoveHeader(
             SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView header) {
-        View targetView = parent.getScrollTargetView();
-        if (targetView == null) targetView = child;
-        if (targetView == null) return !mFullyExpanded;
-        return !mFullyExpanded || targetView.canScrollVertically(-1);
+        if (child == null) {
+            if (parent.isVerticalOrientation()) {
+                return !mFullyExpanded;
+            } else {
+                return true;
+            }
+        } else {
+            if (parent.isVerticalOrientation()) {
+                return !mFullyExpanded || child.canScrollVertically(-1);
+            } else {
+                return child.canScrollHorizontally(-1);
+            }
+        }
     }
 
     @Override
     public boolean isNotYetInEdgeCannotMoveFooter(
             SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer) {
-        View targetView = parent.getScrollTargetView();
-        if (targetView == null) targetView = child;
-        if (targetView == null) return !mFullyCollapsed;
-        return !mFullyCollapsed || targetView.canScrollVertically(1);
+        if (child == null) {
+            if (parent.isVerticalOrientation()) {
+                return !mFullyCollapsed;
+            } else {
+                return true;
+            }
+        } else {
+            if (parent.isVerticalOrientation()) {
+                return !mFullyCollapsed || child.canScrollVertically(1);
+            } else {
+                return child.canScrollHorizontally(1);
+            }
+        }
     }
 }
