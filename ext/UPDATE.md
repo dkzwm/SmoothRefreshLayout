@@ -1,10 +1,10 @@
 # 更新日志
 ## 1.7.0.androidx
-> 修改支持`NestedScrollingParent3`、`NestedScrollingChild3`，此版本开始不再更新`android.support`对应包，只更新`androidx`包。    
-> 移动`SRReflectUtil`到`util`包下，`core`包不再包含兼容低版本的反射代码，如需使用请自行继承`SmoothRefreshLayout`重写相应函数自行调用`SRReflectUtil`对应方法进行使用。    
-> 重命名`OnLoadMoreScrollCallback`接口为`OnSyncScrollCallback`，同时实现滚动到顶自动刷新的同步滚动逻辑。    
-> 删除方法 `setEnableDynamicEnsureTargetView` 和  `isEnabledDynamicEnsureTargetView`，改为默认就是动态识别滚动内容视图，不再可配置，如果需要指定滚动内容视图请使用`setScrollTargetView`。    
-> 删除方法 `setEnableCheckInsideAnotherDirectionView` 和 `isEnableCheckInsideAnotherDirectionView`，考虑到已动态识别滚动视图，不再浪费效率判断手机是否处于其他方向View中。    
+> 修改支持 `NestedScrollingParent3`、`NestedScrollingChild3`，此版本开始不再更新`android.support`对应包，只更新`androidx`包。    
+> 移动 `SRReflectUtil` 到 `util` 包下，`core` 包不再包含兼容低版本的反射代码，如需使用请自行继承`SmoothRefreshLayout`重写相应函数自行调用`SRReflectUtil`对应方法进行使用。    
+> 重命名 `OnLoadMoreScrollCallback` 接口为 `OnSyncScrollCallback`，同时实现滚动到顶自动刷新的同步滚动逻辑。    
+> 删除方法 `setEnableDynamicEnsureTargetView`  和  `isEnabledDynamicEnsureTargetView`，改为默认就是动态识别滚动内容视图，不再可配置，如果需要指定滚动内容视图请使用`setScrollTargetView`。    
+> 删除方法 `setEnableCheckInsideAnotherDirectionView` 和  `isEnableCheckInsideAnotherDirectionView`，考虑到已动态识别滚动视图，不再浪费效率判断手指按下时是否处于其他方向View中。    
 > 删除回调类 `OnInsideAnotherDirectionViewCallback` 以及其设置方法 `setOnInsideAnotherDirectionViewCallback`，原因同上。
 > 删除方法 `setLoadingMinTime`， 没什么用，改由用户控制最小i加载时间。    
 > 删除方法 `mapTheInverseMatrix`，使用隐藏的 `Android 5.1` 以上系统版本的访问浅灰名单级方法 `transformPointToViewLocal` 进行处理，针对 `Android 5.1` 以下没有该方法的情况做了兼容处理。    
