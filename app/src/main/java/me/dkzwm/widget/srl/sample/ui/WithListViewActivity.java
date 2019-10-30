@@ -53,6 +53,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mClassicHeader.setTitleTextColor(Color.WHITE);
         mClassicHeader.setLastUpdateTextColor(Color.GRAY);
         mRefreshLayout.setEnableKeepRefreshView(true);
+        mRefreshLayout.setEnableOldTouchHandling(false);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(

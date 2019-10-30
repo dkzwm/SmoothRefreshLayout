@@ -3872,7 +3872,7 @@ public class SmoothRefreshLayout extends ViewGroup
             return true;
         }
         if (mIsSpringBackCanNotBeInterrupted) {
-            if (isEnabledNoMoreData()) {
+            if (isEnabledNoMoreData() && isEnabledNoSpringBackWhenNoMoreData()) {
                 mIsSpringBackCanNotBeInterrupted = false;
                 return false;
             }
@@ -4042,6 +4042,9 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mHasSendDownEvent || (event == null && mLastMoveEvent == null)) {
             return;
         }
+        mOffsetConsumed = 0;
+        mOffsetTotal = 0;
+        mOffsetRemaining = mTouchSlop * 2;
         if (sDebug) {
             Log.d(TAG, "sendDownEvent()");
         }
