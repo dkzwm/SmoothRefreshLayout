@@ -8,6 +8,7 @@
 > 删除回调类 `OnInsideAnotherDirectionViewCallback` 以及其设置方法 `setOnInsideAnotherDirectionViewCallback`，原因同上。
 > 删除方法 `setLoadingMinTime`， 没什么用，改由用户控制最小i加载时间。    
 > 删除方法 `mapTheInverseMatrix`，使用隐藏的 `Android 5.1` 以上系统版本的访问浅灰名单级方法 `transformPointToViewLocal` 进行处理，针对 `Android 5.1` 以下没有该方法的情况做了兼容处理。    
+> 优化动态搜索 `AppBarLayout` 逻辑，避免无法识别外层嵌套。    
 ## 1.6.6.8
 > 调整优化刷新视图自定样式效率，在`STYLE_SCALE`/`STYLE_FOLLOW_SCALE`/`STYLE_FOLLOW_CENTER`下不再使用`requestLayout`进行重布局，考虑到SRL高度固定情况下，直接在内部进行计算，大幅提高布局的效率。    
 > 修复#95，感谢@tbxyxs 的反馈。    
