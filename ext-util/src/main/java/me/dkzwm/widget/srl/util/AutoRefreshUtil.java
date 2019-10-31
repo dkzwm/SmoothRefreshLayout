@@ -76,7 +76,7 @@ public class AutoRefreshUtil
                     ScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
                 } else if (mRefreshLayout.getSupportScrollAxis()
                         == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
-                    if (mTargetView instanceof ViewPager) {
+                    if (ViewCatcherUtil.isViewPager(mTargetView)) {
                         final ViewPager pager = (ViewPager) mTargetView;
                         final PagerAdapter adapter = pager.getAdapter();
                         if (adapter == null) return;
