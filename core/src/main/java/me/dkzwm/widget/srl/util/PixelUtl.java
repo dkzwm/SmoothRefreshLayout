@@ -25,20 +25,16 @@
 package me.dkzwm.widget.srl.util;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.TypedValue;
+import androidx.annotation.NonNull;
 
 /** @author dkzwm */
 public class PixelUtl {
-    public static int dp2px(Context context, float offSet) {
-        Resources r;
-        if (context == null) {
-            r = Resources.getSystem();
-        } else {
-            r = context.getResources();
-        }
+    public static int dp2px(@NonNull Context context, float offSet) {
         return Math.round(
                 TypedValue.applyDimension(
-                        TypedValue.COMPLEX_UNIT_DIP, offSet, r.getDisplayMetrics()));
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        offSet,
+                        context.getResources().getDisplayMetrics()));
     }
 }

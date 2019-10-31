@@ -140,6 +140,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected boolean mNestedScrolling = false;
     protected boolean mNestedTouchScrolling = false;
     protected float mFlingBackFactor = 1.1f;
+    protected float mMaxScaleFactor = 1.2F;
     protected byte mStatus = SR_STATUS_INIT;
     protected byte mViewStatus = SR_VIEW_STATUS_INIT;
     protected long mLoadingStartTime = 0;
@@ -4092,12 +4093,13 @@ public class SmoothRefreshLayout extends ViewGroup
             Log.d(TAG, "onFingerUp()");
         }
         notifyFingerUp();
-        if (mMode == Constants.MODE_DEFAULT) {
-            if (!(isEnabledNoMoreData() && isMovingFooter())
-                    && !mScrollChecker.isPreFling()
+        if (!mScrollChecker.isPreFling()) {
+            if (mMode == Constants.MODE_DEFAULT
                     && isEnabledKeepRefreshView()
+                    && !(isEnabledNoMoreData() && isMovingFooter())
                     && mStatus != SR_STATUS_COMPLETE) {
                 if (isHeaderInProcessing()
+                        && mHeaderView != null
                         && !isDisabledPerformRefresh()
                         && isMovingHeader()
                         && mIndicator.isOverOffsetToRefresh()) {
@@ -4108,6 +4110,7 @@ public class SmoothRefreshLayout extends ViewGroup
                         return;
                     }
                 } else if (isFooterInProcessing()
+                        && mFooterView != null
                         && !isDisabledPerformLoadMore()
                         && isMovingFooter()
                         && mIndicator.isOverOffsetToLoadMore()) {
@@ -4119,8 +4122,6 @@ public class SmoothRefreshLayout extends ViewGroup
                     }
                 }
             }
-        }
-        if (!mScrollChecker.isPreFling()) {
             onRelease();
         }
     }
@@ -4250,42 +4251,45 @@ public class SmoothRefreshLayout extends ViewGroup
                 && mIndicator.hasTouched()
                 && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
-        if (delta > 0) {
-            final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
-            final int current = mIndicator.getCurrentPos();
-            final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
-            if (maxHeaderDistance > 0) {
-                if (current >= maxHeaderDistance) {
-                    if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
-                        updateAnotherDirectionPos();
-                        return;
-                    }
-                } else if (current + delta > maxHeaderDistance) {
-                    if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
-                        delta = maxHeaderDistance - current;
-                        if (isFling) {
-                            mScrollChecker.$Scroller.forceFinished(true);
+        if (mHeaderView != null) {
+            if (delta > 0) {
+                final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
+                final int current = mIndicator.getCurrentPos();
+                final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
+                if (maxHeaderDistance > 0) {
+                    if (current >= maxHeaderDistance) {
+                        if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
+                            updateAnotherDirectionPos();
+                            return;
+                        }
+                    } else if (current + delta > maxHeaderDistance) {
+                        if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
+                            delta = maxHeaderDistance - current;
+                            if (isFling) {
+                                mScrollChecker.$Scroller.forceFinished(true);
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            // check if it is needed to compatible scroll
-            if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
-                    && isNotYetInEdgeCannotMoveHeader()
-                    && !isEnabledPinContentView()
-                    && mIsLastRefreshSuccessful
-                    && (!mIndicator.hasTouched()
-                            || mNestedScrolling
-                            || isEnabledSmoothRollbackWhenCompleted())
-                    && mStatus == SR_STATUS_COMPLETE) {
-                if (sDebug) {
-                    Log.d(
-                            TAG,
-                            String.format("moveHeaderPos(): compatible scroll delta: %s", delta));
+            } else {
+                // check if it is needed to compatible scroll
+                if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
+                        && isNotYetInEdgeCannotMoveHeader()
+                        && !isEnabledPinContentView()
+                        && mIsLastRefreshSuccessful
+                        && (!mIndicator.hasTouched()
+                                || mNestedScrolling
+                                || isEnabledSmoothRollbackWhenCompleted())
+                        && mStatus == SR_STATUS_COMPLETE) {
+                    if (sDebug) {
+                        Log.d(
+                                TAG,
+                                String.format(
+                                        "moveHeaderPos(): compatible scroll delta: %s", delta));
+                    }
+                    mNeedFilterScrollEvent = true;
+                    tryToCompatSyncScroll(getScrollTargetView(), delta);
                 }
-                mNeedFilterScrollEvent = true;
-                tryToCompatSyncScroll(getScrollTargetView(), delta);
             }
         }
         movePos(delta);
@@ -4301,42 +4305,45 @@ public class SmoothRefreshLayout extends ViewGroup
                 && mIndicator.hasTouched()
                 && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
         mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
-        if (delta < 0) {
-            final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
-            final int current = mIndicator.getCurrentPos();
-            final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
-            if (maxFooterDistance > 0) {
-                if (current >= maxFooterDistance) {
-                    if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
-                        updateAnotherDirectionPos();
-                        return;
-                    }
-                } else if (current - delta > maxFooterDistance) {
-                    if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
-                        delta = current - maxFooterDistance;
-                        if (isFling) {
-                            mScrollChecker.$Scroller.forceFinished(true);
+        if (mFooterView != null) {
+            if (delta < 0) {
+                final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
+                final int current = mIndicator.getCurrentPos();
+                final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
+                if (maxFooterDistance > 0) {
+                    if (current >= maxFooterDistance) {
+                        if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
+                            updateAnotherDirectionPos();
+                            return;
+                        }
+                    } else if (current - delta > maxFooterDistance) {
+                        if ((mIndicator.hasTouched() && !mScrollChecker.$IsScrolling) || isFling) {
+                            delta = current - maxFooterDistance;
+                            if (isFling) {
+                                mScrollChecker.$Scroller.forceFinished(true);
+                            }
                         }
                     }
                 }
-            }
-        } else {
-            // check if it is needed to compatible scroll
-            if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
-                    && isNotYetInEdgeCannotMoveFooter()
-                    && !isEnabledPinContentView()
-                    && mIsLastRefreshSuccessful
-                    && (!mIndicator.hasTouched()
-                            || mNestedScrolling
-                            || isEnabledSmoothRollbackWhenCompleted())
-                    && mStatus == SR_STATUS_COMPLETE) {
-                if (sDebug) {
-                    Log.d(
-                            TAG,
-                            String.format("moveFooterPos(): compatible scroll delta: %s", delta));
+            } else {
+                // check if it is needed to compatible scroll
+                if ((mFlag & FLAG_ENABLE_COMPAT_SYNC_SCROLL) > 0
+                        && isNotYetInEdgeCannotMoveFooter()
+                        && !isEnabledPinContentView()
+                        && mIsLastRefreshSuccessful
+                        && (!mIndicator.hasTouched()
+                                || mNestedScrolling
+                                || isEnabledSmoothRollbackWhenCompleted())
+                        && mStatus == SR_STATUS_COMPLETE) {
+                    if (sDebug) {
+                        Log.d(
+                                TAG,
+                                String.format(
+                                        "moveFooterPos(): compatible scroll delta: %s", delta));
+                    }
+                    mNeedFilterScrollEvent = true;
+                    tryToCompatSyncScroll(getScrollTargetView(), delta);
                 }
-                mNeedFilterScrollEvent = true;
-                tryToCompatSyncScroll(getScrollTargetView(), delta);
             }
         }
         movePos(-delta);
@@ -4358,12 +4365,12 @@ public class SmoothRefreshLayout extends ViewGroup
             mIndicatorSetter.setCurrentPos(mIndicator.getCurrentPos());
             return;
         }
-        if (delta > 0 && mMode == Constants.MODE_SCALE && calculateScale() >= 1.2f) {
+        if (delta > 0 && mMode == Constants.MODE_SCALE && calculateScale() >= mMaxScaleFactor) {
             return;
         }
         int to = mIndicator.getCurrentPos() + Math.round(delta);
         // over top
-        if (!mScrollChecker.$IsScrolling && to < IIndicator.START_POS) {
+        if (to < IIndicator.START_POS) {
             to = IIndicator.START_POS;
             if (sDebug) {
                 Log.d(TAG, "movePos(): over top");
@@ -4371,11 +4378,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         mIndicatorSetter.setCurrentPos(to);
         int change = to - mIndicator.getLastPos();
-        if (isMovingHeader()) {
-            updatePos(change);
-        } else if (isMovingFooter()) {
-            updatePos(-change);
-        }
+        updatePos(isMovingFooter() ? -change : change);
     }
 
     /**
