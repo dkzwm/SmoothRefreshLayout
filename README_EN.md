@@ -1,15 +1,13 @@
 # SmoothRefreshLayout
 
 [![Release](https://img.shields.io/badge/JCenter-1.7.0.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-707%20%7C%2072%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-706%20%7C%2076%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
 ## English | [中文](README.md)
 
 A highly efficient refresh library for Android.Can support all Views.It's easy to use and more powerful than SwipeRefreshLayout.    
-Part of the open source library comes from [android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
-Thank him for providing such a great open source library ！
 
 ## Features:
  - Can support all Views, according to the specific needs to adaptation.

@@ -1,15 +1,12 @@
 # SmoothRefreshLayout
 
 [![Release](https://img.shields.io/badge/JCenter-1.7.0.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-707%20%7C%2072%20KB-e91e63.svg)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-706%20%7C%2076%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
 ## [English](README_EN.md) | 中文
 一个高效的Android刷新库，理论上支持所有的视图，比官方的SwipeRefreshLayout更强大且使用方便.    
-本开源库的部分代码来自[android-Ultra-Pull-To-Refresh](https://github.com/liaohuqiu/android-Ultra-Pull-To-Refresh).    
-非常感谢他提供的这么棒的开源项目！    
-
 ## 特性:
  - 理论上支持所有的视图,且可根据具体需求高效适配.
  - 支持多点触摸.
