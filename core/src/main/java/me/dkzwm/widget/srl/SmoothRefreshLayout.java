@@ -4008,6 +4008,9 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         sendCancelEvent(ev);
         sendDownEvent(ev);
+        mOffsetConsumed = 0;
+        mOffsetTotal = 0;
+        mOffsetRemaining = mTouchSlop * 2;
         mIndicatorSetter.onFingerUp();
         mIndicatorSetter.onFingerDown(ev.getX(), ev.getY());
     }
@@ -4043,9 +4046,6 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mHasSendDownEvent || (event == null && mLastMoveEvent == null)) {
             return;
         }
-        mOffsetConsumed = 0;
-        mOffsetTotal = 0;
-        mOffsetRemaining = mTouchSlop * 2;
         if (sDebug) {
             Log.d(TAG, "sendDownEvent()");
         }
