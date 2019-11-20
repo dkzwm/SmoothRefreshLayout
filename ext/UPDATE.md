@@ -6,7 +6,7 @@
 > 删除方法 `setEnableDynamicEnsureTargetView`  和  `isEnabledDynamicEnsureTargetView`，改为默认就是动态识别滚动内容视图，不再可配置，如果需要指定滚动内容视图请使用`setScrollTargetView`。    
 > 删除方法 `setEnableCheckInsideAnotherDirectionView` 和  `isEnableCheckInsideAnotherDirectionView`，考虑到已动态识别滚动视图，不再浪费效率判断手指按下时是否处于其他方向View中。    
 > 删除回调类 `OnInsideAnotherDirectionViewCallback` 以及其设置方法 `setOnInsideAnotherDirectionViewCallback`，原因同上。
-> 删除方法 `setLoadingMinTime`， 没什么用，改由用户控制最小i加载时间。    
+> 删除方法 `setLoadingMinTime`， 没什么用，改由用户控制最小加载时间。    
 > 删除方法 `mapTheInverseMatrix`，使用隐藏的 `Android 5.1` 以上系统版本的访问浅灰名单级方法 `transformPointToViewLocal` 进行处理，针对 `Android 5.1` 以下没有该方法的情况做了兼容处理。    
 > 优化动态搜索 `AppBarLayout` 逻辑，避免无法识别外层嵌套。    
 ## 1.6.6.8

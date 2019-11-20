@@ -3452,44 +3452,58 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     private void ensureTargetView() {
-        if (mTargetView == null) {
-            final int count = getChildCount();
-            if (mContentResId != View.NO_ID) {
-                for (int i = count - 1; i >= 0; i--) {
-                    View child = getChildAt(i);
+        boolean ensureStickyHeader = mStickyHeaderView == null && mStickyHeaderResId != NO_ID;
+        boolean ensureStickyFooter = mStickyFooterView == null && mStickyFooterResId != NO_ID;
+        boolean ensureTarget = mTargetView == null && mContentResId != NO_ID;
+        final int count = getChildCount();
+        if (ensureStickyHeader || ensureStickyFooter || ensureTarget) {
+            for (int i = count - 1; i >= 0; i--) {
+                View child = getChildAt(i);
+                if (ensureStickyHeader && child.getId() == mStickyHeaderResId) {
+                    mStickyHeaderView = child;
+                    ensureStickyHeader = false;
+                } else if (ensureStickyFooter && child.getId() == mStickyFooterResId) {
+                    mStickyFooterView = child;
+                    ensureStickyFooter = false;
+                } else if (ensureTarget) {
                     if (mContentResId == child.getId()) {
                         mTargetView = child;
                         View view = ensureScrollTargetView(child, true, 0, 0);
                         if (view != null && view != child) {
                             mAutoFoundScrollTargetView = view;
                         }
-                        break;
+                        ensureTarget = false;
                     } else if (child instanceof ViewGroup) {
                         final View view =
                                 foundViewInViewGroupById((ViewGroup) child, mContentResId);
                         if (view != null) {
                             mTargetView = child;
                             mScrollTargetView = view;
-                            break;
+                            ensureTarget = false;
                         }
                     }
+                } else if (!ensureStickyHeader && !ensureStickyFooter) {
+                    break;
                 }
             }
-            if (mTargetView == null) {
-                for (int i = count - 1; i >= 0; i--) {
-                    View child = getChildAt(i);
-                    if (child.getVisibility() == VISIBLE && !(child instanceof IRefreshView)) {
-                        View view = ensureScrollTargetView(child, true, 0, 0);
-                        if (view != null) {
-                            mTargetView = child;
-                            if (view != child) {
-                                mAutoFoundScrollTargetView = view;
-                            }
-                            break;
-                        } else {
-                            mTargetView = child;
-                            break;
+        }
+        if (mTargetView == null) {
+            for (int i = count - 1; i >= 0; i--) {
+                View child = getChildAt(i);
+                if (child.getVisibility() == VISIBLE
+                        && !(child instanceof IRefreshView)
+                        && child != mStickyHeaderView
+                        && child != mStickyFooterView) {
+                    View view = ensureScrollTargetView(child, true, 0, 0);
+                    if (view != null) {
+                        mTargetView = child;
+                        if (view != child) {
+                            mAutoFoundScrollTargetView = view;
                         }
+                        break;
+                    } else {
+                        mTargetView = child;
+                        break;
                     }
                 }
             }
@@ -3498,12 +3512,6 @@ public class SmoothRefreshLayout extends ViewGroup
             ensureTargetView();
             offsetChild(0, isMovingHeader(), isMovingFooter());
             return;
-        }
-        if (mStickyHeaderView == null && mStickyHeaderResId != NO_ID) {
-            mStickyHeaderView = findViewById(mStickyHeaderResId);
-        }
-        if (mStickyFooterView == null && mStickyFooterResId != NO_ID) {
-            mStickyFooterView = findViewById(mStickyFooterResId);
         }
         mHeaderView = getHeaderView();
         mFooterView = getFooterView();
