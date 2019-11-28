@@ -4022,7 +4022,7 @@ public class SmoothRefreshLayout extends ViewGroup
         sendDownEvent(ev);
         mOffsetConsumed = 0;
         mOffsetTotal = 0;
-        mOffsetRemaining = mTouchSlop * 2;
+        mOffsetRemaining = 0;
         mIndicatorSetter.onFingerUp();
         mIndicatorSetter.onFingerDown(ev.getX(), ev.getY());
     }
