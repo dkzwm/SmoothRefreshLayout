@@ -27,7 +27,7 @@
             android:name=".ui.WithFrameLayoutActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".ui.WithTextViewActivity"
+            android:name=".ui.TestRecyclerViewInNestedScrollViewActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".ui.WithWebViewActivity"

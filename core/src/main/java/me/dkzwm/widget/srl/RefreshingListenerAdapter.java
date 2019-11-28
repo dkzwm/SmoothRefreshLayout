@@ -27,5 +27,8 @@ package me.dkzwm.widget.srl;
 /** @author dkzwm */
 public abstract class RefreshingListenerAdapter implements SmoothRefreshLayout.OnRefreshListener {
     @Override
+    public void onRefreshing() {}
+
+    @Override
     public void onLoadingMore() {}
 }

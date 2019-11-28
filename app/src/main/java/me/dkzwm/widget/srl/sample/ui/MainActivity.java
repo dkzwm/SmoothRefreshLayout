@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_release_to_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_with_viewPager).setOnClickListener(this);
         findViewById(R.id.button_main_with_webView).setOnClickListener(this);
-        findViewById(R.id.button_main_with_textView).setOnClickListener(this);
+        findViewById(R.id.button_main_test_recyclerView_in_nestedScrollView).setOnClickListener(this);
         findViewById(R.id.button_main_test_over_scroll).setOnClickListener(this);
         findViewById(R.id.button_main_test_two_level_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_test_QQ_activity_style).setOnClickListener(this);
@@ -113,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_with_frameLayout:
                 startActivity(new Intent(MainActivity.this, WithFrameLayoutActivity.class));
                 break;
-            case R.id.button_main_with_textView:
-                startActivity(new Intent(MainActivity.this, WithTextViewActivity.class));
+            case R.id.button_main_test_recyclerView_in_nestedScrollView:
+                startActivity(new Intent(MainActivity.this, TestRecyclerViewInNestedScrollViewActivity.class));
                 break;
             case R.id.button_main_with_webView:
                 startActivity(new Intent(MainActivity.this, WithWebViewActivity.class));

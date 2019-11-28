@@ -67,34 +67,18 @@ public class TestBottomSheetDialogActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         recyclerView.setHasFixedSize(true);
         mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
+        List<String> list = DataUtil.createList(mCount, 60);
+        mCount = list.size();
+        mAdapter.updateData(list);
         recyclerView.setAdapter(mAdapter);
         mRefreshLayout = mRootView.findViewById(R.id.smoothRefreshLayout_test_bottom_sheet_dialog);
+        mRefreshLayout.setDisableRefresh(true);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setEnableAutoLoadMore(true);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {
                     @Override
-                    public void onRefreshing() {
-                        mHandler.postDelayed(
-                                new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        List<String> list = DataUtil.createList(mCount, 60);
-                                        mCount = list.size();
-                                        mAdapter.insertData(list);
-                                        mRefreshLayout.refreshComplete();
-                                    }
-                                },
-                                2000);
-                    }
-
-                    @Override
                     public void onLoadingMore() {
-                        Toast.makeText(
-                                        TestBottomSheetDialogActivity.this,
-                                        R.string.has_been_triggered_to_load_more,
-                                        Toast.LENGTH_SHORT)
-                                .show();
                         mHandler.postDelayed(
                                 new Runnable() {
                                     @Override

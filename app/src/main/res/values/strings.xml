@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">SmoothRefreshLayout</string>
     <string name="with_frameLayout">With FrameLayout</string>
-    <string name="with_textView">With TextView</string>
+    <string name="test_recyclerView_in_nestedScrollView">Test RecyclerView in
+        NestedScrollView</string>
     <string name="with_listView">With ListView</string>
     <string name="with_recyclerView">With RecyclerView</string>
     <string name="with_gridView">With GridView</string>
@@ -84,4 +85,5 @@
     <string name="second_floor">Second floor</string>
     <string name="open">Open</string>
     <string name="test_bottom_sheet_dialog">Test BottomSheetDialog</string>
+    <string name="expand_or_collapse">expand/collapse</string>
 </resources>

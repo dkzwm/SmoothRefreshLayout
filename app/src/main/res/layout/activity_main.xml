@@ -24,9 +24,9 @@
                 android:text="@string/with_frameLayout"/>
 
             <Button
-                android:id="@+id/button_main_with_textView"
+                android:id="@+id/button_main_test_recyclerView_in_nestedScrollView"
                 style="@style/LargeButtonStyle"
-                android:text="@string/with_textView"/>
+                android:text="@string/test_recyclerView_in_nestedScrollView"/>
 
             <Button
                 android:id="@+id/button_main_with_listView"
