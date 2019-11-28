@@ -1075,7 +1075,7 @@ public class SmoothRefreshLayout extends ViewGroup
             if (ev.getActionMasked() == MotionEvent.ACTION_DOWN) {
                 mOffsetConsumed = 0;
                 mOffsetTotal = 0;
-                mOffsetRemaining = mTouchSlop * 2;
+                mOffsetRemaining = mTouchSlop * 3;
             } else {
                 if (!mIndicator.isAlreadyHere(IIndicator.START_POS)
                         && mIndicator.getRawOffset() != 0) {
@@ -3616,7 +3616,11 @@ public class SmoothRefreshLayout extends ViewGroup
                         || Math.abs(vy) >= mMinimumFlingVelocity) {
                     final boolean handler = onFling(vx, vy, false);
                     final View targetView = getScrollTargetView();
-                    if (handler && !(ViewCatcherUtil.isViewPager(targetView))) {
+                    if (handler
+                            && targetView != null
+                            && !ViewCatcherUtil.isViewPager(targetView)
+                            && targetView.getParent() instanceof View
+                            && !ViewCatcherUtil.isViewPager((View) targetView.getParent())) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                     }
                 }
@@ -4253,6 +4257,7 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, String.format("moveHeaderPos(): delta: %s", delta));
         }
+        mNeedFilterScrollEvent = false;
         if (!mNestedScrolling
                 && !mHasSendCancelEvent
                 && isEnabledOldTouchHandling()
@@ -4307,6 +4312,7 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, String.format("moveFooterPos(): delta: %s", delta));
         }
+        mNeedFilterScrollEvent = false;
         if (!mNestedScrolling
                 && !mHasSendCancelEvent
                 && isEnabledOldTouchHandling()
@@ -4599,22 +4605,37 @@ public class SmoothRefreshLayout extends ViewGroup
                 if (isMovingFooter && mStickyFooterView != null) {
                     mStickyFooterView.setTranslationY(-mIndicator.getCurrentPos());
                 }
-                if (mScrollTargetView != null && isMovingFooter) {
-                    mScrollTargetView.setTranslationY(-mIndicator.getCurrentPos());
-                } else if (mAutoFoundScrollTargetView != null && isMovingFooter) {
-                    final View targetView;
-                    if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
-                        targetView = (View) mAutoFoundScrollTargetView.getParent();
+                if (isMovingFooter) {
+                    View targetView;
+                    if (mScrollTargetView != null) {
+                        if (mScrollTargetView.getParent() instanceof View) {
+                            if (ViewCatcherUtil.isViewPager((View) mScrollTargetView.getParent())) {
+                                targetView = (View) mScrollTargetView.getParent();
+                            } else {
+                                targetView = mScrollTargetView;
+                            }
+                        } else {
+                            targetView = mScrollTargetView;
+                        }
+                    } else if (mAutoFoundScrollTargetView != null) {
+                        if (mAutoFoundScrollTargetView.getParent() instanceof View) {
+                            if (ViewCatcherUtil.isViewPager(
+                                    (View) mAutoFoundScrollTargetView.getParent())) {
+                                targetView = (View) mAutoFoundScrollTargetView.getParent();
+                            } else {
+                                targetView = mAutoFoundScrollTargetView;
+                            }
+                        } else {
+                            targetView = mAutoFoundScrollTargetView;
+                        }
                     } else {
-                        targetView = mAutoFoundScrollTargetView;
+                        targetView = mTargetView;
                     }
-                    targetView.setTranslationY(-mIndicator.getCurrentPos());
-                } else if (mTargetView != null) {
-                    if (isMovingHeader) {
-                        mTargetView.setTranslationY(mIndicator.getCurrentPos());
-                    } else if (isMovingFooter) {
-                        mTargetView.setTranslationY(-mIndicator.getCurrentPos());
+                    if (targetView != null) {
+                        targetView.setTranslationY(-mIndicator.getCurrentPos());
                     }
+                } else if (isMovingHeader) {
+                    mTargetView.setTranslationY(mIndicator.getCurrentPos());
                 }
             }
         } else if (mTargetView != null) {
@@ -4630,10 +4651,23 @@ public class SmoothRefreshLayout extends ViewGroup
             } else if (isMovingFooter) {
                 final View targetView;
                 if (mScrollTargetView != null) {
-                    targetView = mScrollTargetView;
+                    if (mScrollTargetView.getParent() instanceof View) {
+                        if (ViewCatcherUtil.isViewPager((View) mScrollTargetView.getParent())) {
+                            targetView = (View) mScrollTargetView.getParent();
+                        } else {
+                            targetView = mScrollTargetView;
+                        }
+                    } else {
+                        targetView = mScrollTargetView;
+                    }
                 } else if (mAutoFoundScrollTargetView != null) {
-                    if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
-                        targetView = (View) mAutoFoundScrollTargetView.getParent();
+                    if (mAutoFoundScrollTargetView.getParent() instanceof View) {
+                        if (ViewCatcherUtil.isViewPager(
+                                (View) mAutoFoundScrollTargetView.getParent())) {
+                            targetView = (View) mAutoFoundScrollTargetView.getParent();
+                        } else {
+                            targetView = mAutoFoundScrollTargetView;
+                        }
                     } else {
                         targetView = mAutoFoundScrollTargetView;
                     }
@@ -4772,6 +4806,7 @@ public class SmoothRefreshLayout extends ViewGroup
             notifyStatusChanged(old, mStatus);
             mViewStatus = SR_VIEW_STATUS_INIT;
             mAutomaticActionTriggered = true;
+            mNeedFilterScrollEvent = false;
             tryToResetMovingStatus();
             tryToResetViewsScale();
             if (!mIndicator.hasTouched()) {
@@ -4789,11 +4824,26 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mMode == Constants.MODE_SCALE && mTargetView != null) {
             resetViewScale(mTargetView);
             if (mScrollTargetView != null) {
-                resetViewScale(mScrollTargetView);
+                final View targetView;
+                if (mScrollTargetView.getParent() instanceof View) {
+                    if (ViewCatcherUtil.isViewPager((View) mScrollTargetView.getParent())) {
+                        targetView = (View) mScrollTargetView.getParent();
+                    } else {
+                        targetView = mScrollTargetView;
+                    }
+                } else {
+                    targetView = mScrollTargetView;
+                }
+                resetViewScale(targetView);
             } else if (mAutoFoundScrollTargetView != null) {
                 final View targetView;
-                if (ViewCatcherUtil.isViewPager(mAutoFoundScrollTargetView)) {
-                    targetView = (View) mAutoFoundScrollTargetView.getParent();
+                if (mAutoFoundScrollTargetView.getParent() instanceof View) {
+                    if (ViewCatcherUtil.isViewPager(
+                            (View) mAutoFoundScrollTargetView.getParent())) {
+                        targetView = (View) mAutoFoundScrollTargetView.getParent();
+                    } else {
+                        targetView = mAutoFoundScrollTargetView;
+                    }
                 } else {
                     targetView = mAutoFoundScrollTargetView;
                 }
