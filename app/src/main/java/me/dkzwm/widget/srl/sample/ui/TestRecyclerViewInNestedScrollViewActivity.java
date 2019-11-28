@@ -42,7 +42,8 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
         mRecyclerView.setAdapter(mAdapter);
-        mRefreshLayout = findViewById(R.id.smoothRefreshLayout_test_recyclerView_in_nestedScrollView);
+        mRefreshLayout =
+                findViewById(R.id.smoothRefreshLayout_test_recyclerView_in_nestedScrollView);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {
@@ -76,13 +77,15 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
                                 2000);
                     }
                 });
-        mRefreshLayout.autoRefresh(Constants.ACTION_NOTHING,true);
-        mRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mRefreshLayout.refreshComplete();
-            }
-        },2000);
+        mRefreshLayout.autoRefresh(Constants.ACTION_NOTHING, true);
+        mRefreshLayout.postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mRefreshLayout.refreshComplete();
+                    }
+                },
+                2000);
     }
 
     @Override
@@ -92,7 +95,8 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
                 onBackPressed();
                 return true;
             case Menu.FIRST:
-                LinearLayout linearLayout = findViewById(R.id.linearLayout_test_recyclerView_in_nestedScrollView);
+                LinearLayout linearLayout =
+                        findViewById(R.id.linearLayout_test_recyclerView_in_nestedScrollView);
                 BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(linearLayout);
                 if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -113,7 +117,8 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(TestRecyclerViewInNestedScrollViewActivity.this, MainActivity.class));
+        startActivity(
+                new Intent(TestRecyclerViewInNestedScrollViewActivity.this, MainActivity.class));
         finish();
     }
 
