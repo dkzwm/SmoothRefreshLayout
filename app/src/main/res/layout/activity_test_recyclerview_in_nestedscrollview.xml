@@ -5,14 +5,49 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:theme="@style/AppBarOverlay"
+            app:contentScrim="?attr/colorPrimary"
+            app:expandedTitleMarginStart="10dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                android:src="@drawable/portrait"
+                app:layout_collapseParallaxMultiplier="1" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:contentInsetStart="0dp"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <me.dkzwm.widget.srl.MaterialSmoothRefreshLayout
+        <me.dkzwm.widget.srl.ClassicSmoothRefreshLayout
             android:id="@+id/smoothRefreshLayout_test_recyclerView_in_nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/textView_test_recyclerView_in_nestedScrollView_title">
 
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
@@ -29,7 +64,7 @@
                         android:background="#E8E8E8"
                         android:gravity="center"
                         android:text="@string/test_recyclerView_in_nestedScrollView"
-                        android:textColor="#333333"
+                        android:textColor="@android:color/black"
                         android:textSize="28sp" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -39,7 +74,16 @@
                         android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </androidx.core.widget.NestedScrollView>
-        </me.dkzwm.widget.srl.MaterialSmoothRefreshLayout>
+        </me.dkzwm.widget.srl.ClassicSmoothRefreshLayout>
+
+        <TextView
+            android:id="@+id/textView_test_recyclerView_in_nestedScrollView_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="@string/test_recyclerView_in_nestedScrollView"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <LinearLayout
@@ -54,9 +98,9 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:background="@color/colorPrimary"
-            android:text="@string/test_nested"
+            android:gravity="center"
+            android:text="@string/test_recyclerView_in_nestedScrollView"
             android:textColor="@android:color/white"
             android:textSize="18sp" />
     </LinearLayout>

@@ -5,9 +5,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -35,9 +37,16 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_recyclerview_in_nestedscrollview);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle(R.string.test_recyclerView_in_nestedScrollView);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
+        toolbar.setNavigationOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onBackPressed();
+                    }
+                });
         mRecyclerView = findViewById(R.id.recyclerView_test_recyclerView_in_nestedScrollView);
         mRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         mAdapter = new RecyclerViewAdapter(this, getLayoutInflater());
@@ -77,15 +86,7 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
                                 2000);
                     }
                 });
-        mRefreshLayout.autoRefresh(Constants.ACTION_NOTHING, true);
-        mRefreshLayout.postDelayed(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        mRefreshLayout.refreshComplete();
-                    }
-                },
-                2000);
+        mRefreshLayout.autoRefresh();
     }
 
     @Override
