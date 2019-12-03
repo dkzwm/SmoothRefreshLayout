@@ -97,20 +97,20 @@ public class ViewCatcherUtil {
             return null;
         }
         sIsCaughtCoordinatorLayout = true;
-        try {
-            if (sClassOfCoordinatorLayout == null) {
+        if (sClassOfCoordinatorLayout == null) {
+            try {
                 sClassOfCoordinatorLayout = Class.forName(sClassNameOfCoordinatorLayout);
+            } catch (Exception e) {
+                return null;
             }
-        } catch (Exception e) {
-            return null;
         }
         sIsCaughtAppBarLayout = true;
-        try {
-            if (sClassOfAppBarLayout == null) {
+        if (sClassOfAppBarLayout == null) {
+            try {
                 sClassOfAppBarLayout = Class.forName(sClassNameOfAppBarLayout);
+            } catch (Exception e) {
+                return null;
             }
-        } catch (Exception e) {
-            return null;
         }
         ViewGroup ignoredViewGroup = null;
         ViewGroup findViewGroup = group;
