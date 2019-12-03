@@ -29,6 +29,11 @@
                 android:text="@string/test_recyclerView_in_nestedScrollView"/>
 
             <Button
+                android:id="@+id/button_main_test_recyclerView_in_nestedScrollView_in_srl"
+                style="@style/LargeButtonStyle"
+                android:text="@string/test_recyclerView_in_nestedScrollView_in_srl"/>
+
+            <Button
                 android:id="@+id/button_main_with_listView"
                 style="@style/LargeButtonStyle"
                 android:text="@string/with_listView"/>
@@ -82,12 +87,6 @@
                 android:id="@+id/button_main_test_nested_with_viewPager_in_one_srl"
                 style="@style/LargeButtonStyle"
                 android:text="@string/test_nested_with_viewpager"/>
-
-            <Button
-                android:id="@+id/button_main_test_pull_to_refresh"
-                style="@style/LargeButtonStyle"
-                android:text="@string/pull_to_refresh"/>
-
             <Button
                 android:id="@+id/button_main_test_release_to_refresh"
                 style="@style/LargeButtonStyle"

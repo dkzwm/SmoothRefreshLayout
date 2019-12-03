@@ -31,11 +31,19 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 
 /** @author dkzwm */
 public class ViewCatcherUtil {
+    private static final String sClassNameOfViewPager = "androidx.viewpager.widget.ViewPager";
+    private static final String sClassNameOfCoordinatorLayout =
+            "androidx.coordinatorlayout.widget.CoordinatorLayout";
+    private static final String sClassNameOfRecyclerView =
+            "androidx.recyclerview.widget.RecyclerView";
+    private static final String sClassNameOfAppBarLayout =
+            "com.google.android.material.appbar.AppBarLayout";
     private static Class<?> sClassOfCoordinatorLayout;
     private static Class<?> sClassOfAppBarLayout;
     private static Class<?> sClassOfViewPager;
     private static Class<?> sClassOfRecyclerView;
     private static boolean sIsCaughtAppBarLayout = false;
+    private static boolean sIsCaughtCoordinatorLayout = false;
     private static boolean sIsCaughtViewPager = false;
     private static boolean sIsCaughtRecyclerView = false;
 
@@ -44,7 +52,7 @@ public class ViewCatcherUtil {
         sIsCaughtViewPager = true;
         if (sClassOfViewPager == null) {
             try {
-                sClassOfViewPager = Class.forName("androidx.viewpager.widget.ViewPager");
+                sClassOfViewPager = Class.forName(sClassNameOfViewPager);
             } catch (Exception e) {
                 return false;
             }
@@ -57,7 +65,7 @@ public class ViewCatcherUtil {
         sIsCaughtRecyclerView = true;
         if (sClassOfRecyclerView == null) {
             try {
-                sClassOfRecyclerView = Class.forName("androidx.recyclerview.widget.RecyclerView");
+                sClassOfRecyclerView = Class.forName(sClassNameOfRecyclerView);
             } catch (Exception e) {
                 return false;
             }
@@ -65,18 +73,41 @@ public class ViewCatcherUtil {
         return sClassOfRecyclerView.isAssignableFrom(view.getClass());
     }
 
+    public static boolean isCoordinatorLayout(View view) {
+        if (view == null) {
+            return false;
+        }
+        if (sIsCaughtCoordinatorLayout && sClassOfCoordinatorLayout == null) {
+            return false;
+        }
+        sIsCaughtCoordinatorLayout = true;
+        if (sClassOfCoordinatorLayout == null) {
+            try {
+                sClassOfCoordinatorLayout = Class.forName(sClassNameOfCoordinatorLayout);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return sClassOfCoordinatorLayout.isAssignableFrom(view.getClass());
+    }
+
     public static View catchAppBarLayout(final ViewGroup group) {
-        if (sIsCaughtAppBarLayout
-                && (sClassOfCoordinatorLayout == null || sClassOfAppBarLayout == null)) return null;
-        sIsCaughtAppBarLayout = true;
+        if ((sIsCaughtCoordinatorLayout || sIsCaughtAppBarLayout)
+                && (sClassOfCoordinatorLayout == null || sClassOfAppBarLayout == null)) {
+            return null;
+        }
+        sIsCaughtCoordinatorLayout = true;
         try {
             if (sClassOfCoordinatorLayout == null) {
-                sClassOfCoordinatorLayout =
-                        Class.forName("androidx.coordinatorlayout.widget.CoordinatorLayout");
+                sClassOfCoordinatorLayout = Class.forName(sClassNameOfCoordinatorLayout);
             }
+        } catch (Exception e) {
+            return null;
+        }
+        sIsCaughtAppBarLayout = true;
+        try {
             if (sClassOfAppBarLayout == null) {
-                sClassOfAppBarLayout =
-                        Class.forName("com.google.android.material.appbar.AppBarLayout");
+                sClassOfAppBarLayout = Class.forName(sClassNameOfAppBarLayout);
             }
         } catch (Exception e) {
             return null;
@@ -84,12 +115,7 @@ public class ViewCatcherUtil {
         ViewGroup ignoredViewGroup = null;
         ViewGroup findViewGroup = group;
         while (true) {
-            View view =
-                    findAppBarLayout(
-                            findViewGroup,
-                            ignoredViewGroup,
-                            sClassOfCoordinatorLayout,
-                            sClassOfAppBarLayout);
+            View view = findAppBarLayout(findViewGroup, ignoredViewGroup);
             if (view != null) {
                 return view;
             }
@@ -109,11 +135,7 @@ public class ViewCatcherUtil {
         }
     }
 
-    private static View findAppBarLayout(
-            ViewGroup group,
-            ViewGroup ignoredGroup,
-            Class<?> classOfCoordinatorLayout,
-            Class<?> classOfAppBarLayout) {
+    private static View findAppBarLayout(ViewGroup group, ViewGroup ignoredGroup) {
         if (ignoredGroup != null) {
             if (ignoredGroup == group) {
                 return null;
@@ -121,11 +143,11 @@ public class ViewCatcherUtil {
         } else if (group instanceof IRefreshView) {
             return null;
         }
-        if (classOfCoordinatorLayout.isAssignableFrom(group.getClass())) {
+        if (sClassOfCoordinatorLayout.isAssignableFrom(group.getClass())) {
             final int count = group.getChildCount();
             for (int i = 0; i < count; i++) {
                 final View subView = group.getChildAt(i);
-                if (classOfAppBarLayout.isAssignableFrom(subView.getClass())) {
+                if (sClassOfAppBarLayout.isAssignableFrom(subView.getClass())) {
                     return subView;
                 }
             }
@@ -135,13 +157,10 @@ public class ViewCatcherUtil {
         for (int i = 0; i < count; i++) {
             final View view = group.getChildAt(i);
             if (view instanceof ViewGroup) {
-                View layout =
-                        findAppBarLayout(
-                                (ViewGroup) view,
-                                ignoredGroup,
-                                classOfCoordinatorLayout,
-                                classOfAppBarLayout);
-                if (layout != null) return layout;
+                View layout = findAppBarLayout((ViewGroup) view, ignoredGroup);
+                if (layout != null) {
+                    return layout;
+                }
             }
         }
         return null;

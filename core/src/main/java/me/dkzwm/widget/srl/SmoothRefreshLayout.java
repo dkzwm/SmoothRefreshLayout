@@ -3617,6 +3617,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     final boolean handler = onFling(vx, vy, false);
                     final View targetView = getScrollTargetView();
                     if (handler
+                            && !ViewCatcherUtil.isCoordinatorLayout(mTargetView)
                             && targetView != null
                             && !ViewCatcherUtil.isViewPager(targetView)
                             && targetView.getParent() instanceof View

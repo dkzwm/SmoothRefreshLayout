@@ -31,6 +31,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name=".ui.TestRecyclerViewInNestedScrollViewInSrlActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name=".ui.WithWebViewActivity"
             android:screenOrientation="portrait" />
         <activity

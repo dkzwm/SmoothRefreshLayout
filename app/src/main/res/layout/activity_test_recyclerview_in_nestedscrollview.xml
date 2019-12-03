@@ -81,6 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="24dp"
+            android:background="@android:color/white"
             android:text="@string/test_recyclerView_in_nestedScrollView"
             android:textColor="@android:color/black"
             android:textSize="18sp" />

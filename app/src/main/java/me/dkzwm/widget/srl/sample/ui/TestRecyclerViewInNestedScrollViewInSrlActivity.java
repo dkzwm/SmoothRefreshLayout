@@ -25,7 +25,7 @@ import me.dkzwm.widget.srl.sample.utils.DataUtil;
  *
  * @author dkzwm
  */
-public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivity {
+public class TestRecyclerViewInNestedScrollViewInSrlActivity extends AppCompatActivity {
     private SmoothRefreshLayout mRefreshLayout;
     private Handler mHandler = new Handler();
     private RecyclerView mRecyclerView;
@@ -35,7 +35,7 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_test_recyclerview_in_nestedscrollview);
+        setContentView(R.layout.activity_test_recyclerview_in_nestedscrollview_in_srl);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.arrow_back_white_72x72);
@@ -118,7 +118,8 @@ public class TestRecyclerViewInNestedScrollViewActivity extends AppCompatActivit
     @Override
     public void onBackPressed() {
         startActivity(
-                new Intent(TestRecyclerViewInNestedScrollViewActivity.this, MainActivity.class));
+                new Intent(
+                        TestRecyclerViewInNestedScrollViewInSrlActivity.this, MainActivity.class));
         finish();
     }
 

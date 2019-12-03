@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">SmoothRefreshLayout</string>
     <string name="with_frameLayout">With FrameLayout</string>
-    <string name="test_recyclerView_in_nestedScrollView">Test RecyclerView in
+    <string name="test_recyclerView_in_nestedScrollView">Test RecyclerView inside
         NestedScrollView</string>
+    <string name="test_recyclerView_in_nestedScrollView_in_srl">Test RecyclerView insideNestedScrollView inside Srl</string>
     <string name="with_listView">With ListView</string>
     <string name="with_recyclerView">With RecyclerView</string>
     <string name="with_gridView">With GridView</string>

@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setOnClickListener(this);
         findViewById(R.id.button_main_test_material_style).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested).setOnClickListener(this);
-        findViewById(R.id.button_main_test_pull_to_refresh).setOnClickListener(this);
+        findViewById(R.id.button_main_test_recyclerView_in_nestedScrollView_in_srl)
+                .setOnClickListener(this);
         findViewById(R.id.button_main_test_release_to_refresh).setOnClickListener(this);
         findViewById(R.id.button_main_with_viewPager).setOnClickListener(this);
         findViewById(R.id.button_main_with_webView).setOnClickListener(this);
@@ -144,8 +145,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.button_main_with_viewPager:
                 startActivity(new Intent(MainActivity.this, WithViewPagerActivity.class));
                 break;
-            case R.id.button_main_test_pull_to_refresh:
-                startActivity(new Intent(MainActivity.this, TestPullToRefreshActivity.class));
+            case R.id.button_main_test_recyclerView_in_nestedScrollView_in_srl:
+                startActivity(
+                        new Intent(
+                                MainActivity.this,
+                                TestRecyclerViewInNestedScrollViewInSrlActivity.class));
                 break;
             case R.id.button_main_test_release_to_refresh:
                 startActivity(new Intent(MainActivity.this, TestReleaseToRefreshActivity.class));

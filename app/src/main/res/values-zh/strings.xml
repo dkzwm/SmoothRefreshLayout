@@ -3,6 +3,8 @@
     <string name="app_name">SmoothRefreshLayout</string>
     <string name="with_frameLayout">包含FrameLayout</string>
     <string name="test_recyclerView_in_nestedScrollView">测试RecyclerView嵌套在NestedScrollView中</string>
+    <string name="test_recyclerView_in_nestedScrollView_in_srl">测试RecyclerView嵌套在NestedScrollView
+        中,Srl包含整体</string>
     <string name="with_listView">包含ListView</string>
     <string name="with_recyclerView">包含RecyclerView</string>
     <string name="with_gridView">包含GridView</string>
