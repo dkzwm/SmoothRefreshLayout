@@ -141,7 +141,6 @@ public class SmoothRefreshLayout extends ViewGroup
     protected boolean mIsLastOverScrollCanNotAbort = false;
     protected boolean mNestedScrolling = false;
     protected boolean mNestedTouchScrolling = false;
-    protected float mFlingBackFactor = 1.85f;
     protected float mMaxScaleFactor = 1.2F;
     protected byte mStatus = SR_STATUS_INIT;
     protected byte mViewStatus = SR_VIEW_STATUS_INIT;
