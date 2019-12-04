@@ -14,7 +14,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
@@ -32,7 +31,6 @@ import me.dkzwm.widget.srl.util.PixelUtl;
  */
 public class WaveHeader extends View implements IRefreshView {
     private static final Interpolator sBounceInterpolator = new BounceInterpolator();
-    private static final Interpolator sSpringBackInterpolator = new DecelerateInterpolator();
     protected Paint mWavePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mBarPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     protected Paint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -221,7 +219,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        layout.setSpringBackInterpolator(sSpringBackInterpolator);
+        layout.resetScrollerInterpolator();
         mStatus = SmoothRefreshLayout.SR_STATUS_INIT;
         reset();
         invalidate();
@@ -229,7 +227,7 @@ public class WaveHeader extends View implements IRefreshView {
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
-        layout.setSpringBackInterpolator(sSpringBackInterpolator);
+        layout.resetScrollerInterpolator();
         mStatus = SmoothRefreshLayout.SR_STATUS_PREPARE;
         reset();
         invalidate();
@@ -238,7 +236,7 @@ public class WaveHeader extends View implements IRefreshView {
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, IIndicator indicator) {
         mStatus = SmoothRefreshLayout.SR_STATUS_REFRESHING;
-        layout.setSpringBackInterpolator(sSpringBackInterpolator);
+        layout.resetScrollerInterpolator();
         updateProgressBounds();
         invalidate();
     }
@@ -256,7 +254,7 @@ public class WaveHeader extends View implements IRefreshView {
                     getContext()
                             .getString(me.dkzwm.widget.srl.ext.classic.R.string.sr_refresh_failed);
         }
-        layout.setSpringBackInterpolator(sSpringBackInterpolator);
+        layout.resetScrollerInterpolator();
         invalidate();
     }
 
