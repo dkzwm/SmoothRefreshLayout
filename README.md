@@ -49,11 +49,14 @@ dependencies {
 #### 老版本升级务必查看
  [更新日志](ext/UPDATE.md) 
 ## 快照    
-![拉伸收缩效果](snapshot/test_scale_effect.gif)
-![横向刷新](snapshot/test_horizontal_refresh.gif)
----- 
-![二级刷新](snapshot/test_two_level_refresh.gif)
 ![嵌套滑动](snapshot/test_nested_scroll.gif)
+![二级刷新](snapshot/test_two_level_refresh.gif)
+----
+![横向刷新](snapshot/test_horizontal_refresh.gif)
+![拉伸收缩效果](snapshot/test_scale_effect.gif)
+---- 
+![QQ红包活动](snapshot/test_qq_style.gif)
+![浏览器内核下拉展示](snapshot/test_qq_web_browser_style.gif)
 
 ## 使用   
 #### 在Xml中配置

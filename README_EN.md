@@ -51,35 +51,14 @@ dependencies {
 Download [Demo.apk](https://raw.githubusercontent.com/dkzwm/SmoothRefreshLayout/master/apk/demo.apk)    
 
 ## Snapshots
-- Test Scale effect    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
-
-- Test Horizontal Refresh    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
-
-- Test Multi Direction Views    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
-
-- Test QQ-WebBrowser Style    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
-
-- Test QQ-Activity Style    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_style.gif)
-
-- Test Two-Level Refresh    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
-
-- With RecyclerView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView.gif)
-
-- With CoordinatorLayout    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
-
-- Test Cross-Boundary-Rebound(OverScroll)     
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_overScroll.gif)
-
-- Test Nested-Scroll   
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
+![NestedScrolling](snapshot/test_nested_scroll.gif)
+![Two-Level refresh](snapshot/test_two_level_refresh.gif)
+----
+![Horizontal refresh](snapshot/test_horizontal_refresh.gif)
+![Scale effect](snapshot/test_scale_effect.gif)
+---- 
+![QQ activity](snapshot/test_qq_style.gif)
+![Browser Kernel effect](snapshot/test_qq_web_browser_style.gif)
 
 ## How to use   
 #### Use Xml to config
