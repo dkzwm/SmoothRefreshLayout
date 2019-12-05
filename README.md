@@ -48,36 +48,12 @@ dependencies {
 ## 更新日志
 #### 老版本升级务必查看
  [更新日志](ext/UPDATE.md) 
-## 快照
-- 测试拉伸收缩效果    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_scale_effect.gif)
-
-- 测试横向刷新    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_horizontal_refresh.gif)
-
-- 测试多方向布局下的刷新    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_multi_direction_views.gif)
-
-- 测试QQ浏览器样式    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_web_browser_style.gif)
-
-- 测试QQ活动样式    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_qq_style.gif)
-
-- 测试2级刷新    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_two_level_refresh.gif)
- 
-- 包含RecyclerView    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView.gif)
-
-- CoordinatorLayout    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/with_recyclerView_in_coordinatorLayout.gif)
-
-- 越界回弹模式    
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_overScroll.gif)
-
-- 测试嵌套滑动   
-![](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/snapshot/test_nested_scroll.gif)
+## 快照    
+![拉伸收缩效果](snapshot/test_scale_effect.gif"拉伸收缩效果")
+![横向刷新](snapshot/test_horizontal_refresh.gif"横向刷新")
+---- 
+![二级刷新](snapshot/test_two_level_refresh.gif"二级刷新")
+![嵌套滑动](snapshot/test_nested_scroll.gif"嵌套滑动")
 
 ## 使用   
 #### 在Xml中配置
