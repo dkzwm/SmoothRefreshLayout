@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.config.Constants;
+import me.dkzwm.widget.srl.manager.VScaleLayoutManager;
 import me.dkzwm.widget.srl.sample.R;
 import me.dkzwm.widget.srl.sample.adapter.ListViewAdapter;
 import me.dkzwm.widget.srl.sample.utils.DataUtil;
@@ -36,7 +36,7 @@ public class TestScaleEffectActivity extends AppCompatActivity {
         SmoothRefreshLayout refreshLayout =
                 findViewById(R.id.smoothRefreshLayout_test_scale_effect);
         refreshLayout.setDisableLoadMore(false);
-        refreshLayout.setMode(Constants.MODE_SCALE);
+        refreshLayout.setLayoutManager(new VScaleLayoutManager());
         refreshLayout.setDurationToClose(550);
         Interpolator interpolator =
                 new Interpolator() {

@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import me.dkzwm.widget.srl.RefreshingListenerAdapter;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.sample.BuildConfig;
 import me.dkzwm.widget.srl.sample.R;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Runnable() {
                     @Override
                     public void run() {
-                        mRefreshLayout.autoRefresh(Constants.ACTION_NOTIFY, true);
+                        mRefreshLayout.autoRefresh(SmoothRefreshLayout.ACTION_NOTIFY, true);
                     }
                 },
                 100);

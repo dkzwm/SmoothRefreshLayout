@@ -25,7 +25,7 @@
 package me.dkzwm.widget.srl.indicator;
 
 import androidx.annotation.NonNull;
-import me.dkzwm.widget.srl.annotation.MovingStatus;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
 
 /** @author dkzwm */
 public interface IIndicator {
@@ -35,7 +35,7 @@ public interface IIndicator {
     float DEFAULT_RESISTANCE = 1.65f;
     int START_POS = 0;
 
-    @MovingStatus
+    @SmoothRefreshLayout.MovingStatus
     int getMovingStatus();
 
     int getCurrentPos();
@@ -106,6 +106,6 @@ public interface IIndicator {
      * @author dkzwm
      */
     interface IOffsetCalculator {
-        float calculate(@MovingStatus int status, int currentPos, float offset);
+        float calculate(@SmoothRefreshLayout.MovingStatus int status, int currentPos, float offset);
     }
 }

@@ -26,8 +26,7 @@ package me.dkzwm.widget.srl.indicator;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
-import me.dkzwm.widget.srl.annotation.MovingStatus;
-import me.dkzwm.widget.srl.config.Constants;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
 
 /** @author dkzwm */
 public class DefaultIndicator implements IIndicator, IIndicatorSetter {
@@ -43,7 +42,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     int mPressedPos = 0;
     float mOffset;
     boolean mTouched = false;
-    @MovingStatus private int mStatus = Constants.MOVING_CONTENT;
+    @SmoothRefreshLayout.MovingStatus private int mStatus = SmoothRefreshLayout.MOVING_CONTENT;
     private float mResistanceHeader = DEFAULT_RESISTANCE;
     private float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 0;
@@ -128,11 +127,6 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public void onFingerDown() {
-        mTouched = true;
-    }
-
-    @Override
     public void onFingerMove(float x, float y) {
         float offsetX = (x - mLastMovePoint[0]);
         float offsetY = (y - mLastMovePoint[1]);
@@ -159,7 +153,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public void setMovingStatus(@MovingStatus int status) {
+    public void setMovingStatus(@SmoothRefreshLayout.MovingStatus int status) {
         mStatus = status;
     }
 
@@ -288,14 +282,14 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     public void checkConfig() {
         if (mCanMoveTheMaxRatioOfHeaderHeight > 0
                 && mCanMoveTheMaxRatioOfHeaderHeight < mRatioOfHeaderHeightToRefresh) {
-            Log.w(
+            Log.e(
                     getClass().getSimpleName(),
                     "If the max can move ratio of header less than "
                             + "the triggered refresh ratio of header, refresh will be never trigger!");
         }
         if (mCanMoveTheMaxRatioOfFooterHeight > 0
                 && mCanMoveTheMaxRatioOfFooterHeight < mRatioOfFooterHeightToLoadMore) {
-            Log.w(
+            Log.e(
                     getClass().getSimpleName(),
                     "If the max can move ratio of footer less than "
                             + "the triggered load more ratio of footer, load more will be never trigger!");
@@ -349,9 +343,9 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
         if (mOffsetCalculator != null) {
             mOffset = mOffsetCalculator.calculate(mStatus, mCurrentPos, offset);
         } else {
-            if (mStatus == Constants.MOVING_HEADER) {
+            if (mStatus == SmoothRefreshLayout.MOVING_HEADER) {
                 mOffset = offset / mResistanceHeader;
-            } else if (mStatus == Constants.MOVING_FOOTER) {
+            } else if (mStatus == SmoothRefreshLayout.MOVING_FOOTER) {
                 mOffset = offset / mResistanceFooter;
             } else {
                 if (offset > 0) {

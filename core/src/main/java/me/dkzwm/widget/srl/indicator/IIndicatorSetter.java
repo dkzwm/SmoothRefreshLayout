@@ -24,7 +24,7 @@
  */
 package me.dkzwm.widget.srl.indicator;
 
-import me.dkzwm.widget.srl.annotation.MovingStatus;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
 
 /** @author dkzwm */
 public interface IIndicatorSetter {
@@ -36,8 +36,6 @@ public interface IIndicatorSetter {
     void setFooterHeight(int height);
 
     void setHeaderHeight(int height);
-
-    void onFingerDown();
 
     void onFingerDown(float x, float y);
 
@@ -59,7 +57,7 @@ public interface IIndicatorSetter {
 
     void setCurrentPos(int current);
 
-    void setMovingStatus(@MovingStatus int direction);
+    void setMovingStatus(@SmoothRefreshLayout.MovingStatus int direction);
 
     void setMaxMoveRatio(float ratio);
 
