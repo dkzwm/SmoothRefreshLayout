@@ -30,16 +30,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.manager.HRefreshLayoutManager;
 import me.dkzwm.widget.srl.util.HorizontalScrollCompat;
 
-/**
- * @author dkzwm
- */
+/** @author dkzwm */
 public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     public HorizontalSmoothRefreshLayout(Context context) {
@@ -60,11 +57,16 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super.init(context, attrs, defStyleAttr, defStyleRes);
+        setLayoutManager(new HRefreshLayoutManager());
+    }
+
+    @Override
     protected void createIndicator() {
         DefaultIndicator indicator = new HorizontalDefaultIndicator();
         mIndicator = indicator;
         mIndicatorSetter = indicator;
-        setLayoutManager(new HRefreshLayoutManager());
     }
 
     @Override

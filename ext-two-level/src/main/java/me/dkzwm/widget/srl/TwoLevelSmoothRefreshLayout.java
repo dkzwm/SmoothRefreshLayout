@@ -41,6 +41,7 @@ import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicatorSetter;
+import me.dkzwm.widget.srl.manager.VRefreshLayoutManager;
 
 /** @author dkzwm */
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
@@ -102,6 +103,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mIndicatorSetter = indicator;
         mTwoLevelIndicator = indicator;
         mTwoLevelIndicatorSetter = indicator;
+        setLayoutManager(new VRefreshLayoutManager());
     }
 
     @Override
@@ -264,9 +266,12 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      */
     public boolean autoTwoLevelRefreshHint(
             boolean smoothScroll, int stayDuration, boolean canBeInterrupted) {
-        if (mStatus != SR_STATUS_INIT) return false;
-        if (sDebug)
-            Log.d(TAG, String.format("autoTwoLevelRefreshHint(): smoothScroll:", smoothScroll));
+        if (mStatus != SR_STATUS_INIT && !isDisabledTwoLevelRefresh()) {
+            return false;
+        }
+        if (sDebug) {
+            Log.d(TAG, String.format("autoTwoLevelRefreshHint(): smoothScroll: %b", smoothScroll));
+        }
         mStatus = SR_STATUS_PREPARE;
         mNeedFilterRefreshEvent = true;
         mDurationToStayAtHint = stayDuration;
@@ -337,12 +342,13 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
     public boolean autoTwoLevelRefresh(@Action int action, boolean smoothScroll) {
         if (mStatus != SR_STATUS_INIT || mNeedFilterRefreshEvent || isDisabledPerformRefresh())
             return false;
-        if (sDebug)
+        if (sDebug) {
             Log.d(
                     TAG,
                     String.format(
-                            "autoTwoLevelRefresh(): action: %s, smoothScroll: %s",
+                            "autoTwoLevelRefresh(): action: %d, smoothScroll: %b",
                             action, smoothScroll));
+        }
         final byte old = mStatus;
         mStatus = SR_STATUS_PREPARE;
         notifyStatusChanged(old, mStatus);
@@ -582,7 +588,9 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         @Override
         public void run() {
             if (mLayout != null) {
-                if (SmoothRefreshLayout.sDebug) Log.d(mLayout.TAG, "DelayToBackToTop: run()");
+                if (SmoothRefreshLayout.sDebug) {
+                    Log.d(mLayout.TAG, "DelayToBackToTop: run()");
+                }
                 mLayout.mScrollChecker.scrollTo(
                         IIndicator.START_POS, mLayout.mDurationToCloseHeader);
             }
