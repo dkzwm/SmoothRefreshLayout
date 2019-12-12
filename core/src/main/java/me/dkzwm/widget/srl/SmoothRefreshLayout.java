@@ -56,7 +56,6 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -4672,8 +4671,8 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public abstract static class LayoutManager {
-        public static final int HORIZONTAL = RecyclerView.HORIZONTAL;
-        public static final int VERTICAL = RecyclerView.VERTICAL;
+        public static final int HORIZONTAL = 0;
+        public static final int VERTICAL = 1;
         private static int sId = 0;
         protected final String TAG = getClass().getSimpleName() + "-" + sId++;
         protected SmoothRefreshLayout mLayout;
