@@ -27,7 +27,6 @@ package me.dkzwm.widget.srl.manager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -188,16 +187,16 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
         if (mLayout.getIndicator().getCurrentPos() >= 0) {
             return 1
                     + (float)
-                    Math.min(
-                            .2f,
-                            Math.pow(mLayout.getIndicator().getCurrentPos(), .72f) / 1000f);
+                            Math.min(
+                                    .2f,
+                                    Math.pow(mLayout.getIndicator().getCurrentPos(), .72f) / 1000f);
         } else {
             return 1
                     - (float)
-                    Math.min(
-                            .2f,
-                            Math.pow(-mLayout.getIndicator().getCurrentPos(), .72f)
-                                    / 1000f);
+                            Math.min(
+                                    .2f,
+                                    Math.pow(-mLayout.getIndicator().getCurrentPos(), .72f)
+                                            / 1000f);
         }
     }
 }

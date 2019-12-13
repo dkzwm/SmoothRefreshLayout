@@ -27,7 +27,6 @@ package me.dkzwm.widget.srl.manager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
@@ -81,9 +80,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                                     0,
                                     specSize
                                             - (mLayout.getPaddingTop()
-                                            + mLayout.getPaddingBottom()
-                                            + lp.topMargin
-                                            + lp.bottomMargin));
+                                                    + mLayout.getPaddingBottom()
+                                                    + lp.topMargin
+                                                    + lp.bottomMargin));
                     setHeaderHeight(height);
                 } else {
                     setHeaderHeight(height + lp.topMargin + lp.bottomMargin);
@@ -163,9 +162,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                                     0,
                                     specSize
                                             - (mLayout.getPaddingTop()
-                                            + mLayout.getPaddingBottom()
-                                            + lp.topMargin
-                                            + lp.bottomMargin));
+                                                    + mLayout.getPaddingBottom()
+                                                    + lp.topMargin
+                                                    + lp.bottomMargin));
                     setFooterHeight(height);
                 } else {
                     setFooterHeight(height + lp.topMargin + lp.bottomMargin);
@@ -280,8 +279,8 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                                         (mLayout.getPaddingTop()
                                                 + lp.topMargin
                                                 + (indicator.getCurrentPos()
-                                                - indicator.getHeaderHeight())
-                                                / 2f);
+                                                                - indicator.getHeaderHeight())
+                                                        / 2f);
                     }
                 } else {
                     top = mLayout.getPaddingTop() - child.getMeasuredHeight() - lp.bottomMargin;
@@ -356,26 +355,27 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                     top = lp.topMargin + mContentEnd;
                 }
                 break;
-            case IRefreshView.STYLE_FOLLOW_CENTER: {
-                child.setTranslationY(0);
-                if (mLayout.isMovingFooter()) {
-                    if (indicator.getCurrentPos() <= indicator.getFooterHeight()) {
-                        top = lp.topMargin + mContentEnd - indicator.getCurrentPos();
+            case IRefreshView.STYLE_FOLLOW_CENTER:
+                {
+                    child.setTranslationY(0);
+                    if (mLayout.isMovingFooter()) {
+                        if (indicator.getCurrentPos() <= indicator.getFooterHeight()) {
+                            top = lp.topMargin + mContentEnd - indicator.getCurrentPos();
+                        } else {
+                            top =
+                                    (int)
+                                            (lp.topMargin
+                                                    + mContentEnd
+                                                    - indicator.getCurrentPos()
+                                                    + (indicator.getCurrentPos()
+                                                                    - indicator.getFooterHeight())
+                                                            / 2f);
+                        }
                     } else {
-                        top =
-                                (int)
-                                        (lp.topMargin
-                                                + mContentEnd
-                                                - indicator.getCurrentPos()
-                                                + (indicator.getCurrentPos()
-                                                - indicator.getFooterHeight())
-                                                / 2f);
+                        top = lp.topMargin + mContentEnd;
                     }
-                } else {
-                    top = lp.topMargin + mContentEnd;
+                    break;
                 }
-                break;
-            }
         }
         left = mLayout.getPaddingLeft() + lp.leftMargin;
         right = left + child.getMeasuredWidth();
@@ -456,9 +456,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                     break;
                 case IRefreshView.STYLE_SCALE:
                     if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                            != View.MeasureSpec.EXACTLY
+                                    != View.MeasureSpec.EXACTLY
                             || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                            != View.MeasureSpec.EXACTLY) {
+                                    != View.MeasureSpec.EXACTLY) {
                         needRequestLayout = !ViewCompat.isInLayout(mLayout);
                     } else {
                         measureHeader(
@@ -485,9 +485,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                     }
                     if (indicator.getCurrentPos() > indicator.getHeaderHeight()) {
                         if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                                != View.MeasureSpec.EXACTLY
+                                        != View.MeasureSpec.EXACTLY
                                 || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                                != View.MeasureSpec.EXACTLY) {
+                                        != View.MeasureSpec.EXACTLY) {
                             needRequestLayout = !ViewCompat.isInLayout(mLayout);
                         } else {
                             measureHeader(
@@ -516,9 +516,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                     break;
                 case IRefreshView.STYLE_SCALE:
                     if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                            != View.MeasureSpec.EXACTLY
+                                    != View.MeasureSpec.EXACTLY
                             || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                            != View.MeasureSpec.EXACTLY) {
+                                    != View.MeasureSpec.EXACTLY) {
                         needRequestLayout = !ViewCompat.isInLayout(mLayout);
                     } else {
                         measureFooter(
@@ -545,9 +545,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                     }
                     if (indicator.getCurrentPos() > indicator.getFooterHeight()) {
                         if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                                != View.MeasureSpec.EXACTLY
+                                        != View.MeasureSpec.EXACTLY
                                 || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                                != View.MeasureSpec.EXACTLY) {
+                                        != View.MeasureSpec.EXACTLY) {
                             needRequestLayout = !ViewCompat.isInLayout(mLayout);
                         } else {
                             measureFooter(

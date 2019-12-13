@@ -26,7 +26,6 @@ package me.dkzwm.widget.srl.manager;
 
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.Nullable;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
