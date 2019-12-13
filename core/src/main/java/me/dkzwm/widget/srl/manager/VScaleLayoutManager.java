@@ -27,6 +27,7 @@ package me.dkzwm.widget.srl.manager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -39,6 +40,7 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
     protected float mMaxScaleFactor = 1.2f;
 
     @Override
+    @SmoothRefreshLayout.Orientation
     public int getOrientation() {
         return SmoothRefreshLayout.LayoutManager.VERTICAL;
     }
@@ -46,8 +48,8 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
     @Override
     public void setLayout(SmoothRefreshLayout layout) {
         super.setLayout(layout);
-        setHeaderHeight(Integer.MAX_VALUE);
-        setFooterHeight(Integer.MAX_VALUE);
+        setHeaderHeight(100000);
+        setFooterHeight(100000);
     }
 
     @Override
@@ -186,16 +188,16 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
         if (mLayout.getIndicator().getCurrentPos() >= 0) {
             return 1
                     + (float)
-                            Math.min(
-                                    .2f,
-                                    Math.pow(mLayout.getIndicator().getCurrentPos(), .72f) / 1000f);
+                    Math.min(
+                            .2f,
+                            Math.pow(mLayout.getIndicator().getCurrentPos(), .72f) / 1000f);
         } else {
             return 1
                     - (float)
-                            Math.min(
-                                    .2f,
-                                    Math.pow(-mLayout.getIndicator().getCurrentPos(), .72f)
-                                            / 1000f);
+                    Math.min(
+                            .2f,
+                            Math.pow(-mLayout.getIndicator().getCurrentPos(), .72f)
+                                    / 1000f);
         }
     }
 }

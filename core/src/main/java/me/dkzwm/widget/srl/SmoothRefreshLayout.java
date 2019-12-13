@@ -4673,8 +4673,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public abstract static class LayoutManager {
         public static final int HORIZONTAL = 0;
         public static final int VERTICAL = 1;
-        private static int sId = 0;
-        protected final String TAG = getClass().getSimpleName() + "-" + sId++;
+        protected final String TAG = getClass().getSimpleName() + "-" + SmoothRefreshLayout.sId++;
         protected SmoothRefreshLayout mLayout;
 
         @Orientation
