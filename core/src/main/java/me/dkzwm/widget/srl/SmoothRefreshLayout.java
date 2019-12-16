@@ -2328,6 +2328,13 @@ public class SmoothRefreshLayout extends ViewGroup
         addView(content, lp);
     }
 
+    public void setContentResId(@IdRes int id) {
+        if (id != mContentResId) {
+            mContentResId = id;
+            mTargetView = null;
+            ensureTargetView();
+        }
+    }
     /**
      * Reset scroller interpolator.
      *
@@ -4414,7 +4421,11 @@ public class SmoothRefreshLayout extends ViewGroup
 
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ACTION_NOTIFY, ACTION_AT_ONCE, ACTION_NOTHING})
-    public @interface Action {}
+    @interface Action {}
+
+    @IntDef({LayoutManager.HORIZONTAL, LayoutManager.VERTICAL})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Orientation {}
 
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()}
@@ -4553,10 +4564,6 @@ public class SmoothRefreshLayout extends ViewGroup
          */
         void onStatusChanged(byte old, byte now);
     }
-
-    @IntDef({LayoutManager.HORIZONTAL, LayoutManager.VERTICAL})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Orientation {}
 
     public static class LayoutParams extends MarginLayoutParams {
         public int gravity = Gravity.TOP | Gravity.START;
