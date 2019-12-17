@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -562,13 +563,32 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                 if (mLayout.isMovingHeader()) {
                     content.setTranslationX(indicator.getCurrentPos());
                 } else if (mLayout.isMovingFooter()) {
-                    content = mLayout.getScrollTargetView();
-                    if (content != null) {
-                        content.setTranslationX(-indicator.getCurrentPos());
+                    View targetView = mLayout.getScrollTargetView();
+                    if (targetView != null) {
+                        targetView.setTranslationX(-indicator.getCurrentPos());
                     }
                 }
             }
         }
         return needRequestLayout;
+    }
+
+    @Override
+    public void resetLayout(
+            @Nullable IRefreshView<IIndicator> header,
+            @Nullable IRefreshView<IIndicator> footer,
+            @Nullable View stickyHeader,
+            @Nullable View stickyFooter,
+            @Nullable View content) {
+        if (content != null) {
+            if (mLayout.isMovingFooter()) {
+                View targetView = mLayout.getScrollTargetView();
+                if (targetView != null) {
+                    targetView.setTranslationX(0);
+                }
+            } else if (mLayout.isMovingHeader()) {
+                content.setTranslationX(0);
+            }
+        }
     }
 }
