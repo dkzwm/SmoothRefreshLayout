@@ -34,6 +34,7 @@ import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.manager.HRefreshLayoutManager;
+import me.dkzwm.widget.srl.manager.HScaleLayoutManager;
 import me.dkzwm.widget.srl.util.HorizontalScrollCompat;
 
 /** @author dkzwm */
@@ -57,16 +58,25 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    protected void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super.init(context, attrs, defStyleAttr, defStyleRes);
-        setLayoutManager(new HRefreshLayoutManager());
-    }
-
-    @Override
     protected void createIndicator() {
         DefaultIndicator indicator = new HorizontalDefaultIndicator();
         mIndicator = indicator;
         mIndicatorSetter = indicator;
+    }
+
+    @Override
+    public void setMode(int mode) {
+        if (mode == MODE_DEFAULT) {
+            if (mLayoutManager instanceof HRefreshLayoutManager) {
+                return;
+            }
+            mLayoutManager = new HRefreshLayoutManager();
+        } else {
+            if (mLayoutManager instanceof HScaleLayoutManager) {
+                return;
+            }
+            mLayoutManager = new HScaleLayoutManager();
+        }
     }
 
     @Override

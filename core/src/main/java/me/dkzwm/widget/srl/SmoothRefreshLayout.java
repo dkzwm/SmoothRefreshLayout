@@ -66,6 +66,7 @@ import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicatorSetter;
 import me.dkzwm.widget.srl.manager.VRefreshLayoutManager;
+import me.dkzwm.widget.srl.manager.VScaleLayoutManager;
 import me.dkzwm.widget.srl.util.AppBarLayoutUtil;
 import me.dkzwm.widget.srl.util.ScrollCompat;
 import me.dkzwm.widget.srl.util.ViewCatcherUtil;
@@ -99,6 +100,9 @@ public class SmoothRefreshLayout extends ViewGroup
     public static final byte SCROLLER_MODE_FLING_BACK = 3;
     public static final byte SCROLLER_MODE_SPRING = 4;
     public static final byte SCROLLER_MODE_SPRING_BACK = 5;
+
+    public static final int MODE_DEFAULT = 0;
+    public static final int MODE_SCALE = 1;
 
     protected static final Interpolator sSpringInterpolator =
             new Interpolator() {
@@ -271,6 +275,7 @@ public class SmoothRefreshLayout extends ViewGroup
         TypedArray arr =
                 context.obtainStyledAttributes(
                         attrs, R.styleable.SmoothRefreshLayout, defStyleAttr, defStyleRes);
+        int mode = MODE_DEFAULT;
         if (arr != null) {
             try {
                 mContentResId =
@@ -376,7 +381,7 @@ public class SmoothRefreshLayout extends ViewGroup
                         !arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enableRefresh, true));
                 setDisableLoadMore(
                         !arr.getBoolean(R.styleable.SmoothRefreshLayout_sr_enableLoadMore, false));
-                int mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, 0);
+                mode = arr.getInt(R.styleable.SmoothRefreshLayout_sr_mode, 0);
                 setEnabled(arr.getBoolean(R.styleable.SmoothRefreshLayout_android_enabled, true));
                 preparePaint();
             } finally {
@@ -388,25 +393,13 @@ public class SmoothRefreshLayout extends ViewGroup
             setEnableKeepRefreshView(true);
         }
         setNestedScrollingEnabled(true);
+        setMode(mode);
     }
 
     protected void createIndicator() {
         DefaultIndicator indicator = new DefaultIndicator();
         mIndicator = indicator;
         mIndicatorSetter = indicator;
-        setLayoutManager(new VRefreshLayoutManager());
-    }
-
-    public void setLayoutManager(@NonNull LayoutManager layoutManager) {
-        if (mLayoutManager != layoutManager) {
-            if (mLayoutManager != null) {
-                if (mLayoutManager.getOrientation() != layoutManager.getOrientation()) {
-                    reset();
-                    requestLayout();
-                }
-            }
-            mLayoutManager = layoutManager;
-        }
     }
 
     public final IIndicator getIndicator() {
@@ -634,7 +627,6 @@ public class SmoothRefreshLayout extends ViewGroup
         if (count == 0) {
             return;
         }
-        checkViewsZAxisNeedReset();
         mIndicator.checkConfig();
         final int parentRight = r - l - getPaddingRight();
         final int parentBottom = b - t - getPaddingBottom();
@@ -866,6 +858,32 @@ public class SmoothRefreshLayout extends ViewGroup
      */
     public void setScrollTargetView(View view) {
         mScrollTargetView = view;
+    }
+
+    public void setLayoutManager(@NonNull LayoutManager layoutManager) {
+        if (mLayoutManager != layoutManager) {
+            if (mLayoutManager != null) {
+                if (mLayoutManager.getOrientation() != layoutManager.getOrientation()) {
+                    reset();
+                    requestLayout();
+                }
+            }
+            mLayoutManager = layoutManager;
+        }
+    }
+
+    public void setMode(@Mode int mode) {
+        if (mode == MODE_DEFAULT) {
+            if (mLayoutManager instanceof VRefreshLayoutManager) {
+                return;
+            }
+            mLayoutManager = new VRefreshLayoutManager();
+        } else {
+            if (mLayoutManager instanceof VScaleLayoutManager) {
+                return;
+            }
+            mLayoutManager = new VScaleLayoutManager();
+        }
     }
 
     /**
@@ -2266,6 +2284,9 @@ public class SmoothRefreshLayout extends ViewGroup
         if (footer.getType() != IRefreshView.TYPE_FOOTER) {
             throw new IllegalArgumentException("Wrong type, FooterView type must be TYPE_FOOTER");
         }
+        if (footer == mFooterView) {
+            return;
+        }
         if (mFooterView != null) {
             removeView(mFooterView.getView());
             mFooterView = null;
@@ -2298,6 +2319,9 @@ public class SmoothRefreshLayout extends ViewGroup
         if (header.getType() != IRefreshView.TYPE_HEADER) {
             throw new IllegalArgumentException("Wrong type, HeaderView type must be TYPE_HEADER");
         }
+        if (header == mHeaderView) {
+            return;
+        }
         if (mHeaderView != null) {
             removeView(mHeaderView.getView());
             mHeaderView = null;
@@ -2315,10 +2339,21 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param content Content view
      */
     public void setContentView(View content) {
+        if (mTargetView == content) {
+            return;
+        }
+        mContentResId = View.NO_ID;
+        final int count = getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = getChildAt(i);
+            if (child == content) {
+                mTargetView = content;
+                return;
+            }
+        }
         if (mTargetView != null) {
             removeView(mTargetView);
         }
-        mContentResId = View.NO_ID;
         ViewGroup.LayoutParams lp = content.getLayoutParams();
         if (lp == null) {
             lp = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -2335,6 +2370,7 @@ public class SmoothRefreshLayout extends ViewGroup
             ensureTargetView();
         }
     }
+
     /**
      * Reset scroller interpolator.
      *
@@ -4422,6 +4458,10 @@ public class SmoothRefreshLayout extends ViewGroup
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({ACTION_NOTIFY, ACTION_AT_ONCE, ACTION_NOTHING})
     @interface Action {}
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({MODE_DEFAULT, MODE_SCALE})
+    @interface Mode {}
 
     @IntDef({LayoutManager.HORIZONTAL, LayoutManager.VERTICAL})
     @Retention(RetentionPolicy.SOURCE)

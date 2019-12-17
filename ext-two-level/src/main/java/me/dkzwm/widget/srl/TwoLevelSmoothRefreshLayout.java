@@ -41,7 +41,6 @@ import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicator;
 import me.dkzwm.widget.srl.indicator.ITwoLevelIndicatorSetter;
-import me.dkzwm.widget.srl.manager.VRefreshLayoutManager;
 
 /** @author dkzwm */
 public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
@@ -103,7 +102,6 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mIndicatorSetter = indicator;
         mTwoLevelIndicator = indicator;
         mTwoLevelIndicatorSetter = indicator;
-        setLayoutManager(new VRefreshLayoutManager());
     }
 
     @Override
