@@ -80,7 +80,6 @@ public class HorizontalScrollCompat {
                 }
                 int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findLastVisibleItemPositions(lastPositions);
-                lastVisiblePosition = lastPositions[0];
                 for (int value : lastPositions) {
                     if (value > lastVisiblePosition) {
                         lastVisiblePosition = value;
@@ -117,7 +116,6 @@ public class HorizontalScrollCompat {
                 }
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
-                firstVisiblePosition = firstPositions[0];
                 for (int value : firstPositions) {
                     if (value == 0) {
                         firstVisiblePosition = 0;

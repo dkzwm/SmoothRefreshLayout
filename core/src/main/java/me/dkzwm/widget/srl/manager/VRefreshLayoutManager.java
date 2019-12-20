@@ -587,9 +587,6 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                         targetView.setTranslationY(-indicator.getCurrentPos());
                     }
                 } else if (mLayout.isMovingHeader()) {
-                    if (SmoothRefreshLayout.sDebug) {
-                        Log.d(TAG, String.format("offset(): content: %s ", change));
-                    }
                     content.setTranslationY(indicator.getCurrentPos());
                 }
             }

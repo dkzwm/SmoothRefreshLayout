@@ -55,7 +55,7 @@ public class ScrollCompat {
             if (manager == null) {
                 return false;
             }
-            int lastVisiblePosition = 0;
+            int lastVisiblePosition = -1;
             if (manager instanceof LinearLayoutManager) {
                 LinearLayoutManager linearManager = ((LinearLayoutManager) manager);
                 if (linearManager.getOrientation() == RecyclerView.HORIZONTAL) {
@@ -69,7 +69,6 @@ public class ScrollCompat {
                 }
                 int[] lastPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findLastVisibleItemPositions(lastPositions);
-                lastVisiblePosition = lastPositions[0];
                 for (int value : lastPositions) {
                     if (value > lastVisiblePosition) {
                         lastVisiblePosition = value;
@@ -111,7 +110,6 @@ public class ScrollCompat {
                 }
                 int[] firstPositions = new int[gridLayoutManager.getSpanCount()];
                 gridLayoutManager.findFirstVisibleItemPositions(firstPositions);
-                firstVisiblePosition = firstPositions[0];
                 for (int value : firstPositions) {
                     if (value == 0) {
                         firstVisiblePosition = 0;
