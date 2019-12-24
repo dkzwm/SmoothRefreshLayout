@@ -444,6 +444,12 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        checkViewsZAxisNeedReset();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
             final List<ILifecycleObserver> observers = mLifecycleObservers;
@@ -3042,35 +3048,17 @@ public class SmoothRefreshLayout extends ViewGroup
         final int count = getChildCount();
         if (mViewsZAxisNeedReset && count > 0) {
             mCachedViews.clear();
-            final boolean isEnabledHeaderDrawer = isEnabledHeaderDrawerStyle();
-            final boolean isEnabledFooterDrawer = isEnabledFooterDrawerStyle();
-            if (isEnabledHeaderDrawer && isEnabledFooterDrawer) {
-                for (int i = count - 1; i >= 0; i--) {
-                    View view = getChildAt(i);
-                    if (view != mHeaderView.getView() && view != mFooterView.getView()) {
-                        mCachedViews.add(view);
-                    }
-                }
-            } else if (isEnabledHeaderDrawer) {
-                for (int i = count - 1; i >= 0; i--) {
-                    View view = getChildAt(i);
-                    if (view != mHeaderView.getView()) {
-                        mCachedViews.add(view);
-                    }
-                }
-            } else if (isEnabledFooterDrawer) {
-                for (int i = count - 1; i >= 0; i--) {
-                    View view = getChildAt(i);
-                    if (view != mFooterView.getView()) {
-                        mCachedViews.add(view);
-                    }
-                }
-            } else {
-                for (int i = count - 1; i >= 0; i--) {
-                    View view = getChildAt(i);
-                    if (view != mTargetView) {
-                        mCachedViews.add(view);
-                    }
+            if (mHeaderView == null && mFooterView == null) return;
+            if (mHeaderView != null && !isEnabledHeaderDrawerStyle()) {
+                mCachedViews.add(mHeaderView.getView());
+            }
+            if (mFooterView != null && !isEnabledFooterDrawerStyle()) {
+                mCachedViews.add(mFooterView.getView());
+            }
+            for (int i = count - 1; i >= 0; i--) {
+                View view = getChildAt(i);
+                if (!(view instanceof IRefreshView)) {
+                    mCachedViews.add(view);
                 }
             }
             final int viewCount = mCachedViews.size();
