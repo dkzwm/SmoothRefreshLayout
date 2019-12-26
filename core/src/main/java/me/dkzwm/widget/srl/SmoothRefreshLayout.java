@@ -436,6 +436,14 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (!enabled) {
+            reset();
+        }
+    }
+
+    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         checkViewsZAxisNeedReset();
@@ -3383,7 +3391,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     }
                     final ViewParent parent = getParent();
                     if (!isWrappedByScrollingView(parent)) {
-                        getParent().requestDisallowInterceptTouchEvent(true);
+                        parent.requestDisallowInterceptTouchEvent(true);
                     }
                 }
                 final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
