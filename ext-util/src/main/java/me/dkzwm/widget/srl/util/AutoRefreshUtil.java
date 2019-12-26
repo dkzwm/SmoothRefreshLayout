@@ -32,13 +32,10 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import me.dkzwm.widget.srl.ILifecycleObserver;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
-import me.dkzwm.widget.srl.indicator.IIndicator;
 
 /** @author dkzwm */
 public class AutoRefreshUtil
-        implements ILifecycleObserver,
-                SmoothRefreshLayout.OnNestedScrollChangedListener,
-                SmoothRefreshLayout.OnUIPositionChangedListener {
+        implements ILifecycleObserver, SmoothRefreshLayout.OnStatusChangedListener, Runnable {
     private SmoothRefreshLayout mRefreshLayout;
     private View mTargetView;
     private int mStatus;
@@ -57,14 +54,13 @@ public class AutoRefreshUtil
     @Override
     public void onAttached(SmoothRefreshLayout layout) {
         mRefreshLayout = layout;
-        mRefreshLayout.addOnUIPositionChangedListener(this);
-        mRefreshLayout.addOnNestedScrollChangedListener(this);
+        mRefreshLayout.addOnStatusChangedListener(this);
     }
 
     @Override
     public void onDetached(SmoothRefreshLayout layout) {
-        mRefreshLayout.removeOnUIPositionChangedListener(this);
-        mRefreshLayout.removeOnNestedScrollChangedListener(this);
+        mRefreshLayout.removeCallbacks(this);
+        mRefreshLayout.removeOnStatusChangedListener(this);
         mRefreshLayout = null;
     }
 
@@ -95,6 +91,7 @@ public class AutoRefreshUtil
                 mCachedActionAtOnce = false;
                 mCachedAutoRefreshUseSmoothScroll = false;
             }
+            ViewCompat.postOnAnimation(mRefreshLayout, this);
         }
     }
 
@@ -125,16 +122,12 @@ public class AutoRefreshUtil
                 mCachedActionAtOnce = false;
                 mCachedAutoRefreshUseSmoothScroll = false;
             }
+            ViewCompat.postOnAnimation(mRefreshLayout, this);
         }
     }
 
     @Override
-    public void onChanged(byte status, IIndicator indicator) {
-        mStatus = status;
-    }
-
-    @Override
-    public void onNestedScrollChanged() {
+    public void run() {
         if (mRefreshLayout != null) {
             if (mNeedToTriggerRefresh && !mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
                 if (mRefreshLayout.autoRefresh(
@@ -143,6 +136,8 @@ public class AutoRefreshUtil
                     mNeedToTriggerRefresh = false;
                     mCachedActionAtOnce = false;
                     mCachedAutoRefreshUseSmoothScroll = false;
+                    mRefreshLayout.removeCallbacks(this);
+                    return;
                 }
             } else if (mNeedToTriggerLoadMore && !mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
                 if (mRefreshLayout.autoLoadMore(
@@ -151,8 +146,16 @@ public class AutoRefreshUtil
                     mNeedToTriggerLoadMore = false;
                     mCachedActionAtOnce = false;
                     mCachedAutoRefreshUseSmoothScroll = false;
+                    mRefreshLayout.removeCallbacks(this);
+                    return;
                 }
             }
+            ViewCompat.postOnAnimation(mRefreshLayout, this);
         }
+    }
+
+    @Override
+    public void onStatusChanged(byte old, byte now) {
+        mStatus = now;
     }
 }

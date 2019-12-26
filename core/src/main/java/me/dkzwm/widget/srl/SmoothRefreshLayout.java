@@ -41,6 +41,7 @@ import android.view.VelocityTracker;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
@@ -204,7 +205,6 @@ public class SmoothRefreshLayout extends ViewGroup
     private Interpolator mSpringInterpolator;
     private Interpolator mSpringBackInterpolator;
     private ArrayList<OnUIPositionChangedListener> mUIPositionChangedListeners;
-    private ArrayList<OnNestedScrollChangedListener> mNestedScrollChangedListeners;
     private ArrayList<OnStatusChangedListener> mStatusChangedListeners;
     private ArrayList<ILifecycleObserver> mLifecycleObservers;
     private DelayToDispatchNestedFling mDelayToDispatchNestedFling;
@@ -436,14 +436,6 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        if (!enabled) {
-            reset();
-        }
-    }
-
-    @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
         checkViewsZAxisNeedReset();
@@ -451,8 +443,8 @@ public class SmoothRefreshLayout extends ViewGroup
 
     @Override
     protected void onDetachedFromWindow() {
-        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
-            final List<ILifecycleObserver> observers = mLifecycleObservers;
+        final List<ILifecycleObserver> observers = mLifecycleObservers;
+        if (observers != null) {
             for (ILifecycleObserver observer : observers) {
                 observer.onDetached(this);
             }
@@ -497,8 +489,8 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mLayoutManager == null)
             throw new IllegalArgumentException("LayoutManager can not be null!!");
         mLayoutManager.setLayout(this);
-        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
-            final List<ILifecycleObserver> observers = mLifecycleObservers;
+        final List<ILifecycleObserver> observers = mLifecycleObservers;
+        if (observers != null) {
             for (ILifecycleObserver observer : observers) {
                 observer.onAttached(this);
             }
@@ -834,7 +826,7 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public void removeLifecycleObserver(@NonNull ILifecycleObserver observer) {
-        if (mLifecycleObservers != null && !mLifecycleObservers.isEmpty()) {
+        if (mLifecycleObservers != null) {
             mLifecycleObservers.remove(observer);
         }
     }
@@ -977,38 +969,8 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param listener Listener
      */
     public void removeOnUIPositionChangedListener(@NonNull OnUIPositionChangedListener listener) {
-        if (mUIPositionChangedListeners != null && !mUIPositionChangedListeners.isEmpty()) {
+        if (mUIPositionChangedListeners != null) {
             mUIPositionChangedListeners.remove(listener);
-        }
-    }
-
-    /**
-     * Add a listener to listen for scroll events in this view and all internal views.
-     *
-     * <p>添加监听器以监听此视图和所有内容视图中的滚动事件
-     *
-     * @param listener Listener
-     */
-    public void addOnNestedScrollChangedListener(@NonNull OnNestedScrollChangedListener listener) {
-        if (mNestedScrollChangedListeners == null) {
-            mNestedScrollChangedListeners = new ArrayList<>();
-            mNestedScrollChangedListeners.add(listener);
-        } else if (!mNestedScrollChangedListeners.contains(listener)) {
-            mNestedScrollChangedListeners.add(listener);
-        }
-    }
-
-    /**
-     * remove the listener.
-     *
-     * <p>移除滚动变化监听器
-     *
-     * @param listener Listener
-     */
-    public void removeOnNestedScrollChangedListener(
-            @NonNull OnNestedScrollChangedListener listener) {
-        if (mNestedScrollChangedListeners != null && !mNestedScrollChangedListeners.isEmpty()) {
-            mNestedScrollChangedListeners.remove(listener);
         }
     }
 
@@ -1036,7 +998,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param listener Listener
      */
     public void removeOnStatusChangedListener(@NonNull OnStatusChangedListener listener) {
-        if (mStatusChangedListeners != null && !mStatusChangedListeners.isEmpty()) {
+        if (mStatusChangedListeners != null) {
             mStatusChangedListeners.remove(listener);
         }
     }
@@ -1951,9 +1913,10 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param enable Enable old touch handling
      */
     public void setEnableOldTouchHandling(boolean enable) {
-        if (mIndicator.hasTouched())
-            throw new IllegalArgumentException(
-                    "This method cannot be called during touch event handling");
+        if (mIndicator.hasTouched()) {
+            Log.e(TAG, "This method cannot be called during touch event handling");
+            return;
+        }
         if (enable) {
             mFlag = mFlag | FLAG_ENABLE_OLD_TOUCH_HANDLING;
         } else {
@@ -2203,7 +2166,8 @@ public class SmoothRefreshLayout extends ViewGroup
             if (isEnabledPinContentView() && isEnabledKeepRefreshView()) {
                 mFlag = mFlag | FLAG_ENABLE_PIN_REFRESH_VIEW_WHILE_LOADING;
             } else {
-                throw new IllegalArgumentException(
+                Log.e(
+                        TAG,
                         "This method can only be enabled if setEnablePinContentView"
                                 + " and setEnableKeepRefreshView are set be true");
             }
@@ -3032,7 +2996,6 @@ public class SmoothRefreshLayout extends ViewGroup
             mNeedFilterScrollEvent = false;
             return;
         }
-        notifyNestedScrollChanged();
         tryScrollToPerformAutoRefresh();
         if (compute) {
             mScrollChecker.computeScrollOffset();
@@ -3193,7 +3156,7 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * @see ViewGroup source code
      */
-    private boolean isTransformedTouchPointInView(float x, float y, ViewGroup group, View child) {
+    protected boolean isTransformedTouchPointInView(float x, float y, ViewGroup group, View child) {
         if (child.getVisibility() != VISIBLE
                 || child.getAnimation() != null
                 || child instanceof IRefreshView) {
@@ -3214,7 +3177,7 @@ public class SmoothRefreshLayout extends ViewGroup
         return isInView;
     }
 
-    private void transformPointToViewLocal(ViewGroup group, float[] point, View child) {
+    public void transformPointToViewLocal(ViewGroup group, float[] point, View child) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             group.transformPointToViewLocal(point, child);
         } else {
@@ -3260,6 +3223,16 @@ public class SmoothRefreshLayout extends ViewGroup
             }
         }
         return null;
+    }
+
+    protected boolean isWrappedByScrollingView(ViewParent parent) {
+        if (parent instanceof View) {
+            if (isScrollingView((View) parent)) {
+                return true;
+            }
+            return isWrappedByScrollingView(parent.getParent());
+        }
+        return false;
     }
 
     protected boolean isScrollingView(View view) {
@@ -3382,9 +3355,6 @@ public class SmoothRefreshLayout extends ViewGroup
                 dispatchTouchEventSuper(ev);
                 return true;
             case MotionEvent.ACTION_MOVE:
-                if (!mIndicator.hasTouched()) {
-                    return super.dispatchTouchEvent(ev);
-                }
                 final int index = ev.findPointerIndex(mTouchPointerId);
                 if (index < 0) {
                     Log.e(
@@ -3393,6 +3363,9 @@ public class SmoothRefreshLayout extends ViewGroup
                                     + mTouchPointerId
                                     + " not found. Did any MotionEvents get skipped?");
                     return super.dispatchTouchEvent(ev);
+                }
+                if (!mIndicator.hasTouched()) {
+                    mIndicatorSetter.onFingerDown(ev.getX(index), ev.getY(index));
                 }
                 mLastMoveEvent = ev;
                 if (tryToFilterTouchEvent(ev)) {
@@ -3408,7 +3381,8 @@ public class SmoothRefreshLayout extends ViewGroup
                         mIndicatorSetter.onFingerDown(
                                 ev.getX(index) - offsetX / 10, ev.getY(index) - offsetY / 10);
                     }
-                    if (getParent() != null) {
+                    final ViewParent parent = getParent();
+                    if (!isWrappedByScrollingView(parent)) {
                         getParent().requestDisallowInterceptTouchEvent(true);
                     }
                 }
@@ -3854,9 +3828,13 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mScrollChecker.isFlingBack()) {
             tryScrollBackToTop(mDurationOfFlingBack);
         } else if (isMovingHeader()) {
-            tryScrollBackToTop(mDurationToCloseHeader);
+            float percent = mIndicator.getCurrentPercentOfRefreshOffset();
+            percent = percent > 1 || percent <= 0 ? 1 : percent;
+            tryScrollBackToTop(Math.round(mDurationToCloseHeader * percent));
         } else if (isMovingFooter()) {
-            tryScrollBackToTop(mDurationToCloseFooter);
+            float percent = mIndicator.getCurrentPercentOfLoadMoreOffset();
+            percent = percent > 1 || percent <= 0 ? 1 : percent;
+            tryScrollBackToTop(Math.round(mDurationToCloseFooter * percent));
         } else {
             tryToNotifyReset();
         }
@@ -4397,26 +4375,16 @@ public class SmoothRefreshLayout extends ViewGroup
 
     private void notifyUIPositionChanged() {
         final List<OnUIPositionChangedListener> listeners = mUIPositionChangedListeners;
-        if (listeners != null && !listeners.isEmpty()) {
+        if (listeners != null) {
             for (OnUIPositionChangedListener listener : listeners) {
                 listener.onChanged(mStatus, mIndicator);
-            }
-        }
-        notifyNestedScrollChanged();
-    }
-
-    private void notifyNestedScrollChanged() {
-        final List<OnNestedScrollChangedListener> listeners = mNestedScrollChangedListeners;
-        if (listeners != null && !listeners.isEmpty()) {
-            for (OnNestedScrollChangedListener listener : listeners) {
-                listener.onNestedScrollChanged();
             }
         }
     }
 
     protected void notifyStatusChanged(byte old, byte now) {
         final List<OnStatusChangedListener> listeners = mStatusChangedListeners;
-        if (listeners != null && !listeners.isEmpty()) {
+        if (listeners != null) {
             for (OnStatusChangedListener listener : listeners) {
                 listener.onStatusChanged(old, now);
             }
@@ -4569,15 +4537,6 @@ public class SmoothRefreshLayout extends ViewGroup
         boolean canAutoRefresh(SmoothRefreshLayout parent, @Nullable View child);
     }
 
-    /**
-     * Classes that wish to be notified when the scroll events triggered in this view and all
-     * internal views
-     */
-    public interface OnNestedScrollChangedListener {
-        /** Scroll events triggered */
-        void onNestedScrollChanged();
-    }
-
     /** Classes that wish to be notified when the status changed */
     public interface OnStatusChangedListener {
         /**
@@ -4607,12 +4566,6 @@ public class SmoothRefreshLayout extends ViewGroup
             a.recycle();
         }
 
-        @SuppressWarnings("unused")
-        public LayoutParams(int width, int height, int gravity) {
-            super(width, height);
-            this.gravity = gravity;
-        }
-
         public LayoutParams(int width, int height) {
             super(width, height);
         }
@@ -4625,12 +4578,6 @@ public class SmoothRefreshLayout extends ViewGroup
         @SuppressWarnings("WeakerAccess")
         public LayoutParams(ViewGroup.LayoutParams source) {
             super(source);
-        }
-
-        @SuppressWarnings("unused")
-        public LayoutParams(LayoutParams source) {
-            super(source);
-            gravity = source.gravity;
         }
     }
 

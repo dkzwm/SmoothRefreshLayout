@@ -191,7 +191,7 @@ public class ScrollCompat {
                     return gridLayoutManager.getOrientation() == RecyclerView.VERTICAL;
                 }
             }
-            return false;
+            return true;
         } else {
             return view instanceof ScrollingView;
         }
