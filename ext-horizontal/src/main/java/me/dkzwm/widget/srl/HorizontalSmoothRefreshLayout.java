@@ -24,6 +24,8 @@
  */
 package me.dkzwm.widget.srl;
 
+import static me.dkzwm.widget.srl.config.Constants.MODE_DEFAULT;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;

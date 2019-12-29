@@ -24,6 +24,21 @@
  */
 package me.dkzwm.widget.srl;
 
+import static me.dkzwm.widget.srl.config.Constants.ACTION_AT_ONCE;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTHING;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
+import static me.dkzwm.widget.srl.config.Constants.MODE_DEFAULT;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_CONTENT;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_FOOTER;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_CALC_FLING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING_BACK;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_NONE;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_PRE_FLING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING_BACK;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -48,7 +63,6 @@ import android.widget.Scroller;
 import androidx.annotation.CallSuper;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IdRes;
-import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.GravityCompat;
@@ -57,11 +71,12 @@ import androidx.core.view.NestedScrollingChildHelper;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 import androidx.core.view.ViewCompat;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import me.dkzwm.widget.srl.annotation.Action;
+import me.dkzwm.widget.srl.annotation.Mode;
+import me.dkzwm.widget.srl.annotation.Orientation;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -85,25 +100,6 @@ public class SmoothRefreshLayout extends ViewGroup
     public static final byte SR_VIEW_STATUS_INIT = 21;
     public static final byte SR_VIEW_STATUS_HEADER_IN_PROCESSING = 22;
     public static final byte SR_VIEW_STATUS_FOOTER_IN_PROCESSING = 23;
-
-    public static final int MOVING_CONTENT = 0;
-    public static final int MOVING_FOOTER = 1;
-    public static final int MOVING_HEADER = 2;
-
-    public static final int ACTION_NOTIFY = 0;
-    public static final int ACTION_AT_ONCE = 1;
-    public static final int ACTION_NOTHING = 2;
-
-    public static final byte SCROLLER_MODE_NONE = -1;
-    public static final byte SCROLLER_MODE_PRE_FLING = 0;
-    public static final byte SCROLLER_MODE_CALC_FLING = 1;
-    public static final byte SCROLLER_MODE_FLING = 2;
-    public static final byte SCROLLER_MODE_FLING_BACK = 3;
-    public static final byte SCROLLER_MODE_SPRING = 4;
-    public static final byte SCROLLER_MODE_SPRING_BACK = 5;
-
-    public static final int MODE_DEFAULT = 0;
-    public static final int MODE_SCALE = 1;
 
     protected static final Interpolator sSpringInterpolator =
             new Interpolator() {
@@ -482,6 +478,10 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         mDelayToPerformAutoRefresh.mLayout = null;
         mLayoutManager.setLayout(null);
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+        }
+        mVelocityTracker = null;
         if (sDebug) {
             Log.d(TAG, "onDetachedFromWindow()");
         }
@@ -1270,8 +1270,10 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * <p>自动刷新，`action`触发刷新的动作，`smooth`滚动到触发位置
      *
-     * @param action Auto refresh use action.{@link #ACTION_NOTIFY}, {@link #ACTION_AT_ONCE},{@link
-     *     #ACTION_NOTHING}
+     * @param action Auto refresh use action .{@link
+     *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTIFY}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#ACTION_AT_ONCE}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTHING}
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     public boolean autoRefresh(@Action int action, boolean smoothScroll) {
@@ -1345,8 +1347,10 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * <p>自动加载更多，`action`触发加载更多的动作，`smooth`滚动到触发位置
      *
-     * @param action Auto load more use action.{@link #ACTION_NOTIFY}, {@link
-     *     #ACTION_AT_ONCE},{@link #ACTION_NOTHING}
+     * @param action Auto load more use action.{@link
+     *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTIFY}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#ACTION_AT_ONCE}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTHING}
      * @param smoothScroll Auto load more use smooth scrolling
      */
     public boolean autoLoadMore(@Action int action, boolean smoothScroll) {
@@ -2396,10 +2400,13 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * Get the ScrollChecker current mode.
      *
-     * @return the mode {@link #SCROLLER_MODE_NONE}, {@link #SCROLLER_MODE_PRE_FLING}, {@link
-     *     #SCROLLER_MODE_FLING}, {@link #SCROLLER_MODE_CALC_FLING}, {@link
-     *     #SCROLLER_MODE_FLING_BACK}, {@link #SCROLLER_MODE_SPRING}, {@link
-     *     #SCROLLER_MODE_SPRING_BACK}.
+     * @return the mode {@link me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_NONE}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_PRE_FLING}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_FLING}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_CALC_FLING}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_FLING_BACK}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_SPRING}, {@link
+     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_SPRING_BACK}.
      */
     public byte getScrollMode() {
         return mScrollChecker.mMode;
@@ -3297,10 +3304,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     }
                 }
                 mHasSendCancelEvent = false;
-                if (mVelocityTracker != null) {
-                    mVelocityTracker.recycle();
-                }
-                mVelocityTracker = null;
+                mVelocityTracker.clear();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
                 final int pointerIndex =
@@ -3313,25 +3317,20 @@ public class SmoothRefreshLayout extends ViewGroup
                     mIndicatorSetter.onFingerMove(ev.getX(newIndex), ev.getY(newIndex));
                 }
                 final int count = ev.getPointerCount();
-                if (mVelocityTracker != null) {
-                    mVelocityTracker.addMovement(ev);
-                    // Check the dot product of current velocities.
-                    // If the pointer that left was opposing another velocity vector, clear.
-                    mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
-                    final int upIndex = ev.getActionIndex();
-                    final int id1 = ev.getPointerId(upIndex);
-                    final float x1 = mVelocityTracker.getXVelocity(id1);
-                    final float y1 = mVelocityTracker.getYVelocity(id1);
-                    for (int i = 0; i < count; i++) {
-                        if (i == upIndex) continue;
-                        final int id2 = ev.getPointerId(i);
-                        final float x = x1 * mVelocityTracker.getXVelocity(id2);
-                        final float y = y1 * mVelocityTracker.getYVelocity(id2);
-                        final float dot = x + y;
-                        if (dot < 0) {
-                            mVelocityTracker.clear();
-                            break;
-                        }
+                mVelocityTracker.computeCurrentVelocity(1000, mMaximumFlingVelocity);
+                final int upIndex = ev.getActionIndex();
+                final int id1 = ev.getPointerId(upIndex);
+                final float x1 = mVelocityTracker.getXVelocity(id1);
+                final float y1 = mVelocityTracker.getYVelocity(id1);
+                for (int i = 0; i < count; i++) {
+                    if (i == upIndex) continue;
+                    final int id2 = ev.getPointerId(i);
+                    final float x = x1 * mVelocityTracker.getXVelocity(id2);
+                    final float y = y1 * mVelocityTracker.getYVelocity(id2);
+                    final float dot = x + y;
+                    if (dot < 0) {
+                        mVelocityTracker.clear();
+                        break;
                     }
                 }
                 break;
@@ -4414,22 +4413,6 @@ public class SmoothRefreshLayout extends ViewGroup
         }
         return null;
     }
-
-    @IntDef({MOVING_CONTENT, MOVING_FOOTER, MOVING_HEADER})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface MovingStatus {}
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({ACTION_NOTIFY, ACTION_AT_ONCE, ACTION_NOTHING})
-    @interface Action {}
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({MODE_DEFAULT, MODE_SCALE})
-    @interface Mode {}
-
-    @IntDef({LayoutManager.HORIZONTAL, LayoutManager.VERTICAL})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Orientation {}
 
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()}

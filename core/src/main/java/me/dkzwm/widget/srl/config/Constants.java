@@ -22,48 +22,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package me.dkzwm.widget.srl.indicator;
-
-import me.dkzwm.widget.srl.annotation.MovingStatus;
+package me.dkzwm.widget.srl.config;
 
 /** @author dkzwm */
-public interface IIndicatorSetter {
+public interface Constants {
+    int MODE_DEFAULT = 0;
+    int MODE_SCALE = 1;
 
-    void setRatioToKeepFooter(float ratio);
+    int ACTION_NOTIFY = 0;
+    int ACTION_AT_ONCE = 1;
+    int ACTION_NOTHING = 2;
 
-    void setRatioToKeepHeader(float ratio);
+    int MOVING_CONTENT = 0;
+    int MOVING_FOOTER = 1;
+    int MOVING_HEADER = 2;
 
-    void setFooterHeight(int height);
-
-    void setHeaderHeight(int height);
-
-    void onFingerDown(float x, float y);
-
-    void onFingerMove(float x, float y);
-
-    void onFingerUp();
-
-    void setRatioOfFooterToRefresh(float ratio);
-
-    void setRatioOfHeaderToRefresh(float ratio);
-
-    void setRatioToRefresh(float ratio);
-
-    void setResistanceOfFooter(float resistance);
-
-    void setResistance(float resistance);
-
-    void setResistanceOfHeader(float resistance);
-
-    void setCurrentPos(int current);
-
-    void setMovingStatus(@MovingStatus int direction);
-
-    void setMaxMoveRatio(float ratio);
-
-    void setMaxMoveRatioOfHeader(float ratio);
-
-    void setMaxMoveRatioOfFooter(float ratio);
-
-    void setOffsetCalculator(IIndicator.IOffsetCalculator calculator);
+    byte SCROLLER_MODE_NONE = -1;
+    byte SCROLLER_MODE_PRE_FLING = 0;
+    byte SCROLLER_MODE_CALC_FLING = 1;
+    byte SCROLLER_MODE_FLING = 2;
+    byte SCROLLER_MODE_FLING_BACK = 3;
+    byte SCROLLER_MODE_SPRING = 4;
+    byte SCROLLER_MODE_SPRING_BACK = 5;
 }

@@ -24,6 +24,11 @@
  */
 package me.dkzwm.widget.srl;
 
+import static me.dkzwm.widget.srl.config.Constants.ACTION_AT_ONCE;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTHING;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.SystemClock;
@@ -35,6 +40,8 @@ import android.view.ViewGroup;
 import androidx.annotation.CallSuper;
 import androidx.annotation.FloatRange;
 import androidx.annotation.IntRange;
+import me.dkzwm.widget.srl.annotation.Action;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.ext.twolevel.R;
 import me.dkzwm.widget.srl.extra.TwoLevelRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultTwoLevelIndicator;
@@ -333,8 +340,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      *
      * <p>自动刷新，`action`触发刷新的动作，`smooth`滚动到触发位置
      *
-     * @param action Auto Two-Level refresh use action.{@link #ACTION_NOTIFY}, {@link
-     *     #ACTION_AT_ONCE},{@link #ACTION_NOTHING}
+     * @param action Auto Two-Level refresh use action.{@link Constants#ACTION_NOTIFY}, {@link
+     *     Constants#ACTION_AT_ONCE},{@link Constants#ACTION_NOTHING}
      * @param smoothScroll Auto Two-Level refresh use smooth scrolling
      */
     public boolean autoTwoLevelRefresh(@Action int action, boolean smoothScroll) {

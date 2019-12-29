@@ -1,5 +1,7 @@
 package me.dkzwm.widget.srl.sample.ui;
 
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -60,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 new Runnable() {
                     @Override
                     public void run() {
-                        mRefreshLayout.autoRefresh(SmoothRefreshLayout.ACTION_NOTIFY, true);
+                        mRefreshLayout.autoRefresh(ACTION_NOTIFY, true);
                     }
                 },
                 100);

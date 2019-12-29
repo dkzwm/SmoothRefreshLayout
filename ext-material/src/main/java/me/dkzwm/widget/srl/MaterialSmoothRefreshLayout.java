@@ -24,6 +24,9 @@
  */
 package me.dkzwm.widget.srl;
 
+import static me.dkzwm.widget.srl.config.Constants.MOVING_CONTENT;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;

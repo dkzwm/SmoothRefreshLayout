@@ -31,12 +31,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.annotation.Orientation;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 
 public class HRefreshLayoutManager extends VRefreshLayoutManager {
     @Override
-    @SmoothRefreshLayout.Orientation
+    @Orientation
     public int getOrientation() {
         return SmoothRefreshLayout.LayoutManager.HORIZONTAL;
     }

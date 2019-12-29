@@ -31,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.annotation.Orientation;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.util.ViewCatcherUtil;
@@ -39,7 +40,7 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
     protected int mContentEnd;
 
     @Override
-    @SmoothRefreshLayout.Orientation
+    @Orientation
     public int getOrientation() {
         return SmoothRefreshLayout.LayoutManager.VERTICAL;
     }

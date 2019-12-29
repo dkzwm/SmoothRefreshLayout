@@ -26,7 +26,8 @@ package me.dkzwm.widget.srl.indicator;
 
 import android.util.Log;
 import androidx.annotation.NonNull;
-import me.dkzwm.widget.srl.SmoothRefreshLayout;
+import me.dkzwm.widget.srl.annotation.MovingStatus;
+import me.dkzwm.widget.srl.config.Constants;
 
 /** @author dkzwm */
 public class DefaultIndicator implements IIndicator, IIndicatorSetter {
@@ -42,7 +43,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     int mPressedPos = 0;
     float mOffset;
     boolean mTouched = false;
-    @SmoothRefreshLayout.MovingStatus private int mStatus = SmoothRefreshLayout.MOVING_CONTENT;
+    @MovingStatus private int mStatus = Constants.MOVING_CONTENT;
     private float mResistanceHeader = DEFAULT_RESISTANCE;
     private float mResistanceFooter = DEFAULT_RESISTANCE;
     private int mOffsetToRefresh = 0;
@@ -153,7 +154,7 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
     }
 
     @Override
-    public void setMovingStatus(@SmoothRefreshLayout.MovingStatus int status) {
+    public void setMovingStatus(@MovingStatus int status) {
         mStatus = status;
     }
 
@@ -343,9 +344,9 @@ public class DefaultIndicator implements IIndicator, IIndicatorSetter {
         if (mOffsetCalculator != null) {
             mOffset = mOffsetCalculator.calculate(mStatus, mCurrentPos, offset);
         } else {
-            if (mStatus == SmoothRefreshLayout.MOVING_HEADER) {
+            if (mStatus == Constants.MOVING_HEADER) {
                 mOffset = offset / mResistanceHeader;
-            } else if (mStatus == SmoothRefreshLayout.MOVING_FOOTER) {
+            } else if (mStatus == Constants.MOVING_FOOTER) {
                 mOffset = offset / mResistanceFooter;
             } else {
                 if (offset > 0) {
