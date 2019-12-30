@@ -38,6 +38,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.InputDevice;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -3666,20 +3667,12 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, "sendCancelEvent()");
         }
-        final MotionEvent last;
-        if (event == null) {
-            last = mLastMoveEvent;
-        } else {
-            last = event;
-        }
+        final MotionEvent last = event == null ? mLastMoveEvent : event;
+        final long now = SystemClock.uptimeMillis();
         final MotionEvent ev =
                 MotionEvent.obtain(
-                        last.getDownTime(),
-                        last.getEventTime(),
-                        MotionEvent.ACTION_CANCEL,
-                        last.getX(),
-                        last.getY(),
-                        last.getMetaState());
+                        now, now, MotionEvent.ACTION_CANCEL, last.getX(), last.getY(), 0);
+        ev.setSource(InputDevice.SOURCE_TOUCHSCREEN);
         mHasSendCancelEvent = true;
         mHasSendDownEvent = false;
         super.dispatchTouchEvent(ev);
@@ -3693,35 +3686,27 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, "sendDownEvent()");
         }
-        final MotionEvent last;
-        if (event == null) {
-            last = mLastMoveEvent;
-        } else {
-            last = event;
-        }
+        final MotionEvent last = event == null ? mLastMoveEvent : event;
+        final long now = SystemClock.uptimeMillis();
         final float[] rawOffsets = mIndicator.getRawOffsets();
-        final MotionEvent downEvent =
+        final MotionEvent downEv =
                 MotionEvent.obtain(
-                        last.getDownTime(),
-                        last.getEventTime(),
+                        now,
+                        now,
                         MotionEvent.ACTION_DOWN,
                         last.getX() - rawOffsets[0],
                         last.getY() - rawOffsets[1],
-                        last.getMetaState());
-        super.dispatchTouchEvent(downEvent);
-        downEvent.recycle();
-        final MotionEvent moveEvent =
-                MotionEvent.obtain(
-                        last.getDownTime(),
-                        last.getEventTime(),
-                        MotionEvent.ACTION_MOVE,
-                        last.getX(),
-                        last.getY(),
-                        last.getMetaState());
+                        0);
+        downEv.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+        super.dispatchTouchEvent(downEv);
+        downEv.recycle();
+        final MotionEvent moveEv =
+                MotionEvent.obtain(now, now, MotionEvent.ACTION_MOVE, last.getX(), last.getY(), 0);
+        moveEv.setSource(InputDevice.SOURCE_TOUCHSCREEN);
         mHasSendCancelEvent = false;
         mHasSendDownEvent = true;
-        super.dispatchTouchEvent(moveEvent);
-        moveEvent.recycle();
+        super.dispatchTouchEvent(moveEv);
+        moveEv.recycle();
     }
 
     protected void notifyFingerUp() {
