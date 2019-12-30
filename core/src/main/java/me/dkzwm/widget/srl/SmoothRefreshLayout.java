@@ -24,20 +24,7 @@
  */
 package me.dkzwm.widget.srl;
 
-import static me.dkzwm.widget.srl.config.Constants.ACTION_AT_ONCE;
-import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTHING;
-import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
-import static me.dkzwm.widget.srl.config.Constants.MODE_DEFAULT;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_CONTENT;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_FOOTER;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_CALC_FLING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING_BACK;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_NONE;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_PRE_FLING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING_BACK;
+import static me.dkzwm.widget.srl.config.Constants.*;
 
 import android.content.Context;
 import android.content.res.TypedArray;
