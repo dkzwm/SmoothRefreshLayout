@@ -55,8 +55,7 @@ public class HorizontalScrollCompat {
     }
 
     public static boolean canScaleInternal(View view) {
-        return (view instanceof HorizontalScrollView && ((ViewGroup) view).getChildCount() > 0)
-                || (ViewCatcherUtil.isViewPager(view) && ((ViewGroup) view).getChildCount() > 0);
+        return (view instanceof HorizontalScrollView && ((ViewGroup) view).getChildCount() > 0);
     }
 
     public static boolean canAutoLoadMore(View view) {
