@@ -24,11 +24,6 @@
  */
 package me.dkzwm.widget.srl;
 
-import static me.dkzwm.widget.srl.config.Constants.ACTION_AT_ONCE;
-import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTHING;
-import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.SystemClock;
@@ -281,7 +276,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mNeedFilterRefreshEvent = true;
         mDurationToStayAtHint = stayDuration;
         if (mHeaderView != null) mHeaderView.onRefreshPrepare(this);
-        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         mAutoHintCanBeInterrupted = canBeInterrupted;
@@ -303,7 +298,7 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * <p>自动二级刷新并立即触发刷新回调
      */
     public boolean autoTwoLevelRefresh() {
-        return autoTwoLevelRefresh(ACTION_NOTIFY, true);
+        return autoTwoLevelRefresh(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -314,7 +309,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param atOnce Auto Two-Level refresh at once
      */
     public boolean autoTwoLevelRefresh(boolean atOnce) {
-        return autoTwoLevelRefresh(atOnce ? ACTION_AT_ONCE : ACTION_NOTIFY, true);
+        return autoTwoLevelRefresh(
+                atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -327,7 +323,8 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
      * @param smoothScroll Auto Two-Level refresh use smooth scrolling
      */
     public boolean autoTwoLevelRefresh(boolean atOnce, boolean smoothScroll) {
-        return autoTwoLevelRefresh(atOnce ? ACTION_AT_ONCE : ACTION_NOTIFY, smoothScroll);
+        return autoTwoLevelRefresh(
+                atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
     }
 
     /**
@@ -358,13 +355,16 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
         mStatus = SR_STATUS_PREPARE;
         notifyStatusChanged(old, mStatus);
         if (mHeaderView != null) mHeaderView.onRefreshPrepare(this);
-        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mSubFlag |= FLAG_TRIGGERED_TWO_LEVEL_REFRESH;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         mAutomaticAction = action;
-        if (mIndicator.getHeaderHeight() <= 0) mAutomaticActionTriggered = false;
-        else scrollToTriggeredTwoLevelAutomatic();
+        if (mIndicator.getHeaderHeight() <= 0) {
+            mAutomaticActionTriggered = false;
+        } else {
+            scrollToTriggeredTwoLevelAutomatic();
+        }
         return true;
     }
 
@@ -540,13 +540,13 @@ public class TwoLevelSmoothRefreshLayout extends SmoothRefreshLayout {
 
     private void scrollToTriggeredTwoLevelAutomatic() {
         switch (mAutomaticAction) {
-            case ACTION_NOTHING:
+            case Constants.ACTION_NOTHING:
                 triggeredRefresh(false);
                 break;
-            case ACTION_NOTIFY:
+            case Constants.ACTION_NOTIFY:
                 mFlag |= FLAG_AUTO_REFRESH;
                 break;
-            case ACTION_AT_ONCE:
+            case Constants.ACTION_AT_ONCE:
                 triggeredRefresh(true);
                 break;
         }

@@ -24,21 +24,6 @@
  */
 package me.dkzwm.widget.srl;
 
-import static me.dkzwm.widget.srl.config.Constants.ACTION_AT_ONCE;
-import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTHING;
-import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
-import static me.dkzwm.widget.srl.config.Constants.MODE_DEFAULT;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_CONTENT;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_FOOTER;
-import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_CALC_FLING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING_BACK;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_NONE;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_PRE_FLING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING_BACK;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -78,6 +63,7 @@ import java.util.List;
 import me.dkzwm.widget.srl.annotation.Action;
 import me.dkzwm.widget.srl.annotation.Mode;
 import me.dkzwm.widget.srl.annotation.Orientation;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.IIndicator;
@@ -161,7 +147,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected byte mStatus = SR_STATUS_INIT;
     protected byte mViewStatus = SR_VIEW_STATUS_INIT;
     protected long mLoadingStartTime = 0;
-    protected int mAutomaticAction = ACTION_NOTIFY;
+    protected int mAutomaticAction = Constants.ACTION_NOTIFY;
     protected int mLastNestedType = ViewCompat.TYPE_NON_TOUCH;
     protected int mDurationToCloseHeader = 350;
     protected int mDurationToCloseFooter = 350;
@@ -272,7 +258,7 @@ public class SmoothRefreshLayout extends ViewGroup
         TypedArray arr =
                 context.obtainStyledAttributes(
                         attrs, R.styleable.SmoothRefreshLayout, defStyleAttr, defStyleRes);
-        int mode = MODE_DEFAULT;
+        int mode = Constants.MODE_DEFAULT;
         if (arr != null) {
             try {
                 mContentResId =
@@ -880,7 +866,7 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public void setMode(@Mode int mode) {
-        if (mode == MODE_DEFAULT) {
+        if (mode == Constants.MODE_DEFAULT) {
             if (mLayoutManager instanceof VRefreshLayoutManager) {
                 return;
             }
@@ -1234,7 +1220,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * <p>自动刷新并立即触发刷新回调
      */
     public boolean autoRefresh() {
-        return autoRefresh(ACTION_NOTIFY, true);
+        return autoRefresh(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1245,7 +1231,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param atOnce Auto refresh at once
      */
     public boolean autoRefresh(boolean atOnce) {
-        return autoRefresh(atOnce ? ACTION_AT_ONCE : ACTION_NOTIFY, true);
+        return autoRefresh(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1258,7 +1244,8 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     public boolean autoRefresh(boolean atOnce, boolean smoothScroll) {
-        return autoRefresh(atOnce ? ACTION_AT_ONCE : ACTION_NOTIFY, smoothScroll);
+        return autoRefresh(
+                atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
     }
 
     /**
@@ -1271,10 +1258,8 @@ public class SmoothRefreshLayout extends ViewGroup
      *
      * <p>自动刷新，`action`触发刷新的动作，`smoothScroll`滚动到触发位置
      *
-     * @param action Auto refresh use action .{@link
-     *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTIFY}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#ACTION_AT_ONCE}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTHING}
+     * @param action Auto refresh use action .{@link Constants#ACTION_NOTIFY}, {@link
+     *     Constants#ACTION_AT_ONCE}, {@link Constants#ACTION_NOTHING}
      * @param smoothScroll Auto refresh use smooth scrolling
      */
     public boolean autoRefresh(@Action int action, boolean smoothScroll) {
@@ -1293,7 +1278,7 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mHeaderView != null) {
             mHeaderView.onRefreshPrepare(this);
         }
-        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         mAutomaticAction = action;
@@ -1311,7 +1296,7 @@ public class SmoothRefreshLayout extends ViewGroup
             return false;
         }
         removeCallbacks(mDelayToRefreshComplete);
-        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         triggeredRefresh(true);
         return true;
     }
@@ -1322,7 +1307,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * <p>自动加载更多，并立即触发刷新回调
      */
     public boolean autoLoadMore() {
-        return autoLoadMore(ACTION_NOTIFY, true);
+        return autoLoadMore(Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1333,7 +1318,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param atOnce Auto load more at once
      */
     public boolean autoLoadMore(boolean atOnce) {
-        return autoLoadMore(atOnce ? ACTION_AT_ONCE : ACTION_NOTIFY, true);
+        return autoLoadMore(atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, true);
     }
 
     /**
@@ -1346,7 +1331,8 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param smoothScroll Auto load more use smooth scrolling
      */
     public boolean autoLoadMore(boolean atOnce, boolean smoothScroll) {
-        return autoLoadMore(atOnce ? ACTION_AT_ONCE : ACTION_NOTIFY, smoothScroll);
+        return autoLoadMore(
+                atOnce ? Constants.ACTION_AT_ONCE : Constants.ACTION_NOTIFY, smoothScroll);
     }
 
     /**
@@ -1381,7 +1367,7 @@ public class SmoothRefreshLayout extends ViewGroup
         if (mFooterView != null) {
             mFooterView.onRefreshPrepare(this);
         }
-        mIndicatorSetter.setMovingStatus(MOVING_FOOTER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
         mAutomaticActionUseSmoothScroll = smoothScroll;
         if (mIndicator.getFooterHeight() <= 0) {
@@ -1398,7 +1384,7 @@ public class SmoothRefreshLayout extends ViewGroup
             return false;
         }
         removeCallbacks(mDelayToRefreshComplete);
-        mIndicatorSetter.setMovingStatus(MOVING_FOOTER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         triggeredLoadMore(true);
         return true;
     }
@@ -2423,13 +2409,10 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * Get the ScrollChecker current mode.
      *
-     * @return the mode {@link me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_NONE}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_PRE_FLING}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_FLING}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_CALC_FLING}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_FLING_BACK}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_SPRING}, {@link
-     *     me.dkzwm.widget.srl.config.Constants#SCROLLER_MODE_SPRING_BACK}.
+     * @return the mode {@link Constants#SCROLLER_MODE_NONE}, {@link
+     *     Constants#SCROLLER_MODE_PRE_FLING}, {@link Constants#SCROLLER_MODE_FLING}, {@link
+     *     Constants#SCROLLER_MODE_CALC_FLING}, {@link Constants#SCROLLER_MODE_FLING_BACK}, {@link
+     *     Constants#SCROLLER_MODE_SPRING}, {@link Constants#SCROLLER_MODE_SPRING_BACK}.
      */
     public byte getScrollMode() {
         return mScrollChecker.mMode;
@@ -3580,17 +3563,17 @@ public class SmoothRefreshLayout extends ViewGroup
             Log.d(TAG, "scrollToTriggeredAutomatic()");
         }
         switch (mAutomaticAction) {
-            case ACTION_NOTHING:
+            case Constants.ACTION_NOTHING:
                 if (isRefresh) {
                     triggeredRefresh(false);
                 } else {
                     triggeredLoadMore(false);
                 }
                 break;
-            case ACTION_NOTIFY:
+            case Constants.ACTION_NOTIFY:
                 mFlag |= FLAG_AUTO_REFRESH;
                 break;
-            case ACTION_AT_ONCE:
+            case Constants.ACTION_AT_ONCE:
                 if (isRefresh) {
                     triggeredRefresh(true);
                 } else {
@@ -3903,7 +3886,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 && isEnabledOldTouchHandling()
                 && mIndicator.hasTouched()
                 && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
-        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
         if (mHeaderView != null) {
             if (delta > 0) {
                 final float maxHeaderDistance = mIndicator.getCanMoveTheMaxDistanceOfHeader();
@@ -3958,7 +3941,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 && isEnabledOldTouchHandling()
                 && mIndicator.hasTouched()
                 && !mIndicator.isAlreadyHere(IIndicator.START_POS)) sendCancelEvent(null);
-        mIndicatorSetter.setMovingStatus(MOVING_FOOTER);
+        mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
         if (mFooterView != null) {
             if (delta < 0) {
                 final float maxFooterDistance = mIndicator.getCanMoveTheMaxDistanceOfFooter();
@@ -4149,15 +4132,15 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public boolean isMovingHeader() {
-        return mIndicator.getMovingStatus() == MOVING_HEADER;
+        return mIndicator.getMovingStatus() == Constants.MOVING_HEADER;
     }
 
     public boolean isMovingContent() {
-        return mIndicator.getMovingStatus() == MOVING_CONTENT;
+        return mIndicator.getMovingStatus() == Constants.MOVING_CONTENT;
     }
 
     public boolean isMovingFooter() {
-        return mIndicator.getMovingStatus() == MOVING_FOOTER;
+        return mIndicator.getMovingStatus() == Constants.MOVING_FOOTER;
     }
 
     public boolean isHeaderInProcessing() {
@@ -4174,7 +4157,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 Log.d(TAG, "tryToDispatchNestedFling()");
             }
             final int velocity = (int) (mScrollChecker.getCurrVelocity() + 0.5f);
-            mIndicatorSetter.setMovingStatus(MOVING_CONTENT);
+            mIndicatorSetter.setMovingStatus(Constants.MOVING_CONTENT);
             if (isEnabledOverScroll()
                     && !(isDisabledLoadMoreWhenContentNotFull()
                             && !isNotYetInEdgeCannotMoveHeader()
@@ -4364,7 +4347,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
     protected void tryToResetMovingStatus() {
         if (mIndicator.isAlreadyHere(IIndicator.START_POS) && !isMovingContent()) {
-            mIndicatorSetter.setMovingStatus(MOVING_CONTENT);
+            mIndicatorSetter.setMovingStatus(Constants.MOVING_CONTENT);
             notifyUIPositionChanged();
         }
     }
@@ -4769,7 +4752,7 @@ public class SmoothRefreshLayout extends ViewGroup
         int mLastStart;
         int mLastTo;
         int mDuration;
-        byte mMode = SCROLLER_MODE_NONE;
+        byte mMode = Constants.SCROLLER_MODE_NONE;
         float mVelocity;
         boolean mIsScrolling = false;
         private int[] mCachedPair;
@@ -4791,7 +4774,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
         @Override
         public void run() {
-            if (mMode == SCROLLER_MODE_NONE || isCalcFling()) {
+            if (mMode == Constants.SCROLLER_MODE_NONE || isCalcFling()) {
                 return;
             }
             boolean finished = !mScroller.computeScrollOffset() && mScroller.getCurrY() == mLastY;
@@ -4827,18 +4810,18 @@ public class SmoothRefreshLayout extends ViewGroup
                 tryToDispatchNestedFling();
             } else {
                 switch (mMode) {
-                    case SCROLLER_MODE_SPRING:
-                    case SCROLLER_MODE_FLING_BACK:
-                    case SCROLLER_MODE_SPRING_BACK:
+                    case Constants.SCROLLER_MODE_SPRING:
+                    case Constants.SCROLLER_MODE_FLING_BACK:
+                    case Constants.SCROLLER_MODE_SPRING_BACK:
                         stop();
                         if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
                             onRelease();
                         }
                         break;
-                    case SCROLLER_MODE_PRE_FLING:
-                    case SCROLLER_MODE_FLING:
+                    case Constants.SCROLLER_MODE_PRE_FLING:
+                    case Constants.SCROLLER_MODE_FLING:
                         stop();
-                        mMode = SCROLLER_MODE_FLING_BACK;
+                        mMode = Constants.SCROLLER_MODE_FLING_BACK;
                         if (isEnabledPerformFreshWhenFling()
                                 || isRefreshing()
                                 || isLoadingMore()
@@ -4854,27 +4837,27 @@ public class SmoothRefreshLayout extends ViewGroup
         }
 
         boolean isPreFling() {
-            return mMode == SCROLLER_MODE_PRE_FLING;
+            return mMode == Constants.SCROLLER_MODE_PRE_FLING;
         }
 
         boolean isFling() {
-            return mMode == SCROLLER_MODE_FLING;
+            return mMode == Constants.SCROLLER_MODE_FLING;
         }
 
         boolean isFlingBack() {
-            return mMode == SCROLLER_MODE_FLING_BACK;
+            return mMode == Constants.SCROLLER_MODE_FLING_BACK;
         }
 
         boolean isSpringBack() {
-            return mMode == SCROLLER_MODE_SPRING_BACK;
+            return mMode == Constants.SCROLLER_MODE_SPRING_BACK;
         }
 
         boolean isSpring() {
-            return mMode == SCROLLER_MODE_SPRING;
+            return mMode == Constants.SCROLLER_MODE_SPRING;
         }
 
         boolean isCalcFling() {
-            return mMode == SCROLLER_MODE_CALC_FLING;
+            return mMode == Constants.SCROLLER_MODE_CALC_FLING;
         }
 
         float getCurrVelocity() {
@@ -4910,7 +4893,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
         void startPreFling(float v) {
             stop();
-            mMode = SCROLLER_MODE_PRE_FLING;
+            mMode = Constants.SCROLLER_MODE_PRE_FLING;
             setInterpolator(sFlingInterpolator);
             mVelocity = v;
             mScroller.fling(
@@ -4930,7 +4913,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
         void startFling(float v) {
             stop();
-            mMode = SCROLLER_MODE_CALC_FLING;
+            mMode = Constants.SCROLLER_MODE_CALC_FLING;
             setInterpolator(sFlingInterpolator);
             mVelocity = v;
             mScroller.fling(
@@ -4952,15 +4935,15 @@ public class SmoothRefreshLayout extends ViewGroup
             if (to > curPos) {
                 stop();
                 setInterpolator(mSpringInterpolator);
-                mMode = SCROLLER_MODE_SPRING;
+                mMode = Constants.SCROLLER_MODE_SPRING;
             } else if (to < curPos) {
                 if (!mScrollChecker.isFlingBack()) {
                     stop();
-                    mMode = SCROLLER_MODE_SPRING_BACK;
+                    mMode = Constants.SCROLLER_MODE_SPRING_BACK;
                 }
                 setInterpolator(mSpringBackInterpolator);
             } else {
-                mMode = SCROLLER_MODE_NONE;
+                mMode = Constants.SCROLLER_MODE_NONE;
                 return;
             }
             mLastStart = curPos;
@@ -4996,7 +4979,7 @@ public class SmoothRefreshLayout extends ViewGroup
                             && !isNotYetInEdgeCannotMoveHeader()) {
                         final float velocity = Math.abs(getCurrVelocity());
                         stop();
-                        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+                        mIndicatorSetter.setMovingStatus(Constants.MOVING_HEADER);
                         final int[] result = computeScroll(velocity);
                         if (getHeaderHeight() > 0 && isEnabledAutoRefresh()) {
                             startBounce(
@@ -5013,7 +4996,7 @@ public class SmoothRefreshLayout extends ViewGroup
                             && !isNotYetInEdgeCannotMoveFooter()) {
                         final float velocity = Math.abs(getCurrVelocity());
                         stop();
-                        mIndicatorSetter.setMovingStatus(MOVING_FOOTER);
+                        mIndicatorSetter.setMovingStatus(Constants.MOVING_FOOTER);
                         final int[] result = computeScroll(velocity);
                         if (getFooterHeight() > 0
                                 && (isEnabledNoMoreData() || isEnabledAutoLoadMore())) {
@@ -5060,7 +5043,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
 
         void startBounce(int to, int duration) {
-            mMode = SCROLLER_MODE_FLING;
+            mMode = Constants.SCROLLER_MODE_FLING;
             setInterpolator(sSpringInterpolator);
             mLastStart = mIndicator.getCurrentPos();
             mLastTo = to;
@@ -5095,9 +5078,9 @@ public class SmoothRefreshLayout extends ViewGroup
             mInterpolator = interpolator;
             if (!mScroller.isFinished()) {
                 switch (mMode) {
-                    case SCROLLER_MODE_SPRING:
-                    case SCROLLER_MODE_FLING_BACK:
-                    case SCROLLER_MODE_SPRING_BACK:
+                    case Constants.SCROLLER_MODE_SPRING:
+                    case Constants.SCROLLER_MODE_FLING_BACK:
+                    case Constants.SCROLLER_MODE_SPRING_BACK:
                         mLastStart = mIndicator.getCurrentPos();
                         int distance = mLastTo - mLastStart;
                         int passed = mScroller.timePassed();
@@ -5106,8 +5089,8 @@ public class SmoothRefreshLayout extends ViewGroup
                         removeCallbacks(this);
                         ViewCompat.postOnAnimation(SmoothRefreshLayout.this, this);
                         break;
-                    case SCROLLER_MODE_PRE_FLING:
-                    case SCROLLER_MODE_CALC_FLING:
+                    case Constants.SCROLLER_MODE_PRE_FLING:
+                    case Constants.SCROLLER_MODE_CALC_FLING:
                         final float currentVelocity = getCurrVelocity();
                         mScroller = makeOrGetScroller(interpolator);
                         if (isCalcFling()) {
@@ -5126,15 +5109,15 @@ public class SmoothRefreshLayout extends ViewGroup
         }
 
         void stop() {
-            if (mMode != SCROLLER_MODE_NONE) {
+            if (mMode != Constants.SCROLLER_MODE_NONE) {
                 if (sDebug) {
                     Log.d(TAG, "ScrollChecker: stop()");
                 }
                 if (mNestedScrolling && isCalcFling()) {
-                    mMode = SCROLLER_MODE_NONE;
+                    mMode = Constants.SCROLLER_MODE_NONE;
                     stopNestedScroll(ViewCompat.TYPE_NON_TOUCH);
                 } else {
-                    mMode = SCROLLER_MODE_NONE;
+                    mMode = Constants.SCROLLER_MODE_NONE;
                 }
                 mAutomaticActionUseSmoothScroll = false;
                 mIsScrolling = false;

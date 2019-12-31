@@ -24,8 +24,6 @@
  */
 package me.dkzwm.widget.srl;
 
-import static me.dkzwm.widget.srl.config.Constants.MODE_DEFAULT;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -33,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.core.view.ViewCompat;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
 import me.dkzwm.widget.srl.manager.HRefreshLayoutManager;
@@ -68,7 +67,7 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
 
     @Override
     public void setMode(int mode) {
-        if (mode == MODE_DEFAULT) {
+        if (mode == Constants.MODE_DEFAULT) {
             if (mLayoutManager instanceof HRefreshLayoutManager) {
                 return;
             }

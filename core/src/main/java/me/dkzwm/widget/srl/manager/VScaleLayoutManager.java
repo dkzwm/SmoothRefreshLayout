@@ -24,9 +24,6 @@
  */
 package me.dkzwm.widget.srl.manager;
 
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING_BACK;
-import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING_BACK;
-
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.annotation.Orientation;
+import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 import me.dkzwm.widget.srl.indicator.IIndicator;
 import me.dkzwm.widget.srl.util.ScrollCompat;
@@ -57,8 +55,8 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
 
     @Override
     public boolean isNeedFilterOverTop(float delta) {
-        return mLayout.getScrollMode() != SCROLLER_MODE_SPRING_BACK
-                && mLayout.getScrollMode() != SCROLLER_MODE_FLING_BACK;
+        return mLayout.getScrollMode() != Constants.SCROLLER_MODE_SPRING_BACK
+                && mLayout.getScrollMode() != Constants.SCROLLER_MODE_FLING_BACK;
     }
 
     @Override
