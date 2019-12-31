@@ -89,7 +89,9 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
         mShouldShowLastUpdate = true;
         tryUpdateLastUpdateTime();
-        if (!TextUtils.isEmpty(mLastUpdateTimeKey)) mLastUpdateTimeUpdater.start();
+        if (!TextUtils.isEmpty(mLastUpdateTimeKey)) {
+            mLastUpdateTimeUpdater.start();
+        }
         mProgressBar.setVisibility(INVISIBLE);
         mArrowImageView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
@@ -120,7 +122,11 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
             mTitleTextView.setText(mRefreshSuccessfulRes);
             mLastUpdateTime = System.currentTimeMillis();
             ClassicConfig.updateTime(getContext(), mLastUpdateTimeKey, mLastUpdateTime);
-        } else mTitleTextView.setText(mRefreshFailRes);
+        } else {
+            mTitleTextView.setText(mRefreshFailRes);
+        }
+        mLastUpdateTimeUpdater.stop();
+        mLastUpdateTextView.setVisibility(GONE);
     }
 
     @Override

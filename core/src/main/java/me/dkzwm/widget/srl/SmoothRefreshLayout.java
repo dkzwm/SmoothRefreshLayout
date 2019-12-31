@@ -24,7 +24,20 @@
  */
 package me.dkzwm.widget.srl;
 
-import static me.dkzwm.widget.srl.config.Constants.*;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_AT_ONCE;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTHING;
+import static me.dkzwm.widget.srl.config.Constants.ACTION_NOTIFY;
+import static me.dkzwm.widget.srl.config.Constants.MODE_DEFAULT;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_CONTENT;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_FOOTER;
+import static me.dkzwm.widget.srl.config.Constants.MOVING_HEADER;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_CALC_FLING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_FLING_BACK;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_NONE;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_PRE_FLING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING;
+import static me.dkzwm.widget.srl.config.Constants.SCROLLER_MODE_SPRING_BACK;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -1256,7 +1269,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * refreshing be later If @param smooth has been set to true. Auto perform refresh will using
      * smooth scrolling.
      *
-     * <p>自动刷新，`action`触发刷新的动作，`smooth`滚动到触发位置
+     * <p>自动刷新，`action`触发刷新的动作，`smoothScroll`滚动到触发位置
      *
      * @param action Auto refresh use action .{@link
      *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTIFY}, {@link
@@ -1289,6 +1302,17 @@ public class SmoothRefreshLayout extends ViewGroup
         } else {
             scrollToTriggeredAutomatic(true);
         }
+        return true;
+    }
+
+    /** Trigger refresh action directly */
+    public boolean forceRefresh() {
+        if (mIndicator.getHeaderHeight() <= 0 || isDisabledPerformRefresh()) {
+            return false;
+        }
+        removeCallbacks(mDelayToRefreshComplete);
+        mIndicatorSetter.setMovingStatus(MOVING_HEADER);
+        triggeredRefresh(true);
         return true;
     }
 
@@ -1333,7 +1357,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * refreshing be later If @param smooth has been set to true. Auto perform load more will using
      * smooth scrolling.
      *
-     * <p>自动加载更多，`action`触发加载更多的动作，`smooth`滚动到触发位置
+     * <p>自动加载更多，`action`触发加载更多的动作，`smoothScroll`滚动到触发位置
      *
      * @param action Auto load more use action.{@link
      *     me.dkzwm.widget.srl.config.Constants#ACTION_NOTIFY}, {@link
@@ -1365,6 +1389,17 @@ public class SmoothRefreshLayout extends ViewGroup
         } else {
             scrollToTriggeredAutomatic(false);
         }
+        return true;
+    }
+
+    /** Trigger load more action directly */
+    public boolean forceLoadMore() {
+        if (mIndicator.getFooterHeight() <= 0 || isDisabledPerformLoadMore()) {
+            return false;
+        }
+        removeCallbacks(mDelayToRefreshComplete);
+        mIndicatorSetter.setMovingStatus(MOVING_FOOTER);
+        triggeredLoadMore(true);
         return true;
     }
 
@@ -4291,7 +4326,14 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, "triggeredRefresh()");
         }
-        final byte old = mStatus;
+        byte old = mStatus;
+        if (old != SR_STATUS_PREPARE) {
+            notifyStatusChanged(old, SR_STATUS_PREPARE);
+            old = SR_STATUS_PREPARE;
+            if (mHeaderView != null) {
+                mHeaderView.onRefreshPrepare(this);
+            }
+        }
         mStatus = SR_STATUS_REFRESHING;
         notifyStatusChanged(old, mStatus);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
@@ -4304,7 +4346,14 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, "triggeredLoadMore()");
         }
-        final byte old = mStatus;
+        byte old = mStatus;
+        if (old != SR_STATUS_PREPARE) {
+            notifyStatusChanged(old, SR_STATUS_PREPARE);
+            old = SR_STATUS_PREPARE;
+            if (mFooterView != null) {
+                mFooterView.onRefreshPrepare(this);
+            }
+        }
         mStatus = SR_STATUS_LOADING_MORE;
         notifyStatusChanged(old, mStatus);
         mViewStatus = SR_VIEW_STATUS_FOOTER_IN_PROCESSING;

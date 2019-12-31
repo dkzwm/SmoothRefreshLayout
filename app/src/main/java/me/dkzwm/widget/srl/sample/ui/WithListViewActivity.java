@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import java.util.List;
@@ -48,10 +47,21 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_listView);
         mClassicHeader = findViewById(R.id.classicHeader_with_listView);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
+        mClassicHeader.setTitleTextColor(Color.WHITE);
+        mClassicHeader.setLastUpdateTextColor(Color.WHITE);
         mClassicFooter = findViewById(R.id.classicFooter_with_listView);
         mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
-        mClassicHeader.setTitleTextColor(Color.WHITE);
-        mClassicHeader.setLastUpdateTextColor(Color.GRAY);
+        mClassicFooter.setNoMoreDataRes(R.string.no_more_data_currently_click_to_reload);
+        mClassicFooter.setNoMoreDataClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mRefreshLayout.setEnableNoMoreData(false);
+                        mRefreshLayout.forceLoadMore();
+                    }
+                });
+        mClassicFooter.setTitleTextColor(Color.WHITE);
+        mClassicFooter.setLastUpdateTextColor(Color.WHITE);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnableOldTouchHandling(false);
         mRefreshLayout.setDisableLoadMore(false);
@@ -75,11 +85,6 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
 
                     @Override
                     public void onLoadingMore() {
-                        Toast.makeText(
-                                        WithListViewActivity.this,
-                                        R.string.has_been_triggered_to_load_more,
-                                        Toast.LENGTH_SHORT)
-                                .show();
                         mHandler.postDelayed(
                                 new Runnable() {
                                     @Override

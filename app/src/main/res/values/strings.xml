@@ -87,4 +87,6 @@
     <string name="open">Open</string>
     <string name="test_bottom_sheet_dialog">Test BottomSheetDialog</string>
     <string name="expand_or_collapse">expand/collapse</string>
+    <string name="no_more_data_currently_click_to_reload">No more data currently, click to
+        reload</string>
 </resources>

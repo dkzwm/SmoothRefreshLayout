@@ -46,6 +46,10 @@ public class LastUpdateTimeUpdater implements Runnable {
         if (mRefreshView != null) mRefreshView.post(this);
     }
 
+    public boolean isRunning() {
+        return mRunning;
+    }
+
     public void stop() {
         mRunning = false;
         if (mRefreshView != null) mRefreshView.removeCallbacks(this);

@@ -30,6 +30,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import androidx.annotation.StringRes;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.ext.classic.R;
@@ -47,6 +48,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
     @StringRes private int mLoadFailRes = R.string.sr_load_failed;
     @StringRes private int mReleaseToLoadRes = R.string.sr_release_to_load;
     @StringRes private int mNoMoreDataRes = R.string.sr_no_more_data;
+    private View.OnClickListener mNoMoreDataClickListener;
 
     public ClassicFooter(Context context) {
         this(context, null);
@@ -97,6 +99,10 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         mNoMoreDataRes = noMoreDataRes;
     }
 
+    public void setNoMoreDataClickListener(View.OnClickListener onClickListener) {
+        mNoMoreDataClickListener = onClickListener;
+    }
+
     @Override
     public int getType() {
         return TYPE_FOOTER;
@@ -106,6 +112,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
     public void onReset(SmoothRefreshLayout frame) {
         super.onReset(frame);
         mNoMoreDataChangedView = false;
+        mTitleTextView.setOnClickListener(null);
     }
 
     @Override
@@ -113,10 +120,13 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         mShouldShowLastUpdate = true;
         mNoMoreDataChangedView = false;
         tryUpdateLastUpdateTime();
-        if (TextUtils.isEmpty(mLastUpdateTimeKey)) mLastUpdateTimeUpdater.start();
+        if (!TextUtils.isEmpty(mLastUpdateTimeKey)) {
+            mLastUpdateTimeUpdater.start();
+        }
         mProgressBar.setVisibility(INVISIBLE);
         mArrowImageView.setVisibility(VISIBLE);
         mTitleTextView.setVisibility(VISIBLE);
+        mTitleTextView.setOnClickListener(null);
         if (frame.isEnabledPullToRefresh() && !frame.isDisabledPerformLoadMore()) {
             mTitleTextView.setText(mPullUpToLoadRes);
         } else {
@@ -148,9 +158,10 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         } else {
             mTitleTextView.setText(noMoreData ? mNoMoreDataRes : mLoadFailRes);
         }
+        mLastUpdateTimeUpdater.stop();
+        mLastUpdateTextView.setVisibility(GONE);
         if (noMoreData) {
-            mLastUpdateTimeUpdater.stop();
-            mLastUpdateTextView.setVisibility(GONE);
+            mTitleTextView.setOnClickListener(mNoMoreDataClickListener);
         }
     }
 
@@ -168,6 +179,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
                 mArrowImageView.clearAnimation();
                 mArrowImageView.setVisibility(GONE);
                 mTitleTextView.setText(mNoMoreDataRes);
+                mTitleTextView.setOnClickListener(mNoMoreDataClickListener);
                 mNoMoreDataChangedView = true;
             }
             return;
