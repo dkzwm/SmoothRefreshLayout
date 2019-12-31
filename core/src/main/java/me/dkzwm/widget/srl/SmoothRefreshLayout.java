@@ -842,8 +842,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * in it.You can call this method,set the listView as load more scroll target view. Load more
      * compat will try to make it smooth scrolling.
      *
-     * <p>设置加载更多时需要做滑动处理的视图。<br>
-     * 例如在SmoothRefreshLayout中有一个CoordinatorLayout,
+     * <p>设置加载更多时需要做滑动处理的视图。 例如在SmoothRefreshLayout中有一个CoordinatorLayout,
      * CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerVieW
      * 而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可
      *
@@ -853,6 +852,13 @@ public class SmoothRefreshLayout extends ViewGroup
         mScrollTargetView = view;
     }
 
+    /**
+     * Set custom LayoutManager
+     *
+     * <p>设置自定义布局管理器
+     *
+     * @param layoutManager The custom LayoutManager
+     */
     public void setLayoutManager(@NonNull LayoutManager layoutManager) {
         if (mLayoutManager != layoutManager) {
             if (mLayoutManager != null) {
@@ -865,6 +871,13 @@ public class SmoothRefreshLayout extends ViewGroup
         }
     }
 
+    /**
+     * Set the layout mode
+     *
+     * <p>设置模式，默认为刷新模式，可配置为拉伸模式
+     *
+     * @param mode The layout mode. {@link Constants#MODE_DEFAULT}, {@link Constants#MODE_SCALE}
+     */
     public void setMode(@Mode int mode) {
         if (mode == Constants.MODE_DEFAULT) {
             if (mLayoutManager instanceof VRefreshLayoutManager) {
@@ -1238,7 +1251,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * If @param atOnce has been set to true. Auto perform refresh at once. If @param smooth has
      * been set to true. Auto perform refresh will using smooth scrolling.
      *
-     * <p>自动刷新，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置
+     * <p>自动刷新，`atOnce`立即触发刷新回调，`smoothScroll`滚动到触发位置
      *
      * @param atOnce Auto refresh at once
      * @param smoothScroll Auto refresh use smooth scrolling
@@ -1290,7 +1303,11 @@ public class SmoothRefreshLayout extends ViewGroup
         return true;
     }
 
-    /** Trigger refresh action directly */
+    /**
+     * Trigger refresh action directly
+     *
+     * <p>强制直接触发刷新
+     */
     public boolean forceRefresh() {
         if (mIndicator.getHeaderHeight() <= 0 || isDisabledPerformRefresh()) {
             return false;
@@ -1325,7 +1342,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * If @param atOnce has been set to true. Auto perform load more at once. If @param smooth has
      * been set to true. Auto perform load more will using smooth scrolling.
      *
-     * <p>自动加载更多，`atOnce`立即触发刷新回调，`smooth`滚动到触发位置
+     * <p>自动加载更多，`atOnce`立即触发刷新回调，`smoothScroll`滚动到触发位置
      *
      * @param atOnce Auto load more at once
      * @param smoothScroll Auto load more use smooth scrolling
@@ -1378,7 +1395,11 @@ public class SmoothRefreshLayout extends ViewGroup
         return true;
     }
 
-    /** Trigger load more action directly */
+    /**
+     * Trigger load more action directly
+     *
+     * <p>强制直接触发加载更多
+     */
     public boolean forceLoadMore() {
         if (mIndicator.getFooterHeight() <= 0 || isDisabledPerformLoadMore()) {
             return false;
@@ -1527,7 +1548,7 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * Get the duration of Header return to the start position.
      *
-     * @return mDuration
+     * @return duration
      */
     public int getDurationToCloseHeader() {
         return mDurationToCloseHeader;
@@ -1547,7 +1568,7 @@ public class SmoothRefreshLayout extends ViewGroup
     /**
      * Get the duration of Footer return to the start position.
      *
-     * @return mDuration
+     * @return duration
      */
     public int getDurationToCloseFooter() {
         return mDurationToCloseFooter;
@@ -2353,7 +2374,13 @@ public class SmoothRefreshLayout extends ViewGroup
         mViewsZAxisNeedReset = true;
         addView(content, lp);
     }
-
+    /**
+     * Set the content view resource id.
+     *
+     * <p>设置内容视图
+     *
+     * @param id Content view resource id
+     */
     public void setContentResId(@IdRes int id) {
         if (id != mContentResId) {
             mContentResId = id;
