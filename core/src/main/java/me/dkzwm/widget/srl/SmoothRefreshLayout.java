@@ -1845,7 +1845,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public void setDisablePerformRefresh(boolean disable) {
         if (disable) {
             mFlag = mFlag | FLAG_DISABLE_PERFORM_REFRESH;
-            if (isRefreshing()) reset();
+            reset();
         } else {
             mFlag = mFlag & ~FLAG_DISABLE_PERFORM_REFRESH;
         }
@@ -1899,7 +1899,7 @@ public class SmoothRefreshLayout extends ViewGroup
     public void setDisablePerformLoadMore(boolean disable) {
         if (disable) {
             mFlag = mFlag | FLAG_DISABLE_PERFORM_LOAD_MORE;
-            if (isLoadingMore()) reset();
+            reset();
         } else {
             mFlag = mFlag & ~FLAG_DISABLE_PERFORM_LOAD_MORE;
         }
@@ -3084,33 +3084,33 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     protected void reset() {
-        if (isRefreshing() || isLoadingMore()) {
-            notifyUIRefreshComplete(false, true);
-        }
-        if (mHeaderView != null) {
-            mHeaderView.onReset(this);
-        }
-        if (mFooterView != null) {
-            mFooterView.onReset(this);
-        }
-        if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
-            mScrollChecker.scrollTo(IIndicator.START_POS, 0);
-        }
-        mScrollChecker.stop();
-        mScrollChecker.setInterpolator(mSpringInterpolator);
-        final byte old = mStatus;
-        mStatus = SR_STATUS_INIT;
-        notifyStatusChanged(old, mStatus);
-        mAutomaticActionTriggered = true;
-        if (mLayoutManager != null) {
+        if (mStatus != SR_STATUS_INIT) {
+            if (isRefreshing() || isLoadingMore()) {
+                notifyUIRefreshComplete(false, true);
+            }
+            if (mHeaderView != null) {
+                mHeaderView.onReset(this);
+            }
+            if (mFooterView != null) {
+                mFooterView.onReset(this);
+            }
+            if (!mIndicator.isAlreadyHere(IIndicator.START_POS)) {
+                mScrollChecker.scrollTo(IIndicator.START_POS, 0);
+            }
+            mScrollChecker.stop();
+            mScrollChecker.setInterpolator(mSpringInterpolator);
+            final byte old = mStatus;
+            mStatus = SR_STATUS_INIT;
+            notifyStatusChanged(old, mStatus);
+            mAutomaticActionTriggered = true;
             mLayoutManager.resetLayout(
                     mHeaderView, mFooterView, mStickyHeaderView, mStickyFooterView, mTargetView);
-        }
-        removeCallbacks(mDelayToRefreshComplete);
-        removeCallbacks(mDelayToDispatchNestedFling);
-        removeCallbacks(mDelayToPerformAutoRefresh);
-        if (sDebug) {
-            Log.d(TAG, "reset()");
+            removeCallbacks(mDelayToRefreshComplete);
+            removeCallbacks(mDelayToDispatchNestedFling);
+            removeCallbacks(mDelayToPerformAutoRefresh);
+            if (sDebug) {
+                Log.d(TAG, "reset()");
+            }
         }
     }
 
@@ -4225,14 +4225,8 @@ public class SmoothRefreshLayout extends ViewGroup
                     || mScrollChecker.isFlingBack()) {
                 mScrollChecker.stop();
             }
-            if (mLayoutManager != null) {
-                mLayoutManager.resetLayout(
-                        mHeaderView,
-                        mFooterView,
-                        mStickyHeaderView,
-                        mStickyFooterView,
-                        mTargetView);
-            }
+            mLayoutManager.resetLayout(
+                    mHeaderView, mFooterView, mStickyHeaderView, mStickyFooterView, mTargetView);
             if (getParent() != null) {
                 getParent().requestDisallowInterceptTouchEvent(false);
             }
