@@ -27,6 +27,7 @@ package me.dkzwm.widget.srl.manager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
@@ -578,9 +579,11 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                 if (mLayout.isMovingFooter()) {
                     View targetView = mLayout.getScrollTargetView();
                     if (targetView != null && targetView != content) {
-                        if (targetView.getParent() instanceof View) {
-                            if (ViewCatcherUtil.isViewPager((View) targetView.getParent())) {
-                                targetView = (View) targetView.getParent();
+                        ViewParent parent = targetView.getParent();
+                        if (parent instanceof View) {
+                            View parentView = (View) parent;
+                            if (ViewCatcherUtil.isViewPager(parentView)) {
+                                targetView = parentView;
                             }
                         }
                     }
@@ -606,9 +609,11 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
             if (mLayout.isMovingFooter()) {
                 View targetView = mLayout.getScrollTargetView();
                 if (targetView != null && targetView != content) {
-                    if (targetView.getParent() instanceof View) {
-                        if (ViewCatcherUtil.isViewPager((View) targetView.getParent())) {
-                            targetView = (View) targetView.getParent();
+                    ViewParent parent = targetView.getParent();
+                    if (parent instanceof View) {
+                        View parentView = (View) parent;
+                        if (ViewCatcherUtil.isViewPager(parentView)) {
+                            targetView = parentView;
                         }
                     }
                 }

@@ -27,6 +27,7 @@ package me.dkzwm.widget.srl.manager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -141,9 +142,13 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
             } else if (mLayout.isMovingFooter()) {
                 View targetView = mLayout.getScrollTargetView();
                 if (targetView != null) {
-                    if (targetView != content && targetView.getParent() instanceof View) {
-                        if (ViewCatcherUtil.isViewPager((View) targetView.getParent())) {
-                            targetView = (View) targetView.getParent();
+                    if (targetView != content) {
+                        ViewParent parent = targetView.getParent();
+                        if (parent instanceof View) {
+                            View parentView = (View) parent;
+                            if (ViewCatcherUtil.isViewPager(parentView)) {
+                                targetView = parentView;
+                            }
                         }
                     }
                     if (ScrollCompat.canScaleInternal(targetView)) {
@@ -169,9 +174,13 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
             @Nullable View content) {
         View targetView = mLayout.getScrollTargetView();
         if (targetView != null) {
-            if (targetView != content && targetView.getParent() instanceof View) {
-                if (ViewCatcherUtil.isViewPager((View) targetView.getParent())) {
-                    targetView = (View) targetView.getParent();
+            if (targetView != content) {
+                ViewParent parent = targetView.getParent();
+                if (parent instanceof View) {
+                    View parentView = (View) parent;
+                    if (ViewCatcherUtil.isViewPager(parentView)) {
+                        targetView = parentView;
+                    }
                 }
             }
             if (ScrollCompat.canScaleInternal(targetView)) {
@@ -186,19 +195,11 @@ public class VScaleLayoutManager extends SmoothRefreshLayout.LayoutManager {
     }
 
     protected float calculateScale() {
-        if (mLayout.getIndicator().getCurrentPos() >= 0) {
-            return 1
-                    + (float)
-                            Math.min(
-                                    .2f,
-                                    Math.pow(mLayout.getIndicator().getCurrentPos(), .72f) / 1000f);
+        final int pos = mLayout.getIndicator().getCurrentPos();
+        if (pos >= 0) {
+            return 1 + (float) Math.min(.2f, Math.pow(pos, .72f) / 1000f);
         } else {
-            return 1
-                    - (float)
-                            Math.min(
-                                    .2f,
-                                    Math.pow(-mLayout.getIndicator().getCurrentPos(), .72f)
-                                            / 1000f);
+            return 1 - (float) Math.min(.2f, Math.pow(-pos, .72f) / 1000f);
         }
     }
 }
