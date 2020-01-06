@@ -32,7 +32,6 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.ColorInt;
@@ -53,7 +52,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     protected TextView mTitleTextView;
     protected TextView mLastUpdateTextView;
     protected ImageView mArrowImageView;
-    protected ProgressBar mProgressBar;
+    protected View mProgressBar;
     protected String mLastUpdateTimeKey;
     protected boolean mShouldShowLastUpdate;
     protected long mLastUpdateTime = -1;
@@ -95,7 +94,7 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
         mReverseFlipAnimation.setInterpolator(sLinearInterpolator);
         mReverseFlipAnimation.setDuration(mRotateAniTime);
         mReverseFlipAnimation.setFillAfter(true);
-        ClassicConfig.createClassicViews(this);
+        createClassicViews();
         mArrowImageView = findViewById(R.id.sr_classic_arrow);
         mTitleTextView = findViewById(R.id.sr_classic_title);
         mLastUpdateTextView = findViewById(R.id.sr_classic_last_update);
@@ -104,6 +103,10 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
         mArrowImageView.clearAnimation();
         mArrowImageView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
+    }
+
+    protected void createClassicViews() {
+        ClassicConfig.createClassicViews(this);
     }
 
     public void tryUpdateLastUpdateTime() {
