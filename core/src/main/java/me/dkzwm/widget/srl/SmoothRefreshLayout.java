@@ -3352,7 +3352,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     }
                     final ViewParent parent = getParent();
                     if (!isWrappedByScrollingView(parent)) {
-                        //                        parent.requestDisallowInterceptTouchEvent(true);
+                        parent.requestDisallowInterceptTouchEvent(true);
                     }
                 }
                 final boolean canNotChildScrollDown = !isNotYetInEdgeCannotMoveFooter();
