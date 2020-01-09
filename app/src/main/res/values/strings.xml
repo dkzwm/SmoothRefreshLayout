@@ -89,4 +89,6 @@
     <string name="expand_or_collapse">expand/collapse</string>
     <string name="no_more_data_currently_click_to_reload">No more data currently, click to
         reload</string>
+    <string name="test_motionlayout_scene">Test MotionLayout Scene</string>
+    <string name="test_inner_motionlayout_scene">Test Srl in MotionLayout Scene</string>
 </resources>

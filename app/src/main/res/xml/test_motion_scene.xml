@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        app:constraintSetEnd="@layout/activity_test_motionscene_end"
+        app:constraintSetStart="@layout/activity_test_motionscene_start"
+        app:duration="300">
+
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:touchAnchorId="@id/recyclerView_test_motionLayout_scene"
+            app:touchAnchorSide="top" />
+    </Transition>
+
+</MotionScene>

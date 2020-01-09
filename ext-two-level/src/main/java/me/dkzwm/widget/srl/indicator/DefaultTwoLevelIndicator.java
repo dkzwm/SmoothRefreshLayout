@@ -59,7 +59,7 @@ public class DefaultTwoLevelIndicator extends DefaultIndicator
     public void checkConfig() {
         super.checkConfig();
         if (mRatioOfHeaderHeightToHintTwoLevelRefresh >= mRatioOfHeaderHeightToTwoLevelRefresh) {
-            Log.w(
+            Log.e(
                     getClass().getSimpleName(),
                     "If the height ratio of the Two-Level refresh is "
                             + "less than the height ratio of the triggered Two-Level hint, the Two-Level "

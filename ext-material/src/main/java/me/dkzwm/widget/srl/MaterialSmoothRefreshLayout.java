@@ -48,7 +48,9 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
                             setEnablePinRefreshViewWhileLoading(true);
                         }
                     } else {
-                        if (movingStatus != mLastMovingStatus) setEnablePinContentView(false);
+                        if (movingStatus != mLastMovingStatus) {
+                            setEnablePinContentView(false);
+                        }
                     }
                     mLastMovingStatus = movingStatus;
                 }
@@ -89,7 +91,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setEnablePinContentView(true);
         setEnableKeepRefreshView(true);
         setEnablePinRefreshViewWhileLoading(true);
-        setEnableNextPtrAtOnce(true);
         if (mHeaderView instanceof MaterialHeader)
             ((MaterialHeader) mHeaderView).doHookUIRefreshComplete(this);
         if (!isDisabledLoadMore()) {

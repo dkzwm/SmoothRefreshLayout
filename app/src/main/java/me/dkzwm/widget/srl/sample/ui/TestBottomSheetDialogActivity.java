@@ -92,7 +92,6 @@ public class TestBottomSheetDialogActivity extends AppCompatActivity {
                                 2000);
                     }
                 });
-        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
     }

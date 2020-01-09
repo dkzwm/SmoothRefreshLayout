@@ -63,13 +63,7 @@
             android:name=".ui.WithViewPagerActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.TestPullToRefreshActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.TestReleaseToRefreshActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.TestNextRefreshAtOnceActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.TestMaterialStyleActivity"
@@ -120,6 +114,12 @@
             android:name=".ui.SecondFloorActivity"
             android:screenOrientation="portrait"
             android:theme="@style/NoAnimTheme" />
+        <activity
+            android:name=".ui.TestMotionLayoutSceneActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.TestInMotionLayoutSceneActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

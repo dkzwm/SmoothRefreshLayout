@@ -68,10 +68,9 @@ public class AutoRefreshUtil
         if (mRefreshLayout != null) {
             if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT) return;
             if (mRefreshLayout.isNotYetInEdgeCannotMoveHeader()) {
-                if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
+                if (mRefreshLayout.isVerticalOrientation()) {
                     ScrollCompat.flingCompat(mTargetView, -mMaximumFlingVelocity);
-                } else if (mRefreshLayout.getSupportScrollAxis()
-                        == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
+                } else {
                     if (ViewCatcherUtil.isViewPager(mTargetView)) {
                         final ViewPager pager = (ViewPager) mTargetView;
                         final PagerAdapter adapter = pager.getAdapter();
@@ -99,10 +98,9 @@ public class AutoRefreshUtil
         if (mRefreshLayout != null) {
             if (mStatus != SmoothRefreshLayout.SR_STATUS_INIT) return;
             if (mRefreshLayout.isNotYetInEdgeCannotMoveFooter()) {
-                if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
+                if (mRefreshLayout.isVerticalOrientation()) {
                     ScrollCompat.flingCompat(mTargetView, mMaximumFlingVelocity);
-                } else if (mRefreshLayout.getSupportScrollAxis()
-                        == ViewCompat.SCROLL_AXIS_HORIZONTAL) {
+                } else {
                     if (mTargetView instanceof ViewPager) {
                         final ViewPager pager = (ViewPager) mTargetView;
                         final PagerAdapter adapter = pager.getAdapter();

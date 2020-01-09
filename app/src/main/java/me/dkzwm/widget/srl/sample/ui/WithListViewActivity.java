@@ -116,7 +116,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setRatioToRefresh(1);
         mRefreshLayout.setMaxMoveRatioOfFooter(1);
         mRefreshLayout.setEnableNoSpringBackWhenNoMoreData(true);
-        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
+        //        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_disable_refresh).setOnClickListener(this);

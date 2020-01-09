@@ -35,7 +35,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
-import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.drawable.MaterialProgressDrawable;
 import me.dkzwm.widget.srl.extra.IRefreshView;
@@ -45,7 +44,6 @@ import me.dkzwm.widget.srl.indicator.IIndicator;
 public class MaterialHeader<T extends IIndicator> extends View implements IRefreshView<T> {
     protected MaterialProgressDrawable mDrawable;
     protected float mScale = 1f;
-    private int mCachedDuration = -1;
     private ValueAnimator mAnimator;
     private SmoothRefreshLayout mRefreshLayout;
     private boolean mHasHook = false;
@@ -54,18 +52,18 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
                 @Override
                 public void onHook(final SmoothRefreshLayout.RefreshCompleteHook hook) {
                     if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
-                        mAnimator.setDuration(200);
+                        mAnimator.setDuration(300);
                         mAnimator.addListener(
                                 new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
                                         mAnimator.removeListener(this);
-                                        hook.onHookComplete();
+                                        hook.onHookComplete(true);
                                     }
                                 });
                         mAnimator.start();
                     } else {
-                        hook.onHookComplete();
+                        hook.onHookComplete(true);
                     }
                 }
             };
@@ -101,13 +99,15 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (mHasHook) {
-            if (mRefreshLayout != null)
+            if (mRefreshLayout != null) {
                 mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(
                         mHookUIRefreshCompleteCallBack);
-            else if (getParent() instanceof SmoothRefreshLayout) {
+            } else if (getParent() instanceof SmoothRefreshLayout) {
                 mRefreshLayout = (SmoothRefreshLayout) getParent();
                 mRefreshLayout.setOnHookHeaderRefreshCompleteCallback(
                         mHookUIRefreshCompleteCallBack);
+            } else {
+                mHasHook = false;
             }
         }
     }
@@ -146,7 +146,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
                 return;
             }
         }
-        if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
+        if (mRefreshLayout.isVerticalOrientation()) {
             int height = mDrawable.getIntrinsicHeight() + getPaddingTop() + getPaddingBottom();
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         } else {
@@ -166,7 +166,7 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
     protected void onDraw(Canvas canvas) {
         if (mRefreshLayout == null) return;
         final int saveCount = canvas.save();
-        if (mRefreshLayout.getSupportScrollAxis() == ViewCompat.SCROLL_AXIS_VERTICAL) {
+        if (mRefreshLayout.isVerticalOrientation()) {
             int l = getPaddingLeft() + (getMeasuredWidth() - mDrawable.getIntrinsicWidth()) / 2;
             canvas.translate(l, getPaddingTop());
         } else {
@@ -211,39 +211,25 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
 
     @Override
     public void onReset(SmoothRefreshLayout layout) {
-        resetLayoutHeaderCloseDuration(layout);
         resetDrawable();
         cancelAnimator();
     }
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout layout) {
-        resetLayoutHeaderCloseDuration(layout);
         resetDrawable();
         cancelAnimator();
     }
 
     @Override
     public void onRefreshBegin(SmoothRefreshLayout layout, T indicator) {
-        int duration = layout.getDurationToCloseHeader();
-        if (duration > 0) mCachedDuration = duration;
         mDrawable.setAlpha(255);
         mDrawable.start();
         invalidate();
     }
 
     @Override
-    public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {
-        if (mHasHook) {
-            int duration = layout.getDurationToCloseHeader();
-            if (duration > 0 && mCachedDuration <= 0) mCachedDuration = duration;
-            layout.setDurationToCloseHeader(0);
-        } else {
-            long duration = layout.getDurationToCloseHeader();
-            mAnimator.setDuration(duration);
-            mAnimator.start();
-        }
-    }
+    public void onRefreshComplete(SmoothRefreshLayout layout, boolean isSuccessful) {}
 
     @Override
     public void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator) {
@@ -276,13 +262,6 @@ public class MaterialHeader<T extends IIndicator> extends View implements IRefre
         mDrawable.setAlpha(255);
         mDrawable.stop();
         mScale = 1;
-    }
-
-    private void resetLayoutHeaderCloseDuration(SmoothRefreshLayout layout) {
-        if (mHasHook && mCachedDuration > 0) {
-            layout.setDurationToCloseHeader(mCachedDuration);
-        }
-        mCachedDuration = -1;
     }
 
     private void cancelAnimator() {

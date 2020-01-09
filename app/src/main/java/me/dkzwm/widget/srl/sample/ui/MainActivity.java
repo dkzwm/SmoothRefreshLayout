@@ -73,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_with_recyclerView).setOnClickListener(this);
         findViewById(R.id.button_main_with_recyclerView_in_coordinatorLayout)
                 .setOnClickListener(this);
-        findViewById(R.id.button_main_test_enable_next_pull_to_refresh_at_once)
-                .setOnClickListener(this);
         findViewById(R.id.button_main_test_material_style).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested).setOnClickListener(this);
         findViewById(R.id.button_main_test_recyclerView_in_nestedScrollView_in_srl)
@@ -98,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.button_main_test_scale_effect).setOnClickListener(this);
         findViewById(R.id.button_main_test_horizontal_scale_effect).setOnClickListener(this);
         findViewById(R.id.button_main_test_bottom_sheet_dialog).setOnClickListener(this);
+        findViewById(R.id.button_main_test_motionLayout_scene).setOnClickListener(this);
+        findViewById(R.id.button_main_test_inner_motionLayout_scene).setOnClickListener(this);
         findViewById(R.id.button_main_test_nested_with_viewPager_in_one_srl)
                 .setOnClickListener(this);
         mButtonDebug = findViewById(R.id.button_main_debug);
@@ -154,9 +154,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_release_to_refresh:
                 startActivity(new Intent(MainActivity.this, TestReleaseToRefreshActivity.class));
-                break;
-            case R.id.button_main_test_enable_next_pull_to_refresh_at_once:
-                startActivity(new Intent(MainActivity.this, TestNextRefreshAtOnceActivity.class));
                 break;
             case R.id.button_main_test_material_style:
                 startActivity(new Intent(MainActivity.this, TestMaterialStyleActivity.class));
@@ -216,6 +213,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.button_main_test_bottom_sheet_dialog:
                 startActivity(new Intent(MainActivity.this, TestBottomSheetDialogActivity.class));
+                break;
+            case R.id.button_main_test_motionLayout_scene:
+                startActivity(new Intent(MainActivity.this, TestMotionLayoutSceneActivity.class));
+                break;
+            case R.id.button_main_test_inner_motionLayout_scene:
+                startActivity(new Intent(MainActivity.this, TestInMotionLayoutSceneActivity.class));
                 break;
             case R.id.button_main_debug:
                 SmoothRefreshLayout.sDebug = !SmoothRefreshLayout.sDebug;

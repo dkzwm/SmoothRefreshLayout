@@ -53,7 +53,6 @@ public class NestedPageWithSrlFragment extends Fragment {
         mRefreshLayout = view.findViewById(R.id.smoothRefreshLayout_nested_page_with_srl);
         mRefreshLayout.setDisableLoadMore(false);
         mRefreshLayout.materialStyle();
-        mRefreshLayout.setEnableNextPtrAtOnce(false);
         mRefreshLayout.setDisableWhenAnotherDirectionMove(true);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {

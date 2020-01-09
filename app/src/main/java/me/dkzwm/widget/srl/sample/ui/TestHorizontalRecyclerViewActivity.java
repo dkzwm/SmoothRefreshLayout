@@ -97,7 +97,6 @@ public class TestHorizontalRecyclerViewActivity extends AppCompatActivity {
                     }
                 });
         mRefreshLayout.setDurationToClose(800);
-        mRefreshLayout.setEnableNextPtrAtOnce(true);
         mRefreshLayout.autoRefresh(false);
     }
 

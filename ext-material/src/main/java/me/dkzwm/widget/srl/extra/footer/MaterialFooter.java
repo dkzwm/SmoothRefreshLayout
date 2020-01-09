@@ -84,10 +84,10 @@ public class MaterialFooter<T extends IIndicator> extends View implements IRefre
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mProgressBounds.set(
-                w / 2 - mCircleRadius - mBarWidth,
-                h / 2 - mCircleRadius - mBarWidth,
-                w / 2 + mCircleRadius + mBarWidth,
-                h / 2 + mCircleRadius + mBarWidth);
+                w / 2f - mCircleRadius - mBarWidth,
+                h / 2f - mCircleRadius - mBarWidth,
+                w / 2f + mCircleRadius + mBarWidth,
+                h / 2f + mCircleRadius + mBarWidth);
     }
 
     @Override
