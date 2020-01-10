@@ -305,21 +305,19 @@ public interface IRefreshView <T extends IIndicator> {
 |setDisablePerformRefresh|boolean|关闭触发Header刷新（默认:`false`）|
 |setDisablePerformLoadMore|boolean|关闭触发Footer刷新（默认:`false`）|
 |setEnableNoMoreData|boolean|设置Footer没有更多数据，该选项设置`true`时在Frame层等同`setDisablePerformLoadMore`设置为`true`，只是自定义视图可以根据该标志位改变视图样式,`ClassicFooter`默认实现了对该属性的支持（默认:`false`）|
-|setEnableNoSpringBackWhenNoMoreData|boolean|设置Footer没有更多数据情况下不再回弹|
+|setEnableNoMoreDataAndNoSpringBack|boolean|设置Footer没有更多数据且不再回弹|
 |setDisableRefresh|boolean|禁用Header刷新（默认:`false`）|
 |setDisableLoadMore|boolean|禁用Footer刷新（默认:`false`）|
 |setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
+|setEnableAutoRefresh|boolean|到顶部自动刷新（默认:`false`）|
 |setEnableAutoLoadMore|boolean|到底部自动加载（默认:`false`）|
 |setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
 |setSpringInterpolator|Interpolator|设置主动弹出时的滚动插值器|
 |setSpringBackInterpolator|Interpolator|设置释放时的滚动插值器|
 |setEnableCompatSyncScroll|boolean|设置是否开启回滚时的同步滚动（默认:`true`）|
-|setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
-|setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setDisableLoadMoreWhenContentNotFull|boolean|设置当内容视图未满屏时关闭加载更多|
 |setStickyHeaderResId|int|设置黏贴头部视图的资源ID|
 |setStickyFooterResId|int|设置黏贴头部视图的资源ID|
-|setEnableDynamicEnsureTargetView|boolean|设置开启动态搜索内容视图|
 |setEnableOldTouchHandling|boolean|设置启用老版本的触摸事件处理逻辑|
 |setScrollTargetView|View|设置判断是否滚到到边界对应的视图,例如在SmoothRefreshLayout中有一个CoordinatorLayout,CoordinatorLayout中有AppbarLayout、RecyclerView等，加载更多时希望被移动的视图为RecyclerView而不是CoordinatorLayout,那么设置RecyclerView为TargetView即可|
 

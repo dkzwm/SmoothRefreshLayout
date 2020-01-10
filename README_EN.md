@@ -358,21 +358,17 @@ public interface IRefreshView<T extends IIndicator> {
  |setDisablePerformRefresh|boolean|Disable Header perform refresh（Default: `false`）|
  |setDisablePerformLoadMore|boolean|Disable Footer perform refresh（Default: `false`）|
  |setEnableNoMoreData|boolean|Set the Footer without more data（Default: `false`）|
- |setEnableNoSpringBackWhenNoMoreData|boolean|Set when Footer has no more data to no longer need spring back|
+ |setEnableNoMoreDataAndNoSpringBack|boolean|Set when Footer has no more data and no need spring back|
  |setDisableRefresh|boolean|Disable Header refresh（Default: `false`）|
  |setDisableLoadMore|boolean|Disable Footer refresh（Default: `false`）|
  |setEnableKeepRefreshView|boolean|Keep refresh view in refreshing（Default: `true`）|
- |setEnableAutoLoadMore|boolean|When content view scrolling to bottom, It will be perform load more（Default: `false`）|
+ |setEnableAutoRefresh|boolean|When content view scrolling to top, It will be perform refresh at once（Default: `false`）|
+ |setEnableAutoLoadMore|boolean|When content view scrolling to bottom, It will be perform load more at once（Default: `false`）|
  |setEnablePinRefreshViewWhileLoading|boolean|The refresh view will pinned at the keep refresh position（Default: `false`）|
  |setSpringInterpolator|Interpolator|Set spring interpolator|
- |setOverScrollInterpolator|Interpolator|Set OverScroll interpolator|
- |setEnableCompatSyncScroll|boolean|Set whether to turn on the synchronized scroll when spring back（Default: `true`）|
- |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
- |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
  |setDisableLoadMoreWhenContentNotFull|boolean|Load more will be disabled when the content is not full|
- |setEnableDynamicEnsureTargetView|boolean|Dynamic search the target view|
  |setEnableOldTouchHandling|boolean|Enabled the old touch handling logic|
- |setLoadMoreScrollTargetView|View|Set Footer refresh scroll target view|
+ |setScrollTargetView|View|Set scroll target view|
  
  #### SmoothRefreshLayout callbacks
  |Name|Params|Desc|

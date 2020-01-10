@@ -90,7 +90,7 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                                     @Override
                                     public void run() {
                                         if (mCount >= 50) {
-                                            mRefreshLayout.setEnableNoMoreData(true);
+                                            mRefreshLayout.setEnableNoMoreDataAndNoSpringBack(true);
                                         }
                                         mRefreshLayout.refreshComplete(1200);
                                     }
@@ -115,8 +115,6 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout.setRatioToKeep(1);
         mRefreshLayout.setRatioToRefresh(1);
         mRefreshLayout.setMaxMoveRatioOfFooter(1);
-        mRefreshLayout.setEnableNoSpringBackWhenNoMoreData(true);
-        //        mRefreshLayout.setEnableSmoothRollbackWhenCompleted(true);
         mRefreshLayout.setDisableLoadMoreWhenContentNotFull(true);
         mRefreshLayout.autoRefresh(false);
         findViewById(R.id.button_with_listView_disable_refresh).setOnClickListener(this);
