@@ -31,12 +31,12 @@ import me.dkzwm.widget.srl.extra.IRefreshView;
 
 /** @author dkzwm */
 public class ViewCatcherUtil {
-    private static final String sClassNameOfViewPager = "androidx.viewpager.widget.ViewPager";
-    private static final String sClassNameOfCoordinatorLayout =
+    private static final String CLASS_NAME_OF_VIEWPAGER = "androidx.viewpager.widget.ViewPager";
+    private static final String CLASS_NAME_OF_COORDINATORLAYOUT =
             "androidx.coordinatorlayout.widget.CoordinatorLayout";
-    private static final String sClassNameOfRecyclerView =
+    private static final String CLASS_NAME_OF_RECYCLERVIEW =
             "androidx.recyclerview.widget.RecyclerView";
-    private static final String sClassNameOfAppBarLayout =
+    private static final String CLASS_NAME_OF_APPBARLAYOUT =
             "com.google.android.material.appbar.AppBarLayout";
     private static Class<?> sClassOfCoordinatorLayout;
     private static Class<?> sClassOfAppBarLayout;
@@ -52,7 +52,7 @@ public class ViewCatcherUtil {
         sIsCaughtViewPager = true;
         if (sClassOfViewPager == null) {
             try {
-                sClassOfViewPager = Class.forName(sClassNameOfViewPager);
+                sClassOfViewPager = Class.forName(CLASS_NAME_OF_VIEWPAGER);
             } catch (Exception e) {
                 return false;
             }
@@ -65,7 +65,7 @@ public class ViewCatcherUtil {
         sIsCaughtRecyclerView = true;
         if (sClassOfRecyclerView == null) {
             try {
-                sClassOfRecyclerView = Class.forName(sClassNameOfRecyclerView);
+                sClassOfRecyclerView = Class.forName(CLASS_NAME_OF_RECYCLERVIEW);
             } catch (Exception e) {
                 return false;
             }
@@ -83,7 +83,7 @@ public class ViewCatcherUtil {
         sIsCaughtCoordinatorLayout = true;
         if (sClassOfCoordinatorLayout == null) {
             try {
-                sClassOfCoordinatorLayout = Class.forName(sClassNameOfCoordinatorLayout);
+                sClassOfCoordinatorLayout = Class.forName(CLASS_NAME_OF_COORDINATORLAYOUT);
             } catch (Exception e) {
                 return false;
             }
@@ -99,7 +99,7 @@ public class ViewCatcherUtil {
         sIsCaughtCoordinatorLayout = true;
         if (sClassOfCoordinatorLayout == null) {
             try {
-                sClassOfCoordinatorLayout = Class.forName(sClassNameOfCoordinatorLayout);
+                sClassOfCoordinatorLayout = Class.forName(CLASS_NAME_OF_COORDINATORLAYOUT);
             } catch (Exception e) {
                 return null;
             }
@@ -107,7 +107,7 @@ public class ViewCatcherUtil {
         sIsCaughtAppBarLayout = true;
         if (sClassOfAppBarLayout == null) {
             try {
-                sClassOfAppBarLayout = Class.forName(sClassNameOfAppBarLayout);
+                sClassOfAppBarLayout = Class.forName(CLASS_NAME_OF_APPBARLAYOUT);
             } catch (Exception e) {
                 return null;
             }

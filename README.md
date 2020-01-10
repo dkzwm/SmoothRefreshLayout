@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.0.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-706%20%7C%2076%20KB-e91e63.svg)
+[![Release](https://img.shields.io/badge/JCenter-1.7.1.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-720%20%7C%2082%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -26,12 +26,12 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.androidx'
 
     //android support 最终版本
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
@@ -251,8 +251,6 @@ public interface IRefreshView <T extends IIndicator> {
 |sr_enableOverScroll|boolean|越界回弹（默认:`true`）|
 |sr_enableRefresh|boolean|设置是否启用下拉刷新（默认:`ture`）|
 |sr_enableLoadMore|boolean|设置是否启用加载更多（默认:`false`）|
-|sr_headerBackgroundColor|color|设置Header刷新高度区域的背景色|
-|sr_footerBackgroundColor|color|设置Footer刷新高度区域的背景色|
 |sr_mode|enum|模式设置（默认:`MODE_DEFAULT`为刷新控件模式）|
 |sr_stickyHeader|reference|指定黏贴头部的资源ID|
 |sr_stickyFooter|reference|指定黏贴尾部的资源ID|
@@ -276,8 +274,8 @@ public interface IRefreshView <T extends IIndicator> {
 |setFooterView|IRefreshView|配置尾部视图|
 |setContentView|View|配置内容视图|
 |setMode|int|配置当前模式|
+|setLayoutManager|LayoutManager|配置自定义布局管理器|
 |setDisableWhenAnotherDirectionMove|boolean|内部视图含有其他方向滑动视图时需设置该属性为ture（默认:`false`）|
-|setEnableNextPtrAtOnce|boolean|刷新完成即可再次刷新|
 |setMaxOverScrollDuration|int|设置越界回弹动画最长时间（默认:`350`）|
 |setMinOverScrollDuration|int|设置越界回弹动画最短时间（默认:`100`）|
 |setResistance|float|移动刷新视图时候的移动阻尼（默认:`1.65f`）|
@@ -318,7 +316,6 @@ public interface IRefreshView <T extends IIndicator> {
 |setEnableCompatSyncScroll|boolean|设置是否开启回滚时的同步滚动（默认:`true`）|
 |setHeaderBackgroundColor|int|设置Header刷新高度区域的背景色，可用以替代在Header样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
 |setFooterBackgroundColor|int|设置Footer刷新高度区域的背景色，可用以替代在Footer样式为不需要动态改变视图大小的情况下又想设置刷新高度区域的背景色的场景|
-|setEnableSmoothRollbackWhenCompleted|boolean|设置开启当刷新完成时，回滚动作不能被打断|
 |setDisableLoadMoreWhenContentNotFull|boolean|设置当内容视图未满屏时关闭加载更多|
 |setStickyHeaderResId|int|设置黏贴头部视图的资源ID|
 |setStickyFooterResId|int|设置黏贴头部视图的资源ID|
@@ -353,9 +350,11 @@ public interface IRefreshView <T extends IIndicator> {
 |autoRefresh|无参|自动触发Header刷新,立即触发刷新事件并滚动到触发Header刷新位置|
 |autoRefresh|boolean|自动触发Header刷新,参数:是否立即触发刷新事件,会滚动到触发Header刷新位置|
 |autoRefresh|boolean,boolean|自动触发Header刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到触发Header刷新位置|
+|forceRefresh|无参|强制触发Footer刷新，该方法不会触发滚动|
 |autoLoadMore|无参|自动触发Footer刷新,立即触发刷新事件并滚动到触发Footer刷新位置|
 |autoLoadMore|boolean|自动触发Footer刷新,参数:是否立即触发刷新事件,会滚动到触发Footer刷新位置|
 |autoLoadMore|boolean,boolean|自动触发Footer刷新,参数1:是否立即触发刷新事件,参数2:是否滚动到触发Footer刷新位置|
+|forceLoadMore|无参|强制触发Footer刷新，该方法不会触发滚动|
 
 #### TwoLevelSmoothRefreshLayout java属性设置方法
 |名称|参数|描述|

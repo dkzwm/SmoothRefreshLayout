@@ -47,8 +47,8 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
         mRefreshLayout = findViewById(R.id.smoothRefreshLayout_with_listView);
         mClassicHeader = findViewById(R.id.classicHeader_with_listView);
         mClassicHeader.setLastUpdateTimeKey("header_last_update_time");
-        mClassicHeader.setTitleTextColor(Color.WHITE);
-        mClassicHeader.setLastUpdateTextColor(Color.WHITE);
+        mClassicHeader.setTitleTextColor(Color.BLACK);
+        mClassicHeader.setLastUpdateTextColor(Color.BLACK);
         mClassicFooter = findViewById(R.id.classicFooter_with_listView);
         mClassicFooter.setLastUpdateTimeKey("footer_last_update_time");
         mClassicFooter.setNoMoreDataRes(R.string.no_more_data_currently_click_to_reload);
@@ -60,8 +60,8 @@ public class WithListViewActivity extends AppCompatActivity implements View.OnCl
                         mRefreshLayout.forceLoadMore();
                     }
                 });
-        mClassicFooter.setTitleTextColor(Color.WHITE);
-        mClassicFooter.setLastUpdateTextColor(Color.WHITE);
+        mClassicFooter.setTitleTextColor(Color.BLACK);
+        mClassicFooter.setLastUpdateTextColor(Color.BLACK);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnableOldTouchHandling(false);
         mRefreshLayout.setDisableLoadMore(false);

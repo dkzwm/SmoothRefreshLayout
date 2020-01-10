@@ -7,10 +7,7 @@
     android:layout_height="match_parent"
     android:background="#F2F2F2"
     android:orientation="vertical"
-    android:padding="12dp"
-    app:sr_content="@+id/listView_with_list"
-    app:sr_footerBackgroundColor="@color/colorAccent"
-    app:sr_headerBackgroundColor="@color/colorPrimary">
+    app:sr_content="@+id/listView_with_list">
 
 
     <ListView
@@ -28,13 +25,13 @@
         android:id="@+id/classicHeader_with_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:sr_style="style_scale"/>
+        app:sr_style="style_default"/>
 
     <me.dkzwm.widget.srl.extra.footer.ClassicFooter
         android:id="@+id/classicFooter_with_listView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:sr_style="style_scale"/>
+        app:sr_style="style_default"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

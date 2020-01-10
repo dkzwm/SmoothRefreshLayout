@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.0.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-706%20%7C%2076%20KB-e91e63.svg)
+[![Release](https://img.shields.io/badge/JCenter-1.7.1.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-720%20%7C%2082%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -30,12 +30,12 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  Add the following dependency to your build.gradle file:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.0.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.0.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.androidx'
 
     //android support final version
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
@@ -303,8 +303,6 @@ public interface IRefreshView<T extends IIndicator> {
  |sr_enableOverScroll|boolean|OverScroll（Default: `true`|
  |sr_enableRefresh|boolean|Enable Header refresh（Default: `ture`）|
  |sr_enableLoadMore|boolean|Enable Footer refresh（Default: `false`）|
- |sr_headerBackgroundColor|color|Set the background color of the height of the Header view|
- |sr_footerBackgroundColor|color|Set the background color of the height of the Footer view|
  |sr_mode|enum|Set current mode (Default:`MODE_DEFAULT` as refresh layout)|
  |sr_stickyHeader|reference|Specifies the resource ID of the sticky header|
  |sr_stickyFooter|reference|Specifies the resource ID of the sticky footer|
@@ -328,6 +326,7 @@ public interface IRefreshView<T extends IIndicator> {
  |setFooterView|IRefreshView|Set Footer|
  |setContentView|View|Set content view|
  |setMode|int|Set current mode|
+ |setLayoutManager|LayoutManager|Set custom LayoutManager|
  |setDisableWhenAnotherDirectionMove|boolean|Set whether to filter another direction moves（Default: `false`）|
  |setEnableNextPtrAtOnce|boolean|Set whether user can perform next PTR at once|
  |setMaxOverScrollDuration|int|Set the max duration for Cross-Boundary-Rebound(OverScroll)（Default: `350`）|
@@ -370,7 +369,6 @@ public interface IRefreshView<T extends IIndicator> {
  |setEnableCompatSyncScroll|boolean|Set whether to turn on the synchronized scroll when spring back（Default: `true`）|
  |setHeaderBackgroundColor|int|Set the background color of the height of the Header view|
  |setFooterBackgroundColor|int|Set the background color of the height of the Footer view|
- |setEnableSmoothRollbackWhenCompleted|boolean|Set the scroller rollback can not be interrupted when refresh completed|
  |setDisableLoadMoreWhenContentNotFull|boolean|Load more will be disabled when the content is not full|
  |setEnableDynamicEnsureTargetView|boolean|Dynamic search the target view|
  |setEnableOldTouchHandling|boolean|Enabled the old touch handling logic|
@@ -401,9 +399,11 @@ public interface IRefreshView<T extends IIndicator> {
  |autoRefresh|None|Auto trigger Header refresh|
  |autoRefresh|boolean|Auto trigger Header refresh, parameter: trigger immediately|
  |autoRefresh|boolean,boolean|Auto trigger Header refresh, parameter1: trigger immediately, parameter2: whether use scroll|
+ |forceRefresh|None|Force trigger Header refresh|
  |autoLoadMore|None|Auto trigger Footer refresh|
  |autoLoadMore|boolean|Auto trigger Footer refresh, parameter: trigger immediately|
  |autoLoadMore|boolean,boolean|Auto trigger Footer refresh, parameter1: trigger immediately, parameter2: whether use scroll|
+ |forceLoadMore|None|Force trigger Footer refresh|
 
  #### TwoLevelSmoothRefreshLayout methods
  |Name|Params|Desc|

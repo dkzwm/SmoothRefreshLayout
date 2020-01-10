@@ -43,8 +43,6 @@
             <enum name="mode_default" value="0" />
             <enum name="mode_scale" value="1" />
         </attr>
-        <attr name="sr_headerBackgroundColor" format="color" />
-        <attr name="sr_footerBackgroundColor" format="color" />
     </declare-styleable>
     <declare-styleable name="SmoothRefreshLayout_Layout">
         <attr name="android:layout_gravity" />

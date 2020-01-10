@@ -25,12 +25,10 @@
 package me.dkzwm.widget.srl;
 
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.core.view.ViewCompat;
 import me.dkzwm.widget.srl.config.Constants;
 import me.dkzwm.widget.srl.indicator.DefaultIndicator;
 import me.dkzwm.widget.srl.indicator.HorizontalDefaultIndicator;
@@ -54,11 +52,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
     }
 
     @Override
-    public int getSupportScrollAxis() {
-        return ViewCompat.SCROLL_AXIS_HORIZONTAL;
-    }
-
-    @Override
     protected void createIndicator() {
         DefaultIndicator indicator = new HorizontalDefaultIndicator();
         mIndicator = indicator;
@@ -78,42 +71,6 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             }
             mLayoutManager = new HScaleLayoutManager();
         }
-    }
-
-    @Override
-    protected void drawHeaderBackground(Canvas canvas) {
-        final int right =
-                Math.min(
-                        getPaddingLeft() + mIndicator.getCurrentPos(),
-                        getWidth() - getPaddingLeft());
-        canvas.drawRect(
-                getPaddingLeft(),
-                getPaddingTop(),
-                right,
-                getHeight() - getPaddingBottom(),
-                mBackgroundPaint);
-    }
-
-    @Override
-    protected void drawFooterBackground(Canvas canvas) {
-        final int left, right;
-        if (mTargetView != null) {
-            final LayoutParams lp = (LayoutParams) mTargetView.getLayoutParams();
-            right =
-                    getPaddingLeft()
-                            + lp.leftMargin
-                            + mTargetView.getMeasuredWidth()
-                            + lp.rightMargin;
-            left = right - mIndicator.getCurrentPos();
-        } else {
-            left =
-                    Math.max(
-                            getWidth() - getPaddingRight() - mIndicator.getCurrentPos(),
-                            getPaddingLeft());
-            right = getWidth() - getPaddingRight();
-        }
-        canvas.drawRect(
-                left, getPaddingTop(), right, getHeight() - getPaddingBottom(), mBackgroundPaint);
     }
 
     @Override

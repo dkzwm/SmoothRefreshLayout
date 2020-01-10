@@ -7,8 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:sr_content="@+id/horizontalScrollView_test_horizontal_refresh"
-    app:sr_footerBackgroundColor="@android:color/holo_green_light"
-    app:sr_headerBackgroundColor="@android:color/holo_orange_light"
     app:sr_stickyHeader="@+id/textView_test_horizontal_refresh_sticky_header">
 
     <HorizontalScrollView
