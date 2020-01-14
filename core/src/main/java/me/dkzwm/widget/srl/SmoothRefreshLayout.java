@@ -2542,9 +2542,6 @@ public class SmoothRefreshLayout extends ViewGroup
                 consumed[1] += parentConsumed[1];
             }
         }
-        if (consumed[0] != 0 || consumed[1] != 0) {
-            onNestedScrollChanged(false);
-        }
         if (sDebug) {
             Log.d(
                     TAG,
@@ -2613,12 +2610,12 @@ public class SmoothRefreshLayout extends ViewGroup
         final boolean isVerticalOrientation = isVerticalOrientation();
         if (isVerticalOrientation) {
             if (dyUnconsumed == 0 || consumed[1] == dyUnconsumed) {
-                onNestedScrollChanged(false);
+                onNestedScrollChanged(true);
                 return;
             }
         } else {
             if (dxUnconsumed == 0 || consumed[0] == dxUnconsumed) {
-                onNestedScrollChanged(false);
+                onNestedScrollChanged(true);
                 return;
             }
         }
@@ -2662,7 +2659,7 @@ public class SmoothRefreshLayout extends ViewGroup
             tryToResetMovingStatus();
         }
         if (dxConsumed != 0 || dyConsumed != 0 || consumed[0] != 0 || consumed[1] != 0) {
-            onNestedScrollChanged(false);
+            onNestedScrollChanged(true);
         }
     }
 
