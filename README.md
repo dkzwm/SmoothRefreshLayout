@@ -311,7 +311,7 @@ public interface IRefreshView <T extends IIndicator> {
 |setEnableKeepRefreshView|boolean|刷新中保持视图停留在所设置的应该停留的位置（默认:`true`）|
 |setEnableAutoRefresh|boolean|到顶部自动刷新（默认:`false`）|
 |setEnableAutoLoadMore|boolean|到底部自动加载（默认:`false`）|
-|setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置前提是开启了`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项，否则运行时会抛出异常|
+|setEnablePinRefreshViewWhileLoading|boolean|固定刷新视图在所设置的应该停留的位置，并且不响应移动，即Material样式（默认:`false`）,设置开启会同时开启`setEnablePinContentView`和`setEnableKeepRefreshView`2个选项|
 |setSpringInterpolator|Interpolator|设置主动弹出时的滚动插值器|
 |setSpringBackInterpolator|Interpolator|设置释放时的滚动插值器|
 |setEnableCompatSyncScroll|boolean|设置是否开启回滚时的同步滚动（默认:`true`）|

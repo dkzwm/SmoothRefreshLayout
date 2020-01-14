@@ -131,6 +131,11 @@ public class WaveTextRefreshView extends View implements IRefreshView {
         requestLayout();
     }
 
+    public void setTypeface(Typeface typeface) {
+        mTextPaint.setTypeface(typeface);
+        requestLayout();
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         mTextPaint.getTextBounds(mText, 0, mText.length(), mTextRect);

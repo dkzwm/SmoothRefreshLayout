@@ -1,6 +1,7 @@
 package me.dkzwm.widget.srl.sample.ui;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.MenuItem;
@@ -20,10 +21,21 @@ import me.dkzwm.widget.srl.sample.header.WaveTextRefreshView;
  * @author dkzwm
  */
 public class WithFrameLayoutActivity extends AppCompatActivity {
+    private static final String[] NAME_OF_TYPEFACES = new String[4];
+
+    static {
+        NAME_OF_TYPEFACES[0] = "Facon-2.ttf";
+        NAME_OF_TYPEFACES[1] = "DontMeltDrip-Regular-2.otf";
+        NAME_OF_TYPEFACES[2] = "DrSugiyama-Pro-Regular-2.ttf";
+        NAME_OF_TYPEFACES[3] = "Squiggles-wKm6-2.ttf";
+    }
+
     private SmoothRefreshLayout mRefreshLayout;
     private TextView mTextView;
+    private WaveTextRefreshView mRefreshView;
     private Handler mHandler = new Handler();
     private int mCount = 0;
+    private int mIndex = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,12 +66,12 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-        WaveTextRefreshView refreshView = new WaveTextRefreshView(this);
-        refreshView.setIncrementalY(.5f);
-        mRefreshLayout.setHeaderView(refreshView);
+        mRefreshView = new WaveTextRefreshView(this);
+        mRefreshView.setIncrementalY(.5f);
+        mRefreshView.setTextSize(18);
+        mRefreshLayout.setHeaderView(mRefreshView);
         mRefreshLayout.setRatioToKeep(1);
         mRefreshLayout.setRatioOfHeaderToRefresh(1);
-        mRefreshLayout.setEnableOverScroll(false);
         mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnableInterceptEventWhileLoading(true);
         mRefreshLayout.setDisableLoadMore(false);
@@ -83,6 +95,22 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                                 8000);
                     }
                 });
+        mRefreshLayout.addOnStatusChangedListener(
+                new SmoothRefreshLayout.OnStatusChangedListener() {
+                    @Override
+                    public void onStatusChanged(byte old, byte now) {
+                        if (now == SmoothRefreshLayout.SR_STATUS_INIT) {
+                            if (mIndex >= NAME_OF_TYPEFACES.length - 1) {
+                                mIndex = 0;
+                            } else {
+                                mIndex++;
+                            }
+                            mRefreshView.setTypeface(
+                                    Typeface.createFromAsset(
+                                            getAssets(), NAME_OF_TYPEFACES[mIndex]));
+                        }
+                    }
+                });
         mRefreshLayout.autoRefresh(true);
     }
 
@@ -92,7 +120,6 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }

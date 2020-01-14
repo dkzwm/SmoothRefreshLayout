@@ -44,7 +44,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
                     int movingStatus = indicator.getMovingStatus();
                     if (movingStatus == Constants.MOVING_HEADER) {
                         if (movingStatus != mLastMovingStatus) {
-                            setEnablePinContentView(true);
                             setEnablePinRefreshViewWhileLoading(true);
                         }
                     } else {
@@ -90,7 +89,6 @@ public class MaterialSmoothRefreshLayout extends SmoothRefreshLayout {
         setMaxMoveRatioOfHeader(1.5f);
         setEnablePinContentView(true);
         setEnableKeepRefreshView(true);
-        setEnablePinRefreshViewWhileLoading(true);
         if (mHeaderView instanceof MaterialHeader)
             ((MaterialHeader) mHeaderView).doHookUIRefreshComplete(this);
         if (!isDisabledLoadMore()) {

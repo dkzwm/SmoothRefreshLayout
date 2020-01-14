@@ -39,8 +39,6 @@ public class WithWebViewActivity extends AppCompatActivity {
         MaterialHeader header = new MaterialHeader(this);
         header.setPadding(0, PixelUtl.dp2px(this, 20), 0, PixelUtl.dp2px(this, 20));
         mRefreshLayout.setHeaderView(header);
-        mRefreshLayout.setEnablePinContentView(true);
-        mRefreshLayout.setEnableKeepRefreshView(true);
         mRefreshLayout.setEnablePinRefreshViewWhileLoading(true);
         mRefreshLayout.setOnRefreshListener(
                 new RefreshingListenerAdapter() {
