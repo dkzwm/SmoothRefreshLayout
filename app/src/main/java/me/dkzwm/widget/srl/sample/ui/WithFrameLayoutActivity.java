@@ -99,7 +99,8 @@ public class WithFrameLayoutActivity extends AppCompatActivity {
                 new SmoothRefreshLayout.OnStatusChangedListener() {
                     @Override
                     public void onStatusChanged(byte old, byte now) {
-                        if (now == SmoothRefreshLayout.SR_STATUS_INIT) {
+                        if (now == SmoothRefreshLayout.SR_STATUS_INIT
+                                && old == SmoothRefreshLayout.SR_STATUS_COMPLETE) {
                             if (mIndex >= NAME_OF_TYPEFACES.length - 1) {
                                 mIndex = 0;
                             } else {

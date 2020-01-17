@@ -37,5 +37,6 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation "androidx.constraintlayout:constraintlayout:2.0.0-beta4"
+    implementation 'com.airbnb.android:lottie:3.3.1'
 
 }

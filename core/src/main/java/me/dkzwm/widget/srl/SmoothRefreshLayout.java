@@ -2849,7 +2849,6 @@ public class SmoothRefreshLayout extends ViewGroup
 
     public void onNestedScrollChanged(boolean compute) {
         if (mNeedFilterScrollEvent) {
-            mNeedFilterScrollEvent = false;
             return;
         }
         tryScrollToPerformAutoRefresh();
@@ -2859,15 +2858,14 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     public boolean isVerticalOrientation() {
-        return mLayoutManager.getOrientation() == LayoutManager.VERTICAL;
+        return mLayoutManager == null || mLayoutManager.getOrientation() == LayoutManager.VERTICAL;
     }
 
     /** Check the Z-Axis relationships of the views need to be rearranged */
     protected void checkViewsZAxisNeedReset() {
         final int count = getChildCount();
-        if (mViewsZAxisNeedReset && count > 0) {
+        if (mViewsZAxisNeedReset && count > 0 && (mHeaderView != null || mFooterView != null)) {
             mCachedViews.clear();
-            if (mHeaderView == null && mFooterView == null) return;
             if (mHeaderView != null && !isEnabledHeaderDrawerStyle()) {
                 mCachedViews.add(mHeaderView.getView());
             }
@@ -3659,12 +3657,6 @@ public class SmoothRefreshLayout extends ViewGroup
             return;
         }
         if (isNeedFilterTouchEvent() && mIndicator.hasLeftStartPosition()) {
-            mScrollChecker.scrollTo(IIndicator.START_POS, duration);
-            return;
-        }
-        if (isMovingFooter()
-                && mStatus == SR_STATUS_COMPLETE
-                && mIndicator.hasJustBackToStartPosition()) {
             mScrollChecker.scrollTo(IIndicator.START_POS, duration);
             return;
         }
@@ -4790,7 +4782,6 @@ public class SmoothRefreshLayout extends ViewGroup
                     Log.d(TAG, "ScrollChecker: computeScrollOffset()");
                 }
                 if (isCalcFling()) {
-                    mLastY = mScroller.getCurrY();
                     if (mVelocity > 0
                             && mIndicator.isAlreadyHere(IIndicator.START_POS)
                             && !isNotYetInEdgeCannotMoveHeader()) {
