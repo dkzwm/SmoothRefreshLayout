@@ -2418,7 +2418,8 @@ public class SmoothRefreshLayout extends ViewGroup
         return isEnabled()
                 && isNestedScrollingEnabled()
                 && mTargetView != null
-                && (axes & getNestedScrollAxes()) != 0;
+                && (axes & getNestedScrollAxes()) != 0
+                && !(type == ViewCompat.TYPE_NON_TOUCH && !isEnabledOverScroll());
     }
 
     @Override
@@ -2722,9 +2723,8 @@ public class SmoothRefreshLayout extends ViewGroup
         final View targetView = getScrollTargetView();
         if (targetView != null) {
             ViewCompat.stopNestedScroll(targetView, type);
-        } else {
-            getScrollingChildHelper().stopNestedScroll(type);
         }
+        getScrollingChildHelper().stopNestedScroll(type);
     }
 
     @Override
