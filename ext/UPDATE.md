@@ -1,9 +1,12 @@
 # 更新日志
+## 1.7.1.1.androidx
+> 修改 `ViewCatcherUtil` 类实现， 完善 `CoordinatorLayout` 各种布局下的适配性。    
+> 修改只在纵向模式下才动态搜索 `AppBarLayout`。    
 ## 1.7.1.androidx
 > 重构布局相关代码，封装出 `LayoutManager`，已实现默认刷新布局管理器和拉伸布局管理器，支持自定义布局管理器以实现不同需求下的效果。    
 > 修改 `RefreshCompleteHook`类的`onHookComplete`方法定义，添加`immediatelyNoScrolling`参数，用以标记是否需要立刻回置到起始位置。    
 > 删除方法 `getDurationToCloseHeader`、`getDurationToCloseFooter`，该方法原来在`MaterialHeader`中有使用，修改实现后已不再需要故删除。    
-> 修改 `AutoRefreshUtil`类实现。    
+> 修改 `AutoRefreshUtil` 类实现。    
 > 删除接口 `OnNestedScrollChangedListener`，以及相关方法，起初添加该方法是为了实现自动刷新工具检测内部滚动事件用，实际使用中发现和 `OnUIPositionChangedListener`接口有较多重合，效率偏低同时由于修改了自动刷新工具已不再需要该接口故而删除。    
 > 删除方法 `setEnableSmoothRollbackWhenCompleted`、`isEnabledSmoothRollbackWhenCompleted`，改为默认开启，原因为刷新或者加载更多完成后，添加数据会导致视图边界变动，如果此时处于触摸中，之前的逻辑是直接让刷新视图回置到起始位置，但会引起和未处于触摸中的回滚起始位置动画体验不一致的感觉，故而统一为刷新完成不管是否触摸中一律不能中断刷新完成回滚动画让刷新视图回滚到起始位置，保持体验一致。    
 > 删除方法 `setEnableNextPtrAtOnce`、`isEnabledNextPtrAtOnce`，由于上一点配置后导致本配置失效故而删除。    

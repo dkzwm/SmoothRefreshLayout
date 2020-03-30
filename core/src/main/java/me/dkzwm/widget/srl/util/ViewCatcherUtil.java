@@ -27,6 +27,7 @@ package me.dkzwm.widget.srl.util;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import me.dkzwm.widget.srl.SmoothRefreshLayout;
 import me.dkzwm.widget.srl.extra.IRefreshView;
 
 /** @author dkzwm */
@@ -91,7 +92,7 @@ public class ViewCatcherUtil {
         return sClassOfCoordinatorLayout.isAssignableFrom(view.getClass());
     }
 
-    public static View catchAppBarLayout(final ViewGroup group) {
+    public static View catchAppBarLayout(final SmoothRefreshLayout group) {
         if ((sIsCaughtCoordinatorLayout || sIsCaughtAppBarLayout)
                 && (sClassOfCoordinatorLayout == null || sClassOfAppBarLayout == null)) {
             return null;
@@ -112,56 +113,60 @@ public class ViewCatcherUtil {
                 return null;
             }
         }
-        ViewGroup ignoredViewGroup = null;
-        ViewGroup findViewGroup = group;
-        while (true) {
-            View view = findAppBarLayout(findViewGroup, ignoredViewGroup);
-            if (view != null) {
-                return view;
-            }
-            ignoredViewGroup = findViewGroup;
-            ViewParent parent = findViewGroup.getParent();
-            if (parent instanceof ViewGroup) {
-                findViewGroup = (ViewGroup) parent;
-                if (findViewGroup.getId() == android.R.id.content) {
-                    return null;
-                }
-                if (isViewPager(findViewGroup) || isRecyclerView(findViewGroup)) {
-                    return null;
-                }
-                continue;
-            }
+        ViewGroup coordinatorLayout = findChildCoordinatorLayout(group);
+        if (coordinatorLayout == null) {
+            coordinatorLayout = findParentCoordinatorLayout(group);
+        }
+        if (coordinatorLayout == null) {
             return null;
         }
+        final int count = coordinatorLayout.getChildCount();
+        for (int i = 0; i < count; i++) {
+            final View child = coordinatorLayout.getChildAt(i);
+            if (sClassOfAppBarLayout.isAssignableFrom(child.getClass())) {
+                return child;
+            }
+        }
+        return null;
     }
 
-    private static View findAppBarLayout(ViewGroup group, ViewGroup ignoredGroup) {
-        if (ignoredGroup != null) {
-            if (ignoredGroup == group) {
-                return null;
-            }
-        } else if (group instanceof IRefreshView) {
-            return null;
-        }
+    private static ViewGroup findChildCoordinatorLayout(ViewGroup group) {
         if (sClassOfCoordinatorLayout.isAssignableFrom(group.getClass())) {
-            final int count = group.getChildCount();
-            for (int i = 0; i < count; i++) {
-                final View subView = group.getChildAt(i);
-                if (sClassOfAppBarLayout.isAssignableFrom(subView.getClass())) {
-                    return subView;
-                }
-            }
-            return null;
+            return group;
         }
         final int count = group.getChildCount();
         for (int i = 0; i < count; i++) {
             final View view = group.getChildAt(i);
             if (view instanceof ViewGroup) {
-                View layout = findAppBarLayout((ViewGroup) view, ignoredGroup);
+                if (ScrollCompat.isScrollingView(view)) {
+                    continue;
+                }
+                if (view instanceof IRefreshView) {
+                    continue;
+                }
+                ViewGroup layout = findChildCoordinatorLayout((ViewGroup) view);
                 if (layout != null) {
                     return layout;
                 }
             }
+        }
+        return null;
+    }
+
+    private static ViewGroup findParentCoordinatorLayout(ViewGroup group) {
+        ViewParent parent = group.getParent();
+        while (parent instanceof ViewGroup) {
+            group = (ViewGroup) parent;
+            if (group.getId() == android.R.id.content) {
+                return null;
+            }
+            if (ScrollCompat.isScrollingView(group)) {
+                return null;
+            }
+            if (sClassOfCoordinatorLayout.isAssignableFrom(group.getClass())) {
+                return group;
+            }
+            parent = group.getParent();
         }
         return null;
     }

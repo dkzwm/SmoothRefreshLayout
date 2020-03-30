@@ -31,6 +31,7 @@ dependencies {
     implementation rootProject.ext.libs.recyclerview
     implementation rootProject.ext.libs.design
     implementation rootProject.ext.libs.viewpager
+    implementation "com.hendraanggrian.material:collapsingtoolbarlayout-subtitle:1.0.0"
     implementation 'com.github.dkzwm:ViewPagerTransforms:1.3.3'
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
     implementation 'com.joooonho:selectableroundedimageview:1.0.1'

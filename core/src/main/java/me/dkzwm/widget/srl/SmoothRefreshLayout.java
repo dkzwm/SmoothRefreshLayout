@@ -117,7 +117,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 22;
     protected static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 9;
     protected static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 12;
-    public static boolean sDebug = true;
+    public static boolean sDebug = false;
     private static int sId = 0;
     private static IRefreshViewCreator sCreator;
     protected final String TAG = "SmoothRefreshLayout-" + sId++;
@@ -470,14 +470,16 @@ public class SmoothRefreshLayout extends ViewGroup
                 observer.onAttached(this);
             }
         }
-        View view = ViewCatcherUtil.catchAppBarLayout(this);
-        if (view != null) {
-            mAppBarLayoutUtil = new AppBarLayoutUtil(view);
-            if (mInEdgeCanMoveHeaderCallBack == null) {
-                mInEdgeCanMoveHeaderCallBack = mAppBarLayoutUtil;
-            }
-            if (mInEdgeCanMoveFooterCallBack == null) {
-                mInEdgeCanMoveFooterCallBack = mAppBarLayoutUtil;
+        if (isVerticalOrientation()) {
+            View view = ViewCatcherUtil.catchAppBarLayout(this);
+            if (view != null) {
+                mAppBarLayoutUtil = new AppBarLayoutUtil(view);
+                if (mInEdgeCanMoveHeaderCallBack == null) {
+                    mInEdgeCanMoveHeaderCallBack = mAppBarLayoutUtil;
+                }
+                if (mInEdgeCanMoveFooterCallBack == null) {
+                    mInEdgeCanMoveFooterCallBack = mAppBarLayoutUtil;
+                }
             }
         }
         mDelayToPerformAutoRefresh.mLayout = this;
