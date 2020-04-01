@@ -115,6 +115,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected static final int FLAG_ENABLE_COMPAT_SYNC_SCROLL = 0x01 << 20;
     protected static final int FLAG_ENABLE_PERFORM_FRESH_WHEN_FLING = 0x01 << 21;
     protected static final int FLAG_ENABLE_OLD_TOUCH_HANDLING = 0x01 << 22;
+    protected static final int FLAG_BEEN_SET_NO_MORE_DATA = 0x01 << 23;
     protected static final int MASK_DISABLE_PERFORM_LOAD_MORE = 0x07 << 9;
     protected static final int MASK_DISABLE_PERFORM_REFRESH = 0x03 << 12;
     public static boolean sDebug = false;
@@ -1867,6 +1868,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param enable Enable no more data
      */
     public void setEnableNoMoreData(boolean enable) {
+        mFlag = mFlag | FLAG_BEEN_SET_NO_MORE_DATA;
         if (enable) {
             mFlag = mFlag | FLAG_ENABLE_NO_MORE_DATA;
         } else {
@@ -1920,6 +1922,7 @@ public class SmoothRefreshLayout extends ViewGroup
      * @param enable Enable no more data
      */
     public void setEnableNoMoreDataAndNoSpringBack(boolean enable) {
+        mFlag = mFlag | FLAG_BEEN_SET_NO_MORE_DATA;
         if (enable) {
             mFlag = mFlag | FLAG_ENABLE_NO_MORE_DATA | FLAG_ENABLE_NO_MORE_DATA_NO_BACK;
         } else {
@@ -3418,10 +3421,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 final int offsetToKeepHeaderWhileLoading =
                         mIndicator.getOffsetToKeepHeaderWhileLoading();
                 final int offsetToRefresh = mIndicator.getOffsetToRefresh();
-                offset =
-                        (offsetToKeepHeaderWhileLoading >= offsetToRefresh)
-                                ? offsetToKeepHeaderWhileLoading
-                                : offsetToRefresh;
+                offset = Math.max(offsetToKeepHeaderWhileLoading, offsetToRefresh);
             } else {
                 offset = mIndicator.getOffsetToRefresh();
             }
@@ -3430,10 +3430,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 final int offsetToKeepFooterWhileLoading =
                         mIndicator.getOffsetToKeepFooterWhileLoading();
                 final int offsetToLoadMore = mIndicator.getOffsetToLoadMore();
-                offset =
-                        (offsetToKeepFooterWhileLoading >= offsetToLoadMore)
-                                ? offsetToKeepFooterWhileLoading
-                                : offsetToLoadMore;
+                offset = Math.max(offsetToKeepFooterWhileLoading, offsetToLoadMore);
             } else {
                 offset = mIndicator.getOffsetToLoadMore();
             }
@@ -4013,6 +4010,13 @@ public class SmoothRefreshLayout extends ViewGroup
             mFooterRefreshCompleteHook.doHook();
             return;
         }
+        if ((mFlag & FLAG_BEEN_SET_NO_MORE_DATA) <= 0) {
+            if (mIsLastRefreshSuccessful) {
+                mFlag = mFlag & ~(FLAG_ENABLE_NO_MORE_DATA | FLAG_ENABLE_NO_MORE_DATA_NO_BACK);
+            }
+        } else {
+            mFlag = mFlag & ~FLAG_BEEN_SET_NO_MORE_DATA;
+        }
         final byte old = mStatus;
         mStatus = SR_STATUS_COMPLETE;
         notifyStatusChanged(old, mStatus);
@@ -4128,7 +4132,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mStatus = SR_STATUS_REFRESHING;
         notifyStatusChanged(old, mStatus);
         mViewStatus = SR_VIEW_STATUS_HEADER_IN_PROCESSING;
-        mFlag &= ~(FLAG_AUTO_REFRESH | FLAG_ENABLE_NO_MORE_DATA);
+        mFlag &= ~FLAG_AUTO_REFRESH;
         mIsSpringBackCanNotBeInterrupted = false;
         performRefresh(notify);
     }
