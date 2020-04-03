@@ -218,70 +218,52 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
             }
             return;
         }
-        boolean changed = mHeaderStyle != header.getStyle();
-        mHeaderStyle = header.getStyle();
         final SmoothRefreshLayout.LayoutParams lp =
                 (SmoothRefreshLayout.LayoutParams) child.getLayoutParams();
         final IIndicator indicator = mLayout.getIndicator();
         int left = 0, right, top, bottom;
         switch (header.getStyle()) {
             case IRefreshView.STYLE_DEFAULT:
-                if (changed) {
-                    if (mLayout.isMovingHeader()) {
-                        child.setTranslationX(indicator.getCurrentPos());
-                    } else {
-                        child.setTranslationX(0);
-                    }
+                if (mLayout.isMovingHeader()) {
+                    child.setTranslationX(indicator.getCurrentPos());
+                } else {
+                    child.setTranslationX(0);
                 }
                 left = mLayout.getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
                 break;
             case IRefreshView.STYLE_SCALE:
             case IRefreshView.STYLE_PIN:
-                if (changed) {
-                    child.setTranslationX(0);
-                }
+                child.setTranslationX(0);
                 left = mLayout.getPaddingLeft() + lp.leftMargin;
                 break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
-                if (changed) {
-                    child.setTranslationX(0);
-                }
                 if (mLayout.isMovingHeader()) {
                     if (indicator.getCurrentPos() <= indicator.getHeaderHeight()) {
-                        left =
-                                mLayout.getPaddingLeft()
-                                        - child.getMeasuredWidth()
-                                        + indicator.getCurrentPos()
-                                        - lp.rightMargin;
+                        left = mLayout.getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
+                        child.setTranslationX(indicator.getCurrentPos());
                     } else {
                         left = mLayout.getPaddingLeft() + lp.leftMargin;
+                        child.setTranslationX(0);
                     }
                 } else {
                     left = mLayout.getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
+                    child.setTranslationX(0);
                 }
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
-                if (changed) {
-                    if (mLayout.isMovingHeader()) {
-                        child.setTranslationX(
-                                Math.min(indicator.getCurrentPos(), indicator.getHeaderHeight()));
-                    } else {
-                        child.setTranslationX(0);
-                    }
+                if (mLayout.isMovingHeader()) {
+                    child.setTranslationX(
+                            Math.min(indicator.getCurrentPos(), indicator.getHeaderHeight()));
+                } else {
+                    child.setTranslationX(0);
                 }
                 left = mLayout.getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
                 break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
-                if (changed) {
-                    child.setTranslationX(0);
-                }
                 if (mLayout.isMovingHeader()) {
                     if (indicator.getCurrentPos() <= indicator.getHeaderHeight()) {
-                        left =
-                                mLayout.getPaddingLeft()
-                                        + indicator.getCurrentPos()
-                                        - child.getMeasuredWidth()
-                                        - lp.rightMargin;
+                        left = mLayout.getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
+                        child.setTranslationX(indicator.getCurrentPos());
                     } else {
                         left =
                                 (int)
@@ -290,9 +272,11 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                                                 + (indicator.getCurrentPos()
                                                                 - indicator.getHeaderHeight())
                                                         / 2f);
+                        child.setTranslationX(0);
                     }
                 } else {
                     left = mLayout.getPaddingLeft() - child.getMeasuredWidth() - lp.rightMargin;
+                    child.setTranslationX(0);
                 }
                 break;
         }
@@ -318,56 +302,39 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
             }
             return;
         }
-        boolean changed = mFooterStyle != footer.getStyle();
-        mFooterStyle = footer.getStyle();
         final SmoothRefreshLayout.LayoutParams lp =
                 (SmoothRefreshLayout.LayoutParams) child.getLayoutParams();
         final IIndicator indicator = mLayout.getIndicator();
         int left = 0, right, top, bottom;
+        int translationX = 0;
         switch (footer.getStyle()) {
             case IRefreshView.STYLE_DEFAULT:
-                if (changed) {
-                    if (mLayout.isMovingFooter()) {
-                        child.setTranslationX(-indicator.getCurrentPos());
-                    } else {
-                        child.setTranslationX(0);
-                    }
+                if (mLayout.isMovingFooter()) {
+                    translationX = -indicator.getCurrentPos();
                 }
                 left = lp.leftMargin + mContentEnd;
                 break;
             case IRefreshView.STYLE_SCALE:
-                if (changed) {
-                    child.setTranslationX(0);
-                }
                 left =
                         lp.leftMargin
                                 + mContentEnd
                                 - (mLayout.isMovingFooter() ? indicator.getCurrentPos() : 0);
                 break;
             case IRefreshView.STYLE_PIN:
-                if (changed) {
-                    child.setTranslationX(0);
-                }
                 left = mContentEnd - lp.rightMargin - child.getMeasuredWidth();
                 break;
             case IRefreshView.STYLE_FOLLOW_PIN:
-                if (changed) {
-                    if (mLayout.isMovingFooter()) {
-                        child.setTranslationX(
-                                -Math.min(indicator.getCurrentPos(), indicator.getFooterHeight()));
-                    } else {
-                        child.setTranslationX(0);
-                    }
+                if (mLayout.isMovingFooter()) {
+                    translationX =
+                            -Math.min(indicator.getCurrentPos(), indicator.getFooterHeight());
                 }
                 left = lp.leftMargin + mContentEnd;
                 break;
             case IRefreshView.STYLE_FOLLOW_SCALE:
-                if (changed) {
-                    child.setTranslationX(0);
-                }
                 if (mLayout.isMovingFooter()) {
                     if (indicator.getCurrentPos() <= indicator.getFooterHeight()) {
-                        left = lp.leftMargin + mContentEnd - indicator.getCurrentPos();
+                        left = lp.leftMargin + mContentEnd;
+                        translationX = -indicator.getCurrentPos();
                     } else {
                         left = lp.leftMargin + mContentEnd - child.getMeasuredWidth();
                     }
@@ -377,12 +344,10 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                 break;
             case IRefreshView.STYLE_FOLLOW_CENTER:
                 {
-                    if (changed) {
-                        child.setTranslationX(0);
-                    }
                     if (mLayout.isMovingFooter()) {
                         if (indicator.getCurrentPos() <= indicator.getFooterHeight()) {
-                            left = lp.leftMargin + mContentEnd - indicator.getCurrentPos();
+                            left = lp.leftMargin + mContentEnd;
+                            translationX = -indicator.getCurrentPos();
                         } else {
                             left =
                                     (int)
@@ -399,6 +364,12 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                     break;
                 }
         }
+        if (mLayout.isMovingHeader()
+                && left < mLayout.getMeasuredWidth()
+                && footer.getStyle() != IRefreshView.STYLE_SCALE) {
+            translationX = indicator.getCurrentPos();
+        }
+        child.setTranslationX(translationX);
         if (mLayout.isInEditMode()) {
             left = left - child.getMeasuredWidth();
         }
@@ -461,20 +432,6 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                 case IRefreshView.STYLE_DEFAULT:
                     header.getView().setTranslationX(indicator.getCurrentPos());
                     break;
-                case IRefreshView.STYLE_SCALE:
-                    if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                                    != View.MeasureSpec.EXACTLY
-                            || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                                    != View.MeasureSpec.EXACTLY) {
-                        needRequestLayout = !ViewCompat.isInLayout(mLayout);
-                    } else {
-                        measureHeader(
-                                header,
-                                mLayout.getMeasuredWidthAndState(),
-                                mLayout.getMeasuredHeightAndState());
-                        layoutHeaderView(header);
-                    }
-                    break;
                 case IRefreshView.STYLE_PIN:
                     header.getView().setTranslationX(0);
                     break;
@@ -490,21 +447,11 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                     if (ViewCompat.isInLayout(mLayout)) {
                         break;
                     }
-                    if (indicator.getCurrentPos() > indicator.getHeaderHeight()) {
-                        if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                                        != View.MeasureSpec.EXACTLY
-                                || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                                        != View.MeasureSpec.EXACTLY) {
-                            needRequestLayout = !ViewCompat.isInLayout(mLayout);
-                        } else {
-                            measureHeader(
-                                    header,
-                                    mLayout.getMeasuredWidthAndState(),
-                                    mLayout.getMeasuredHeightAndState());
-                            layoutHeaderView(header);
-                        }
+                    if (mMeasureMatchParentChildren) {
+                        needRequestLayout = !ViewCompat.isInLayout(mLayout);
                     } else {
-                        ViewCompat.offsetLeftAndRight(header.getView(), change);
+                        measureHeader(header, mOldWidthMeasureSpec, mOldHeightMeasureSpec);
+                        layoutHeaderView(header);
                     }
                     break;
             }
@@ -521,20 +468,6 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                 case IRefreshView.STYLE_DEFAULT:
                     footer.getView().setTranslationX(-indicator.getCurrentPos());
                     break;
-                case IRefreshView.STYLE_SCALE:
-                    if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                                    != View.MeasureSpec.EXACTLY
-                            || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                                    != View.MeasureSpec.EXACTLY) {
-                        needRequestLayout = !ViewCompat.isInLayout(mLayout);
-                    } else {
-                        measureFooter(
-                                footer,
-                                mLayout.getMeasuredWidthAndState(),
-                                mLayout.getMeasuredHeightAndState());
-                        layoutFooterView(footer);
-                    }
-                    break;
                 case IRefreshView.STYLE_PIN:
                     footer.getView().setTranslationX(0);
                     break;
@@ -545,26 +478,17 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                                             indicator.getCurrentPos(),
                                             indicator.getFooterHeight()));
                     break;
+                case IRefreshView.STYLE_SCALE:
                 case IRefreshView.STYLE_FOLLOW_SCALE:
                 case IRefreshView.STYLE_FOLLOW_CENTER:
                     if (ViewCompat.isInLayout(mLayout)) {
                         break;
                     }
-                    if (indicator.getCurrentPos() > indicator.getFooterHeight()) {
-                        if (View.MeasureSpec.getMode(mLayout.getMeasuredWidthAndState())
-                                        != View.MeasureSpec.EXACTLY
-                                || View.MeasureSpec.getMode(mLayout.getMeasuredHeightAndState())
-                                        != View.MeasureSpec.EXACTLY) {
-                            needRequestLayout = !ViewCompat.isInLayout(mLayout);
-                        } else {
-                            measureFooter(
-                                    footer,
-                                    mLayout.getMeasuredWidthAndState(),
-                                    mLayout.getMeasuredHeightAndState());
-                            layoutFooterView(footer);
-                        }
+                    if (mMeasureMatchParentChildren) {
+                        needRequestLayout = !ViewCompat.isInLayout(mLayout);
                     } else {
-                        ViewCompat.offsetLeftAndRight(footer.getView(), change);
+                        measureFooter(footer, mOldWidthMeasureSpec, mOldHeightMeasureSpec);
+                        layoutFooterView(footer);
                     }
                     break;
             }
@@ -605,14 +529,22 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
             @Nullable View stickyFooter,
             @Nullable View content) {
         if (content != null) {
-            if (mLayout.isMovingFooter()) {
-                View targetView = mLayout.getScrollTargetView();
-                if (targetView != null) {
-                    targetView.setTranslationX(0);
-                }
-            } else if (mLayout.isMovingHeader()) {
-                content.setTranslationX(0);
+            View targetView = mLayout.getScrollTargetView();
+            if (targetView != null) {
+                targetView.setTranslationX(0);
             }
+        }
+        if (header != null) {
+            layoutHeaderView(header);
+        }
+        if (footer != null) {
+            layoutFooterView(footer);
+        }
+        if (stickyHeader != null) {
+            layoutStickyHeaderView(stickyHeader);
+        }
+        if (stickyFooter != null) {
+            layoutStickyFooterView(stickyFooter);
         }
     }
 }

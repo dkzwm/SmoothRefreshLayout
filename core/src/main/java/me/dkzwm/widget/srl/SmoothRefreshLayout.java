@@ -500,6 +500,9 @@ public class SmoothRefreshLayout extends ViewGroup
         final boolean measureMatchParentChildren =
                 MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
                         || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
+        mLayoutManager.mMeasureMatchParentChildren = measureMatchParentChildren;
+        mLayoutManager.mOldWidthMeasureSpec = widthMeasureSpec;
+        mLayoutManager.mOldHeightMeasureSpec = heightMeasureSpec;
         for (int i = 0; i < count; i++) {
             final View child = getChildAt(i);
             if (child.getVisibility() == GONE) {
@@ -4468,6 +4471,9 @@ public class SmoothRefreshLayout extends ViewGroup
         public static final int VERTICAL = 1;
         protected final String TAG = getClass().getSimpleName() + "-" + SmoothRefreshLayout.sId++;
         protected SmoothRefreshLayout mLayout;
+        protected boolean mMeasureMatchParentChildren;
+        protected int mOldWidthMeasureSpec;
+        protected int mOldHeightMeasureSpec;
 
         @Orientation
         public abstract int getOrientation();
