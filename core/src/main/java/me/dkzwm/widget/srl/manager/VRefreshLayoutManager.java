@@ -369,8 +369,6 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                 && footer.getStyle() != IRefreshView.STYLE_SCALE) {
             translationY = indicator.getCurrentPos();
         }
-        Log.d(TAG, String.format("onLayout(): footer: %s", translationY));
-        Log.d(TAG, String.format("onLayout(): top: %s", translationY + top));
         child.setTranslationY(translationY);
         left = mLayout.getPaddingLeft() + lp.leftMargin;
         right = left + child.getMeasuredWidth();
