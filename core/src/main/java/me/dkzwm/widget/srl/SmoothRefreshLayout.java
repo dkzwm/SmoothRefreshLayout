@@ -1437,6 +1437,17 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     /**
+     * Set the duration for Fling back.
+     *
+     * <p>设置越界回弹效果回弹时的持续时长（默认:`550`）
+     *
+     * @param duration Duration
+     */
+    public void setFlingBackDuration(int duration) {
+        mDurationOfFlingBack = duration;
+    }
+
+    /**
      * Set the duration of return back to the start position.
      *
      * <p>设置刷新完成回滚到起始位置的时间
