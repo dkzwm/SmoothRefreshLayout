@@ -170,6 +170,7 @@ public class SmoothRefreshLayout extends ViewGroup
     protected OnSyncScrollCallback mSyncScrollCallback;
     protected OnPerformAutoLoadMoreCallBack mAutoLoadMoreCallBack;
     protected OnPerformAutoRefreshCallBack mAutoRefreshCallBack;
+    protected OnCalculateBounceCallback mCalculateBounceCallback;
     protected int mFlag =
             FLAG_DISABLE_LOAD_MORE
                     | FLAG_ENABLE_KEEP_REFRESH_VIEW
@@ -975,6 +976,10 @@ public class SmoothRefreshLayout extends ViewGroup
      */
     public void setOnPerformAutoRefreshCallBack(OnPerformAutoRefreshCallBack callBack) {
         mAutoRefreshCallBack = callBack;
+    }
+
+    public void setOnCalculateBounceCallback(OnCalculateBounceCallback callBack) {
+        mCalculateBounceCallback = callBack;
     }
 
     /**
@@ -4246,7 +4251,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveHeader()}
-     * method behavior should implement this interface.
+     * method behavior
      */
     public interface OnHeaderEdgeDetectCallBack {
         /**
@@ -4265,7 +4270,7 @@ public class SmoothRefreshLayout extends ViewGroup
 
     /**
      * Classes that wish to override {@link SmoothRefreshLayout#isNotYetInEdgeCannotMoveFooter()}
-     * method behavior should implement this interface.
+     * method behavior
      */
     public interface OnFooterEdgeDetectCallBack {
         /**
@@ -4282,10 +4287,7 @@ public class SmoothRefreshLayout extends ViewGroup
                 SmoothRefreshLayout parent, @Nullable View child, @Nullable IRefreshView footer);
     }
 
-    /**
-     * Classes that wish to be notified when the swipe gesture correctly triggers a refresh should
-     * implement this interface.
-     */
+    /** Classes that wish to be notified when the swipe gesture correctly triggers a refresh */
     public interface OnRefreshListener {
         /** Called when a refresh is triggered. */
         void onRefreshing();
@@ -4294,10 +4296,7 @@ public class SmoothRefreshLayout extends ViewGroup
         void onLoadingMore();
     }
 
-    /**
-     * Classes that wish to be notified when the views position changes should implement this
-     * interface
-     */
+    /** Classes that wish to be notified when the views position changes */
     public interface OnUIPositionChangedListener {
         /**
          * UI position changed
@@ -4371,6 +4370,13 @@ public class SmoothRefreshLayout extends ViewGroup
          *     {@link #SR_STATUS_COMPLETE}}
          */
         void onStatusChanged(byte old, byte now);
+    }
+
+    /** Classes that wish to override the calculate bounce duration and distance method */
+    public interface OnCalculateBounceCallback {
+        int onCalculateDistance(float velocity);
+
+        int onCalculateDuration(float velocity);
     }
 
     public static class LayoutParams extends MarginLayoutParams {
@@ -4849,28 +4855,32 @@ public class SmoothRefreshLayout extends ViewGroup
         }
 
         int[] computeScroll(float velocity) {
-            // Multiply by a given empirical value
-            velocity = velocity * .535f;
-            float deceleration =
-                    (float)
-                            Math.log(
-                                    Math.abs(velocity / 4.5f)
-                                            / (ViewConfiguration.getScrollFriction() * mPhysical));
-            float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2f);
-            mCachedPair[0] =
-                    Math.max(
-                            Math.min(
-                                    (int)
-                                            ((ViewConfiguration.getScrollFriction()
-                                                            * mPhysical
-                                                            * Math.exp(deceleration))
-                                                    * ratio),
-                                    mMaxDistance),
-                            mTouchSlop);
+            int distance, duration;
+            if (mCalculateBounceCallback != null) {
+                distance = mCalculateBounceCallback.onCalculateDistance(velocity);
+                duration = mCalculateBounceCallback.onCalculateDuration(velocity);
+                mCachedPair[0] = Math.max(distance, mTouchSlop);
+            } else {
+                // Multiply by a given empirical value
+                velocity = velocity * .535f;
+                float deceleration =
+                        (float)
+                                Math.log(
+                                        Math.abs(velocity / 4.5f)
+                                                / (ViewConfiguration.getScrollFriction()
+                                                        * mPhysical));
+                float ratio = (float) ((Math.exp(-Math.log10(velocity) / 1.2d)) * 2f);
+                distance =
+                        (int)
+                                ((ViewConfiguration.getScrollFriction()
+                                                * mPhysical
+                                                * Math.exp(deceleration))
+                                        * ratio);
+                duration = (int) (1000f * ratio);
+                mCachedPair[0] = Math.max(Math.min(distance, mMaxDistance), mTouchSlop);
+            }
             mCachedPair[1] =
-                    Math.min(
-                            Math.max((int) (1000f * ratio), mMinOverScrollDuration),
-                            mMaxOverScrollDuration);
+                    Math.min(Math.max(duration, mMinOverScrollDuration), mMaxOverScrollDuration);
             return mCachedPair;
         }
 
