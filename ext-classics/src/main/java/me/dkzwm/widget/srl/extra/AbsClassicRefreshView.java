@@ -179,10 +179,12 @@ public abstract class AbsClassicRefreshView<T extends IIndicator> extends Relati
     public void onReset(SmoothRefreshLayout frame) {
         mArrowImageView.clearAnimation();
         mArrowImageView.setVisibility(VISIBLE);
+        mTitleTextView.setVisibility(VISIBLE);
         mProgressBar.setVisibility(INVISIBLE);
         mShouldShowLastUpdate = true;
         mLastUpdateTimeUpdater.stop();
         tryUpdateLastUpdateTime();
+        requestLayout();
     }
 
     @Override

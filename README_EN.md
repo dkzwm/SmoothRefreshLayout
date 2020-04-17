@@ -1,7 +1,7 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.1.1.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
-![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-720%20%7C%2082%20KB-e91e63.svg)
+[![Release](https://img.shields.io/badge/JCenter-1.7.1.2.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-740%20%7C%2084%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
 
@@ -19,23 +19,23 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  - Support Horizontal refresh.
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
  - Support Refresh view has six styles: STYLE_DEFAULT(Do not change the height by default)、 STYLE_SCALE(Dynamically change the height)、 STYLE_PIN(Pinned the refresh view)、 STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、 STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、 STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
- - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）, PS:TaoBao-Senond-Floor、JD-Activity.
+ - Support Two-Level refresh（TwoLevelSmoothRefreshLayout）, PS:TaoBao-Second-Floor、JD-Activity.
  - Support ListView, GridView, RecyclerView on LoadMore to smooth scrolling.
  - Support synchronous Fling gestures.
- - Support Scale effect, PS:XiaoMi phone settings page effects.    
- - Support Hrizontal Scale effect.    
+ - Support Scale effect, PS:XIAOMI phone settings page effects.    
+ - Support Horizontal Scale effect.    
  - Many callback interface and debugging information.
  
  ## Installation
  Add the following dependency to your build.gradle file:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.1.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.1.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.1.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.1.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.1.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.1.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.1.2.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.2.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.2.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.2.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.2.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.2.androidx'
 
     //android support final version
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'

@@ -26,6 +26,7 @@ package me.dkzwm.widget.srl;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.os.Build;
 import android.os.SystemClock;
@@ -688,6 +689,12 @@ public class SmoothRefreshLayout extends ViewGroup
     }
 
     @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        mLayoutManager.onLayoutDraw(canvas);
+    }
+
+    @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (!isEnabled()
                 || mTargetView == null
@@ -796,6 +803,10 @@ public class SmoothRefreshLayout extends ViewGroup
             }
             mLayoutManager = layoutManager;
         }
+    }
+
+    public LayoutManager getLayoutManager() {
+        return mLayoutManager;
     }
 
     /**
@@ -4499,6 +4510,8 @@ public class SmoothRefreshLayout extends ViewGroup
         public void setLayout(SmoothRefreshLayout layout) {
             mLayout = layout;
         }
+
+        public void onLayoutDraw(Canvas canvas) {}
 
         public boolean isNeedFilterOverTop(float delta) {
             return true;

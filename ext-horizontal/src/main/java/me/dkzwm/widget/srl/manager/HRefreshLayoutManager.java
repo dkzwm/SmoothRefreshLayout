@@ -24,6 +24,7 @@
  */
 package me.dkzwm.widget.srl.manager;
 
+import android.graphics.Canvas;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -518,6 +519,9 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
                 }
             }
         }
+        if (mBackgroundPaint != null) {
+            mLayout.invalidate();
+        }
         return needRequestLayout;
     }
 
@@ -546,5 +550,32 @@ public class HRefreshLayoutManager extends VRefreshLayoutManager {
         if (stickyFooter != null) {
             layoutStickyFooterView(stickyFooter);
         }
+    }
+
+    @Override
+    protected void drawHeaderBackground(Canvas canvas) {
+        final int right =
+                Math.min(
+                        mLayout.getPaddingLeft() + mLayout.getIndicator().getCurrentPos(),
+                        mLayout.getWidth() - mLayout.getPaddingLeft());
+        canvas.drawRect(
+                mLayout.getPaddingLeft(),
+                mLayout.getPaddingTop(),
+                right,
+                mLayout.getHeight() - mLayout.getPaddingBottom(),
+                mBackgroundPaint);
+    }
+
+    @Override
+    protected void drawFooterBackground(Canvas canvas) {
+        final int left;
+        final int right = mContentEnd;
+        left = right - mLayout.getIndicator().getCurrentPos();
+        canvas.drawRect(
+                left,
+                mLayout.getPaddingTop(),
+                right,
+                mLayout.getHeight() - mLayout.getPaddingBottom(),
+                mBackgroundPaint);
     }
 }

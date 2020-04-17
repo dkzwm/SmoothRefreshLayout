@@ -87,6 +87,7 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
+        mArrowImageView.clearAnimation();
         mShouldShowLastUpdate = true;
         tryUpdateLastUpdateTime();
         if (!TextUtils.isEmpty(mLastUpdateTimeKey)) {
@@ -100,6 +101,7 @@ public class ClassicHeader<T extends IIndicator> extends AbsClassicRefreshView<T
         } else {
             mTitleTextView.setText(mPullDownRes);
         }
+        requestLayout();
     }
 
     @Override

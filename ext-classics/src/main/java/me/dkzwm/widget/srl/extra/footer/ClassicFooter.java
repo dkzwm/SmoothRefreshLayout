@@ -30,6 +30,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import androidx.annotation.StringRes;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
@@ -104,6 +105,12 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
     }
 
     @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        Log.d(getClass().getSimpleName(), "---------5:");
+    }
+
+    @Override
     public int getType() {
         return TYPE_FOOTER;
     }
@@ -117,6 +124,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
 
     @Override
     public void onRefreshPrepare(SmoothRefreshLayout frame) {
+        mArrowImageView.clearAnimation();
         mShouldShowLastUpdate = true;
         mNoMoreDataChangedView = false;
         tryUpdateLastUpdateTime();
@@ -132,6 +140,7 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
         } else {
             mTitleTextView.setText(mPullUpRes);
         }
+        requestLayout();
     }
 
     @Override

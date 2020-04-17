@@ -24,10 +24,14 @@
  */
 package me.dkzwm.widget.srl.manager;
 
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
@@ -39,6 +43,17 @@ import me.dkzwm.widget.srl.util.ViewCatcherUtil;
 
 public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
     protected int mContentEnd;
+    protected Paint mBackgroundPaint;
+    protected int mHeaderBackgroundColor = Color.TRANSPARENT;
+    protected int mFooterBackgroundColor = Color.TRANSPARENT;
+
+    @Override
+    public void setLayout(SmoothRefreshLayout layout) {
+        super.setLayout(layout);
+        if (layout != null) {
+            layout.setWillNotDraw(mBackgroundPaint == null);
+        }
+    }
 
     @Override
     @Orientation
@@ -547,6 +562,9 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
                 }
             }
         }
+        if (mBackgroundPaint != null) {
+            mLayout.invalidate();
+        }
         return needRequestLayout;
     }
 
@@ -582,5 +600,78 @@ public class VRefreshLayoutManager extends SmoothRefreshLayout.LayoutManager {
         if (stickyFooter != null) {
             layoutStickyFooterView(stickyFooter);
         }
+    }
+
+    public void setHeaderBackgroundColor(@ColorInt int color) {
+        mHeaderBackgroundColor = color;
+        preparePaint();
+    }
+
+    public void setFooterBackgroundColor(@ColorInt int color) {
+        mFooterBackgroundColor = color;
+        preparePaint();
+    }
+
+    private void preparePaint() {
+        boolean hasColor =
+                (mHeaderBackgroundColor != Color.TRANSPARENT
+                        || mFooterBackgroundColor != Color.TRANSPARENT);
+        if (mBackgroundPaint == null && hasColor) {
+            mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            mBackgroundPaint.setStyle(Paint.Style.FILL);
+            if (mLayout != null) {
+                mLayout.setWillNotDraw(false);
+            }
+        } else if (!hasColor) {
+            if (mBackgroundPaint != null) mBackgroundPaint.reset();
+            mBackgroundPaint = null;
+            if (mLayout != null) {
+                mLayout.setWillNotDraw(true);
+            }
+        }
+    }
+
+    @Override
+    public void onLayoutDraw(Canvas canvas) {
+        if (mBackgroundPaint != null
+                && !mLayout.isEnabledPinContentView()
+                && !mLayout.getIndicator().isAlreadyHere(IIndicator.START_POS)) {
+            if (!mLayout.isDisabledRefresh()
+                    && mLayout.isMovingHeader()
+                    && mHeaderBackgroundColor != Color.TRANSPARENT) {
+                mBackgroundPaint.setColor(mHeaderBackgroundColor);
+                drawHeaderBackground(canvas);
+            } else if (!mLayout.isDisabledLoadMore()
+                    && mLayout.isMovingFooter()
+                    && mFooterBackgroundColor != Color.TRANSPARENT) {
+                mBackgroundPaint.setColor(mFooterBackgroundColor);
+                drawFooterBackground(canvas);
+            }
+        }
+    }
+
+    protected void drawHeaderBackground(Canvas canvas) {
+        final int bottom =
+                Math.min(
+                        mLayout.getPaddingTop() + mLayout.getIndicator().getCurrentPos(),
+                        mLayout.getHeight() - mLayout.getPaddingTop());
+        canvas.drawRect(
+                mLayout.getPaddingLeft(),
+                mLayout.getPaddingTop(),
+                mLayout.getWidth() - mLayout.getPaddingRight(),
+                bottom,
+                mBackgroundPaint);
+    }
+
+    protected void drawFooterBackground(Canvas canvas) {
+        final int top;
+        final int bottom = mContentEnd;
+        top = bottom - mLayout.getIndicator().getCurrentPos();
+        canvas.drawRect(
+                mLayout.getPaddingLeft(),
+                top,
+                mLayout.getWidth() - mLayout.getPaddingRight(),
+                bottom,
+                mBackgroundPaint);
     }
 }

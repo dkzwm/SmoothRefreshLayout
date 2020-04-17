@@ -1,4 +1,10 @@
 # 更新日志
+## 1.7.1.2.androidx
+> 在 `VRefreshLayoutManager` 添加方法 `setHeaderBackgroundColor`、`setFooterBackgroundColor`。    
+> 添加方法 `getLayoutManager` 方法。    
+> 添加接口 `OnCalculateBounceCallback` ，用以重载计算越界距离和时间函数，不喜欢本库自带越界回弹效果的话，可使用该接口实现自己的越界计算函数，配合`setMinOverScrollDuration`、`setMaxOverScrollDuration`、`setFlingBackDuration`、`setSpringInterpolator`、`setSpringBackInterpolator` 可以实现几乎所有的越界回弹效果。    
+> 添加方法 `setOnCalculateBounceCallback`。    
+> 添加方法 `setFlingBackDuration`。    
 ## 1.7.1.1.androidx
 > 修改 `ViewCatcherUtil` 类实现， 完善 `CoordinatorLayout` 各种布局下的适配性。    
 > 修改只在纵向模式下才动态搜索 `AppBarLayout`。    
