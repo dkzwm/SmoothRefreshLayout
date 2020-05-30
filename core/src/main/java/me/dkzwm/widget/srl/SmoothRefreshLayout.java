@@ -3896,8 +3896,8 @@ public class SmoothRefreshLayout extends ViewGroup
                         && !mIndicator.hasTouched()
                         && !(mScrollChecker.isPreFling() || mScrollChecker.isFling())
                         && mIndicator.isJustReturnedOffsetToRefresh()) {
-                    triggeredRefresh(true);
                     mScrollChecker.stop();
+                    triggeredRefresh(true);
                 }
             } else if (isFooterInProcessing() && isMovingFooter() && !isDisabledPerformLoadMore()) {
                 if (isEnabledPullToRefresh() && mIndicator.isOverOffsetToLoadMore()) {
@@ -3906,8 +3906,8 @@ public class SmoothRefreshLayout extends ViewGroup
                         && !mIndicator.hasTouched()
                         && !(mScrollChecker.isPreFling() || mScrollChecker.isFling())
                         && mIndicator.isJustReturnedOffsetToLoadMore()) {
-                    triggeredLoadMore(true);
                     mScrollChecker.stop();
+                    triggeredLoadMore(true);
                 }
             }
         }
