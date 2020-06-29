@@ -15,7 +15,7 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  - Support Nested-Scroll feature, implemented the NestedScrollingChild3, NestedScrollingParent3 interface.
  - Extends the ViewGroup, has excellent performance,support similar FameLayout feature（Gravity、Margin).
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）、Scroll to top to Auto-Refresh.
- - Support Cross boundary rebound(OverScroll).
+ - Support Cross boundary rebound(OverScroll), Since the `1.7.1.3.androidx` version, supports Physics-based motion.
  - Support Horizontal refresh.
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
  - Support Refresh view has six styles: STYLE_DEFAULT(Do not change the height by default)、 STYLE_SCALE(Dynamically change the height)、 STYLE_PIN(Pinned the refresh view)、 STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、 STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、 STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
@@ -36,6 +36,8 @@ dependencies {
     implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.2.androidx'
     implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.2.androidx'
     implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.2.androidx'
+    //Available from version 1.7.1.3.androidx
+    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.3.androidx'
 
     //android support final version
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'

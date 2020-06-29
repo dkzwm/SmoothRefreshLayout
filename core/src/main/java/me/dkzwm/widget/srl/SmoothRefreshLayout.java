@@ -245,7 +245,7 @@ public class SmoothRefreshLayout extends ViewGroup
         mTouchSlop = viewConfiguration.getScaledTouchSlop();
         mMaximumFlingVelocity = viewConfiguration.getScaledMaximumFlingVelocity();
         mMinimumFlingVelocity = viewConfiguration.getScaledMinimumFlingVelocity();
-        mScrollChecker = new ScrollChecker();
+        createScrollerChecker();
         mSpringInterpolator = SPRING_INTERPOLATOR;
         mSpringBackInterpolator = SPRING_BACK_INTERPOLATOR;
         mDelayToPerformAutoRefresh = new DelayToPerformAutoRefresh();
@@ -366,6 +366,10 @@ public class SmoothRefreshLayout extends ViewGroup
         DefaultIndicator indicator = new DefaultIndicator();
         mIndicator = indicator;
         mIndicatorSetter = indicator;
+    }
+
+    protected void createScrollerChecker() {
+        mScrollChecker = new ScrollChecker();
     }
 
     public final IIndicator getIndicator() {
@@ -786,6 +790,10 @@ public class SmoothRefreshLayout extends ViewGroup
         mScrollTargetView = view;
     }
 
+    public LayoutManager getLayoutManager() {
+        return mLayoutManager;
+    }
+
     /**
      * Set custom LayoutManager
      *
@@ -803,10 +811,6 @@ public class SmoothRefreshLayout extends ViewGroup
             }
             mLayoutManager = layoutManager;
         }
-    }
-
-    public LayoutManager getLayoutManager() {
-        return mLayoutManager;
     }
 
     /**
@@ -2356,7 +2360,7 @@ public class SmoothRefreshLayout extends ViewGroup
         }
     }
 
-    protected boolean onFling(float vx, final float vy, boolean nested) {
+    public boolean onFling(float vx, final float vy, boolean nested) {
         if (sDebug) {
             Log.d(
                     TAG,
@@ -3956,7 +3960,7 @@ public class SmoothRefreshLayout extends ViewGroup
         return mViewStatus == SR_VIEW_STATUS_FOOTER_IN_PROCESSING;
     }
 
-    private void tryToDispatchNestedFling() {
+    protected void tryToDispatchNestedFling() {
         if (mScrollChecker.isPreFling() && mIndicator.isAlreadyHere(IIndicator.START_POS)) {
             if (sDebug) {
                 Log.d(TAG, "tryToDispatchNestedFling()");
@@ -4595,14 +4599,14 @@ public class SmoothRefreshLayout extends ViewGroup
     class ScrollChecker implements Runnable {
         private static final float GRAVITY_EARTH = 9.80665f;
         private final float mPhysical;
-        private final int mMaxDistance;
+        final int mMaxDistance;
         Scroller[] mCachedScroller;
         Scroller mScroller;
         Scroller mCalcScroller;
         Interpolator mInterpolator;
-        int mLastY;
-        int mLastStart;
-        int mLastTo;
+        float mLastY;
+        float mLastStart;
+        float mLastTo;
         int mDuration;
         byte mMode = Constants.SCROLLER_MODE_NONE;
         float mVelocity;
@@ -4631,12 +4635,13 @@ public class SmoothRefreshLayout extends ViewGroup
             }
             boolean finished = !mScroller.computeScrollOffset() && mScroller.getCurrY() == mLastY;
             int curY = mScroller.getCurrY();
-            int deltaY = curY - mLastY;
+            float deltaY = curY - mLastY;
             if (sDebug) {
                 Log.d(
                         TAG,
                         String.format(
-                                "ScrollChecker: run(): finished: %b, mode: %d, start: %d, to: %d, curPos: %d, curY:%d, last: %d, delta: %d",
+                                "ScrollChecker: run(): finished: %b, mode: %d, start: %f, to: %f,"
+                                        + " curPos: %d, curY:%d, last: %f, delta: %f",
                                 finished,
                                 mMode,
                                 mLastStart,
@@ -4805,7 +4810,7 @@ public class SmoothRefreshLayout extends ViewGroup
                         String.format(
                                 "ScrollChecker: scrollTo(): to: %d, duration: %d", to, duration));
             }
-            int distance = mLastTo - mLastStart;
+            int distance = (int) (mLastTo - mLastStart);
             mLastY = 0;
             mDuration = duration;
             mIsScrolling = true;
@@ -4909,7 +4914,7 @@ public class SmoothRefreshLayout extends ViewGroup
                                 "ScrollChecker: startBounce(): to: %d, duration: %d",
                                 to, duration));
             }
-            int distance = mLastTo - mLastStart;
+            int distance = (int) (mLastTo - mLastStart);
             mLastY = 0;
             mDuration = duration;
             mIsScrolling = true;
@@ -4938,7 +4943,7 @@ public class SmoothRefreshLayout extends ViewGroup
                     case Constants.SCROLLER_MODE_FLING_BACK:
                     case Constants.SCROLLER_MODE_SPRING_BACK:
                         mLastStart = mIndicator.getCurrentPos();
-                        int distance = mLastTo - mLastStart;
+                        int distance = (int) (mLastTo - mLastStart);
                         int passed = mScroller.timePassed();
                         mScroller = makeOrGetScroller(interpolator);
                         mScroller.startScroll(0, 0, 0, distance, mDuration - passed);

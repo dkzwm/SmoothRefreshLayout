@@ -1,1 +1,2 @@
-include ':app', ':core', ':ext-two-level', ':ext-horizontal', ':ext-classics', ':ext-material', ':ext-util'
+include ':app', ':core', ':ext-two-level', ':ext-horizontal', ':ext-classics', ':ext-material',
+        ':ext-util',':ext-dynamic-rebound'

@@ -1,6 +1,6 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.1.2.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+[![Release](https://img.shields.io/badge/JCenter-1.7.1.3.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-740%20%7C%2084%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -13,7 +13,7 @@
  - 支持嵌套滑动,完整实现了NestedScrollingChild3，NestedScrollingParent3 接口,玩转CoordinatorLayout.
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
- - 支持越界回弹.
+ - 支持越界回弹，自`1.7.1.3.androidx`版本开始支持基于物理特性的越界回弹效果.
  - 支持刷新视图自定样式:STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小，会在SRL内部测量并布局，所以性能会有损失)、STYLE_PIN(不会改变视图大小，固定在顶部或者底部)、STYLE_FOLLOW_SCALE(先纵向跟随移动并且不改变视图大小，大于视图高度后动态改变视图大小且性能会有损失)、STYLE_FOLLOW_PIN(不会改变视图大小，先纵向跟随移动，大于视图高度后固定)、STYLE_FOLLOW_CENTER(不会改变视图大小，先纵向跟随移动，大于视图高度后让视图保持在移动的距离中心点).
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）,PS:淘宝二楼、京东活动.
  - 支持横向刷新(HorizontalSmoothRefreshLayout).
@@ -26,12 +26,14 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.2.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.2.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.2.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.2.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.2.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.2.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.1.3.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.3.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.3.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.3.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.3.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.3.androidx'
+    //物理回弹动画扩展实现，自1.7.1.3开始提供
+    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.3.androidx'
 
     //android support 最终版本
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'

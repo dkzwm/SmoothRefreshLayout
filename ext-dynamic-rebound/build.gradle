@@ -1,0 +1,105 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+group = rootProject.ext.bintray['groupId']
+version=rootProject.ext.android['versionName']
+
+android {
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        versionCode rootProject.ext.android.versionCode
+        versionName rootProject.ext.android.versionName
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compileOnly project(':core')
+    compileOnly rootProject.ext.libs.recyclerview
+    compileOnly rootProject.ext.libs.dynamicanimation
+}
+
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    failOnError false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
+
+// build a jar with javadoc
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+                name 'SmoothRefreshLayout-HorizontalExtension'
+                groupId rootProject.ext.bintray['groupId']
+                url rootProject.ext.bintray['siteUrl']
+                artifactId 'ext-horizontal'
+                description 'Horizontal refresh extension of SmoothRefreshLayout'
+                licenses {
+                    license {
+                        name rootProject.ext.bintray['licenseName']
+                        url rootProject.ext.bintray['licenseUrl']
+                    }
+                }
+                developers {
+                    developer {
+                        id rootProject.ext.bintray['developerId']
+                        name rootProject.ext.bintray['developerName']
+                        email rootProject.ext.bintray['developerEmail']
+                    }
+                }
+                scm {
+                    connection rootProject.ext.bintray['gitUrl']
+                    developerConnection rootProject.ext.bintray['gitUrl']
+                    url rootProject.ext.bintray['siteUrl']
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.key")
+
+    configurations = ['archives']
+    pkg {
+        repo = 'maven'
+        name = 'ext-dynamic-rebound'
+        desc = 'Dynamic rebound extension of SmoothRefreshLayout'
+        websiteUrl = rootProject.ext.bintray['siteUrl']
+        vcsUrl = rootProject.ext.bintray['gitUrl']
+        licenses = rootProject.ext.allLicenses
+        publish = true
+    }
+}
