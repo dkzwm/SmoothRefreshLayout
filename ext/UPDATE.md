@@ -1,5 +1,8 @@
 # 更新日志
 ## 1.7.1.2.androidx
+> 修复#115，未考虑到触发刷新同步调用结束刷新导致刷新视图无法操作问题。   
+> 添加扩展模块 `ext-dynamic-rebound`, 使用基于物理的动画实现越界回弹，使回弹效果更贴近真实。理论上该扩展模块可直接替换SRL使用，无需修改代码。    
+## 1.7.1.2.androidx
 > 在 `VRefreshLayoutManager` 添加方法 `setHeaderBackgroundColor`、`setFooterBackgroundColor`。    
 > 添加方法 `getLayoutManager` 方法。    
 > 添加接口 `OnCalculateBounceCallback` ，用以重载计算越界距离和时间函数，不喜欢本库自带越界回弹效果的话，可使用该接口实现自己的越界计算函数，配合`setMinOverScrollDuration`、`setMaxOverScrollDuration`、`setFlingBackDuration`、`setSpringInterpolator`、`setSpringBackInterpolator` 可以实现几乎所有的越界回弹效果。    
