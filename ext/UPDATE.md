@@ -1,4 +1,7 @@
 # 更新日志
+## 1.7.1.3.androidx
+> 修复#115，未考虑到触发刷新同步调用结束刷新导致刷新视图无法操作问题。   
+> 添加扩展模块 `ext-dynamic-rebound`, 使用基于物理的动画实现越界回弹，使回弹效果更贴近真实。理论上该扩展模块可直接替换SRL使用，无需修改代码。    
 ## 1.7.1.2.androidx
 > 在 `VRefreshLayoutManager` 添加方法 `setHeaderBackgroundColor`、`setFooterBackgroundColor`。    
 > 添加方法 `getLayoutManager` 方法。    

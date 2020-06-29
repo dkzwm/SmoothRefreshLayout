@@ -109,6 +109,14 @@ public class DynamicReboundSmoothRefreshLayout extends SmoothRefreshLayout {
         }
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        if (mScrollChecker instanceof DynamicReboundScrollChecker) {
+            ((DynamicReboundScrollChecker) mScrollChecker).cleanAnimation();
+        }
+        super.onDetachedFromWindow();
+    }
+
     private static class ReboundProperty extends FloatPropertyCompat {
         private float mValue;
 
@@ -135,6 +143,7 @@ public class DynamicReboundSmoothRefreshLayout extends SmoothRefreshLayout {
         private float mFrictionFactor = 3.5f;
         private float mStiffness = SpringForce.STIFFNESS_LOW;
         private float mDampingRatio = SpringForce.DAMPING_RATIO_NO_BOUNCY;
+        private ReboundProperty mReboundProperty = new ReboundProperty();
 
         @Override
         public void run() {
@@ -288,21 +297,30 @@ public class DynamicReboundSmoothRefreshLayout extends SmoothRefreshLayout {
                 mScroller.forceFinished(true);
                 if (mFlingAnimation != null) {
                     mFlingAnimation.cancel();
-                    mFlingAnimation.removeEndListener(this);
-                    mFlingAnimation.removeUpdateListener(this);
-                    mFlingAnimation = null;
                 }
                 if (mSpringAnimation != null) {
                     mSpringAnimation.cancel();
-                    mSpringAnimation.removeEndListener(this);
-                    mSpringAnimation.removeUpdateListener(this);
-                    mSpringAnimation = null;
                 }
                 mDuration = 0;
                 mLastY = 0;
                 mLastTo = -1;
                 mLastStart = 0;
                 removeCallbacks(this);
+            }
+        }
+
+        void cleanAnimation() {
+            if (mFlingAnimation != null) {
+                mFlingAnimation.cancel();
+                mFlingAnimation.removeUpdateListener(this);
+                mFlingAnimation.removeEndListener(this);
+                mFlingAnimation = null;
+            }
+            if (mSpringAnimation != null) {
+                mSpringAnimation.cancel();
+                mSpringAnimation.removeUpdateListener(this);
+                mSpringAnimation.removeEndListener(this);
+                mSpringAnimation = null;
             }
         }
 
@@ -318,11 +336,15 @@ public class DynamicReboundSmoothRefreshLayout extends SmoothRefreshLayout {
             mLastStart = mIndicator.getCurrentPos();
             mIsScrolling = true;
             removeCallbacks(this);
-            mFlingAnimation = new FlingAnimation(this, new ReboundProperty());
+            if (mFlingAnimation == null) {
+                mFlingAnimation = new FlingAnimation(this, mReboundProperty);
+                mFlingAnimation.addUpdateListener(this);
+                mFlingAnimation.addEndListener(this);
+            } else {
+                mReboundProperty.mValue = 0;
+            }
             mFlingAnimation.setStartVelocity(velocity);
             mFlingAnimation.setFriction((float) Math.pow(Math.abs(velocity), 1 / mFrictionFactor));
-            mFlingAnimation.addUpdateListener(this);
-            mFlingAnimation.addEndListener(this);
             mFlingAnimation.start();
         }
 
@@ -332,12 +354,18 @@ public class DynamicReboundSmoothRefreshLayout extends SmoothRefreshLayout {
             }
             stop();
             mMode = Constants.SCROLLER_MODE_FLING_BACK;
-            mSpringAnimation = new SpringAnimation(this, new ReboundProperty(), to);
+            if (mSpringAnimation == null) {
+                mSpringAnimation = new SpringAnimation(this, mReboundProperty, to);
+                mSpringAnimation.addUpdateListener(this);
+                mSpringAnimation.addEndListener(this);
+            }
             mLastY = mIndicator.getCurrentPos();
             mSpringAnimation.setStartValue(mLastY);
-            mSpringAnimation.getSpring().setStiffness(mStiffness).setDampingRatio(mDampingRatio);
-            mSpringAnimation.addUpdateListener(this);
-            mSpringAnimation.addEndListener(this);
+            mSpringAnimation
+                    .getSpring()
+                    .setStiffness(mStiffness)
+                    .setDampingRatio(mDampingRatio)
+                    .setFinalPosition(to);
             mSpringAnimation.start();
         }
 

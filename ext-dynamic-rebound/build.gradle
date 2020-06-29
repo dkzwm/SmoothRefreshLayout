@@ -58,11 +58,11 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'SmoothRefreshLayout-HorizontalExtension'
+                name 'SmoothRefreshLayout-DynamicReboundExtension'
                 groupId rootProject.ext.bintray['groupId']
                 url rootProject.ext.bintray['siteUrl']
-                artifactId 'ext-horizontal'
-                description 'Horizontal refresh extension of SmoothRefreshLayout'
+                artifactId 'ext-dynamic-rebound'
+                description 'Dynamic rebound extension of SmoothRefreshLayout'
                 licenses {
                     license {
                         name rootProject.ext.bintray['licenseName']
