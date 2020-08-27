@@ -3156,8 +3156,9 @@ public class SmoothRefreshLayout extends ViewGroup
                             && !ViewCatcherUtil.isCoordinatorLayout(mTargetView)
                             && targetView != null
                             && !ViewCatcherUtil.isViewPager(targetView)
-                            && targetView.getParent() instanceof View
-                            && !ViewCatcherUtil.isViewPager((View) targetView.getParent())) {
+                            && !(targetView.getParent() instanceof View
+                                    && ViewCatcherUtil.isViewPager(
+                                            (View) targetView.getParent()))) {
                         ev.setAction(MotionEvent.ACTION_CANCEL);
                     }
                 }
@@ -4598,8 +4599,8 @@ public class SmoothRefreshLayout extends ViewGroup
 
     class ScrollChecker implements Runnable {
         private static final float GRAVITY_EARTH = 9.80665f;
-        private final float mPhysical;
         final int mMaxDistance;
+        private final float mPhysical;
         Scroller[] mCachedScroller;
         Scroller mScroller;
         Scroller mCalcScroller;
