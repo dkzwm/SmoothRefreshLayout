@@ -451,7 +451,6 @@ public class SmoothRefreshLayout extends ViewGroup
             mDelayToRefreshComplete.mLayout = null;
         }
         mDelayToPerformAutoRefresh.mLayout = null;
-        mLayoutManager.setLayout(null);
         if (mVelocityTracker != null) {
             mVelocityTracker.recycle();
         }
@@ -468,9 +467,6 @@ public class SmoothRefreshLayout extends ViewGroup
         if (sDebug) {
             Log.d(TAG, "onAttachedToWindow()");
         }
-        if (mLayoutManager == null)
-            throw new IllegalArgumentException("LayoutManager can not be null!!");
-        mLayoutManager.setLayout(this);
         final List<ILifecycleObserver> observers = mLifecycleObservers;
         if (observers != null) {
             for (ILifecycleObserver observer : observers) {
@@ -808,8 +804,10 @@ public class SmoothRefreshLayout extends ViewGroup
                     reset();
                     requestLayout();
                 }
+                mLayoutManager.setLayout(null);
             }
             mLayoutManager = layoutManager;
+            mLayoutManager.setLayout(this);
         }
     }
 
@@ -825,12 +823,12 @@ public class SmoothRefreshLayout extends ViewGroup
             if (mLayoutManager instanceof VRefreshLayoutManager) {
                 return;
             }
-            mLayoutManager = new VRefreshLayoutManager();
+            setLayoutManager(new VRefreshLayoutManager());
         } else {
             if (mLayoutManager instanceof VScaleLayoutManager) {
                 return;
             }
-            mLayoutManager = new VScaleLayoutManager();
+            setLayoutManager(new VScaleLayoutManager());
         }
     }
 
