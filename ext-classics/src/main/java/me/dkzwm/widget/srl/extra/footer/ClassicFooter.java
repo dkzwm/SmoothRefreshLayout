@@ -105,12 +105,6 @@ public class ClassicFooter<T extends IIndicator> extends AbsClassicRefreshView<T
     }
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-        Log.d(getClass().getSimpleName(), "---------5:");
-    }
-
-    @Override
     public int getType() {
         return TYPE_FOOTER;
     }
