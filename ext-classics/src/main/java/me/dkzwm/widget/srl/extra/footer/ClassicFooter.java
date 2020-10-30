@@ -30,7 +30,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import androidx.annotation.StringRes;
 import me.dkzwm.widget.srl.SmoothRefreshLayout;
