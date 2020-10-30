@@ -64,12 +64,12 @@ public class HorizontalSmoothRefreshLayout extends SmoothRefreshLayout {
             if (mLayoutManager instanceof HRefreshLayoutManager) {
                 return;
             }
-            mLayoutManager = new HRefreshLayoutManager();
+            setLayoutManager(new HRefreshLayoutManager());
         } else {
             if (mLayoutManager instanceof HScaleLayoutManager) {
                 return;
             }
-            mLayoutManager = new HScaleLayoutManager();
+            setLayoutManager(new HScaleLayoutManager());
         }
     }
 
