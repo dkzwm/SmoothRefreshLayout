@@ -3713,12 +3713,12 @@ public class SmoothRefreshLayout extends ViewGroup
                 final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
                 if (maxHeaderDistance > 0) {
                     if (current >= maxHeaderDistance) {
-                        if ((mIndicator.hasTouched() && !mScrollChecker.mIsScrolling) || isFling) {
+                        if (!mScrollChecker.mIsScrolling || isFling) {
                             updateAnotherDirectionPos();
                             return;
                         }
                     } else if (current + delta > maxHeaderDistance) {
-                        if ((mIndicator.hasTouched() && !mScrollChecker.mIsScrolling) || isFling) {
+                        if (!mScrollChecker.mIsScrolling || isFling) {
                             delta = maxHeaderDistance - current;
                             if (isFling) {
                                 mScrollChecker.mScroller.forceFinished(true);
@@ -3765,12 +3765,12 @@ public class SmoothRefreshLayout extends ViewGroup
                 final boolean isFling = mScrollChecker.isFling() || mScrollChecker.isPreFling();
                 if (maxFooterDistance > 0) {
                     if (current >= maxFooterDistance) {
-                        if ((mIndicator.hasTouched() && !mScrollChecker.mIsScrolling) || isFling) {
+                        if (!mScrollChecker.mIsScrolling || isFling) {
                             updateAnotherDirectionPos();
                             return;
                         }
                     } else if (current - delta > maxFooterDistance) {
-                        if ((mIndicator.hasTouched() && !mScrollChecker.mIsScrolling) || isFling) {
+                        if (!mScrollChecker.mIsScrolling || isFling) {
                             delta = current - maxFooterDistance;
                             if (isFling) {
                                 mScrollChecker.mScroller.forceFinished(true);

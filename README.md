@@ -1,6 +1,6 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.1.5.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
+[![Release](https://img.shields.io/badge/JCenter-1.7.1.6.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-740%20%7C%2084%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -26,15 +26,15 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.5.androidx'
+    implementation 'me.dkzwm.widget.srl:core:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.6.androidx'
     //1.7.1.4.androidx版本的横向扩展有严重BUG，请勿使用
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.6.androidx'
     //物理回弹动画扩展实现，自1.7.1.3开始提供
-    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.5.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.6.androidx'
 
     //android support 最终版本
     implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
