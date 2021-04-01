@@ -1,6 +1,5 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.1.5.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-740%20%7C%2084%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -29,24 +28,18 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  ## Installation
  Add the following dependency to your build.gradle file:
 ```
+repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+}
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.5.androidx'
-    //Do not used `ext-horizontal:1.7.1.4.androidx`
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.5.androidx'
-    //Available from version 1.7.1.3.androidx
-    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.5.androidx'
-
-    //android support final version
-    implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:core:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-util:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-material:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-horizontal:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-classics:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-two-level:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-dynamic-rebound:1.7.1.6.androidx'
 }
 ```
 

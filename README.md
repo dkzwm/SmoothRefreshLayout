@@ -1,6 +1,5 @@
 # SmoothRefreshLayout
 
-[![Release](https://img.shields.io/badge/JCenter-1.7.1.5.androidx-brightgreen.svg)](https://bintray.com/dkzwm/maven/core)
 ![Methods](https://img.shields.io/badge/Methods%20%7C%20Size-740%20%7C%2084%20KB-e91e63.svg)
 [![MinSdk](https://img.shields.io/badge/MinSdk-14-blue.svg)](https://developer.android.com/about/versions/android-4.0.html)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/dkzwm/SmoothRefreshLayout/blob/master/LICENSE)
@@ -25,24 +24,18 @@
 ## 引入
 添加如下依赖到你的 build.gradle 文件:
 ```
+repositories {
+    ...
+    maven { url 'https://jitpack.io' }
+}
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.5.androidx'
-    //1.7.1.4.androidx版本的横向扩展有严重BUG，请勿使用
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.5.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.5.androidx'
-    //物理回弹动画扩展实现，自1.7.1.3开始提供
-    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.5.androidx'
-
-    //android support 最终版本
-    implementation 'me.dkzwm.widget.srl:core:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.6.6.8'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.6.6.8'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:core:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-util:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-material:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-horizontal:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-classics:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-two-level:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-dynamic-rebound:1.7.1.6.androidx'
 }
 ```
 
@@ -65,7 +58,7 @@ dependencies {
 #### 在Xml中配置
 ```
 <?xml version="1.0" encoding="utf-8"?>
-<me.dkzwm.widget.srl.SmoothRefreshLayout
+<com.github.dkzwm:SmoothRefreshLayout.SmoothRefreshLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/refreshLayout"
