@@ -58,7 +58,7 @@ dependencies {
 #### 在Xml中配置
 ```
 <?xml version="1.0" encoding="utf-8"?>
-<com.github.dkzwm:SmoothRefreshLayout.SmoothRefreshLayout
+<me.dkzwm.widget.srl.SmoothRefreshLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/refreshLayout"
