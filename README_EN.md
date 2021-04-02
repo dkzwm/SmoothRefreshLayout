@@ -33,13 +33,13 @@ repositories {
     maven { url 'https://jitpack.io' }
 }
 dependencies {
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:core:1.7.1.6'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-util:1.7.1.6'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-material:1.7.1.6'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-horizontal:1.7.1.6'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-classics:1.7.1.6'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-two-level:1.7.1.6'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-dynamic-rebound:1.7.1.6'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:core:1.7.2'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-util:1.7.2'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-material:1.7.2'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-horizontal:1.7.2'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-classics:1.7.2'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-two-level:1.7.2'
+    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-dynamic-rebound:1.7.2'
 }
 ```
 
