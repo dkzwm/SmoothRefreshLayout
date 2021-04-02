@@ -7,17 +7,16 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.2'
+        classpath 'com.android.tools.build:gradle:4.1.3'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
     }
 }
 
 plugins {
-    id "com.diffplug.gradle.spotless" version "3.25.0"
+    id "com.diffplug.spotless" version "5.3.0"
 }
 
 allprojects {
@@ -35,8 +34,8 @@ allprojects {
 }
 
 subprojects {
+    apply plugin: 'com.diffplug.spotless'
     if (it.name != 'app') {
-        apply plugin: 'com.diffplug.gradle.spotless'
         spotless {
             java {
                 target fileTree('.') {
@@ -48,7 +47,6 @@ subprojects {
             }
         }
     } else {
-        apply plugin: 'com.diffplug.gradle.spotless'
         spotless {
             java {
                 target '**/*.java'
@@ -79,7 +77,7 @@ ext {
     bintray = [
             siteUrl       : 'https://github.com/dkzwm/SmoothRefreshLayout',
             gitUrl        : 'https://github.com/dkzwm/SmoothRefreshLayout.git',
-            groupId       : "me.dkzwm.widget.srl",
+            groupId       : "com.github.dkzwm",
             libVersion    : android.versionName,
             developerId   : "dkzwm",
             developerName : "Zhang Weiming",

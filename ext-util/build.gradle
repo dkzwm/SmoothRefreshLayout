@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
 
 group = rootProject.ext.bintray['groupId']
 version=rootProject.ext.android['versionName']
@@ -84,23 +83,5 @@ install {
                 }
             }
         }
-    }
-}
-
-bintray {
-    Properties properties = new Properties()
-    properties.load(project.rootProject.file('local.properties').newDataInputStream())
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.key")
-
-    configurations = ['archives']
-    pkg {
-        repo = 'maven'
-        name = 'ext-util'
-        desc = 'Utils for SmoothRefreshLayout'
-        websiteUrl = rootProject.ext.bintray['siteUrl']
-        vcsUrl = rootProject.ext.bintray['gitUrl']
-        licenses = rootProject.ext.allLicenses
-        publish = true
     }
 }
