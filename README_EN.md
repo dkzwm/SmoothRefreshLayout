@@ -28,18 +28,14 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  ## Installation
  Add the following dependency to your build.gradle file:
 ```
-repositories {
-    ...
-    maven { url 'https://jitpack.io' }
-}
 dependencies {
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:core:1.7.2'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-util:1.7.2'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-material:1.7.2'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-horizontal:1.7.2'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-classics:1.7.2'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-two-level:1.7.2'
-    implementation 'com.github.dkzwm:SmoothRefreshLayout:ext-dynamic-rebound:1.7.2'
+    implementation 'me.dkzwm.widget.srl:core:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.6.androidx'
+    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.6.androidx'
 }
 ```
 
