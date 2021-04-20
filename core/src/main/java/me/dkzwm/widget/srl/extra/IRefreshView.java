@@ -141,7 +141,7 @@ public interface IRefreshView<T extends IIndicator> {
     void onRefreshPositionChanged(SmoothRefreshLayout layout, byte status, T indicator);
 
     /**
-     * Before the transaction of the refresh view has not yet been processed completed。 This method
+     * Before the transaction of the refresh view has not yet been processed completed. This method
      * will be triggered when the position of the other refresh view changes.<br>
      *
      * <p>Since version 1.4.6

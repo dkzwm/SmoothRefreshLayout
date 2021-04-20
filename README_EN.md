@@ -14,7 +14,7 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  - Support Nested-Scroll feature, implemented the NestedScrollingChild3, NestedScrollingParent3 interface.
  - Extends the ViewGroup, has excellent performance,support similar FameLayout feature（Gravity、Margin).
  - Support Auto-Refresh、Auto-LoadMore、Scroll to bottom to Auto-LoadMore（Recommended to use the Adapter while use ListView/GridView/RecyclerView）、Scroll to top to Auto-Refresh.
- - Support Cross boundary rebound(OverScroll), Since the `1.7.1.3.androidx` version, supports Physics-based motion.
+ - Support Cross boundary rebound(OverScroll), supports Physics-based motion.
  - Support Horizontal refresh.
  - Support Drawer-Style(Refresh view below the Content view and Refresh view has been pinned).
  - Support Refresh view has six styles: STYLE_DEFAULT(Do not change the height by default)、 STYLE_SCALE(Dynamically change the height)、 STYLE_PIN(Pinned the refresh view)、 STYLE_FOLLOW_SCALE(When the moved position large than the view height, SmoothRefreshLayout will dynamically change the height)、 STYLE_FOLLOW_PIN(When the moved position large than the view height，pinned the refresh view)、 STYLE_FOLLOW_CENTER(When the moved position large than the view height, make refresh view in center) .    
@@ -29,13 +29,13 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  Add the following dependency to your build.gradle file:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:srl-core:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-material:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-dynamic-rebound:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-horizontal:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-two-level:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-util:1.7.2.1'
 }
 ```
 

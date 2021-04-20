@@ -2,9 +2,8 @@ import groovy.xml.XmlUtil
 
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-
-group = rootProject.ext.bintray['groupId']
-version = rootProject.ext.android['versionName']
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
@@ -22,6 +21,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    lintOptions {
+        abortOnError false        // true by default
+        checkAllWarnings false
+        checkReleaseBuilds false
+        ignoreWarnings true       // false by default
+        quiet true                // false by default
+    }
 }
 
 dependencies {
@@ -35,11 +41,12 @@ dependencies {
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+    archiveClassifier.set('sources')
 }
 
 task javadoc(type: Javadoc) {
     failOnError false
+    options.encoding = 'UTF-8'
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
     classpath += configurations.compile
@@ -47,7 +54,7 @@ task javadoc(type: Javadoc) {
 
 // build a jar with javadoc
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
+    archiveClassifier.set('javadoc')
     from javadoc.destinationDir
 }
 
@@ -64,7 +71,8 @@ install {
                 name 'SmoothRefreshLayout-Core'
                 groupId rootProject.ext.bintray['groupId']
                 url rootProject.ext.bintray['siteUrl']
-                artifactId 'core'
+                version rootProject.ext.bintray['libVersion']
+                artifactId 'srl-core'
                 description 'A highly efficient refresh library for Android, Can support all Views.'
                 licenses {
                     license {
@@ -105,12 +113,74 @@ gradle.buildFinished { project ->
                             'jdkName': jdkName,
                             'jdkType': jdkType
                     ])
-            def text=XmlUtil.serialize(parsedXml)
+            def text = XmlUtil.serialize(parsedXml)
             imlFile.withWriter("UTF8") { writer ->
                 writer.write(text)
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace()
+        }
+    }
+}
+signing {
+    sign publishing.publications
+}
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId rootProject.ext.bintray['groupId']
+            artifactId 'srl-core'
+            version rootProject.ext.bintray['libVersion']
+
+            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'srl-core'
+                description = 'A highly efficient refresh library for Android, Can support all Views.'
+                url = rootProject.ext.bintray['siteUrl']
+                licenses {
+                    license {
+                        name = rootProject.ext.bintray['licenseName']
+                        url = rootProject.ext.bintray['licenseUrl']
+                    }
+                }
+                developers {
+                    developer {
+                        id = rootProject.ext.bintray['developerId']
+                        name = rootProject.ext.bintray['developerName']
+                        email = rootProject.ext.bintray['developerEmail']
+                    }
+                }
+                scm {
+                    connection = rootProject.ext.bintray['gitUrl']
+                    developerConnection = rootProject.ext.bintray['gitUrl']
+                    url = rootProject.ext.bintray['siteUrl']
+                }
+                withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+
+                    project.configurations.implementation.allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        dependencyNode.appendNode('version', it.version)
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "sonatype"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                Properties properties = new Properties()
+                properties.load(project.rootProject.file('local.properties').newDataInputStream())
+                username = properties.getProperty("bintray.user")
+                password = properties.getProperty("bintray.key")
+            }
         }
     }
 }

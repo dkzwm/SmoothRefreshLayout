@@ -12,7 +12,7 @@
  - 支持嵌套滑动,完整实现了NestedScrollingChild3，NestedScrollingParent3 接口,玩转CoordinatorLayout.
  - 直接继承自ViewGroup,拥有卓越的性能,支持类FameLayout的特性（Gravity、Margin).
  - 支持自动刷新、自动上拉加载、到底自动加载更多（不推荐，建议使用Adapter实现，可自定义到底判断逻辑回调实现预加载更多）.
- - 支持越界回弹，自`1.7.1.3.androidx`版本开始支持基于物理特性的越界回弹效果.
+ - 支持越界回弹，支持基于物理特性的越界回弹效果.
  - 支持刷新视图自定样式:STYLE_DEFAULT(默认不改变大小)、STYLE_SCALE(动态改变大小，会在SRL内部测量并布局，所以性能会有损失)、STYLE_PIN(不会改变视图大小，固定在顶部或者底部)、STYLE_FOLLOW_SCALE(先纵向跟随移动并且不改变视图大小，大于视图高度后动态改变视图大小且性能会有损失)、STYLE_FOLLOW_PIN(不会改变视图大小，先纵向跟随移动，大于视图高度后固定)、STYLE_FOLLOW_CENTER(不会改变视图大小，先纵向跟随移动，大于视图高度后让视图保持在移动的距离中心点).
  - 支持二级刷新事件（TwoLevelSmoothRefreshLayout）,PS:淘宝二楼、京东活动.
  - 支持横向刷新(HorizontalSmoothRefreshLayout).
@@ -25,13 +25,13 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
-    implementation 'me.dkzwm.widget.srl:core:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-util:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-material:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-horizontal:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-classics:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-two-level:1.7.1.6.androidx'
-    implementation 'me.dkzwm.widget.srl:ext-dynamic-rebound:1.7.1.6.androidx'
+    implementation 'com.github.dkzwm:srl-core:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-material:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-dynamic-rebound:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-horizontal:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-two-level:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-ext-util:1.7.2.1'
 }
 ```
 
