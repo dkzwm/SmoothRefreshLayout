@@ -25,13 +25,13 @@
 添加如下依赖到你的 build.gradle 文件:
 ```
 dependencies {
-    implementation 'com.github.dkzwm:srl-core:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-material:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-dynamic-rebound:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-horizontal:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-two-level:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-util:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-core:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-material:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-dynamic-rebound:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-horizontal:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-two-level:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-util:1.7.2.2'
 }
 ```
 

@@ -18,6 +18,10 @@ android {
     dexOptions {
         preDexLibraries = false
     }
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
 }
 
 dependencies {
@@ -38,7 +42,7 @@ dependencies {
     implementation 'com.joooonho:selectableroundedimageview:1.0.1'
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-    implementation "androidx.constraintlayout:constraintlayout:2.0.1"
+    implementation "androidx.constraintlayout:constraintlayout:2.1.0"
     implementation 'com.airbnb.android:lottie:3.3.1'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.1.0-alpha03'
     implementation 'me.dkzwm.graphics.wmm:core:0.0.1'

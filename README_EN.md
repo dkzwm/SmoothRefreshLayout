@@ -29,13 +29,13 @@ A highly efficient refresh library for Android.Can support all Views.It's easy t
  Add the following dependency to your build.gradle file:
 ```
 dependencies {
-    implementation 'com.github.dkzwm:srl-core:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-material:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-dynamic-rebound:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-horizontal:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-two-level:1.7.2.1'
-    implementation 'com.github.dkzwm:srl-ext-util:1.7.2.1'
+    implementation 'com.github.dkzwm:srl-core:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-classics:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-material:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-dynamic-rebound:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-horizontal:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-two-level:1.7.2.2'
+    implementation 'com.github.dkzwm:srl-ext-util:1.7.2.2'
 }
 ```
 
