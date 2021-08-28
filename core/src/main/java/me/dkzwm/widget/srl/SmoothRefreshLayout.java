@@ -3072,12 +3072,12 @@ public class SmoothRefreshLayout extends ViewGroup
 
     public void transformPointToViewLocal(ViewGroup group, float[] point, View child) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1
-                && Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
+                && Build.VERSION.SDK_INT <= Build.VERSION_CODES.R) {
             group.transformPointToViewLocal(point, child);
         } else {
             // When the system version is lower than LOLLIPOP_MR1, the system source code has no
             // transformPointToViewLocal method. We need to be compatible with it.
-            // When the system version is larger than P, the transformPointToViewLocal method has
+            // When the system version is larger than R, the transformPointToViewLocal method has
             // been unavailable. We need to be compatible with it.
             point[0] += group.getScrollX() - child.getLeft();
             point[1] += group.getScrollY() - child.getTop();
