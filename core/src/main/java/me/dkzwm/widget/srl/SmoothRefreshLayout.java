@@ -3504,7 +3504,7 @@ public class SmoothRefreshLayout extends ViewGroup
         final View targetView = getScrollTargetView();
         if (mInEdgeCanMoveHeaderCallBack != null) {
             return mInEdgeCanMoveHeaderCallBack.isNotYetInEdgeCannotMoveHeader(
-                    this, targetView, mFooterView);
+                    this, targetView, mHeaderView);
         }
         return targetView != null && targetView.canScrollVertically(-1);
     }
@@ -3513,7 +3513,7 @@ public class SmoothRefreshLayout extends ViewGroup
         final View targetView = getScrollTargetView();
         if (mInEdgeCanMoveFooterCallBack != null) {
             return mInEdgeCanMoveFooterCallBack.isNotYetInEdgeCannotMoveFooter(
-                    this, targetView, mHeaderView);
+                    this, targetView, mFooterView);
         }
         return targetView != null && targetView.canScrollVertically(1);
     }
