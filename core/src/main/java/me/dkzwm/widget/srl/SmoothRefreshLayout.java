@@ -2865,10 +2865,12 @@ public class SmoothRefreshLayout extends ViewGroup
     @Override
     public boolean canScrollVertically(int direction) {
         if (isVerticalOrientation()) {
-            if (direction < 0) {
-                return super.canScrollVertically(direction) || isNotYetInEdgeCannotMoveHeader();
-            } else {
-                return super.canScrollVertically(direction) || isNotYetInEdgeCannotMoveFooter();
+            if (mAppBarLayoutUtil == null || mAppBarLayoutUtil != mInEdgeCanMoveHeaderCallBack) {
+                if (direction < 0) {
+                    return super.canScrollVertically(direction) || isNotYetInEdgeCannotMoveHeader();
+                } else {
+                    return super.canScrollVertically(direction) || isNotYetInEdgeCannotMoveFooter();
+                }
             }
         }
         return super.canScrollVertically(direction);
